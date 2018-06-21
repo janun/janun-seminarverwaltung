@@ -1,0 +1,23 @@
+h1, h2, h3 {
+  margin: 0;
+  padding: 0;
+  color: $green;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+h2 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+h3 {
+  font-size: 26px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}

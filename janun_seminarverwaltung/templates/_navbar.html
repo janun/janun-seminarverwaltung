@@ -1,0 +1,22 @@
+{% load static i18n %}
+
+<div class="navbar">
+  <nav class="navbar__inner container">
+
+    <ul>
+      <li><a href="{% url 'home' %}">JANUN Seminarverwaltung</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
+    </ul>
+
+    <ul class="float-right">
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a></li>
+        <li><a href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a></li>
+      {% else %}
+        <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
+        <li><a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></li>
+      {% endif %}
+    </ul>
+
+  </nav>
+</div>
