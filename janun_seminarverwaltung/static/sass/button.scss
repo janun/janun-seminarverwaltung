@@ -1,0 +1,46 @@
+.button, .btn {
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  border-radius: 50px;
+  padding: 10px 25px;
+  background: white;
+  color: $brown;
+  font-weight: bold;
+  @include shadow(1);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:active {
+    @include shadow(0);
+  }
+
+  &-danger {
+    background: $red;
+    color: white;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &-primary {
+    background: $green;
+    color: white;
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.btn-reset, .button-reset {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  font-weight: inherit;
+}

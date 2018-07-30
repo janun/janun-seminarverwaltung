@@ -4,17 +4,25 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+<div class="section">
+  {% if object.avatar %}
+    <div class="button-image">
+      <img src="{{ object.avatar.url }}" class="button-image__image" alt="">
     </div>
-  </div>
+  {% endif %}
+  <h1>{{ object.name }}</h1>
+  <p>Rolle: {{ object.get_role_display }}</p>
+</div>
+
+{% if groups %}
+<div class="section">
+  <h2>Gruppen</h2>
+  {% for group in groups %}
+    {% include "groups/_group.html" with object=group %}
+  {% endfor %}
+</div>
+{% endif %}
 
 {% if object == request.user %}
 <!-- Action buttons -->
@@ -33,4 +41,3 @@
 
 </div>
 {% endblock content %}
-

@@ -1,0 +1,21 @@
+{% extends "seminars/seminar_wizard.html" %}
+
+{% block before_form %}
+<p>
+  {% if max_funding %}
+    Aufgrund der eingegeben Daten kannst Du <b>maximal {{ max_funding }} €</b> beantragen.<br>
+    Solltest Du aber auch mit weniger Förderung auskommen, können evtl. mehr Seminare stattfinden.
+  {% else %}
+    Bitte füll vorher Gruppe, Bildungstage und Teilnehmende aus.
+  {% endif %}
+</p>
+{% endblock %}
+
+{% block after_form %}
+<p>
+  JANUN fördert Seminare, finanziert sie aber nicht komplett.
+  Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.).
+  Der Richtwert für Teilnahmebeiträge ist 3,50 € pro Person und Tag.
+  Ausgenommen sind eintägige Seminare.
+</p>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load rules %}
+{% load utils %}
+
+{% block title %}{{ block.super }} {{ object.name }}{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'groups:list' %}">← Alle Gruppen</a>
+
+<div class="image-button image-button--big">
+  <img class="image-button__image" src="{{ object.logo.url }}" alt="Logo for {{ object.name }}">
+</div>
+<h1>{{ object.name }}</h1>
+
+<p>Mitglieder: {{ object.members.all|link_list|default:"niemand" }}</p>
+<p>Gruppenhut: {{ object.group_hats.all|link_list|default:"niemand" }}</p>
+
+<div style="margin-bottom: 60px"></div>
+
+{% if seminars %}
+  <h2>Seminare ({{ seminars|length }})</h2>
+  <div class="card-grid">
+    {% for seminar in seminars %}
+      {% include "seminars/_seminar.html" with object=seminar %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+{% has_perm 'groups.delete_janungroup' user object as can_delete %}
+{% if can_delete %}
+  <a class="button button-danger" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
+{% endif %}
+
+{% endblock %}

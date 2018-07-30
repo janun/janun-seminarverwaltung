@@ -1,0 +1,59 @@
+.form-group {
+  margin-bottom: 30px;
+}
+
+.form-control, .numberinput {
+  font-size: inherit;
+  font-family: inherit;
+  border: 1px solid $grey;
+  border-radius: 2px;
+  padding: 10px 15px;
+  background: rgba(black, 0.025);
+}
+
+.col-form-label {
+  display: inline-block;
+  padding-bottom: 5px;
+  color: inherit;
+  font-weight: bold;
+}
+
+.invalid-feedback {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: $red;
+}
+
+
+.filter-form {
+  background: white;
+  border-radius: 10px;
+  @include shadow(1);
+  margin-top: 20px;
+  padding: 20px;
+  font-size: 18px;
+  color: $darkgrey;
+
+  &__buttons {
+    display: block;
+  }
+
+  .col-form-label {
+    font-weight: normal;
+    display: block;
+  }
+
+  .form-control, .numberinput {
+    padding: 10px 10px;
+  }
+
+  .form-group {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 10px;
+
+    div {
+      display: inline-block;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} Übersicht für Verwalter{% endblock %}
+
+{% block content %}
+<h1>Willkommen, {{ user.username|title }}!</h1>
+
+{% if seminars %}
+  <h2>Neueste Seminare</h2>
+  <div class="card-grid">
+    {% for seminar in seminars %}
+      {% include "seminars/_seminar.html" with object=seminar %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+{% endblock %}

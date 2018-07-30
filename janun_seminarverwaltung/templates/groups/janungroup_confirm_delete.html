@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} {{ object.name }} löschen?{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'groups:detail' object.id %}">← {{ object.name }}</a>
+
+<form class="alert" method="post">
+  {% csrf_token %}
+  <p>Möchtest Du wirklich die JANUN-Gruppe „{{ object }}“ löschen?</p>
+  <input class="button button-danger" type="submit" value="Ja, löschen" />
+</form>
+
+{% endblock %}

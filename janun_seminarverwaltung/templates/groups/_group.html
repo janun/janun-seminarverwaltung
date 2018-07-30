@@ -1,0 +1,8 @@
+<a class="group" href="{% url 'groups:detail' group.pk %}">
+  <span class="image-button image-button--big">
+    {% if object.logo %}
+      <img src="{{ object.logo.url }}" alt="Logo of {{ object.name }}" class="image-button__image">
+    {% endif %}
+  </span>
+  {{ object.name }}
+</a>

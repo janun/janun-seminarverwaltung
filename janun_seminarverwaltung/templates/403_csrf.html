@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Forbidden (403){% endblock %}
+{% block title %}{{ block.super }} Keine Berechtigung (403){% endblock %}
 
 {% block content %}
-<h1>Forbidden (403)</h1>
-
-<p>CSRF verification failed. Request aborted.</p>
+<div class="alert alert-error">
+  <h1>CSRF-Fehler</h1>
+  <p>CSRF-Überprüfung fehlgeschlagen. Das könnte ein Sicherheitsproblem sein.</p>
+  <ul>
+    <li>Du kannst versuchen Cookies zu aktivieren</li>
+  </ul>
+</div>
 {% endblock content %}

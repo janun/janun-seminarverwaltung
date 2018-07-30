@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load rules %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}{{ block.super }} {{ heading }}{% endblock %}
+
+{% block content %}
+<h1>{{ heading }}</h1>
+
+{% has_perm 'seminars.add_seminar' user as can_add %}
+{% if can_add %}
+<div class="clearfix">
+  <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+</div>
+{% endif %}
+
+
+{% if orig_len > 10 %}
+<form class="filter-form" action="" method="get">
+  {{ filter.form|crispy }}
+  <div class="filter-form__buttons">
+    <button class="button button-primary" type="submit">Suche</button>
+    <a href="?" class="button button" type="submit">zurücksetzen</a>
+  </div>
+</form>
+{% endif %}
+
+
+{% if seminar_list %}
+  <div class="table-wrapper">
+    {% render_table table %}
+  </div>
+{% else %}
+  <p>Leider keine Seminare vorhanden.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/filter-form.js' %}"></script>
+{% endblock javascript %}

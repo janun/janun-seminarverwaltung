@@ -22,7 +22,8 @@ body {
 
 a {
   font-family: inherit;
-  color: inherit;
+  color: $green;
+  text-decoration: none;
 
   &:hover {
     color: $green;

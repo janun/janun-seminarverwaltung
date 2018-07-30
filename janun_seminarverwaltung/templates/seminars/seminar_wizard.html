@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+  {{ wizard.form.media }}
+{% endblock %}
+
+{% block title %}{{ block.super }} Neues Seminar anmelden ({{ form.Meta.short_title }}){% endblock %}
+
+{% block content %}
+<div class="wizard">
+
+<div class="wizard__head">
+  {% if seminar_title %}
+    <h1>„{{ seminar_title }}“ anmelden</h1>
+  {% else %}
+    <h1>Neues Seminar anmelden</h1>
+  {% endif %}
+</div>
+
+<div class="wizard__content">
+
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+
+    <ul class="wizard__steps">
+      {% for step_name, step_form in view.get_form_list.items %}
+        <li class="{% if step == step_name %}wizard__steps--active{% endif %}">
+          <button class="btn-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">{{ step_form.Meta.short_title }}</button>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div class="wizard__form">
+      {% if form.Meta.title %}
+        <h2>{{ form.Meta.title }}</h2>
+      {% endif %}
+      {% block before_form %}{% endblock %}
+      {% block form %}
+        {% if wizard.form.forms %}
+          {{ wizard.form.management_form }}
+          {% for form in wizard.form.forms %}
+            {{ form|crispy }}
+          {% endfor %}
+        {% else %}
+          {{ wizard.form|crispy }}
+        {% endif %}
+      {% endblock form %}
+      {% block after_form %}{% endblock %}
+    </div>
+  </div>
+
+  <div class="wizard__footer">
+    {% if wizard.steps.prev %}
+      <button class="button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Zurück</button>
+    {% endif %}
+    <input class="button button-primary float-right" type="submit" value="Speichern & Weiter"/>
+  </div>
+
+</form>
+</div>
+{% endblock content %}
