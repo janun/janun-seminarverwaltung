@@ -45,6 +45,10 @@
       font-weight: bold;
     }
 
+    &--valid {
+      color: $green;
+    }
+
     li {
       margin-bottom: 5px;
     }

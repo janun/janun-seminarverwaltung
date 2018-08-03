@@ -375,6 +375,8 @@ h3 {
     padding-left: 30px; }
     .wizard__steps--active {
       font-weight: bold; }
+    .wizard__steps--valid {
+      color: #3A9D00; }
     .wizard__steps li {
       margin-bottom: 5px; }
   .wizard__form {

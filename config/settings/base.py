@@ -282,3 +282,5 @@ STRONGHOLD_PUBLIC_NAMED_URLS = (
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+SEMINAR_POLICY_URL = env('SEMINAR_POLICY_URL', default="https://janunde.s3.amazonaws.com/documents/JANUN-Seminarabrechnungsrichtlinie_2018.pdf")

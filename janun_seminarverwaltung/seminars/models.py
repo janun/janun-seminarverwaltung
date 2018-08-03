@@ -7,6 +7,8 @@ TODOS:
  * colors for states? / Object for choices?
 """
 
+from datetime import date
+
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
@@ -77,7 +79,7 @@ class Seminar(TimeStampedModel, models.Model):
     location = models.CharField("Ort", max_length=255)
     planned_training_days = models.PositiveSmallIntegerField("Anzahl Bildungstage")
     planned_attendees = IntegerRangeField("Anzahl Teilnehmende")
-    requested_funding = models.DecimalField("Benötigte Förderung", max_digits=6, decimal_places=2)
+    requested_funding = models.DecimalField("Benötigte Förderung", max_digits=10, decimal_places=2)
     group = models.ForeignKey(
         'groups.JANUNGroup',
         related_name="seminars",
@@ -101,6 +103,48 @@ class Seminar(TimeStampedModel, models.Model):
         choices=STATUS,
         verbose_name="Status"
     )
+
+    def get_max_funding(self):
+        if not self.planned_training_days or not self.planned_attendees:
+            return None
+
+        if self.planned_training_days == 1:
+            rate = 6.5
+        elif self.group:
+            rate = 11.5
+        else:
+            rate = 9.0
+
+        funding = self.planned_attendees.lower * self.planned_training_days * rate
+
+        if self.group:
+            return funding
+
+        if self.planned_training_days <= 3:
+            limit = 300
+        else:
+            limit = 300 + 200 * (self.planned_training_days - 3)
+        if limit > 1000:
+            limit = 1000
+
+        if funding > limit:
+            return limit
+        return funding
+
+    def get_deadline(self):
+        if not self.end:
+            return None
+        enddate = self.end.date()
+        year = enddate.year
+        if date(year, 1, 1) <= enddate <= date(year, 3, 31):
+            return date(year, 4, 15)
+        if date(year, 4, 1) <= enddate <= date(year, 6, 30):
+            return date(year, 7, 15)
+        if date(year, 7, 1) <= enddate <= date(year, 9, 30):
+            return date(year, 10, 15)
+        if date(year, 10, 1) <= enddate <= date(year, 12, 31):
+            return date(year, 1, 15)
+        return AssertionError
 
     objects = SeminarQuerySet.as_manager()
 

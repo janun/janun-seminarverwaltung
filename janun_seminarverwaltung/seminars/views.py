@@ -1,5 +1,7 @@
+from collections import OrderedDict
+
 from django.views.generic import DetailView
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect
 from django.contrib import messages
 from django.core import validators
 
@@ -80,6 +82,7 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         ('days', seminar_forms.TrainingDaysSeminarForm),
         ('attendees', seminar_forms.AttendeesSeminarForm),
         ('funding', seminar_forms.FundingSeminarForm),
+        ('confirm', seminar_forms.ConfirmSeminarForm),
     )
 
     def get_template_names(self):
@@ -93,57 +96,37 @@ class SeminarWizardView(NamedUrlSessionWizardView):
     def get_form_instance(self, step):
         if self.instance is None:
             self.instance = Seminar()
+            for form_key in self.get_form_list():
+                self.get_form(
+                    step=form_key,
+                    data=self.storage.get_step_data(form_key),
+                    files=self.storage.get_step_files(form_key)
+                ).is_valid()
         return self.instance
 
-    # def get_form_kwargs(self, step=None):
-    #     form_kwargs = super().get_form_kwargs(step=step)
-    #     return form_kwargs
+    def get_form_kwargs(self, step=None):
+        form_kwargs = super().get_form_kwargs(step=step)
+        form_kwargs['user'] = self.request.user
+        return form_kwargs
 
-    def get_form_initial(self, step):
-        initial = super().get_form_initial(step)
-        # set initial group if only one possibility
-        if step == 'group':
-            if self.request.user.role == 'TEAMER' and self.request.user.janun_groups.count() == 1:
-                initial['group'] = self.request.user.janun_groups.get()
-        return initial
-
-    def get_form(self, step=None, data=None, files=None):
-        form = super().get_form(step=step, data=data, files=files)
-        if step is None:
-            step = self.steps.current
-        # TEAMER may only choose own groups
-        if step == 'group':
-            if self.request.user.role == 'TEAMER':
-                form.fields['group'].queryset = self.request.user.janun_groups
-        if step == 'days':
-            max_training_days = self.get_max_training_days()
-            if max_training_days:
-                form.fields['planned_training_days'].validators.append(
-                    validators.MaxValueValidator(max_training_days)
-                )
-        # funding may not be higher than max_funding
-        if step == 'funding':
-            max_funding = self.get_max_funding()
-            if max_funding:
-                form.fields['requested_funding'].validators.append(
-                    validators.MaxValueValidator(max_funding)
-                )
-            else:
-                form.fields['requested_funding'].validators.append(
-                    validators.MaxValueValidator(
-                        0,
-                        message="Du musst Gruppe, Bildungstage und Teilnehmende ausfüllen."
-                    )
-                )
-        return form
+    def get_form_obj_list(self):
+        form_obj_list = OrderedDict()
+        for form_key in self.get_form_list():
+            form_obj_list[form_key] = self.get_form(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key)
+            )
+        return form_obj_list
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
+        context['form_obj_list'] = self.get_form_obj_list()
         content = self.get_cleaned_data_for_step('content')
         if content:
             context['seminar_title'] = content['title']
         if self.steps.current == 'funding':
-            context['max_funding'] = self.get_max_funding()
+            context['max_funding'] = self.get_form_instance('funding').get_max_funding()
         return context
 
     def render_goto_step(self, goto_step, **kwargs):
@@ -160,24 +143,5 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         messages.success(self.request, 'Seminar "%s" gespeichert.' % self.instance.title)
         return HttpResponseRedirect('/')
 
-    def get_max_funding(self):
-        group = self.get_cleaned_data_for_step('group')
-        days = self.get_cleaned_data_for_step('days')
-        attendees = self.get_cleaned_data_for_step('attendees')
-        if group is not None and days is not None and attendees is not None:
-            return calc_max_funding(
-                days['planned_training_days'],
-                attendees['planned_attendees'].upper,
-                group['group'] != ''
-            )
-        return None
-
-    def get_max_training_days(self):
-        datetime_data = self.get_cleaned_data_for_step('datetime')
-        if datetime_data:
-            start = datetime_data['start']
-            end = datetime_data['end']
-            return (end - start).days + 1
-        return None
 
 # TODO: DeleteView, UpdateView

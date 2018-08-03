@@ -26,9 +26,12 @@
     {{ wizard.management_form }}
 
     <ul class="wizard__steps">
-      {% for step_name, step_form in view.get_form_list.items %}
-        <li class="{% if step == step_name %}wizard__steps--active{% endif %}">
-          <button class="btn-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">{{ step_form.Meta.short_title }}</button>
+      {% for step_name, step_form in form_obj_list.items %}
+        <li class="{% if step == step_name %}wizard__steps--active{% endif %}
+                   {% if step_form.is_valid %}wizard__steps--valid{% endif %}">
+          <button class="btn-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">
+            {{ step_form.Meta.short_title }}
+          </button>
         </li>
       {% endfor %}
     </ul>
@@ -56,6 +59,7 @@
     {% if wizard.steps.prev %}
       <button class="button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Zurück</button>
     {% endif %}
+    <a class="button button-danger" href="{% url "seminars:create" %}?reset">Löschen</a>
     <input class="button button-primary float-right" type="submit" value="Speichern & Weiter"/>
   </div>
 
