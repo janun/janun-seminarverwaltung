@@ -82,6 +82,7 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         ('days', seminar_forms.TrainingDaysSeminarForm),
         ('attendees', seminar_forms.AttendeesSeminarForm),
         ('funding', seminar_forms.FundingSeminarForm),
+        ('barriers', seminar_forms.BarrierSeminarForm),
         ('confirm', seminar_forms.ConfirmSeminarForm),
     )
 

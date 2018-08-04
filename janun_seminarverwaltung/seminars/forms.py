@@ -76,6 +76,13 @@ class FundingSeminarForm(SeminarStepForm):
         fields = ('requested_funding',)
 
 
+class BarrierSeminarForm(SeminarStepForm):
+    class Meta(SeminarStepForm.Meta):
+        title = "Auftretende Barrieren"
+        short_title = "Barrieren"
+        fields = ('mobility_barriers', 'language_barriers', 'hearing_barriers', 'seeing_barriers')
+
+
 class ConfirmSeminarForm(SeminarStepForm):
     confirm_policy = forms.BooleanField(
         label="Ich habe die <a href='%s'>Seminarabrechnungsrichtlinie</a> gelesen." % settings.SEMINAR_POLICY_URL,

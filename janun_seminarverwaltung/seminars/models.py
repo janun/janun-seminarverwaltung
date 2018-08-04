@@ -89,7 +89,7 @@ class Seminar(TimeStampedModel, models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    # ManyToManyField?? Damit mehrere Teamer author sein können?
+    # QUESTION: ManyToManyField?? Damit mehrere Teamer author sein können?
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="seminars",
@@ -103,6 +103,33 @@ class Seminar(TimeStampedModel, models.Model):
         # protected=True,
         choices=STATUS,
         verbose_name="Status"
+    )
+    mobility_barriers = models.TextField(
+        "Moblitäts-Barrieren",
+        help_text="Zum Bsp.: Müssen Stufen oder Treppen überwunden werden?"
+                  "Findet ein Workshop im Garten statt? Sind sportliche Betätigungen vorgesehen?",
+        blank=True,
+        null=True,
+    )
+    language_barriers = models.TextField(
+        "Sprach-Barrieren",
+        help_text="Zum Bsp.: Kommen viele Fachausdrücke vor?"
+                  "Sind die Workshops auch für Menschen geeignet, die wenig Deutsch sprechen?",
+        blank=True,
+        null=True,
+    )
+    hearing_barriers = models.TextField(
+        "Hör-Barrieren",
+        help_text="Zum Bsp.: Werden Filme mit oder ohne Untertitel gezeigt?"
+                  "Sind laute (Stör-)Geräusche wahrscheinlich?",
+        blank=True,
+        null=True,
+    )
+    seeing_barriers = models.TextField(
+        "Seh-Barrieren",
+        help_text="Zum Bsp.: Findet Textarbeit statt? Muss man Farben erkennen können?",
+        blank=True,
+        null=True,
     )
 
     def get_max_funding(self):
