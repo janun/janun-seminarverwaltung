@@ -14,6 +14,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.contrib.postgres.fields.ranges import IntegerRangeField
+from django.core.exceptions import ValidationError
 
 from django_fsm import FSMField, transition
 import rules
@@ -145,6 +146,33 @@ class Seminar(TimeStampedModel, models.Model):
         if date(year, 10, 1) <= enddate <= date(year, 12, 31):
             return date(year, 1, 15)
         return AssertionError
+
+    def get_duration(self):
+        if self.end and self.start:
+            return (self.end - self.start).days + 1
+        return None
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if exclude and 'planned_training_days' not in exclude and self.planned_training_days:
+            max_days = self.get_duration()
+            if max_days and self.planned_training_days > max_days:
+                raise ValidationError({
+                    'planned_training_days':
+                        "Darf nicht größer sein, als die Dauer Deines Seminars (%s Tage)." % max_days
+                })
+        if exclude and 'requested_funding' not in exclude and self.requested_funding:
+            max_funding = self.get_max_funding()
+            if max_funding and self.requested_funding > max_funding:
+                raise ValidationError({
+                    'requested_funding':
+                        "Sorry, die maximale Förderung für Dein Seminar beträgt %.2f €." % max_funding
+                })
+        if exclude and 'end' not in exclude and self.end and self.start:
+            if self.end < self.start:
+                raise ValidationError({
+                    'end': "Endzeit sollte nach Startzeit liegen."
+                })
 
     objects = SeminarQuerySet.as_manager()
 

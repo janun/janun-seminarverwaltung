@@ -41,14 +41,6 @@ class LocationSeminarForm(SeminarStepForm):
 
 
 class TrainingDaysSeminarForm(SeminarStepForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.start and self.instance.end:
-            max_days = (self.instance.end - self.instance.start).days + 1
-            self.fields['planned_training_days'].validators.append(
-                validators.MaxValueValidator(max_days)
-            )
-
     class Meta(SeminarStepForm.Meta):
         title = "Wieviele Bildungstage hat Dein Seminar?"
         short_title = "Bildungstage"
@@ -78,14 +70,6 @@ class GroupSeminarForm(SeminarStepForm):
 
 
 class FundingSeminarForm(SeminarStepForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        max_funding = self.instance.get_max_funding()
-        if max_funding:
-            self.fields['requested_funding'].validators.append(
-                validators.MaxValueValidator(max_funding)
-            )
-
     class Meta(SeminarStepForm.Meta):
         title = "Wieviel Förderung benötigst Du?"
         short_title = "Förderung"
@@ -98,6 +82,11 @@ class ConfirmSeminarForm(SeminarStepForm):
         required=True,
     )
 
+    confirm_deadline = forms.BooleanField(
+        label="Ich reiche alle Unterlagen bis zur Abrechnungsdeadline ein.",
+        required=True
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.requested_funding:
@@ -108,10 +97,9 @@ class ConfirmSeminarForm(SeminarStepForm):
 
         deadline = self.instance.get_deadline()
         if deadline:
-            label = "Ich reiche alle Unterlagen bis zur <b>Abrechnungsdeadline am %s</b> ein." % deadline.strftime("%d.%m.%Y")
-        else:
-            label = "Ich reiche alle Unterlagen bis zur Abrechnungsdeadline ein."
-        self.fields['confirm_deadline'] = forms.BooleanField(label=label, required=True)
+            label = "Ich reiche alle Unterlagen bis zur <b>Abrechnungsdeadline am %s</b> ein." % \
+                deadline.strftime("%d.%m.%Y")
+            self.fields['confirm_deadline'].label = label
 
     class Meta(SeminarStepForm.Meta):
         title = "Bestätigung"

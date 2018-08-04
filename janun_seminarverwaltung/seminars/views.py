@@ -132,9 +132,9 @@ class SeminarWizardView(NamedUrlSessionWizardView):
     def render_goto_step(self, goto_step, **kwargs):
         # try to save form
         form = self.get_form(data=self.request.POST, files=self.request.FILES)
-        if form.is_valid():
-            self.storage.set_step_data(self.steps.current, self.process_step(form))
-            self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+        # if form.is_valid():
+        self.storage.set_step_data(self.steps.current, self.process_step(form))
+        self.storage.set_step_files(self.steps.current, self.process_step_files(form))
         return super().render_goto_step(goto_step, **kwargs)
 
     def done(self, form_list, **kwargs):
