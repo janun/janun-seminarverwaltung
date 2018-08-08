@@ -7,7 +7,8 @@ TODOS:
  * colors for states? / Object for choices?
 """
 
-from datetime import date
+from datetime import date, timedelta
+import math
 
 from django.utils import timezone
 from django.conf import settings
@@ -15,36 +16,19 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.postgres.fields.ranges import IntegerRangeField
 from django.core.exceptions import ValidationError
+from django.utils.formats import date_format
 
 from django_fsm import FSMField, transition
 import rules
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 
-from janun_seminarverwaltung.users.models import is_verwalter, is_teamer
-
-
-def calc_max_funding(days, attendees, has_group):
-    if days == 1:
-        rate = 6.5
-    elif has_group:
-        rate = 11.5
-    else:
-        rate = 9.0
-    return attendees * days * rate
+from janun_seminarverwaltung.users.models import is_verwalter, is_teamer, is_pruefer
 
 
 class SeminarQuerySet(models.QuerySet):
     def by_quarter(self, quarter):
-        if quarter == 1:
-            return self.filter(start__month__in=(1, 2, 3))
-        if quarter == 2:
-            return self.filter(start__month__in=(4, 5, 6))
-        if quarter == 3:
-            return self.filter(start__month__in=(7, 8, 9))
-        if quarter == 4:
-            return self.filter(start__month__in=(10, 11, 12))
-        return self
+        return self.filter(start__quarter=quarter)
 
     def by_year(self, year):
         return self.filter(start__year=year)
@@ -70,7 +54,7 @@ class Seminar(TimeStampedModel, models.Model):
         ('UEBERWIESEN', 'überwiesen'),
     )
 
-    title = models.CharField("Titel", max_length=255)
+    title = models.CharField("Titel", max_length=255, unique_for_date="start")
     content = models.TextField(
         "Inhalt",
         help_text="Welche Inhalte werden in Deinem Seminar vermittelt?",
@@ -99,7 +83,7 @@ class Seminar(TimeStampedModel, models.Model):
         on_delete=models.SET_NULL
     )
     state = FSMField(
-        default='angemeldet',
+        default='ANGEMELDET',
         # protected=True,
         choices=STATUS,
         verbose_name="Status"
@@ -132,18 +116,24 @@ class Seminar(TimeStampedModel, models.Model):
         null=True,
     )
 
-    def get_max_funding(self):
-        if not self.planned_training_days or not self.planned_attendees:
-            return None
+    @property
+    def planned_tnt(self):
+        if self.planned_attendees and self.planned_training_days:
+            return self.planned_attendees.upper * self.planned_training_days
+        return None
 
+    def get_max_funding(self):
+        if not self.planned_tnt:
+            return None
+        # calc rate
         if self.planned_training_days == 1:
             rate = 6.5
         elif self.group:
             rate = 11.5
         else:
             rate = 9.0
-
-        funding = self.planned_attendees.lower * self.planned_training_days * rate
+        # tnt * rate
+        funding = self.planned_tnt * rate
 
         if self.group:
             return funding
@@ -162,44 +152,71 @@ class Seminar(TimeStampedModel, models.Model):
     def get_deadline(self):
         if not self.end:
             return None
-        enddate = self.end.date()
-        year = enddate.year
-        if date(year, 1, 1) <= enddate <= date(year, 3, 31):
-            return date(year, 4, 15)
-        if date(year, 4, 1) <= enddate <= date(year, 6, 30):
-            return date(year, 7, 15)
-        if date(year, 7, 1) <= enddate <= date(year, 9, 30):
-            return date(year, 10, 15)
-        if date(year, 10, 1) <= enddate <= date(year, 12, 31):
-            return date(year, 1, 15)
-        return AssertionError
+        year = self.end.year
+        deadlines = {
+            1: date(year, 4, 15),
+            2: date(year, 7, 15),
+            3: date(year, 10, 15),
+            4: date(year, 1, 15)
+        }
+        quarter = math.ceil(self.end.month / 3)
+        return deadlines[quarter]
 
     def get_duration(self):
-        if self.end and self.start:
+        if self.end and self.start and self.end > self.start:
             return (self.end - self.start).days + 1
+        return None
+
+    def clean_title(self):
+        if self.start and self.title:
+            qs = Seminar.objects.filter(start__date=self.start.date())
+            qs.filter(title=self.title)
+            if self.pk:
+                qs.exclude(pk=self.pk)
+            if qs.exists():
+                return ValidationError(
+                    "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",
+                    params={'title': self.title, 'date': date_format(self.start)}
+                )
+        return None
+
+    def clean_end(self):
+        if self.end and self.start:
+            if self.end < self.start:
+                return ValidationError("Endzeit muss nach Startzeit liegen.")
+        return None
+
+    def clean_planned_training_days(self):
+        if self.planned_training_days:
+            max_days = self.get_duration()
+            if max_days and self.planned_training_days > max_days:
+                return ValidationError(
+                    "Darf nicht größer sein, als die Dauer Deines Seminars (%(days)s Tage).",
+                    params={'days': max_days}
+                )
+        return None
+
+    def clean_requested_funding(self):
+        if self.requested_funding:
+            max_funding = self.get_max_funding()
+            if max_funding and self.requested_funding > max_funding:
+                return ValidationError(
+                    "Sorry, die maximale Förderung für Dein Seminar beträgt %(max_funding).2f €.",
+                    params={'max_funding': max_funding}
+                )
         return None
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
-        if exclude and 'planned_training_days' not in exclude and self.planned_training_days:
-            max_days = self.get_duration()
-            if max_days and self.planned_training_days > max_days:
-                raise ValidationError({
-                    'planned_training_days':
-                        "Darf nicht größer sein, als die Dauer Deines Seminars (%s Tage)." % max_days
-                })
-        if exclude and 'requested_funding' not in exclude and self.requested_funding:
-            max_funding = self.get_max_funding()
-            if max_funding and self.requested_funding > max_funding:
-                raise ValidationError({
-                    'requested_funding':
-                        "Sorry, die maximale Förderung für Dein Seminar beträgt %.2f €." % max_funding
-                })
-        if exclude and 'end' not in exclude and self.end and self.start:
-            if self.end < self.start:
-                raise ValidationError({
-                    'end': "Endzeit sollte nach Startzeit liegen."
-                })
+        fields = ('title', 'end', 'planned_training_days', 'requested_funding')
+        errors = {}
+        for field in fields:
+            if not exclude or field not in exclude:
+                error = getattr(self, 'clean_%s' % field)()
+                if error:
+                    errors[field] = error
+        if errors:
+            raise ValidationError(errors)
 
     objects = SeminarQuerySet.as_manager()
 
@@ -331,8 +348,13 @@ def has_group_hat_for_seminar(user, seminar):
     return seminar.group in user.group_hats.all()
 
 
+@rules.predicate
+def just_created(user, seminar):
+    return seminar.created > (timezone.now() - timedelta(minutes=5))
+
+
 rules.add_perm('seminars.can_see_all_seminars', is_verwalter)
 rules.add_perm('seminars.detail_seminar', is_verwalter | is_seminar_author | has_group_hat_for_seminar)
 rules.add_perm('seminars.add_seminar', is_verwalter | is_teamer)
 rules.add_perm('seminars.change_seminar', is_verwalter | is_seminar_author | has_group_hat_for_seminar)
-rules.add_perm('seminars.delete_seminar', is_verwalter)
+rules.add_perm('seminars.delete_seminar', is_verwalter | is_seminar_author & just_created)

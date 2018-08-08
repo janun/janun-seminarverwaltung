@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load rules %}
+
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
 {% block content %}
@@ -8,9 +10,15 @@
 <h1>{{ object.title }}</h1>
 
 <p>
-  {{ object.start|date:"SHORT_DATETIME_FORMAT" }}
-  <span class="color-grey">bis</span> {{ object.end|date:"SHORT_DATETIME_FORMAT" }}
-  {% if object.location %} <span class="color-grey">in</span> {{ object.location }}{% endif %}
+  {% if object.start.date == object.end.date %}
+    {{ object.start|date:"SHORT_DATE_FORMAT" }}
+  {% else %}
+    {{ object.start|date:"SHORT_DATE_FORMAT" }}
+    <span class="color-grey">bis</span> {{ object.end|date:"SHORT_DATE_FORMAT" }}
+  {% endif %}
+  {% if object.location %}
+    <span class="color-grey">in</span> {{ object.location }}
+  {% endif %}
 </p>
 
 <p class="color-grey">
@@ -32,5 +40,11 @@
 <p>Geplante Bildungstage: {{ object.planned_training_days }}</p>
 <p>Geplante Teilnehmende: {{ object.planned_attendees.lower }}–{{ object.planned_attendees.upper }}</p>
 <p>Angeforderte Förderung: {{ object.requested_funding }}</p>
+
+
+{% has_perm 'seminars.delete_seminar' user object as can_delete %}
+{% if can_delete %}
+  <a class="button button-danger" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
+{% endif %}
 
 {% endblock %}

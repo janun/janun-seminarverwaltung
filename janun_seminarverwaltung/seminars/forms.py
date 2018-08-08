@@ -1,6 +1,8 @@
+from datetime import timedelta
+
 from django import forms
-from django.core import validators
 from django.conf import settings
+from django.utils import timezone
 
 from seminars.models import Seminar
 
@@ -27,6 +29,13 @@ class ContentSeminarForm(SeminarStepForm):
 
 
 class DatetimeSeminarForm(SeminarStepForm):
+
+    def clean_start(self):
+        start = self.cleaned_data['start']
+        if start.date() < (timezone.now().date() + timedelta(days=14)):
+            raise forms.ValidationError("Sorry, Du musst Dein Seminar 14 Tage vorher anmelden.")
+        return start
+
     class Meta(SeminarStepForm.Meta):
         title = "Wann findet Dein Seminar statt?"
         short_title = "Datum"

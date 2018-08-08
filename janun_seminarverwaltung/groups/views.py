@@ -51,7 +51,7 @@ class JANUNGroupCreateView(PermissionRequiredMixin, CreateView):
     raise_exception = True
 
 
-class JANUNGroupDeleteView(DeleteView):
+class JANUNGroupDeleteView(PermissionRequiredMixin, DeleteView):
     model = JANUNGroup
     success_url = reverse_lazy('groups:list')
     permission_required = 'groups.delete_janungroup'

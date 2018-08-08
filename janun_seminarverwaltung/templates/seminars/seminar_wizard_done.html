@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} {{ instance.title }} angemeldet{% endblock %}
+
+{% block content %}
+<div class="wizard">
+  <div class="wizard__head">
+    <h1>„{{ instance.title }}“ angemeldet</h1>
+  </div>
+
+  <div class="wizard__content">
+    <div class="wizard__form">
+      <h2>Fertig</h2>
+      <p>
+        Das Seminar „{{ instance.title }}“ wurde angemeldet
+        und wir haben Dir eine Bestätigungsmail geschickt.
+      </p>
+      <p>
+        Du erhälst, in der Regel, in 7—14 Tagen von uns eine Antwort,
+        ob Dein Seminar gefördert werden kann.
+      </p>
+    </div>
+  </div>
+
+  <div class="wizard__footer">
+    <a class="button button-primary float-right" href="{{ instance.get_absolute_url }}">Zum Seminar</a>
+  </div>
+</div>
+{% endblock content %}

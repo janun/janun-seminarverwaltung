@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} {{ object.name }} löschen?{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'seminars:detail' object.id %}">← {{ object.title }}</a>
+
+<form class="alert" method="post">
+  {% csrf_token %}
+  <p>Möchtest Du wirklich das Seminar „{{ object }}“ löschen?</p>
+  <input class="button button-danger" type="submit" value="Ja, löschen" />
+</form>
+
+{% endblock %}

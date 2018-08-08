@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% load crispy_forms_tags %}
 
 {% block head %}
@@ -40,6 +39,7 @@
       {% if form.Meta.title %}
         <h2>{{ form.Meta.title }}</h2>
       {% endif %}
+
       {% block before_form %}{% endblock %}
       {% block form %}
         {% if wizard.form.forms %}
@@ -56,11 +56,12 @@
   </div>
 
   <div class="wizard__footer">
-    {% if wizard.steps.prev %}
-      <button class="button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Zurück</button>
+    <a class="button button-danger" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a>
+    {% if wizard.steps.last %}
+      <input class="button button-primary float-right" type="submit" value="Seminar anmelden"/>
+    {% else %}
+      <input class="button button-primary float-right" type="submit" value="Speichern & Weiter"/>
     {% endif %}
-    <a class="button button-danger" href="{% url "seminars:create" %}?reset">Löschen</a>
-    <input class="button button-primary float-right" type="submit" value="Speichern & Weiter"/>
   </div>
 
 </form>
