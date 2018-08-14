@@ -2,6 +2,7 @@ import django_filters
 
 from seminars.models import Seminar
 from groups.models import JANUNGroup
+from janun_seminarverwaltung.users.models import User
 
 
 class YearFilter(django_filters.ChoiceFilter):
@@ -18,40 +19,39 @@ class YearFilter(django_filters.ChoiceFilter):
         return super().field
 
 
-class QuarterFilter(django_filters.ChoiceFilter):
-
-    def __init__(self, *args, **kwargs):
-        kwargs['lookup_expr'] = "month__in"
-        super().__init__(*args, **kwargs)
-
-    @property
-    def field(self):
-        self.extra['choices'] = [
-            (i, "{0}. Quartal".format(i)) for i in range(1, 5)
-        ]
-        return super().field
-
-    def filter(self, qs, value):
-        if value:
-            v = int(value)*3
-            value = (v-2, v-1, v)
-        return super().filter(qs, value)
+def allowed_groups(request):
+    if request is None:
+        return JANUNGroup.objects.none()
+    user = request.user
+    if user.role == 'VERWALTER':
+        return JANUNGroup.objects.all()
+    if user.role == 'PRUEFER':
+        return user.group_hats.all()
+    return user.janun_groups.all()
 
 
-class AllValuesModelFilter(django_filters.AllValuesFilter):
-    pass
+def allowed_users(request):
+    if request is None:
+        return User.objects.none()
+    user = request.user
+    if user.role in ('VERWALTER', 'PRUEFER'):
+        return User.objects.all()
+    return User.objects.filter(pk=user.pk)
 
 
 class SeminarFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
     start_year = YearFilter(label="Jahr", name="start")
-    start_quarter = QuarterFilter(label="Quartal", name="start")
-    group = django_filters.ModelChoiceFilter(
-        name='group',
-        null_label='-- keine --',
-        queryset=JANUNGroup.objects.all(),
+    start_quarter = django_filters.ChoiceFilter(
+        label="Quartal", name="start", lookup_expr='quarter',
+        choices=[(i, "{0}. Quartal".format(i)) for i in range(1, 5)]
     )
-    # author = AllValuesModelFilter()
+    group = django_filters.ModelChoiceFilter(
+        name='group', null_label='-- keine --', queryset=allowed_groups
+    )
+    author = django_filters.ModelChoiceFilter(
+        name='author', queryset=allowed_users
+    )
 
     class Meta:
         model = Seminar

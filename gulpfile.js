@@ -10,7 +10,7 @@ var gulp = require('gulp'),
       sass = require('gulp-sass'),
       autoprefixer = require('gulp-autoprefixer'),
       cssnano = require('gulp-cssnano'),
-      
+
       rename = require('gulp-rename'),
       del = require('del'),
       plumber = require('gulp-plumber'),
@@ -21,6 +21,7 @@ var gulp = require('gulp'),
       runSequence = require('run-sequence'),
       browserSync = require('browser-sync').create(),
       reload = browserSync.reload;
+      var concat = require("gulp-concat");
 
 
 // Relative paths function
@@ -29,7 +30,7 @@ var pathsConfig = function (appName) {
   var vendorsRoot = 'node_modules/';
 
   return {
-    
+
     app: this.app,
     templates: this.app + '/templates',
     css: this.app + '/static/css',
@@ -51,7 +52,7 @@ gulp.task('styles', function() {
   return gulp.src(paths.sass + '/project.scss')
     .pipe(sass({
       includePaths: [
-        
+
         paths.sass
       ]
     }).on('error', sass.logError))
@@ -66,15 +67,12 @@ gulp.task('styles', function() {
 
 // Javascript minification
 gulp.task('scripts', function() {
-  return gulp.src(paths.js + '/project.js')
+  return gulp.src([paths.js + '/**/*.js', '!**/*.min.js'])
+    .pipe(concat("project.min.js"))
     .pipe(plumber()) // Checks for errors
     .pipe(uglify()) // Minifies the js
-    .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(paths.js));
 });
-
-
-
 
 // Image compression
 gulp.task('imgCompression', function(){

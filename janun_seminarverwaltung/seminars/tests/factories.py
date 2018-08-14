@@ -3,11 +3,11 @@ from psycopg2.extras import NumericRange
 
 from django.utils.dateparse import parse_datetime
 
-from .models import Seminar
-from groups.factory import JANUNGroupFactory
+from seminars.models import Seminar
+from groups.tests.factories import JANUNGroupFactory
 
 
-class SeminarFactory(factory.Factory):
+class SeminarFactory(factory.DjangoModelFactory):
     title = "Test Seminar"
     content = "This is a test."
     start = parse_datetime("2019-01-05 12:00")

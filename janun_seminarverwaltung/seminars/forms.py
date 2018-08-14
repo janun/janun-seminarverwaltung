@@ -7,13 +7,7 @@ from django.utils import timezone
 from seminars.models import Seminar
 
 
-class UserMixin:
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        super().__init__(*args, **kwargs)
-
-
-class SeminarStepForm(UserMixin, forms.ModelForm):
+class SeminarStepForm(forms.ModelForm):
     use_required_attribute = False
 
     class Meta:
@@ -65,7 +59,7 @@ class AttendeesSeminarForm(SeminarStepForm):
 
 class GroupSeminarForm(SeminarStepForm):
     def __init__(self, *args, **kwargs):
-        user = kwargs.get('user')
+        user = kwargs.pop('user')
         if user.role == 'TEAMER' and user.janun_groups.count() == 1:
             kwargs['initial']['group'] = user.janun_groups.get()
         super().__init__(*args, **kwargs)

@@ -1,14 +1,14 @@
 from collections import OrderedDict
 
-from django.views.generic import DetailView, DeleteView
+from django.views.generic import DetailView, DeleteView, ListView
 from django.shortcuts import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.core.exceptions import PermissionDenied
+# from django.core.exceptions import PermissionDenied
 
 from rules.contrib.views import PermissionRequiredMixin
-# from braces.views import SelectRelatedMixin
+from braces.views import SelectRelatedMixin
 from django_tables2 import SingleTableView
 from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
@@ -25,36 +25,43 @@ class SeminarListView(FilterView, SingleTableView):
     filterset_class = SeminarFilter
     template_name = "seminars/seminar_list.html"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.orig_count = 0  # count before filter
+
     def get_queryset(self):
-        if self.request.user.role == "TEAMER":
-            qs = Seminar.objects.filter(author=self.request.user)
-            self.orig_len = qs.count()
-            return qs
+        # everyone sees their own seminars
+        qs = Seminar.objects.filter(author=self.request.user)
+        # pruefer also sees seminars for their groups
         if self.request.user.role == "PRUEFER":
-            qs = Seminar.objects.filter(
-                group__in=self.request.user.group_hats.all()
-            )
-            self.orig_len = qs.count()
-            return qs
+            qs |= Seminar.objects.filter(group__in=self.request.user.group_hats.all())
+        # verwalter simply can see all seminars
         if self.request.user.role == "VERWALTER":
             qs = Seminar.objects.all()
-            self.orig_len = qs.count()
-            return qs
-        raise PermissionDenied
+        qs = qs.select_related('group', 'author')
+        self.orig_count = qs.count()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.role == "TEAMER":
-            context['heading'] = "Deine Seminare (%s)" % self.orig_len
+        heading = "Deine Seminare"
         if self.request.user.role == "PRUEFER":
-            context['heading'] = "Seminare deiner Gruppen (%s)" % len(self.object_list)
+            heading = "Seminare Deiner Gruppen"
         if self.request.user.role == "VERWALTER":
-            context['heading'] = "Alle Seminare (%s)" % len(self.object_list)
-        context['orig_len'] = self.orig_len
+            heading = "Alle Seminare"
+
+        count = len(self.object_list)
+        if count != self.orig_count:
+            heading = heading + " (%s/%s)" % (count, self.orig_count)
+        else:
+            heading = heading + " (%s)" % count
+
+        context['heading'] = heading
+        context['orig_count'] = self.orig_count
         return context
 
 
-class SeminarDetailView(PermissionRequiredMixin, DetailView):
+class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView):
     model = Seminar
     select_related = ['author', 'group']
     permission_required = 'seminars.detail_seminar'
@@ -118,22 +125,23 @@ class SeminarWizardView(PermissionRequiredMixin, NamedUrlSessionWizardView):
 
     def get_form_kwargs(self, step=None):
         form_kwargs = super().get_form_kwargs(step=step)
-        form_kwargs['user'] = self.request.user
+        if step == 'group':
+            form_kwargs['user'] = self.request.user
         return form_kwargs
 
-    def get_form_obj_list(self):
-        form_obj_list = OrderedDict()
+    def get_steps(self):
+        forms = OrderedDict()
         for form_key in self.get_form_list():
-            form_obj_list[form_key] = self.get_form(
+            forms[form_key] = self.get_form(
                 step=form_key,
                 data=self.storage.get_step_data(form_key),
                 files=self.storage.get_step_files(form_key)
             )
-        return form_obj_list
+        return forms
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
-        context['form_obj_list'] = self.get_form_obj_list()
+        context['steps'] = self.get_steps()
         content = self.get_cleaned_data_for_step('content')
         if content:
             context['seminar_title'] = content['title']

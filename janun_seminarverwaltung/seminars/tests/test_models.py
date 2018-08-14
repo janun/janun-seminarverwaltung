@@ -5,11 +5,10 @@ from django.utils.dateparse import parse_datetime
 
 from tests import TestCase
 
-from seminars.factory import SeminarFactory
+from seminars.tests.factories import SeminarFactory
 
 
-
-class SeminarModelTest(TestCase):
+class SeminarModelTests(TestCase):
 
     def setUp(self):
         self.seminar = SeminarFactory.build()
@@ -57,9 +56,9 @@ class SeminarModelTest(TestCase):
 
     def test_unique(self):
         s1 = SeminarFactory.create()  # TODO: factory create not working?
-        s1.group.save()
-        s1.save()
-        s2 = SeminarFactory()
+        # s1.group.save()
+        # s1.save()
+        s2 = SeminarFactory.build()
         self.assertIsNotNone(s1.pk)
         self.assertEqual(s1.title, s2.title)
         self.assertEqual(s1.start, s2.start)
@@ -69,56 +68,56 @@ class SeminarModelTest(TestCase):
     def test_get_max_funding(self):
         # mehrtägige Seminare für Gruppen
         self.assertEqual(
-            SeminarFactory(planned_training_days=10, planned_attendees=NumericRange(10, 15))
+            SeminarFactory.build(planned_training_days=10, planned_attendees=NumericRange(10, 15))
             .get_max_funding(), 11.5 * 10 * 15
         )
         # eintägige Seminare für Gruppen
         self.assertEqual(
-            SeminarFactory(planned_training_days=1, planned_attendees=NumericRange(10, 15))
+            SeminarFactory.build(planned_training_days=1, planned_attendees=NumericRange(10, 15))
             .get_max_funding(), 6.5 * 1 * 15
         )
         # mehrtägige Seminare ohne Gruppe
         self.assertEqual(
-            SeminarFactory(planned_training_days=5, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=5, planned_attendees=NumericRange(10, 15), group=None)
             .get_max_funding(), 9 * 5 * 15
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 3 Tage
         self.assertEqual(
-            SeminarFactory(planned_training_days=3, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=3, planned_attendees=NumericRange(10, 15), group=None)
             .get_max_funding(), 300
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 4 Tage
         self.assertEqual(
-            SeminarFactory(planned_training_days=4, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=4, planned_attendees=NumericRange(10, 15), group=None)
             .get_max_funding(), 500
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze von 1000
         self.assertEqual(
-            SeminarFactory(planned_training_days=99, planned_attendees=NumericRange(10, 99), group=None)
+            SeminarFactory.build(planned_training_days=99, planned_attendees=NumericRange(10, 99), group=None)
             .get_max_funding(), 1000
         )
         # eintägige Seminare ohne Gruppe
         self.assertEqual(
-            SeminarFactory(planned_training_days=1, planned_attendees=NumericRange(10, 10), group=None)
+            SeminarFactory.build(planned_training_days=1, planned_attendees=NumericRange(10, 10), group=None)
             .get_max_funding(), 6.5 * 1 * 10
         )
         # Beispiel aus Seminarabrechnungsrichtlinie 2018
-        s2 = SeminarFactory(planned_training_days=3, planned_attendees=NumericRange(10, 15))
+        s2 = SeminarFactory.build(planned_training_days=3, planned_attendees=NumericRange(10, 15))
         self.assertEqual(s2.get_max_funding(), 517.5)
         s2.group = None
         self.assertEqual(s2.get_max_funding(), 300)
 
     def test_get_deadline(self):
         self.assertEqual(
-            SeminarFactory(end=parse_datetime("2018-01-01")).get_deadline(),
+            SeminarFactory.build(end=parse_datetime("2018-01-01")).get_deadline(),
             parse_datetime("2018-04-15")
         )
         self.assertEqual(
-            SeminarFactory(end=parse_datetime("2018-12-31")).get_deadline(),
+            SeminarFactory.build(end=parse_datetime("2018-12-31")).get_deadline(),
             parse_datetime("2019-01-15")
         )
         self.assertEqual(
-            SeminarFactory(end=parse_datetime("2018-05-15")).get_deadline(),
+            SeminarFactory.build(end=parse_datetime("2018-05-15")).get_deadline(),
             parse_datetime("2019-07-15")
         )
 

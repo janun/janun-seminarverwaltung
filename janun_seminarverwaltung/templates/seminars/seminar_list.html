@@ -17,8 +17,6 @@
 </div>
 {% endif %}
 
-
-{% if orig_len > 10 %}
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
   <div class="filter-form__buttons">
@@ -26,19 +24,9 @@
     <a href="?" class="button button" type="submit">zurücksetzen</a>
   </div>
 </form>
-{% endif %}
 
-
-{% if seminar_list %}
-  <div class="table-wrapper">
-    {% render_table table %}
-  </div>
-{% else %}
-  <p>Leider keine Seminare vorhanden.</p>
-{% endif %}
+<div class="table-wrapper">
+  {% render_table table %}
+</div>
 
 {% endblock %}
-
-{% block javascript %}
-  <script src="{% static 'js/filter-form.js' %}"></script>
-{% endblock javascript %}
