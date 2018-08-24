@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load rules %}
+
+{% block title %}{{ block.super }} {{ object.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+<a class="backlink" href="{% url 'seminars:detail' object.pk %}">← {{ object.title }}</a>
+
+<h1>Wirklich {{ transition.custom.button_name }}?</h1>
+
+<form method="post" action="">
+  {% csrf_token %}
+
+  <a class="button" href="{% url 'seminars:detail' object.pk %}">Abbrechen</a>
+
+  <button type="submit" class="button button--{{ transition.custom.color }}">
+    {{ transition.custom.button_name }}
+  </button>
+</form>
+
+</div>
+{% endblock %}

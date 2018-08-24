@@ -7,14 +7,14 @@
 // }
 
 .table {
-  width: 1000px;
+  width: 100%;
   background-color: white;
   @include shadow(1);
   border-radius: 5px;
   // overflow: hidden;
   margin-top: 30px;
   color: $brown;
-  font-size: 18px;
+  // font-size: 18px;
   border-collapse: collapse;
 
   tr {
@@ -66,4 +66,5 @@
   &__img {
     height: 40px;
   }
+
 }

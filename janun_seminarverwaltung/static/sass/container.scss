@@ -6,6 +6,11 @@
   margin-right: auto;
 }
 
-.navbar + .container {
+.big-container {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.navbar + .big-container {
   margin-top: 50px;
 }

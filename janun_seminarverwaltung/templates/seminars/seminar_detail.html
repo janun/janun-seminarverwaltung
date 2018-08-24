@@ -5,19 +5,21 @@
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
 {% block content %}
+<div class="container">
+
 <a class="backlink" href="{% url 'seminars:list' %}">← Alle Seminare</a>
 
 <h1>{{ object.title }}</h1>
 
-<p>
+<p style="font-size:24px">
   {% if object.start.date == object.end.date %}
     {{ object.start|date:"SHORT_DATE_FORMAT" }}
   {% else %}
     {{ object.start|date:"SHORT_DATE_FORMAT" }}
-    <span class="color-grey">bis</span> {{ object.end|date:"SHORT_DATE_FORMAT" }}
+    bis {{ object.end|date:"SHORT_DATE_FORMAT" }}
   {% endif %}
   {% if object.location %}
-    <span class="color-grey">in</span> {{ object.location }}
+    in {{ object.location }}
   {% endif %}
 </p>
 
@@ -31,20 +33,19 @@
   {% endif %}
 </p>
 
-<br>
+{% include "seminars/_state.html" with state=object.state %}
 
-<p>Status: {{ object.state.title }}</p>
-
-<br>
-
-<p>Geplante Bildungstage: {{ object.planned_training_days }}</p>
-<p>Geplante Teilnehmende: {{ object.planned_attendees.lower }}–{{ object.planned_attendees.upper }}</p>
-<p>Angeforderte Förderung: {{ object.requested_funding }}</p>
+<div class="panel">
+  Hier soll man dann die einzelnen Daten ändern können.
+  <br><br><br><br>
+</div>
 
 
 {% has_perm 'seminars.delete_seminar' user object as can_delete %}
 {% if can_delete %}
-  <a class="button button-danger" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
+  <a class="button button-danger float-right" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
 {% endif %}
 
+
+</div>
 {% endblock %}

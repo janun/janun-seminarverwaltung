@@ -13,6 +13,7 @@
   {% endif %}
   <h1>{{ object.name }}</h1>
   <p>Rolle: {{ object.get_role_display }}</p>
+  <p>E-Mail: <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
 </div>
 
 {% if groups %}

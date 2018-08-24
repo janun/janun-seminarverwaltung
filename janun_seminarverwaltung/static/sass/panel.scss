@@ -1,0 +1,8 @@
+.panel {
+  background-color: white;
+  border-radius: 10px;
+  @include shadow(1);
+  padding: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

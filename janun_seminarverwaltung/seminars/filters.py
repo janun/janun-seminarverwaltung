@@ -55,4 +55,4 @@ class SeminarFilter(django_filters.FilterSet):
 
     class Meta:
         model = Seminar
-        fields = ['title', 'group', 'state', 'author', 'start_year', 'start_quarter']
+        fields = ['title', 'start_year', 'start_quarter', 'group', 'author', 'state']

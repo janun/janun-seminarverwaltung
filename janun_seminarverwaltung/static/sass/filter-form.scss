@@ -1,0 +1,32 @@
+.filter-form {
+  background: white;
+  border-radius: 10px;
+  @include shadow(1);
+  margin-top: 20px;
+  padding: 20px;
+  font-size: 18px;
+  color: $darkgrey;
+
+  &__buttons {
+    display: block;
+  }
+
+  .col-form-label {
+    font-weight: normal;
+    display: block;
+  }
+
+  .form-control, .numberinput {
+    padding: 10px 10px;
+  }
+
+  .form-group {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 10px;
+
+    div {
+      display: inline-block;
+    }
+  }
+}

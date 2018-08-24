@@ -8,14 +8,10 @@
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
 {% block content %}
-<h1>{{ heading }}</h1>
-
-{% has_perm 'seminars.add_seminar' user as can_add %}
-{% if can_add %}
 <div class="clearfix">
+  <h1 class="float-left">{{ heading }}</h1>
   <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
 </div>
-{% endif %}
 
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}

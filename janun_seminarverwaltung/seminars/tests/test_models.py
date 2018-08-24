@@ -91,6 +91,16 @@ class SeminarModelTests(TestCase):
             SeminarFactory.build(planned_training_days=4, planned_attendees=NumericRange(10, 15), group=None)
             .get_max_funding(), 500
         )
+        # mehrtägige Seminare ohne Gruppe; Obergrenze für 5 Tage
+        self.assertEqual(
+            SeminarFactory.build(planned_training_days=5, planned_attendees=NumericRange(15, 20), group=None)
+            .get_max_funding(), 700
+        )
+        # mehrtägige Seminare ohne Gruppe; Obergrenze für 6 Tage
+        self.assertEqual(
+            SeminarFactory.build(planned_training_days=6, planned_attendees=NumericRange(15, 20), group=None)
+            .get_max_funding(), 900
+        )
         # mehrtägige Seminare ohne Gruppe; Obergrenze von 1000
         self.assertEqual(
             SeminarFactory.build(planned_training_days=99, planned_attendees=NumericRange(10, 99), group=None)

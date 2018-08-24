@@ -10,6 +10,10 @@ from seminars.models import Seminar
 class SeminarStepForm(forms.ModelForm):
     use_required_attribute = False
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Seminar
         fields = ()
@@ -25,15 +29,19 @@ class ContentSeminarForm(SeminarStepForm):
 class DatetimeSeminarForm(SeminarStepForm):
 
     def clean_start(self):
-        start = self.cleaned_data['start']
-        if start.date() < (timezone.now().date() + timedelta(days=14)):
-            raise forms.ValidationError("Sorry, Du musst Dein Seminar 14 Tage vorher anmelden.")
+        if self.user.role == 'TEAMER':
+            start = self.cleaned_data['start']
+            if start.date() < (timezone.now().date() + timedelta(days=14)):
+                raise forms.ValidationError("Sorry, Du musst Dein Seminar 14 Tage vorher anmelden.")
         return start
 
     class Meta(SeminarStepForm.Meta):
         title = "Wann findet Dein Seminar statt?"
         short_title = "Datum"
         fields = ('start', 'end')
+        help_texts = {
+            'start': "Bsp.: 1.4.19 10:00"
+        }
 
 
 class LocationSeminarForm(SeminarStepForm):
@@ -59,8 +67,8 @@ class AttendeesSeminarForm(SeminarStepForm):
 
 class GroupSeminarForm(SeminarStepForm):
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
-        if user.role == 'TEAMER' and user.janun_groups.count() == 1:
+        user = kwargs.get('user')
+        if user.janun_groups.count() == 1:
             kwargs['initial']['group'] = user.janun_groups.get()
         super().__init__(*args, **kwargs)
         if user.role == 'TEAMER':

@@ -1,18 +1,12 @@
 from django.urls import path
 
-from .views import VerwalterDashboard, PrueferDashboard, TeamerDashboard
-from utils import dispatch_by_user
+# from .views import VerwalterDashboard, PrueferDashboard, TeamerDashboard
+# from utils import dispatch_by_user
+from .views import Dashboard
 
 app_name = 'dashboard'
 
 
 urlpatterns = [
-    path('',
-         dispatch_by_user(
-             VerwalterDashboard.as_view(),
-             PrueferDashboard.as_view(),
-             TeamerDashboard.as_view()
-         ),
-         name='dashboard'
-        ),
+    path('', Dashboard.as_view(), name='dashboard')
 ]

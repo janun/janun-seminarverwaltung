@@ -1,4 +1,5 @@
 .button, .btn {
+  display: inline-block;
   border: none;
   font-size: inherit;
   font-family: inherit;
@@ -10,27 +11,40 @@
   @include shadow(1);
   text-decoration: none;
   cursor: pointer;
+  // margin: 10px;
 
   &:active {
     @include shadow(0);
   }
 
-  &-danger {
-    background: $red;
+  &-colored {
     color: white;
-
     &:hover {
       color: white;
     }
   }
 
-  &-primary {
+  &-danger, &--red {
+    background: $red;
+    @extend .button-colored;
+  }
+  &-primary, &--green {
     background: $green;
-    color: white;
+    @extend .button-colored;
+  }
 
+  &--red-lined {
+    color: $red;
+    border: 2px solid $red;
+    @include shadow(0);
     &:hover {
-      color: white;
+      color: $red;
     }
+  }
+  &--green-lined {
+    color: $green;
+    border: 2px solid $green;
+    @include shadow(0);
   }
 }
 

@@ -241,35 +241,40 @@ class Seminar(TimeStampedModel, models.Model):
     @transition(field=state,
                 source=['ANGEMELDET', 'ABGELEHNT', 'ABGESAGT'],
                 target='ZUGESAGT',
-                custom=dict(button_name="Zusagen"))
+                permission='seminars.can_zusagen',
+                custom=dict(button_name="Zusagen", color="green"))
     def zusagen(self):
         pass
 
     @transition(field=state,
                 source=['ZUGESAGT'],
                 target='ABGESAGT',
-                custom=dict(button_name="Absagen"))
+                permission='seminars.can_absagen',
+                custom=dict(button_name="Absagen", color="red"))
     def absagen(self):
         pass
 
     @transition(field=state,
                 source=['ANGEMELDET', 'ZUGESAGT'],
                 target='ABGELEHNT',
-                custom=dict(button_name="Ablehnen"))
+                permission='seminars.can_ablehnen',
+                custom=dict(button_name="Ablehnen", color="red"))
     def ablehnen(self):
         pass
 
     @transition(field=state,
                 source=['ANGEMELDET', 'ZUGESAGT'],
                 target='ZURUECKGEZOGEN',
-                custom=dict(button_name="Zurückziehen"))
+                permission='seminars.can_zurueckziehen',
+                custom=dict(button_name="Zurückziehen", color="red"))
     def zurueckziehen(self):
         pass
 
     @transition(field=state,
                 source=['ZUGESAGT'],
                 target='STATTGEFUNDEN',
-                custom=dict(button_name="Stattfinden bestätigen"),
+                permission='seminars.can_stattfinden',
+                custom=dict(button_name="Stattfinden bestätigen", color="green"),
                 conditions=[is_in_the_past])
     def stattfinden(self):
         pass
@@ -277,84 +282,123 @@ class Seminar(TimeStampedModel, models.Model):
     @transition(field=state,
                 source=['STATTGEFUNDEN'],
                 target='OHNE_ABRECHNUNG',
-                custom=dict(button_name="ohne Abrechnung"))
+                permission='seminars.can_ohne_abrechnung',
+                custom=dict(button_name="ohne Abrechnung", color="red"))
     def ohne_abrechnung(self):
         pass
 
     @transition(field=state,
                 source=['STATTGEFUNDEN'],
                 target='ABGESCHICKT',
-                custom=dict(button_name="Abrechnung abgeschickt bestätigen"))
+                permission='seminars.can_abschicken',
+                custom=dict(button_name="Abrechnung abgeschickt bestätigen", color="green"))
     def abschicken(self):
         pass
 
     @transition(field=state,
                 source=['STATTGEFUNDEN', 'ABGESCHICKT'],
                 target='ANGEKOMMEN',
-                custom=dict(button_name="Abrechnung angekommen bestätigen"))
+                permission='seminars.can_ankommen',
+                custom=dict(button_name="Abrechnung angekommen bestätigen", color="green"))
     def ankommen(self):
         pass
 
     @transition(field=state,
                 source=['ANGEKOMMEN'],
                 target='RECHNERISCH',
-                custom=dict(button_name="in die rechnerische Prüfung"))
+                permission='seminars.can_rechnen',
+                custom=dict(button_name="in die rechnerische Prüfung", color="green"))
     def rechnen(self):
         pass
 
     @transition(field=state,
                 source=['RECHNERISCH'],
                 target='INHALTLICH',
-                custom=dict(button_name="in die inhaltliche Prüfung"))
+                permission='seminars.can_inhalten',
+                custom=dict(button_name="in die inhaltliche Prüfung", color="green"))
     def inhalten(self):
         pass
 
     @transition(field=state,
                 source=['INHALTLICH'],
                 target='NACHPRUEFUNG',
-                custom=dict(button_name="in die Nachprüfung"))
+                permission='seminars.can_nach_pruefen',
+                custom=dict(button_name="in die Nachprüfung", color="green"))
     def nach_pruefen(self):
         pass
 
     @transition(field=state,
                 source=['NACHPRUEFUNG'],
                 target='FERTIG',
-                custom=dict(button_name="Prüfung abschließen"))
+                permission='seminars.can_fertigen',
+                custom=dict(button_name="Prüfung abschließen", color="green"))
     def fertigen(self):
         pass
 
     @transition(field=state,
                 source=['FERTIG'],
                 target='UEBERWIESEN',
-                custom=dict(button_name="Überweisung bestätigen"))
+                permission='seminars.can_ueberweisen',
+                custom=dict(button_name="Überweisung bestätigen", color="green"))
     def ueberweisen(self):
         pass
 
     @transition(field=state,
                 source=['NACHPRUEFUNG', 'INHALTLICH', 'ANGEKOMMEN'],
                 target='UNMOEGLICH',
-                custom=dict(button_name="Abrechnung unmöglich"))
+                permission='seminars.can_unmoeglichen',
+                custom=dict(button_name="Abrechnung unmöglich", color="red"))
     def unmoeglichen(self):
         pass
 
 
 @rules.predicate
 def is_seminar_author(user, seminar):
-    return seminar.author == user
+    if seminar:
+        return seminar.author == user
+    return False
 
 
 @rules.predicate
 def has_group_hat_for_seminar(user, seminar):
-    return seminar.group in user.group_hats.all()
+    if seminar:
+        return seminar.group in user.group_hats.all()
+    return False
+
+
+@rules.predicate
+def has_janun_group_for_seminar(user, seminar):
+    if seminar:
+        return seminar.group in user.janun_groups.all()
+    return False
 
 
 @rules.predicate
 def just_created(user, seminar):
-    return seminar.created > (timezone.now() - timedelta(minutes=5))
+    if seminar:
+        return seminar.created > (timezone.now() - timedelta(minutes=5))
+    return False
 
 
 rules.add_perm('seminars.can_see_all_seminars', is_verwalter)
-rules.add_perm('seminars.detail_seminar', is_verwalter | is_seminar_author | has_group_hat_for_seminar)
-rules.add_perm('seminars.add_seminar', is_verwalter | is_teamer)
+rules.add_perm(
+    'seminars.detail_seminar',
+    is_verwalter | is_seminar_author | has_group_hat_for_seminar | has_janun_group_for_seminar)
 rules.add_perm('seminars.change_seminar', is_verwalter | is_seminar_author | has_group_hat_for_seminar)
 rules.add_perm('seminars.delete_seminar', is_verwalter | is_seminar_author & just_created)
+
+# perms for transitions
+rules.add_perm('seminars.can_zusagen',          is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_absagen',          is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_ablehnen',         is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_zurueckziehen',    is_verwalter | has_group_hat_for_seminar | is_seminar_author)
+rules.add_perm('seminars.can_stattfinden',      is_verwalter | has_group_hat_for_seminar | is_seminar_author)
+rules.add_perm('seminars.can_ohne_abrechnung',  is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_abschicken',       is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_ankommen',         is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_rechnen',          is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_inhalten',         is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_nach_pruefen',     is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_fertigen',         is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_ueberweisen',      is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_unmoeglichen',     is_verwalter | has_group_hat_for_seminar)

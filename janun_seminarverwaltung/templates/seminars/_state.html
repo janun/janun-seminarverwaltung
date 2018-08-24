@@ -1,0 +1,15 @@
+<div class="seminar-state clearfix">
+  <span class="seminar-state__current float-left">
+    Status: {{ object.get_state_display|title }}
+  </span>
+
+  <div class="seminar-state__transitions">
+    {% for transition in available_transitions %}
+      <a
+        href="{% url 'seminars:change_state' object.pk transition.name %}"
+        class="button button--{{ transition.custom.color }}-lined">
+        {{ transition.custom.button_name }}
+      </a><br>
+    {% endfor %}
+  </div>
+</div>

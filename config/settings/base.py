@@ -283,4 +283,17 @@ STRONGHOLD_PUBLIC_NAMED_URLS = (
 # Your stuff...
 # ------------------------------------------------------------------------------
 
-SEMINAR_POLICY_URL = env('SEMINAR_POLICY_URL', default="https://janunde.s3.amazonaws.com/documents/JANUN-Seminarabrechnungsrichtlinie_2018.pdf")
+SEMINAR_POLICY_URL = env(
+    'SEMINAR_POLICY_URL',
+    default="https://janunde.s3.amazonaws.com/documents/JANUN-Seminarabrechnungsrichtlinie_2018.pdf"
+)
+
+
+from django.conf.locale.de.formats import DATETIME_INPUT_FORMATS
+
+DATETIME_INPUT_FORMATS += [
+    '%d.%m.%y %H:%M:%S',     # '25.10.06 14:30:59'
+    '%d.%m.%y %H:%M:%S.%f',  # '25.10.06 14:30:59.000200'
+    '%d.%m.%y %H:%M',        # '25.10.06 14:30'
+    '%d.%m.%y',              # '25.10.06'
+]

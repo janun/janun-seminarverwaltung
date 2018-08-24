@@ -6,6 +6,8 @@
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
 {% block content %}
+<div class="container">
+
 <h1>{{ heading }}</h1>
 
 {% has_perm 'groups.add_janungroup' user as can_add %}
@@ -15,10 +17,7 @@
 </div>
 {% endif %}
 
-{% if janungroup_list %}
-  {% render_table table %}
-{% else %}
-  <p>Leider keine Gruppen vorhanden.</p>
-{% endif %}
+{% render_table table %}
 
+</div>
 {% endblock %}

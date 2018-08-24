@@ -1,10 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
+from django.db.models import Q
+from django.apps import apps
 
 import rules
 
 from model_utils import Choices
+
+# from seminars.models import Seminar
 
 
 def avatar_filename(instance, filename):
@@ -61,6 +65,16 @@ class User(AbstractUser):
         if self.role in ("PRUEFER", "VERWALTER"):
             return self.group_hats.all()
         return []
+
+    def get_seminars(self):
+        Seminar = apps.get_model('seminars', 'Seminar')
+        if self.role == 'VERWALTER':
+            return Seminar.objects.all()
+        return Seminar.objects.filter(
+            Q(author=self)
+            | Q(group__in=self.group_hats.all())
+            | Q(group__in=self.janun_groups.all())
+        )
 
     class Meta:
         permissions = (

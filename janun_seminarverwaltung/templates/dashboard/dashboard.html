@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} Übersicht{% endblock %}
+
+{% block content %}
+<div class="container">
+
+<div class="section">
+  <h1>Willkommen, {{ user.username|title }}!</h1>
+</div>
+
+{% if janun_groups %}
+<div class="section">
+  <h2>Gruppen</h2>
+  <div>
+    {% for group in janun_groups %}
+      {% include "groups/_group.html" with object=group %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+{% if group_hats %}
+<div class="section">
+  <h2>Gruppenhüte</h2>
+  <div>
+    {% for group in group_hats %}
+      {% include "groups/_group.html" with object=group %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+{% if seminars %}
+<div class="section">
+  <div class="clearfix">
+    <h2 class="float-left">Die letzten Seminare</h2>
+    <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+  </div>
+  <div class="card-grid">
+    {% for seminar in seminars %}
+      {% include "seminars/_seminar.html" with object=seminar %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+</div>
+{% endblock %}

@@ -1,7 +1,10 @@
+from django.core import mail
+
 from tests import TestCase
 
 from .factories import SeminarFactory
 from seminars.models import Seminar
+from groups.tests.factories import JANUNGroupFactory
 
 
 class SeminarListViewTests(TestCase):
@@ -33,6 +36,28 @@ class SeminarListViewTests(TestCase):
         self.assertResponseNotContains("Test Seminar")
         self.assertResponseContains("Leider keine Seminare vorhanden.")
         self.assertQuerysetEqual(response.context['seminar_list'], [])
+
+    def test_can_see_seminars_of_own_janun_groups(self):
+        group = JANUNGroupFactory.create()
+        user = self.make_user()
+        user.janun_groups.add(group)
+        user.save()
+        seminar = SeminarFactory.create(title="Test Seminar", group=group)
+        with self.login(user):
+            response = self.get_check_200(self.url_name)
+        self.assertResponseContains("Test Seminar")
+        self.assertQuerysetEqual(response.context['seminar_list'], [repr(seminar)])
+
+    def test_can_see_seminars_of_own_group_hats(self):
+        group = JANUNGroupFactory.create()
+        user = self.make_user(role="PRUEFER")
+        user.group_hats.add(group)
+        user.save()
+        seminar = SeminarFactory.create(title="Test Seminar", group=group)
+        with self.login(user):
+            response = self.get_check_200(self.url_name)
+        self.assertResponseContains("Test Seminar")
+        self.assertQuerysetEqual(response.context['seminar_list'], [repr(seminar)])
 
 
 class SeminarDetailViewTests(TestCase):
@@ -106,7 +131,93 @@ class SeminarDeleteViewTests(TestCase):
 
 
 class SeminarWizardViewTests(TestCase):
-    pass
+    url_name = 'seminars:create'
+
+    def setUp(self):
+        self.user = self.make_user()
+
+    def test_login_required(self):
+        self.assertLoginRequired(self.url_name)
+
+    def test_initial_call(self):
+        with self.login(self.user):
+            response = self.get(self.url_name)
+            self.response_302()
+            self.assertEqual(response.url, self.reverse('seminars:create_step', step='content'))
+            self.get(response.url)
+            self.response_200()
+
+    wizard_step_data = (
+        {
+            'step': 'content',
+            'title': "Test Seminar",
+            'content': "Dies ist ein Test",
+        },
+        {
+            'step': 'datetime',
+            'start': "2021-01-01 12:00",
+            'end': "2021-01-05 20:00",
+        },
+        {
+            'step': 'location',
+            'location': "Hannover",
+        },
+        {
+            'step': 'group',
+            'group': "",
+        },
+        {
+            'step': 'days',
+            'planned_training_days': "5",
+        },
+        {
+            'step': 'attendees',
+            'planned_attendees_0': "10",
+            'planned_attendees_1': "20",
+        },
+        {
+            'step': 'funding',
+            'requested_funding': "10",
+        },
+        {
+            'step': 'barriers',
+            'mobility_barriers': "",
+            'language_barriers': "",
+            'hearing_barriers': "",
+            'seeing_barriers': "",
+        },
+        {
+            'step': 'confirm',
+            'confirm_policy': True,
+            'confirm_deadline': True,
+            'confirm_funding': True
+        },
+    )
+
+    def test_all_steps(self):
+        self.make_user("Verwalter", role="VERWALTER")
+        with self.login(self.user):
+            first_step = self.wizard_step_data[0]['step']
+            self.get('seminars:create_step', step=first_step)
+            self.response_200()
+
+            for step_data in self.wizard_step_data:
+                step = step_data.pop('step')
+                data = {'seminar_wizard_view-current_step': step}
+                for key, value in step_data.items():
+                    data["{0}-{1}".format(step, key)] = value
+                post_response = self.post('seminars:create_step', data=data, step=step)
+                self.response_302()
+                get_response = self.get(post_response.url)
+                self.response_200()
+            self.assertEqual(post_response.url, self.reverse('seminars:create_step', step='done'))
+            # sends mail to author and verwalter
+            self.assertEqual(len(mail.outbox), 2)
+            self.assertEqual(mail.outbox[0].subject, 'Dein Seminar "Test Seminar"')
+            self.assertEqual(mail.outbox[1].subject, 'Neues Seminar "Test Seminar"')
+
+
+
 
 
 class SeminarUpdateViewTests(TestCase):

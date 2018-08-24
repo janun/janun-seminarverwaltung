@@ -1,0 +1,3 @@
+{{ user.username }} hat das Seminar "{{ seminar.title }}" angemeldet.
+
+Siehe: {{ seminar_url }}

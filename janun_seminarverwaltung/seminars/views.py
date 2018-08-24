@@ -1,22 +1,25 @@
 from collections import OrderedDict
 
-from django.views.generic import DetailView, DeleteView, ListView
-from django.shortcuts import HttpResponseRedirect
+from django.views.generic import DetailView, DeleteView
+from django.views.generic.detail import SingleObjectMixin
+from django.shortcuts import HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
-# from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import SelectRelatedMixin
 from django_tables2 import SingleTableView
 from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
+from django_fsm import has_transition_perm
 
 from seminars.models import Seminar
 from seminars.tables import SeminarTable
 from seminars.filters import SeminarFilter
 import seminars.forms as seminar_forms
+from .email import send_wizard_done_mails
 
 
 class SeminarListView(FilterView, SingleTableView):
@@ -24,31 +27,27 @@ class SeminarListView(FilterView, SingleTableView):
     table_class = SeminarTable
     filterset_class = SeminarFilter
     template_name = "seminars/seminar_list.html"
+    paginate_by = 50
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orig_count = 0  # count before filter
 
     def get_queryset(self):
-        # everyone sees their own seminars
-        qs = Seminar.objects.filter(author=self.request.user)
-        # pruefer also sees seminars for their groups
-        if self.request.user.role == "PRUEFER":
-            qs |= Seminar.objects.filter(group__in=self.request.user.group_hats.all())
-        # verwalter simply can see all seminars
-        if self.request.user.role == "VERWALTER":
-            qs = Seminar.objects.all()
+        user = self.request.user
+        qs = user.get_seminars()
         qs = qs.select_related('group', 'author')
         self.orig_count = qs.count()
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
         heading = "Deine Seminare"
-        if self.request.user.role == "PRUEFER":
-            heading = "Seminare Deiner Gruppen"
-        if self.request.user.role == "VERWALTER":
+        if user.role == "VERWALTER":
             heading = "Alle Seminare"
+        elif user.group_hats.exists() or user.janun_groups.exists():
+            heading += " und die Deiner Gruppen"
 
         count = len(self.object_list)
         if count != self.orig_count:
@@ -67,23 +66,56 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
     permission_required = 'seminars.detail_seminar'
     raise_exception = True
 
-
-# class SeminarCreateView(PermissionRequiredMixin, CreateView):
-#     model = Seminar
-#     fields = ['title', 'start', 'end', 'group', 'author', 'state']
-#     permission_required = 'seminars.add_seminar'
-#     raise_exception = True
-#
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         initial['author'] = self.request.user
-#         initial['group'] = self.request.user.janun_groups.first()
-#         return initial
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['available_transitions'] = self.object.get_available_user_state_transitions(user)
+        return context
 
 
-class SeminarWizardView(PermissionRequiredMixin, NamedUrlSessionWizardView):
-    permission_required = 'seminars.add_seminar'
-    raise_exception = True
+class SeminarChangeStateView(DetailView):
+    model = Seminar
+    template_name = 'seminars/seminar_change_state.html'
+
+    def __init__(self, *args, **kwargs):
+        self.transition = None
+        super().__init__(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['transition'] = self.transition
+        return context
+
+    def get(self, request, *args, **kwargs):
+        transition_name = kwargs.get('transition', None)
+        instance = self.get_object()
+        possible_transitions = instance.get_available_state_transitions()
+        try:
+            self.transition = next(trans for trans in possible_transitions if trans.name == transition_name)
+        except StopIteration:
+            raise Http404
+        transition_func = getattr(instance, transition_name)
+        user = request.user
+        if not has_transition_perm(transition_func, user):
+            raise PermissionDenied
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        transition_name = kwargs.get('transition', None)
+        if transition_name:
+            user = request.user
+            instance = self.get_object()
+            self.transition = getattr(instance, transition_name)
+            if has_transition_perm(self.transition, user):
+                self.transition()
+                instance.save()
+                messages.info(request, "Status wurde geändert auf \"%s\"" % instance.get_state_display())
+            else:
+                raise PermissionDenied
+        return HttpResponseRedirect(instance.get_absolute_url())
+
+
+class SeminarWizardView(NamedUrlSessionWizardView):
     template_name = "seminars/seminar_wizard.html"
     form_list = (
         ('content', seminar_forms.ContentSeminarForm),
@@ -125,8 +157,7 @@ class SeminarWizardView(PermissionRequiredMixin, NamedUrlSessionWizardView):
 
     def get_form_kwargs(self, step=None):
         form_kwargs = super().get_form_kwargs(step=step)
-        if step == 'group':
-            form_kwargs['user'] = self.request.user
+        form_kwargs['user'] = self.request.user
         return form_kwargs
 
     def get_steps(self):
@@ -150,9 +181,7 @@ class SeminarWizardView(PermissionRequiredMixin, NamedUrlSessionWizardView):
         return context
 
     def render_goto_step(self, goto_step, **kwargs):
-        # try to save form
         form = self.get_form(data=self.request.POST, files=self.request.FILES)
-        # if form.is_valid():
         self.storage.set_step_data(self.steps.current, self.process_step(form))
         self.storage.set_step_files(self.steps.current, self.process_step_files(form))
         return super().render_goto_step(goto_step, **kwargs)
@@ -160,7 +189,8 @@ class SeminarWizardView(PermissionRequiredMixin, NamedUrlSessionWizardView):
     def done(self, form_list, **kwargs):
         self.instance.author = self.request.user
         self.instance.save()
-        messages.success(self.request, 'Seminar "%s" gespeichert.' % self.instance.title)
+        messages.success(self.request, 'Seminar "{0}" gespeichert.'.format(self.instance.title))
+        send_wizard_done_mails(seminar=self.instance, request=self.request)
         return render(self.request, 'seminars/seminar_wizard_done.html', {
             'instance': self.instance,
         })

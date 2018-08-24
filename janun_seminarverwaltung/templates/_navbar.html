@@ -27,7 +27,7 @@
       {% if request.user.is_authenticated %}
         <li><a href="{% url 'users:detail' request.user.username  %}"
                class="{% if request.resolver_match.namespace == "users" %}active{% endif %}">
-               {{ user.username }}</a></li>
+               {{ request.user.username }}</a></li>
         <li><a href="{% url 'account_logout' %}"
                class="{% if request.resolver_match.url_name == "account_logout" %}active{% endif %}">
                {% trans "Sign Out" %}</a></li>
