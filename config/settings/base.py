@@ -74,6 +74,7 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_filters',
     'stronghold',
+    'django_comments',
 ]
 LOCAL_APPS = [
     'janun_seminarverwaltung.users.apps.UsersConfig',

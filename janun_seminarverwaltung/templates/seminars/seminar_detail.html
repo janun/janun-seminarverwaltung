@@ -46,6 +46,7 @@
   <a class="button button-danger float-right" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
 {% endif %}
 
+{% include "seminars/_comments.html" %}
 
 </div>
 {% endblock %}

@@ -10,11 +10,9 @@ urlpatterns = [
     path('', include("janun_seminarverwaltung.dashboard.urls")),
     path('seminare/', include("janun_seminarverwaltung.seminars.urls")),
     path('gruppen/', include("janun_seminarverwaltung.groups.urls")),
-    url(
-        r"^users/",
-        include("janun_seminarverwaltung.users.urls", namespace="users"),
-    ),
-    url(r"^accounts/", include("allauth.urls")),
+    path('users/', include("janun_seminarverwaltung.users.urls")),
+    path('accounts/', include("allauth.urls")),
+    path('comments/', include('django_comments.urls')),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )
