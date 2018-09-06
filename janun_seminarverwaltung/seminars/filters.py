@@ -6,7 +6,6 @@ from janun_seminarverwaltung.users.models import User
 
 
 class YearFilter(django_filters.ChoiceFilter):
-
     def __init__(self, *args, **kwargs):
         kwargs['lookup_expr'] = "year"
         super().__init__(*args, **kwargs)
@@ -41,16 +40,16 @@ def allowed_users(request):
 
 class SeminarFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
-    start_year = YearFilter(label="Jahr", name="start")
+    start_year = YearFilter(label="Jahr", field_name="start")
     start_quarter = django_filters.ChoiceFilter(
-        label="Quartal", name="start", lookup_expr='quarter',
+        label="Quartal", field_name="start", lookup_expr='quarter',
         choices=[(i, "{0}. Quartal".format(i)) for i in range(1, 5)]
     )
     group = django_filters.ModelChoiceFilter(
-        name='group', null_label='-- keine --', queryset=allowed_groups
+        null_label='-- keine --', queryset=allowed_groups
     )
     author = django_filters.ModelChoiceFilter(
-        name='author', queryset=allowed_users
+        queryset=allowed_users
     )
 
     class Meta:

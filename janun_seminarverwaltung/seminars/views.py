@@ -10,7 +10,7 @@ from django.core.exceptions import PermissionDenied
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import SelectRelatedMixin
-from django_tables2 import SingleTableView
+from django_tables2.views import SingleTableMixin
 from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
 from django_fsm import has_transition_perm
@@ -22,20 +22,20 @@ import seminars.forms as seminar_forms
 from .email import send_wizard_done_mails
 
 
-class SeminarListView(FilterView, SingleTableView):
+class SeminarListView(SingleTableMixin, FilterView):
     model = Seminar
     table_class = SeminarTable
     filterset_class = SeminarFilter
     template_name = "seminars/seminar_list.html"
     paginate_by = 50
+    strict = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orig_count = 0  # count before filter
 
     def get_queryset(self):
-        user = self.request.user
-        qs = user.get_seminars()
+        qs = self.request.user.get_seminars()
         qs = qs.select_related('group', 'author')
         self.orig_count = qs.count()
         return qs
