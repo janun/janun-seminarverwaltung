@@ -7,6 +7,8 @@
 
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
+{% block container_class %}big-container{% endblock %}
+
 {% block content %}
 <div class="clearfix">
   <h1 class="float-left">{{ heading }}</h1>
@@ -24,5 +26,4 @@
 <div class="table-wrapper">
   {% render_table table %}
 </div>
-
 {% endblock %}

@@ -12,6 +12,7 @@ class SeminarTable(tables.Table):
 
     class Meta:
         model = Seminar
+        # TODO: Förderbedarf, Teilnahmetage nach JFG
         fields = [
             'title', 'start', 'group', 'author', 'state', 'created'
         ]

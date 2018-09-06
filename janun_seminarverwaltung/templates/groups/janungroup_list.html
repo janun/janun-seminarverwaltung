@@ -6,18 +6,14 @@
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
 <h1>{{ heading }}</h1>
 
 {% has_perm 'groups.add_janungroup' user as can_add %}
 {% if can_add %}
-<div class="clearfix">
-  <a href="{% url 'groups:create' %}" class="float-right button button-primary">Gruppe hinzufügen</a>
-</div>
+  <div class="clearfix">
+    <a href="{% url 'groups:create' %}" class="float-right button button-primary">Gruppe hinzufügen</a>
+  </div>
 {% endif %}
 
 {% render_table table %}
-
-</div>
 {% endblock %}

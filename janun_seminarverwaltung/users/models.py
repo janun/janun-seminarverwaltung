@@ -83,6 +83,16 @@ class User(AbstractUser):
         )
 
 
+def get_verwalter_mails():
+    qs = User.objects.filter(role='VERWALTER')
+    return list(qs.values_list('email', flat=True))
+
+
+def get_group_hat_mails(group):
+    qs = User.objects.filter(group_hats=group)
+    return list(qs.values_list('email', flat=True))
+
+
 @rules.predicate
 def is_teamer(user):
     return user.role == "TEAMER"
@@ -113,3 +123,14 @@ rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_in_same_grou
 rules.add_perm('users.add_user', is_verwalter)
 rules.add_perm('users.change_user', is_verwalter | is_own_user)
 rules.add_perm('users.delete_user', is_verwalter)
+
+
+# NOT WORKING
+@rules.predicate
+def is_own_comment(user, comment):
+    if comment:
+        return user == comment.user
+    return False
+
+
+rules.add_perm('django_comments.can_moderate', is_verwalter | is_own_comment)

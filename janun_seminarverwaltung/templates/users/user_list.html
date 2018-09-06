@@ -6,10 +6,7 @@
 {% block title %}Benutzer{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2>Benutzer ({{ object_list|length }})</h2>
+<h2>Benutzer ({{ object_list|length }})</h2>
 
-  {% render_table table %}
-
-</div>
+{% render_table table %}
 {% endblock content %}

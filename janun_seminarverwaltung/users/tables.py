@@ -21,7 +21,6 @@ class UserTable(tables.Table):
 
     class Meta:
         model = User
-        # template_name = 'seminars/_table.html'
         fields = [
             'avatar', 'name', 'role', 'groups'
         ]

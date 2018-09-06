@@ -5,27 +5,25 @@
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
 <a class="backlink" href="{% url 'seminars:list' %}">← Alle Seminare</a>
 
 <h1>{{ object.title }}</h1>
 
-<p style="font-size:24px">
+<p>
   {% if object.start.date == object.end.date %}
-    {{ object.start|date:"SHORT_DATE_FORMAT" }}
+    {{ object.start|date:"d.m.y" }}
   {% else %}
-    {{ object.start|date:"SHORT_DATE_FORMAT" }}
-    bis {{ object.end|date:"SHORT_DATE_FORMAT" }}
+    {{ object.start|date:"d.m.y" }}
+    bis {{ object.end|date:"d.m.y" }}
   {% endif %}
   {% if object.location %}
     in {{ object.location }}
   {% endif %}
 </p>
 
-<p class="color-grey">
+<p class="color-grey" style="margin-top: 60px;">
   angemeldet von <a href="{{ object.author.get_absolute_url }}">{{ object.author }}</a>
-  am {{ object.created|date:"SHORT_DATE_FORMAT" }}
+  am {{ object.created|date:"d.m.y" }}
   {% if object.group %}
     für <a href="{% url 'groups:detail' object.group.id %}">{{ object.group.name }}</a>
   {% else %}
@@ -47,6 +45,4 @@
 {% endif %}
 
 {% include "seminars/_comments.html" %}
-
-</div>
 {% endblock %}

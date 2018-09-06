@@ -1,0 +1,43 @@
+.comment-form {
+  // margin-top: 180px;
+  margin-bottom: 90px;
+  width: 100%;
+
+  textarea {
+    border-radius: 5px;
+    border: 1px solid $lightgrey;
+    background-color: inherit;
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    font-size: inherit;
+    color: inherit;
+    font-family: inherit;
+    margin-bottom: 15px;
+  }
+
+  input[type="submit"] {
+    float: right;
+  }
+}
+
+.comment {
+  margin-bottom: 30px;
+  width: 100%;
+
+  & + & {
+    border-bottom: 1px solid #ccc;
+  }
+
+  &__text {
+    margin-top: 5px;
+  }
+
+  &__meta {
+    font-size: 16px;
+    color: $grey;
+    a {
+      color: $grey;
+    }
+  }
+}

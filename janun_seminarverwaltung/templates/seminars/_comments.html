@@ -1,8 +1,10 @@
 {% load comments %}
+{% load rules %}
 
+<div style="margin-top: 180px;"></div>
 
-<div style="margin-top: 60px;">
-  <h4>Kommentare</h4>
+<h3 style="margin-bottom: 60px;">Kommentare</h3>
+<div class="comment-form">
   {% get_comment_form for object as form %}
   <form action="{% comment_form_target %}" method="POST">
     {% csrf_token %}
@@ -12,18 +14,45 @@
     {{ form.timestamp }}
     {{ form.security_hash }}
     <input type="hidden" name="next" value="{% url 'seminars:detail' object.id %}" />
-    <input type="submit" class="button" value="Kommentieren" id="id_submit" />
+    <input type="submit" class="button button-primary" value="Kommentieren" id="id_submit" />
   </form>
 </div>
 
+<script>
+  // enable/disable submit button on textarea input
+  var button = document.getElementById('id_submit');
+  button.disabled = true;
+  var comment = document.getElementById('id_comment');
+  comment.addEventListener("input", function() {
+    if (comment.value !== "") {
+      button.disabled = false;
+    } else {
+      button.disabled = true;
+    }
+  });
+</script>
 
 {% get_comment_list for object as comment_list %}
 {% if comment_list %}
-  <ul>
-    {% for comment in comment_list %}
-      <li>{{ comment }}</li>
-    {% endfor %}
-  </ul>
+  <div class="comment-list">
+      {% for comment in comment_list reversed %}
+        <div>
+          <div class="comment">
+            <span class="comment__meta">
+              <span>{{ comment.submit_date|date:"SHORT_DATETIME_FORMAT" }}</span>,
+              <a href="{{ comment.user.get_absolute_url }}">{{ comment.user.name }}</a>
+              {% has_perm 'django_comments.can_moderate' user comment as can_moderate %}
+              {% if can_moderate %}
+                <span class="float-right">
+                  <a href="{% url 'comments-delete' comment.id %}"?next="{% url 'seminars:detail' object.id %}">Löschen</a>
+                </span>
+              {% endif %}
+            </span>
+            <p class="comment__text">{{ comment.comment }}</p>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
 {% else %}
-  Keine Kommentare
+  <p>Keine Kommentare</p>
 {% endif %}

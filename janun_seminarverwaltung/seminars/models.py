@@ -238,12 +238,16 @@ class Seminar(TimeStampedModel, models.Model):
     def is_in_the_past(self):
         return timezone.now() > self.end
 
+    # TODO: Wenn Abrechnungszeitraum abläuft, Erinnerungsmail an Autor schicken.
+    # TODO: Wenn Seminar stattgefunden hat, E-Mail an Autor, mit Link, um Stattfinden zu bestätigen
+
     @transition(field=state,
                 source=['ANGEMELDET', 'ABGELEHNT', 'ABGESAGT'],
                 target='ZUGESAGT',
                 permission='seminars.can_zusagen',
                 custom=dict(button_name="Zusagen", color="green"))
     def zusagen(self):
+        # Email: author, Gruppenhut
         pass
 
     @transition(field=state,
@@ -252,6 +256,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_absagen',
                 custom=dict(button_name="Absagen", color="red"))
     def absagen(self):
+        # Email: author, Gruppenhut, verwalter
         pass
 
     @transition(field=state,
@@ -260,6 +265,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_ablehnen',
                 custom=dict(button_name="Ablehnen", color="red"))
     def ablehnen(self):
+        # Email: author, Gruppenhut
         pass
 
     @transition(field=state,
@@ -268,6 +274,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_zurueckziehen',
                 custom=dict(button_name="Zurückziehen", color="red"))
     def zurueckziehen(self):
+        # Email: author, Gruppenhut, verwalter
         pass
 
     @transition(field=state,
@@ -277,6 +284,7 @@ class Seminar(TimeStampedModel, models.Model):
                 custom=dict(button_name="Stattfinden bestätigen", color="green"),
                 conditions=[is_in_the_past])
     def stattfinden(self):
+        # Email: an Gruppenhut
         pass
 
     @transition(field=state,
@@ -285,6 +293,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_ohne_abrechnung',
                 custom=dict(button_name="ohne Abrechnung", color="red"))
     def ohne_abrechnung(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -293,6 +302,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_abschicken',
                 custom=dict(button_name="Abrechnung abgeschickt bestätigen", color="green"))
     def abschicken(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -301,6 +311,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_ankommen',
                 custom=dict(button_name="Abrechnung angekommen bestätigen", color="green"))
     def ankommen(self):
+        # Mail an Autor
         pass
 
     @transition(field=state,
@@ -309,6 +320,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_rechnen',
                 custom=dict(button_name="in die rechnerische Prüfung", color="green"))
     def rechnen(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -317,6 +329,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_inhalten',
                 custom=dict(button_name="in die inhaltliche Prüfung", color="green"))
     def inhalten(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -325,6 +338,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_nach_pruefen',
                 custom=dict(button_name="in die Nachprüfung", color="green"))
     def nach_pruefen(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -333,6 +347,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_fertigen',
                 custom=dict(button_name="Prüfung abschließen", color="green"))
     def fertigen(self):
+        # Mail an Autor
         pass
 
     @transition(field=state,
@@ -341,6 +356,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_ueberweisen',
                 custom=dict(button_name="Überweisung bestätigen", color="green"))
     def ueberweisen(self):
+        # keine Mail
         pass
 
     @transition(field=state,
@@ -349,6 +365,7 @@ class Seminar(TimeStampedModel, models.Model):
                 permission='seminars.can_unmoeglichen',
                 custom=dict(button_name="Abrechnung unmöglich", color="red"))
     def unmoeglichen(self):
+        # keine Mail
         pass
 
 
@@ -389,12 +406,12 @@ rules.add_perm('seminars.delete_seminar', is_verwalter | is_seminar_author & jus
 
 # perms for transitions
 rules.add_perm('seminars.can_zusagen',          is_verwalter | has_group_hat_for_seminar)
-rules.add_perm('seminars.can_absagen',          is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_absagen',          is_verwalter | has_group_hat_for_seminar | is_seminar_author)
 rules.add_perm('seminars.can_ablehnen',         is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_zurueckziehen',    is_verwalter | has_group_hat_for_seminar | is_seminar_author)
 rules.add_perm('seminars.can_stattfinden',      is_verwalter | has_group_hat_for_seminar | is_seminar_author)
 rules.add_perm('seminars.can_ohne_abrechnung',  is_verwalter | has_group_hat_for_seminar)
-rules.add_perm('seminars.can_abschicken',       is_verwalter | has_group_hat_for_seminar)
+rules.add_perm('seminars.can_abschicken',       is_verwalter | has_group_hat_for_seminar | is_seminar_author)
 rules.add_perm('seminars.can_ankommen',         is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_rechnen',          is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_inhalten',         is_verwalter | has_group_hat_for_seminar)
