@@ -54,6 +54,11 @@ class Seminar(TimeStampedModel, models.Model):
         ('UEBERWIESEN', 'überwiesen'),
     )
 
+    def get_state_color(self):
+        if self.state in ('ZURUECKGEZOGEN', 'ABGELEHNT', 'ABGESAGT', 'OHNE_ABRECHNUNG', 'UNMOEGLICH'):
+            return 'red'
+        return 'green'
+
     title = models.CharField("Titel", max_length=255, unique_for_date="start")
     content = models.TextField(
         "Inhalt",
@@ -300,7 +305,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['STATTGEFUNDEN'],
                 target='ABGESCHICKT',
                 permission='seminars.can_abschicken',
-                custom=dict(button_name="Abrechnung abgeschickt bestätigen", color="green"))
+                custom=dict(button_name="Abrechnung abgeschickt", color="green"))
     def abschicken(self):
         # keine Mail
         pass
@@ -309,7 +314,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['STATTGEFUNDEN', 'ABGESCHICKT'],
                 target='ANGEKOMMEN',
                 permission='seminars.can_ankommen',
-                custom=dict(button_name="Abrechnung angekommen bestätigen", color="green"))
+                custom=dict(button_name="Abrechnung angekommen", color="green"))
     def ankommen(self):
         # Mail an Autor
         pass
@@ -318,7 +323,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ANGEKOMMEN'],
                 target='RECHNERISCH',
                 permission='seminars.can_rechnen',
-                custom=dict(button_name="in die rechnerische Prüfung", color="green"))
+                custom=dict(button_name="rechnerische Prüfung", color="green"))
     def rechnen(self):
         # keine Mail
         pass
@@ -327,7 +332,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['RECHNERISCH'],
                 target='INHALTLICH',
                 permission='seminars.can_inhalten',
-                custom=dict(button_name="in die inhaltliche Prüfung", color="green"))
+                custom=dict(button_name="inhaltliche Prüfung", color="green"))
     def inhalten(self):
         # keine Mail
         pass
@@ -336,7 +341,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['INHALTLICH'],
                 target='NACHPRUEFUNG',
                 permission='seminars.can_nach_pruefen',
-                custom=dict(button_name="in die Nachprüfung", color="green"))
+                custom=dict(button_name="Nachprüfung", color="green"))
     def nach_pruefen(self):
         # keine Mail
         pass

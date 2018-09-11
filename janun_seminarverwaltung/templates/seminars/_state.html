@@ -1,15 +1,24 @@
-<div class="seminar-state clearfix">
-  <span class="seminar-state__current float-left">
-    Status: {{ object.get_state_display|title }}
-  </span>
+<div class="margin-top-60 margin-bottom-60">
+  <h4 class="color-grey">Status:</h4>
+  <div class="seminar-state">
 
-  <div class="seminar-state__transitions">
-    {% for transition in available_transitions %}
-      <a
-        href="{% url 'seminars:change_state' object.pk transition.name %}"
-        class="button button--{{ transition.custom.color }}-lined">
-        {{ transition.custom.button_name }}
-      </a><br>
-    {% endfor %}
+    <div class="seminar-state__current font-weight-bold margin-bottom-30 color-{{ object.get_state_color }}">
+      {{ object.get_state_display|title }}
+    </div>
+
+    {% if available_transitions %}
+      <div class="seminar-state__arrow">→</div>
+
+      <div class="seminar-state__transitions">
+        {% for transition in available_transitions %}
+          <a
+            href="{% url 'seminars:change_state' object.pk transition.name %}"
+            class="button button--{{ transition.custom.color }}-lined">
+            {{ transition.custom.button_name }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
   </div>
 </div>

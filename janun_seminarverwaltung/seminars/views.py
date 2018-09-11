@@ -69,7 +69,7 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context['available_transitions'] = self.object.get_available_user_state_transitions(user)
+        context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
         return context
 
 

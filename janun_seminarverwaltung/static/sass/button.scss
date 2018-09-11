@@ -11,7 +11,7 @@
   @include shadow(1);
   text-decoration: none;
   cursor: pointer;
-  // margin: 10px;
+  margin: 5px;
 
   &:active {
     @include shadow(0);
@@ -36,15 +36,17 @@
   &--red-lined {
     color: $red;
     border: 2px solid $red;
-    @include shadow(0);
+    // @include shadow(0);
     &:hover {
       color: $red;
     }
+    // background: transparent;
   }
   &--green-lined {
     color: $green;
     border: 2px solid $green;
-    @include shadow(0);
+    // @include shadow(0);
+    // background: transparent;
   }
 
   &:disabled {

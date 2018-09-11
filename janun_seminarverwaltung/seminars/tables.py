@@ -8,7 +8,7 @@ class SeminarTable(tables.Table):
     start = tables.DateColumn(format="d.m.y")
     created = tables.DateColumn(format="d.m.y")
     group = tables.RelatedLinkColumn()
-    author = tables.RelatedLinkColumn()
+    author = tables.RelatedLinkColumn(text=lambda s: s.author.name)
 
     class Meta:
         model = Seminar

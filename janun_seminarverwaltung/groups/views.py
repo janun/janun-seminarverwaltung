@@ -50,6 +50,10 @@ class JANUNGroupCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'groups.add_janungroup'
     raise_exception = True
 
+    # https://github.com/dfunckt/django-rules/issues/85
+    def get_object(self):
+        return None
+
 
 class JANUNGroupDeleteView(PermissionRequiredMixin, DeleteView):
     model = JANUNGroup

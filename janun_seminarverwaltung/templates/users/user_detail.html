@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block title %}{{ block.super }}  {{ object.name }}{% endblock %}
 
 {% block content %}
+<a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer</a>
 
 <div class="section">
   {% if object.avatar %}

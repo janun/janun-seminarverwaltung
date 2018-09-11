@@ -3,7 +3,7 @@
 
 <div style="margin-top: 180px;"></div>
 
-<h3 style="margin-bottom: 60px;">Kommentare</h3>
+<h3 class="margin-bottom-30">Kommentare</h3>
 <div class="comment-form">
   {% get_comment_form for object as form %}
   <form action="{% comment_form_target %}" method="POST">
@@ -13,7 +13,7 @@
     {{ form.object_pk }}
     {{ form.timestamp }}
     {{ form.security_hash }}
-    <input type="hidden" name="next" value="{% url 'seminars:detail' object.id %}" />
+    <input type="hidden" name="next" value="{% url 'seminars:detail' object.id %}#comments" />
     <input type="submit" class="button button-primary" value="Kommentieren" id="id_submit" />
   </form>
 </div>
@@ -34,10 +34,10 @@
 
 {% get_comment_list for object as comment_list %}
 {% if comment_list %}
-  <div class="comment-list">
+  <div id="comments" class="comment-list">
       {% for comment in comment_list reversed %}
         <div>
-          <div class="comment">
+          <div id="c{{ comment.id }}" class="comment">
             <span class="comment__meta">
               <span>{{ comment.submit_date|date:"SHORT_DATETIME_FORMAT" }}</span>,
               <a href="{{ comment.user.get_absolute_url }}">{{ comment.user.name }}</a>

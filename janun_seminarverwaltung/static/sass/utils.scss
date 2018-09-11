@@ -4,7 +4,6 @@
 .float-left {
   float: left;
 }
-
 .clearfix:after {
   content: "";
   display: table;
@@ -15,15 +14,37 @@
 .color-grey {
   color: $grey;
 }
-
 .color-darkgrey {
   color: $darkgrey;
 }
-
 .color-red {
   color: $red;
 }
-
 .color-green {
   color: $green;
+}
+
+
+.font-weight-bold {
+  font-weight: bold;
+}
+
+
+.margin-bottom-15 {
+  margin-bottom: 15px;
+}
+.margin-top-15 {
+  margin-top: 15px;
+}
+.margin-bottom-30 {
+  margin-bottom: 30px;
+}
+.margin-top-30 {
+  margin-top: 30px;
+}
+.margin-bottom-60 {
+  margin-bottom: 60px;
+}
+.margin-top-60 {
+  margin-top: 60px;
 }

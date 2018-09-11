@@ -21,17 +21,17 @@
   {% endif %}
 </p>
 
-<p class="color-grey" style="margin-top: 60px;">
-  angemeldet von <a href="{{ object.author.get_absolute_url }}">{{ object.author }}</a>
-  am {{ object.created|date:"d.m.y" }}
+<p class="color-grey margin-top-30">
+  Angemeldet von <a href="{{ object.author.get_absolute_url }}">{{ object.author }}</a>
+  am {{ object.created|date:"d.m.y" }}<br>
   {% if object.group %}
-    für <a href="{% url 'groups:detail' object.group.id %}">{{ object.group.name }}</a>
+    Für die Gruppe <a href="{% url 'groups:detail' object.group.id %}">{{ object.group.name }}</a>
   {% else %}
     (ohne Gruppe)
   {% endif %}
 </p>
 
-{% include "seminars/_state.html" with state=object.state %}
+{% include "seminars/_state.html" %}
 
 <div class="panel">
   Hier soll man dann die einzelnen Daten ändern können.

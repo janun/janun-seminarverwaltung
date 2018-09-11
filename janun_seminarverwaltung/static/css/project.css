@@ -23,13 +23,34 @@
 .color-green {
   color: #3A9D00; }
 
+.font-weight-bold {
+  font-weight: bold; }
+
+.margin-bottom-15 {
+  margin-bottom: 15px; }
+
+.margin-top-15 {
+  margin-top: 15px; }
+
+.margin-bottom-30 {
+  margin-bottom: 30px; }
+
+.margin-top-30 {
+  margin-top: 30px; }
+
+.margin-bottom-60 {
+  margin-bottom: 60px; }
+
+.margin-top-60 {
+  margin-top: 60px; }
+
 html {
   font-family: "Cabin", sans-serif;
   color: #644327;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   font-size: 20px;
-  line-height: 1.2;
+  line-height: 1.33;
   margin: 0;
   padding: 0; }
 
@@ -140,7 +161,8 @@ h3 {
   -webkit-box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.24), 0 1.5px 6px rgba(0, 0, 0, 0.12);
           box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.24), 0 1.5px 6px rgba(0, 0, 0, 0.12);
   text-decoration: none;
-  cursor: pointer; }
+  cursor: pointer;
+  margin: 5px; }
   .button:active, .btn:active {
     -webkit-box-shadow: none;
             box-shadow: none; }
@@ -154,16 +176,12 @@ h3 {
     background: #3A9D00; }
   .button--red-lined, .btn--red-lined {
     color: #C41737;
-    border: 2px solid #C41737;
-    -webkit-box-shadow: none;
-            box-shadow: none; }
+    border: 2px solid #C41737; }
     .button--red-lined:hover, .btn--red-lined:hover {
       color: #C41737; }
   .button--green-lined, .btn--green-lined {
     color: #3A9D00;
-    border: 2px solid #3A9D00;
-    -webkit-box-shadow: none;
-            box-shadow: none; }
+    border: 2px solid #3A9D00; }
   .button:disabled, .btn:disabled {
     background-color: #737373;
     color: white;
@@ -202,10 +220,12 @@ h3 {
   color: #C41737; }
 
 .backlink {
-  display: block;
-  margin-bottom: 30px;
+  display: inline-block;
   color: #737373;
-  font-size: 16px; }
+  font-size: 16px;
+  padding: 15px;
+  margin: -15px;
+  margin-bottom: 15px; }
 
 .card {
   position: relative;
@@ -394,22 +414,21 @@ h3 {
       display: inline-block; }
 
 .seminar-state {
-  color: #737373;
-  margin-bottom: 60px;
-  margin-top: 60px; }
-  .seminar-state h4 {
-    margin: 0;
-    margin-bottom: 20px;
-    font-weight: normal; }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
   .seminar-state__current {
-    font-size: 24px;
-    color: #3A9D00;
-    font-weight: bold; }
+    white-space: nowrap;
+    font-size: 24px; }
+  .seminar-state__arrow {
+    color: #737373;
+    font-size: 50px;
+    font-weight: bold;
+    margin-left: 30px;
+    margin-top: -20px; }
   .seminar-state__transitions {
-    margin-top: -10px;
-    margin-left: 300px; }
-    .seminar-state__transitions .button {
-      margin-bottom: 10px; }
+    margin-top: -15px;
+    margin-left: 30px; }
 
 .panel {
   background-color: white;
