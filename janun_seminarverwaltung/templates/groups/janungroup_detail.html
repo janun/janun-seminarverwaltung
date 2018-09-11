@@ -8,9 +8,12 @@
 {% block content %}
 <a class="backlink" href="{% url 'groups:list' %}">← Alle Gruppen</a>
 
+{% if object.logo %}
 <div class="image-button image-button--big">
   <img class="image-button__image" src="{{ object.logo.url }}" alt="Logo for {{ object.name }}">
 </div>
+{% endif %}
+
 <h1>{{ object.name }}</h1>
 
 <p>Mitglieder: {{ object.members.all|link_list|default:"niemand" }}</p>
