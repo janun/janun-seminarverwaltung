@@ -1,3 +1,5 @@
+import datetime
+
 import django_filters
 
 from seminars.models import Seminar
@@ -38,6 +40,16 @@ def allowed_users(request):
     return User.objects.filter(pk=user.pk)
 
 
+def filter_timing(qs, field, value):
+    if value == 'past':
+        return qs.filter(end__lt=datetime.date.today())
+    if value == 'future':
+        return qs.filter(start__gte=datetime.date.today())
+    if value == 'running':
+        return qs.filter(start__date=datetime.date.today())
+    return qs
+
+
 class SeminarFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
     start_year = YearFilter(label="Jahr", field_name="start")
@@ -50,6 +62,11 @@ class SeminarFilter(django_filters.FilterSet):
     )
     author = django_filters.ModelChoiceFilter(
         queryset=allowed_users
+    )
+    timing = django_filters.ChoiceFilter(
+        label="Zeitpunkt d. Stattfindens", field_name="start",
+        choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
+        method=filter_timing
     )
 
     class Meta:
