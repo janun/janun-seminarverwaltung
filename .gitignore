@@ -53,6 +53,9 @@ coverage.xml
 # Django stuff:
 staticfiles/
 
+# Output of css compilation
+janun_seminarverwaltung/static/css/*.css
+
 # Sphinx documentation
 docs/_build/
 
