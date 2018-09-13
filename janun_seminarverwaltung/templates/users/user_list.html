@@ -3,7 +3,7 @@
 {% load static i18n %}
 {% load django_tables2 %}
 
-{% block title %}Benutzer{% endblock %}
+{% block title %}{{ block.super }} Benutzer{% endblock %}
 
 {% block content %}
 <h2>Benutzer ({{ object_list|length }})</h2>

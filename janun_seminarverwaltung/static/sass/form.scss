@@ -2,13 +2,24 @@
   margin-bottom: 30px;
 }
 
+.multiField {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+
+  .form-check {
+    margin-top: 55px;
+  }
+}
+
 .form-control, .numberinput {
   font-size: inherit;
   font-family: inherit;
-  border: 1px solid $grey;
+  border: 1px solid #ccc;
   border-radius: 2px;
   padding: 10px 15px;
-  background: rgba(black, 0.025);
+  background: white;
+  color: inherit;
 }
 
 .col-form-label {

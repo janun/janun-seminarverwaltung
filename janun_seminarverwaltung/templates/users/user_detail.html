@@ -6,19 +6,22 @@
 {% block content %}
 <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer</a>
 
-<div class="section">
+<div style="display: flex; align-items: center;">
   {% if object.avatar %}
-    <div class="button-image">
-      <img src="{{ object.avatar.url }}" class="button-image__image" alt="">
+    <div class="round-image" style="margin-right: 30px;">
+      <img src="{{ object.avatar.url }}" class="round-image__image" alt="Bild von {{ object.name }}">
     </div>
   {% endif %}
   <h1>{{ object.name }}</h1>
+</div>
+
+<div class="margin-top-60">
   <p>Rolle: {{ object.get_role_display }}</p>
   <p>E-Mail: <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
 </div>
 
 {% if groups %}
-<div class="section">
+<div class="section margin-top-60">
   <h2>Gruppen</h2>
   {% for group in groups %}
     {% include "groups/_group.html" with object=group %}

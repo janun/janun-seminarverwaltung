@@ -177,7 +177,7 @@ class Seminar(TimeStampedModel, models.Model):
             qs = Seminar.objects.filter(start__date=self.start.date())
             qs.filter(title=self.title)
             if self.pk:
-                qs.exclude(pk=self.pk)
+                qs = qs.exclude(pk=self.pk)
             if qs.exists():
                 return ValidationError(
                     "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",

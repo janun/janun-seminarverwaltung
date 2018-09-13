@@ -4,11 +4,11 @@ from .models import Seminar
 
 
 class SeminarTable(tables.Table):
-    title = tables.LinkColumn()
-    start = tables.DateColumn(format="d.m.y")
-    created = tables.DateColumn(format="d.m.y")
-    group = tables.RelatedLinkColumn()
-    author = tables.RelatedLinkColumn(text=lambda s: s.author.name)
+    title = tables.Column(linkify=True)
+    start = tables.DateColumn()
+    created = tables.DateColumn()
+    group = tables.Column(linkify=True)
+    author = tables.Column(linkify=True)
 
     class Meta:
         model = Seminar
@@ -18,6 +18,9 @@ class SeminarTable(tables.Table):
         ]
         attrs = {
             'class': 'table'
+        }
+        row_attrs = {
+            'data-link': lambda record: record.get_absolute_url()
         }
         order_by = "start"
         empty_text = "Leider keine Seminare vorhanden."

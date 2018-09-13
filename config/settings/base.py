@@ -75,6 +75,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'stronghold',
     'django_comments',
+    'phonenumber_field',
 ]
 LOCAL_APPS = [
     'janun_seminarverwaltung.users.apps.UsersConfig',
@@ -298,3 +299,6 @@ DATETIME_INPUT_FORMATS += [
     '%d.%m.%y %H:%M',        # '25.10.06 14:30'
     '%d.%m.%y',              # '25.10.06'
 ]
+
+PHONENUMBER_DEFAULT_REGION = 'DE'
+PHONENUMBER_DB_FORMAT = 'RFC3966'

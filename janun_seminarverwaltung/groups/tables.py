@@ -8,7 +8,9 @@ class JANUNGroupTable(tables.Table):
     logo = tables.TemplateColumn(
         """
         {% if record.logo %}
-            <div class="image-button"><img class="image-button__image" src="{{ record.logo.url }}"></div>
+            <div class="round-image round-image--small round-image--logo">
+                <img class="round-image__image" src="{{ record.logo.url }}">
+            </div>
         {% endif %}""",
         verbose_name=""
     )
@@ -22,5 +24,8 @@ class JANUNGroupTable(tables.Table):
         ]
         attrs = {
             'class': 'table'
+        }
+        row_attrs = {
+            'data-link': lambda record: record.get_absolute_url()
         }
         order_by = "name"

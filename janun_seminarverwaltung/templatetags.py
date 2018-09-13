@@ -1,7 +1,6 @@
 from django import template
 from django.utils.html import format_html_join
 
-
 register = template.Library()
 
 

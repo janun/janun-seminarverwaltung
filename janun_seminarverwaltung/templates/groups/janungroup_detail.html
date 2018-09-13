@@ -8,32 +8,85 @@
 {% block content %}
 <a class="backlink" href="{% url 'groups:list' %}">← Alle Gruppen</a>
 
-{% if object.logo %}
-<div class="image-button image-button--big">
-  <img class="image-button__image" src="{{ object.logo.url }}" alt="Logo for {{ object.name }}">
+<div class="cleafix">
+  <div class="float-right">
+    {% has_perm 'groups.edit_janungroup' user object as can_edit %}
+    {% if can_edit %}
+      <a class="button" href="{% url 'groups:edit' object.id %}">Gruppe bearbeiten</a>
+    {% endif %}
+    <br>
+    {% has_perm 'groups.delete_janungroup' user object as can_delete %}
+    {% if can_delete %}
+      <a class="button button-danger" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
+    {% endif %}
+  </div>
+
+  <div style="display: flex; align-items: center;">
+    {% if object.logo %}
+      <div class="round-image round-image--logo" style="margin-right: 30px;">
+        <img class="round-image__image" src="{{ object.logo.url }}" alt="Logo for {{ object.name }}">
+      </div>
+    {% endif %}
+    <h1>{{ object.name }}</h1>
+  </div>
 </div>
-{% endif %}
 
-<h1>{{ object.name }}</h1>
 
-<p>Mitglieder: {{ object.members.all|link_list|default:"niemand" }}</p>
-<p>Gruppenhut: {{ object.group_hats.all|link_list|default:"niemand" }}</p>
 
-<div style="margin-bottom: 60px"></div>
+<div class="margin-top-60 margin-bottom-60">
+  <p>Mitglieder: {{ object.members.all|link_list|default:"niemand" }}</p>
+  <p>Gruppenhut: {{ object.group_hats.all|link_list|default:"niemand" }}</p>
+</div>
+
+<div class="margin-top-60 margin-bottom-60">
+  {% if object.homepage %}
+    <p><strong>Homepage:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>
+  {% endif %}
+  {% if object.email %}
+    <p><strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
+  {% endif %}
+  {% if object.address %}
+    <p><strong>Postadresse:</strong><br> {{ object.address|linebreaksbr }}</p>
+  {% endif %}
+
+
+  <div class="margin-top-60">
+    <h3>Kontaktpersonen</h3>
+    {% if contact_people %}
+      <ul style="padding:0">
+      {% for person in contact_people %}
+        <li style="list-style: none;margin:0">
+          {{ person.name }},
+          {% if person.email %}
+            <a href="mailto:{{ person.email }}">{{ person.email }}</a>,
+          {% endif %}
+          {% if person.phone %}
+            <a href="{{ person.phone.as_rfc3966 }}">{{ person.phone.as_national }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>Keine eingetragen 😢<br>
+        <a href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
+      </p>
+    {% endif %}
+  </div>
+
+</div>
 
 {% if seminars %}
-  <h2>Seminare ({{ seminars|length }})</h2>
-  <div class="card-grid">
-    {% for seminar in seminars %}
-      {% include "seminars/_seminar.html" with object=seminar %}
-    {% endfor %}
+  <div class="clearfix">
+    <h2>Neueste Seminare</h2>
+    <div class="card-grid">
+      {% for seminar in seminars %}
+        {% include "seminars/_seminar.html" with object=seminar %}
+      {% endfor %}
+    </div>
+    <a href="{% url 'seminars:list' %}?group={{ object.pk }}" class="float-right">Alle Seminare →</a>
   </div>
-{% endif %}
-
-
-{% has_perm 'groups.delete_janungroup' user object as can_delete %}
-{% if can_delete %}
-  <a class="button button-danger" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
+{% else %}
+  <p>Keine Seminare angemeldet.</p>
 {% endif %}
 
 {% endblock %}

@@ -1,7 +1,7 @@
 <a class="group" href="{% url 'groups:detail' group.pk %}">
-  <span class="image-button image-button--big">
+  <span class="round-image round-image--logo">
     {% if object.logo %}
-      <img src="{{ object.logo.url }}" alt="Logo of {{ object.name }}" class="image-button__image">
+      <img src="{{ object.logo.url }}" alt="Logo of {{ object.name }}" class="round-image__image">
     {% endif %}
   </span>
   {{ object.name }}

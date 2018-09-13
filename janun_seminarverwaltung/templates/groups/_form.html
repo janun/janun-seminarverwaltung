@@ -1,0 +1,21 @@
+{% load crispy_forms_tags %}
+
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    {% if contact_people_form %}
+      <div class="margin-top-60">
+        <h2 id="contact_people">Kontakt-Personen</h2>
+        <p>Es sollten drei Kontaktpersonen eingetragen werden.</p>
+        {{ contact_people_form|crispy }}
+      </div>
+    {% endif %}
+
+    {% if object.pk %}
+      <a class="button" href="{% url 'groups:detail' object.pk %}">Abbrechen</a>
+    {% endif %}
+    <input class="button button-primary" type="submit" value="Speichern" />
+  </form>
+</div>

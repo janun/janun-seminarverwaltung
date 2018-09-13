@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }} Seminar anmelden{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'seminars:detail' object.pk %}">← {{ object.title }}</a>
+<h1>Seminar bearbeiten</h1>
+
+<div class="panel clearfix">
+<form method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <div class="float-right">
+    <a class="button" href="{% url 'seminars:detail' object.pk %}">Abbrechen</a>
+    <input class="button button-primary" type="submit" value="Speichern" />
+  </div>
+</form>
+</div>
+
+{% endblock %}

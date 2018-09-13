@@ -11,5 +11,5 @@ class Dashboard(TemplateView):
         context['group_hats'] = user.group_hats.all()
         context['janun_groups'] = user.janun_groups.all()
 
-        context['seminars'] = user.get_seminars()[:3]
+        context['seminars'] = user.get_seminars()[:6]
         return context

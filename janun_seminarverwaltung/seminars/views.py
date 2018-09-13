@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from django.views.generic import DetailView, DeleteView
+from django.views.generic import DetailView, DeleteView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import HttpResponseRedirect, Http404
 from django.contrib import messages
@@ -65,12 +65,21 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
     select_related = ['author', 'group']
     permission_required = 'seminars.detail_seminar'
     raise_exception = True
+    template_name_suffix = '_detail'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
         return context
+
+
+class SeminarEditView(PermissionRequiredMixin, UpdateView):
+    model = Seminar
+    permission_required = 'seminars.edit_seminar'
+    raise_exception = True
+    fields = ['title', 'start', 'end', 'location']
+    template_name_suffix = '_edit_form'
 
 
 class SeminarChangeStateView(DetailView):

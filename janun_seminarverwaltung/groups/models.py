@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 
 import rules
+from phonenumber_field.modelfields import PhoneNumberField
+
 from janun_seminarverwaltung.users.models import is_verwalter
 
 
@@ -15,6 +17,9 @@ class JANUNGroup(models.Model):
         verbose_name="Logo", blank=True, null=True,
         upload_to=logo_filename
     )
+    homepage = models.URLField("Homepage", blank=True, null=True)
+    email = models.EmailField("Kontakt E-Mail", blank=True, null=True)
+    address = models.TextField("Postadresse", blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -32,6 +37,19 @@ class JANUNGroup(models.Model):
         )
 
 
+class ContactPerson(models.Model):
+    name = models.CharField("Name", max_length=255)
+    email = models.EmailField("E-Mail", blank=True, null=True)
+    phone = PhoneNumberField("Telefonnummer", blank=True)
+    group = models.ForeignKey(JANUNGroup, on_delete=models.CASCADE, related_name='contact_people')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+
+
 @rules.predicate
 def is_member(user, group):
     return user in group.members.all()
@@ -45,5 +63,5 @@ def has_group_hat(user, group):
 rules.add_perm('groups.can_see_all_janungroups', is_verwalter)
 rules.add_perm('groups.detail_janungroup', is_verwalter | is_member | has_group_hat)
 rules.add_perm('groups.add_janungroup', is_verwalter)
-rules.add_perm('groups.change_janungroup', is_verwalter | is_member | has_group_hat)
+rules.add_perm('groups.edit_janungroup', is_verwalter | is_member | has_group_hat)
 rules.add_perm('groups.delete_janungroup', is_verwalter)

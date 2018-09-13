@@ -32,6 +32,10 @@
     background: $green;
     @extend .button-colored;
   }
+  &--blue {
+    background: $blue;
+    @extend .button-colored;
+  }
 
   &--red-lined {
     color: $red;

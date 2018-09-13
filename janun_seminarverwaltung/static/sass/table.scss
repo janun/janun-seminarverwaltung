@@ -1,28 +1,24 @@
-// .table-wrapper {
-//   width: 105%;
-//   overflow-x: scroll;
-//   padding: 10px;
-//   margin-left: -10px;
-//   margin-right: -10px;
-// }
-
 .table {
   width: 100%;
   background-color: white;
   @include shadow(1);
   border-radius: 5px;
-  // overflow: hidden;
   margin-top: 30px;
   color: $brown;
-  // font-size: 18px;
   border-collapse: collapse;
 
   tr {
     height: 60px;
+
+    &[data-link] {
+      cursor: pointer;
+    }
   }
 
-  .odd {
-    background-color: #f2f2f2;
+  .odd, .even {
+    &:hover {
+      background-color: #f0f0f0;
+    }
   }
 
   th {

@@ -8,11 +8,13 @@ class UserTable(tables.Table):
     avatar = tables.TemplateColumn(
         """
         {% if record.avatar %}
-            <div class="image-button"><img class="image-button__image" src="{{ record.avatar.url }}"></div>
+            <div class="round-image round-image--small">
+                <img class="round-image__image" src="{{ record.avatar.url }}">
+            </div>
         {% endif %}""",
         verbose_name="",
     )
-    name = tables.LinkColumn('users:detail', args=[A('username')])
+    name = tables.Column(linkify=True)
     groups = tables.TemplateColumn(
         """{{ record.get_groups|join:"," }}""",
         verbose_name="Gruppen",
@@ -25,6 +27,9 @@ class UserTable(tables.Table):
             'avatar', 'name', 'role', 'groups'
         ]
         attrs = {
-            'class': 'table'
+            'class': 'table',
+        }
+        row_attrs = {
+            'data-link': lambda record: record.get_absolute_url()
         }
         order_by = "name"

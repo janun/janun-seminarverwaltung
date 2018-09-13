@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
 {% load rules %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
 {% block content %}
 <a class="backlink" href="{% url 'seminars:list' %}">← Alle Seminare</a>
 
-<h1>{{ object.title }}</h1>
+<div class="clearfix">
+  <h1 class="float-left">{{ object.title }}</h1>
+  {% has_perm 'seminars.delete_seminar' user object as can_delete %}
+  {% if can_delete %}
+    <a class="button button-danger float-right" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
+  {% endif %}
+</div>
 
 <p>
   {% if object.start.date == object.end.date %}
@@ -33,16 +40,20 @@
 
 {% include "seminars/_state.html" %}
 
-<div class="panel">
-  Hier soll man dann die einzelnen Daten ändern können.
-  <br><br><br><br>
+<div class="panel clearfix">
+
+
+  <strong>Titel:</strong>
+  <p>{{ object.title }}</p><br>
+
+  <strong>Beschreibung:</strong>
+  <p>{{ object.content }}</p>
+
+    <a class="button button--blue float-right" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
 </div>
 
 
-{% has_perm 'seminars.delete_seminar' user object as can_delete %}
-{% if can_delete %}
-  <a class="button button-danger float-right" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
-{% endif %}
-
 {% include "seminars/_comments.html" %}
+
+
 {% endblock %}

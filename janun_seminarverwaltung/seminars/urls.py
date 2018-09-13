@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import SeminarListView, SeminarDetailView, SeminarWizardView, SeminarDeleteView, SeminarChangeStateView
+from .views import (SeminarListView, SeminarDetailView, SeminarWizardView, 
+                    SeminarDeleteView, SeminarChangeStateView, SeminarEditView)
 
 app_name = 'seminars'
 
@@ -14,4 +15,5 @@ urlpatterns = [
     path('create/<str:step>/', seminar_wizard, name='create_step'),
     path('create/', seminar_wizard, name='create'),
     path('<int:pk>/delete', SeminarDeleteView.as_view(), name='delete'),
+    path('<int:pk>/edit', SeminarEditView.as_view(), name='edit'),
 ]
