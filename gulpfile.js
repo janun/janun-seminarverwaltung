@@ -8,6 +8,7 @@ var gulp = require('gulp'),
       pjson = require('./package.json'),
       gutil = require('gulp-util'),
       sass = require('gulp-sass'),
+      sassGlob = require('gulp-sass-glob');
       autoprefixer = require('gulp-autoprefixer'),
       cssnano = require('gulp-cssnano'),
 
@@ -50,12 +51,8 @@ var paths = pathsConfig();
 // Styles autoprefixing and minification
 gulp.task('styles', function() {
   return gulp.src(paths.sass + '/project.scss')
-    .pipe(sass({
-      includePaths: [
-
-        paths.sass
-      ]
-    }).on('error', sass.logError))
+    .pipe(sassGlob())
+    .pipe(sass({includePaths: [paths.sass]}).on('error', sass.logError))
     .pipe(plumber()) // Checks for errors
     .pipe(autoprefixer({browsers: ['last 2 versions']})) // Adds vendor prefixes
     .pipe(pixrem())  // add fallbacks for rem units

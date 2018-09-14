@@ -8,16 +8,16 @@
 {% block content %}
 <a class="backlink" href="{% url 'groups:list' %}">← Alle Gruppen</a>
 
-<div class="cleafix">
+<div>
   <div class="float-right">
     {% has_perm 'groups.edit_janungroup' user object as can_edit %}
     {% if can_edit %}
-      <a class="button" href="{% url 'groups:edit' object.id %}">Gruppe bearbeiten</a>
+      <a class="button float-right" href="{% url 'groups:edit' object.id %}">Gruppe bearbeiten</a>
     {% endif %}
     <br>
     {% has_perm 'groups.delete_janungroup' user object as can_delete %}
     {% if can_delete %}
-      <a class="button button-danger" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
+      <a class="button button-danger float-right" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
     {% endif %}
   </div>
 
@@ -32,13 +32,9 @@
 </div>
 
 
-
-<div class="margin-top-60 margin-bottom-60">
-  <p>Mitglieder: {{ object.members.all|link_list|default:"niemand" }}</p>
-  <p>Gruppenhut: {{ object.group_hats.all|link_list|default:"niemand" }}</p>
-</div>
-
-<div class="margin-top-60 margin-bottom-60">
+<div class="margin-top-30">
+  <p><strong>Mitglieder:</strong> {{ object.members.all|link_list|default:"niemand" }}</p>
+  <p><strong>Gruppenhut:</strong> {{ object.group_hats.all|link_list|default:"niemand" }}</p>
   {% if object.homepage %}
     <p><strong>Homepage:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>
   {% endif %}
@@ -48,32 +44,31 @@
   {% if object.address %}
     <p><strong>Postadresse:</strong><br> {{ object.address|linebreaksbr }}</p>
   {% endif %}
-
-
-  <div class="margin-top-60">
-    <h3>Kontaktpersonen</h3>
-    {% if contact_people %}
-      <ul style="padding:0">
-      {% for person in contact_people %}
-        <li style="list-style: none;margin:0">
-          {{ person.name }},
-          {% if person.email %}
-            <a href="mailto:{{ person.email }}">{{ person.email }}</a>,
-          {% endif %}
-          {% if person.phone %}
-            <a href="{{ person.phone.as_rfc3966 }}">{{ person.phone.as_national }}</a>
-          {% endif %}
-        </li>
-      {% endfor %}
-      </ul>
-    {% else %}
-      <p>Keine eingetragen 😢<br>
-        <a href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
-      </p>
-    {% endif %}
-  </div>
-
 </div>
+
+<div class="margin-top-60 margin-bottom-60">
+  <h3>Kontaktpersonen</h3>
+  {% if contact_people %}
+    <ul style="padding:0">
+    {% for person in contact_people %}
+      <li style="list-style: none;margin:0">
+        {{ person.name }},
+        {% if person.email %}
+          <a href="mailto:{{ person.email }}">{{ person.email }}</a>,
+        {% endif %}
+        {% if person.phone %}
+          <a href="{{ person.phone.as_rfc3966 }}">{{ person.phone.as_national }}</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>Keine eingetragen 😢<br>
+      <a href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
+    </p>
+  {% endif %}
+</div>
+
 
 {% if seminars %}
   <div class="clearfix">

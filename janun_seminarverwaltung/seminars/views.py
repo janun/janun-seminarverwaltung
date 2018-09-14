@@ -27,7 +27,7 @@ class SeminarListView(SingleTableMixin, FilterView):
     table_class = SeminarTable
     filterset_class = SeminarFilter
     template_name = "seminars/seminar_list.html"
-    paginate_by = 50
+    paginate_by = 25
     strict = False
 
     def __init__(self, *args, **kwargs):
@@ -78,7 +78,8 @@ class SeminarEditView(PermissionRequiredMixin, UpdateView):
     model = Seminar
     permission_required = 'seminars.edit_seminar'
     raise_exception = True
-    fields = ['title', 'start', 'end', 'location']
+    fields = ('title', 'start', 'end', 'location', 'content',
+              'planned_training_days', 'planned_attendees', 'requested_funding', 'group')
     template_name_suffix = '_edit_form'
 
 

@@ -40,16 +40,12 @@
 
 {% include "seminars/_state.html" %}
 
+
 <div class="panel clearfix">
-
-
-  <strong>Titel:</strong>
-  <p>{{ object.title }}</p><br>
-
   <strong>Beschreibung:</strong>
   <p>{{ object.content }}</p>
 
-    <a class="button button--blue float-right" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
+  <a class="button button--blue float-right" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
 </div>
 
 

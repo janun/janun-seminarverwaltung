@@ -1,22 +1,2 @@
-@import 'settings';
-@import 'mixins/shadows.scss';
-@import 'utils';
-
-@import 'base';
-@import 'container';
-@import 'navbar';
-@import 'headings';
-@import 'alert';
-@import 'button';
-@import 'form';
-@import 'backlink';
-@import 'card';
-@import 'table';
-@import 'section';
-@import 'round-image';
-@import 'wizard';
-@import 'seminar-state';
-@import 'panel';
-@import 'filter-form';
-@import 'comments';
-@import 'footer';
+@import './_*';
+@import './*';

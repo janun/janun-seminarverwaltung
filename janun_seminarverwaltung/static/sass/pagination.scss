@@ -1,0 +1,28 @@
+.pagination {
+  margin-top: 60px;
+  padding: 0;
+  text-align: center;
+  li {
+    display: inline-block;
+
+    a {
+      background-color: white;
+      border-radius: 50px;
+      padding: 15px 30px;
+      @include shadow(1);
+
+      &:hover {
+        background-color: rgba(black, 0.05)
+      }
+    }
+
+    &.active a {
+      background-color: $blue;
+      color: white;
+    }
+  }
+
+  li+li {
+    margin-left: 15px;
+  }
+}
