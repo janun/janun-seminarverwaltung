@@ -276,9 +276,18 @@ STRONGHOLD_PUBLIC_NAMED_URLS = (
     'account_login',
     'account_signup',
     'account_logout',
+    'account_change_password',
+    'account_set_password',
     'account_inactive',
     'account_email_verification_sent',
     'account_confirm_email',
+    'account_reset_password',
+    'account_reset_password_done',
+    'account_reset_password_from_key', # some keys not working, see below
+    'account_reset_password_from_key_done',
+)
+STRONGHOLD_PUBLIC_URLS = (
+    r'^/accounts/password/reset/key/.*$',
 )
 
 
