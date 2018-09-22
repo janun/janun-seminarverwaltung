@@ -15,10 +15,8 @@ class UserTable(tables.Table):
         verbose_name="",
     )
     name = tables.Column(linkify=True)
-    groups = tables.TemplateColumn(
-        """{{ record.get_groups|join:"," }}""",
-        verbose_name="Gruppen",
-        orderable=False,
+    groups = tables.ManyToManyColumn(
+        accessor=A('get_groups'), linkify_item=True, verbose_name="Gruppen"
     )
 
     class Meta:

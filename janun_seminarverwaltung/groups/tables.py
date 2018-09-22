@@ -15,7 +15,7 @@ class JANUNGroupTable(tables.Table):
         verbose_name=""
     )
     name = tables.LinkColumn('groups:detail', args=[A('pk')])
-    group_hats = tables.ManyToManyColumn()
+    group_hats = tables.ManyToManyColumn(linkify_item=True)
 
     class Meta:
         model = JANUNGroup
