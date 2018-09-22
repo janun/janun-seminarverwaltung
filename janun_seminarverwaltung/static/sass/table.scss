@@ -57,6 +57,12 @@
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 300px;
+
+    a {
+      display: inline-block;
+      height: 60px;
+      line-height: 60px;
+    }
   }
 
   &__img {
