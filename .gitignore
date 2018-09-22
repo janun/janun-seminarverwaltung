@@ -56,6 +56,10 @@ staticfiles/
 # Output of css compilation
 janun_seminarverwaltung/static/css/*.css
 
+# Output of js minification
+janun_seminarverwaltung/static/js/*.min.js
+
+
 # Sphinx documentation
 docs/_build/
 
