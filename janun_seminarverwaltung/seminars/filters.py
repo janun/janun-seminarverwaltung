@@ -69,6 +69,10 @@ class SeminarFilter(django_filters.FilterSet):
         method=filter_timing
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filters['title'].field.widget.attrs['autofocus'] = True
+
     class Meta:
         model = Seminar
         fields = ['title', 'start_year', 'start_quarter', 'group', 'author', 'state']
