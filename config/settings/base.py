@@ -59,7 +59,7 @@ DJANGO_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.humanize', # Handy template tags
+    'django.contrib.humanize',
     'django.contrib.admin',
 ]
 THIRD_PARTY_APPS = [
@@ -74,7 +74,6 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_filters',
     'stronghold',
-    'django_comments',
     'phonenumber_field',
 ]
 LOCAL_APPS = [

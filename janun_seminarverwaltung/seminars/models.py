@@ -424,3 +424,31 @@ rules.add_perm('seminars.can_nach_pruefen',     is_verwalter | has_group_hat_for
 rules.add_perm('seminars.can_fertigen',         is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_ueberweisen',      is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_unmoeglichen',     is_verwalter | has_group_hat_for_seminar)
+
+
+
+class SeminarComment(TimeStampedModel, models.Model):
+    seminar = models.ForeignKey(
+        Seminar,
+        related_name="comments",
+        verbose_name="Seminar",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="comments",
+        verbose_name="Autor",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    comment = models.TextField("Kommentartext")
+
+
+@rules.predicate
+def is_comment_author(user, comment):
+    if comment:
+        return comment.author == user
+    return False
+
+
+rules.add_perm('seminars.delete_seminar_comment', is_verwalter | is_comment_author)

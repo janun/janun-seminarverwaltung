@@ -1,56 +1,49 @@
-{% load comments %}
 {% load rules %}
+{% load humanize %}
 
 <div style="margin-top: 180px;"></div>
 
-<h3 class="margin-bottom-30">Kommentare</h3>
-<div class="comment-form">
-  {% get_comment_form for object as form %}
-  <form action="{% comment_form_target %}" method="POST">
+<h3 id="comments" class="margin-bottom-30">Kommentare</h3>
+<div class="comment-form clearfix">
+  <form action="{% url 'seminars:create_comment' object.pk %}" method="POST">
     {% csrf_token %}
-    {{ form.comment }}
-    {{ form.content_type }}
-    {{ form.object_pk }}
-    {{ form.timestamp }}
-    {{ form.security_hash }}
-    <input type="hidden" name="next" value="{% url 'seminars:detail' object.id %}#comments" />
-    <input type="submit" class="button button-primary" value="Kommentieren" id="id_submit" />
+    {{ comment_form }}
+    <input type="submit" class="button button-primary float-right" value="Kommentieren" id="id_submit_comment" />
   </form>
 </div>
 
 <script>
   // enable/disable submit button on textarea input
-  var button = document.getElementById('id_submit');
-  button.disabled = true;
+  var button = document.getElementById('id_submit_comment');
   var comment = document.getElementById('id_comment');
-  comment.addEventListener("input", function() {
-    if (comment.value !== "") {
-      button.disabled = false;
-    } else {
-      button.disabled = true;
-    }
-  });
+  function checkComment() {
+    button.disabled = (comment.value === "");
+  }
+  comment.addEventListener("input", checkComment);
+  checkComment();
 </script>
 
-{% get_comment_list for object as comment_list %}
-{% if comment_list %}
+{% if comments %}
   <div id="comments" class="comment-list">
-      {% for comment in comment_list reversed %}
+      {% for comment in comments reversed %}
+
         <div>
           <div id="c{{ comment.id }}" class="comment">
             <span class="comment__meta">
-              <span>{{ comment.submit_date|date:"SHORT_DATETIME_FORMAT" }}</span>,
-              <a href="{{ comment.user.get_absolute_url }}">{{ comment.user.name }}</a>
-              {% has_perm 'django_comments.can_moderate' user comment as can_moderate %}
-              {% if can_moderate %}
+              <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">
+                {{ comment.created|naturaltime }}</time>
+              von <a href="{{ comment.author.get_absolute_url }}">{{ comment.author.name }}</a>
+              {% has_perm 'seminars.delete_seminar_comment' user comment as can_delete %}
+              {% if can_delete %}
                 <span class="float-right">
-                  <a href="{% url 'comments-delete' comment.id %}"?next="{% url 'seminars:detail' object.id %}">Löschen</a>
+                  <a href="{% url 'seminars:delete_comment' seminar.pk comment.pk %}">Löschen</a>
                 </span>
               {% endif %}
             </span>
-            <p class="comment__text">{{ comment.comment }}</p>
+            <p class="comment__text">{{ comment.comment|linebreaksbr }}</p>
           </div>
         </div>
+
       {% endfor %}
   </div>
 {% else %}

@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
-from django.views.generic import DetailView, DeleteView, UpdateView
+from django.views.generic import DetailView, DeleteView, UpdateView, CreateView
 from django.views.generic.detail import SingleObjectMixin
-from django.shortcuts import HttpResponseRedirect, Http404
+from django.shortcuts import HttpResponseRedirect, Http404, get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -15,7 +15,7 @@ from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
 from django_fsm import has_transition_perm
 
-from seminars.models import Seminar
+from seminars.models import Seminar, SeminarComment
 from seminars.tables import SeminarTable
 from seminars.filters import SeminarFilter
 import seminars.forms as seminar_forms
@@ -71,6 +71,44 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
+        context['comments'] = self.object.comments.all()
+        context['comment_form'] = seminar_forms.SeminarCommentForm()
+        return context
+
+
+class SeminarCommentCreateView(CreateView):
+    model = SeminarComment
+    form_class = seminar_forms.SeminarCommentForm
+
+    def form_valid(self, form):
+        get_object_or_404(Seminar, pk=self.kwargs['pk'])
+        form.instance.seminar_id = self.kwargs['pk']
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse_lazy('seminars:detail', kwargs={'pk': self.kwargs['pk']}) + "#comments"
+        )
+
+    def get_success_url(self):
+        return reverse_lazy('seminars:detail', kwargs={'pk': self.kwargs['pk']}) + "#comments"
+
+
+class SeminarCommentDeleteView(PermissionRequiredMixin, DeleteView):
+    model = SeminarComment
+    permission_required = 'seminars.delete_seminar_comment'
+    raise_exception = True
+    permission_required = 'seminars.delete_seminar'
+    raise_exception = True
+
+    def get_success_url(self):
+        return reverse_lazy('seminars:detail', kwargs={'pk': self.kwargs['seminar_pk']}) + "#comments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['seminar'] = get_object_or_404(Seminar, pk=self.kwargs['seminar_pk'])
+        context['comment'] = context['object']
         return context
 
 

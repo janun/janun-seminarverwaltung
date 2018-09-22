@@ -1,6 +1,5 @@
 .comment-form {
-  // margin-top: 180px;
-  margin-bottom: 90px;
+  margin-bottom: 30px;
   width: 100%;
 
   textarea {
@@ -8,16 +7,12 @@
     border: 1px solid $lightgrey;
     background-color: inherit;
     width: 100%;
-    height: 120px;
+    max-width: 660px;
     padding: 10px;
     font-size: inherit;
     color: inherit;
     font-family: inherit;
     margin-bottom: 15px;
-  }
-
-  input[type="submit"] {
-    float: right;
   }
 }
 
@@ -31,6 +26,8 @@
 
   &__text {
     margin-top: 5px;
+    width: 100%;
+    max-width: 640px;
   }
 
   &__meta {
@@ -39,5 +36,10 @@
     a {
       color: $grey;
     }
+  }
+
+  &--quoted {
+    padding-left: 15px;
+    border-left: 6px solid rgba($blue, 0.5);
   }
 }

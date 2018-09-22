@@ -4,7 +4,17 @@ from django import forms
 from django.conf import settings
 from django.utils import timezone
 
-from seminars.models import Seminar
+from seminars.models import Seminar, SeminarComment
+
+
+class SeminarCommentForm(forms.ModelForm):
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Dein Kommentar"}),
+        label='',
+    )
+    class Meta:
+        model = SeminarComment
+        fields = ('comment',)
 
 
 class SeminarStepForm(forms.ModelForm):

@@ -28,7 +28,7 @@
           {% for step_name, step_form in steps.items %}
             <li class="{% if wizard.steps.current == step_name %}wizard__steps--active{% endif %}
                        {% if step_form.is_valid %}wizard__steps--valid{% endif %}">
-              <button class="btn-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">
+              <button class="button-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">
                 {{ step_form.Meta.short_title }}
               </button>
             </li>
