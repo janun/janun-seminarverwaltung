@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ block.super }} JANUN-Gruppe bearbeiten{% endblock %}
+{% block title %}{{ block.super }} {{ object.name }} bearbeiten{% endblock %}
 
 {% block content %}
 <a class="backlink" href="{% url 'groups:detail' object.pk %}">← {{ object.name }}</a>
 
-<h1>JANUN-Gruppe {{ object.name }} bearbeiten</h1>
+<h1>{{ object.name }} bearbeiten</h1>
 {% include "groups/_form.html" %}
 
 {% endblock %}
