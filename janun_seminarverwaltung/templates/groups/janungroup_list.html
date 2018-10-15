@@ -2,6 +2,7 @@
 
 {% load rules %}
 {% load django_tables2 %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
@@ -14,6 +15,16 @@
     <a href="{% url 'groups:create' %}" class="float-right button button-primary">Gruppe hinzufügen</a>
   {% endif %}
 </div>
+
+{% if filter %}
+<form class="filter-form" action="" method="get">
+  {{ filter.form|crispy }}
+  <div class="filter-form__buttons">
+    <button class="button button-primary" type="submit">Suche</button>
+    <a href="?" class="button button" type="submit">zurücksetzen</a>
+  </div>
+</form>
+{% endif %}
 
 {% render_table table %}
 {% endblock %}

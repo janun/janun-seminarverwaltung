@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} {{ object.name }} löschen?{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'users:detail' object.username %}">← {{ object.name }}</a>
+
+<form class="alert" method="post">
+  {% csrf_token %}
+  <p>Möchtest Du wirklich Benutzer_in <strong>{{ object }}</strong> löschen?</p>
+  <a class="button" href="{% url 'users:detail' object.username %}">Abbrechen</a>
+  <input class="button button-danger" type="submit" value="{{ object }} löschen" />
+</form>
+
+{% endblock %}

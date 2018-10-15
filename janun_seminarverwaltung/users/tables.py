@@ -18,11 +18,17 @@ class UserTable(tables.Table):
     groups = tables.ManyToManyColumn(
         accessor=A('get_groups'), linkify_item=True, verbose_name="Gruppen"
     )
+    last_login = tables.TemplateColumn(
+        """{% load humanize %}
+        <time datetime="{{ value|date:'c' }}" title="{{ value|date:"DATETIME_FORMAT" }}">
+            {{ value|naturaltime|default:"noch nie" }}
+        </time>"""
+    )
 
     class Meta:
         model = User
         fields = [
-            'avatar', 'name', 'role', 'groups'
+            'avatar', 'name', 'role', 'groups', 'last_login', 'is_active'
         ]
         attrs = {
             'class': 'table',

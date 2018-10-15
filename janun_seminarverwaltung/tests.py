@@ -22,7 +22,8 @@ class ValidationErrorTestMixin(object):
 class TestCase(ValidationErrorTestMixin, PlusTestCase):
 
     def make_user(self, username='testuser', password='password', perms=None, role=None):
-        user = super().make_user(username, password, perms)
+        email = username + "@example.com"
+        user = super().make_user(username, password, perms=perms)
         if role:
             user.role = role
             user.save()

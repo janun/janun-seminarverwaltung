@@ -63,5 +63,5 @@ def has_group_hat(user, group):
 rules.add_perm('groups.can_see_all_janungroups', is_verwalter)
 rules.add_perm('groups.detail_janungroup', is_verwalter | is_member | has_group_hat)
 rules.add_perm('groups.add_janungroup', is_verwalter)
-rules.add_perm('groups.edit_janungroup', is_verwalter | is_member | has_group_hat)
+rules.add_perm('groups.change_janungroup', is_verwalter | is_member | has_group_hat)
 rules.add_perm('groups.delete_janungroup', is_verwalter)

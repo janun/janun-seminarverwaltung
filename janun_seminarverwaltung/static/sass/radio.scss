@@ -1,0 +1,42 @@
+.radio {
+  &__label {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    padding-left: 40px;
+    line-height: 40px;
+    cursor: pointer;
+
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 30px;
+      height: 30px;
+      border: 2px solid $lightgrey;
+      border-radius: 50%;
+    }
+
+    &:after {
+      display: none;
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 13px;
+      width: 14px;
+      height: 14px;
+      background-color: $green;
+      border-radius: 50%;
+    }
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  &__input:checked ~ &__label:after {
+    display: inline-block;
+  }
+}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ block.super }} Benutzer_in hinzufügen{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
+
+<h1>Benutzer_in hinzufügen</h1>
+
+<div class="panel">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class="button button-primary" type="submit" value="Speichern" />
+  </form>
+</div>
+
+{% endblock %}

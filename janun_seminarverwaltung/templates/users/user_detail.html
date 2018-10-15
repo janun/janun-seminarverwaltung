@@ -1,10 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
+{% load rules %}
+{% load humanize %}
 
 {% block title %}{{ block.super }}  {{ object.name }}{% endblock %}
 
 {% block content %}
-<a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer</a>
+
+{% has_perm 'users.see_all_users' request.user object as can_see_all %}
+{% if can_see_all %}
+  <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
+{% endif %}
+
+<div class="float-right">
+  {% has_perm 'users.change_user' request.user object as can_edit %}
+  {% if can_edit %}
+    <a class="button float-right" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
+  {% endif %}
+  <br>
+  {% has_perm 'users.delete_user' request.user object as can_delete %}
+  {% if can_delete %}
+    <a class="button button-danger float-right" href="{% url 'users:delete' object.pk %}">löschen</a>
+  {% endif %}
+</div>
+
 
 <div style="display: flex; align-items: center;">
   {% if object.avatar %}
@@ -20,6 +39,17 @@
   <p>E-Mail: <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
 </div>
 
+<p>
+    Letzte Anmeldung:
+    <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
+        {{ object.last_login|naturaltime|default:"noch nie" }}
+    </time><br>
+    Account besteht seit:
+    <time datetime="{{ object.date_joined|date:'c' }}" title="{{ object.date_joined|date:"DATETIME_FORMAT" }}">
+        {{ object.date_joined }}
+    </time>
+</p>
+
 {% if groups %}
 <div class="section margin-top-60">
   <h2>Gruppen</h2>
@@ -27,20 +57,6 @@
     {% include "groups/_group.html" with object=group %}
   {% endfor %}
 </div>
-{% endif %}
-
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
 {% endif %}
 
 

@@ -9,6 +9,10 @@ $footer-height: 200px;
   text-align: center;
   padding: 30px 10px;
   margin-top: 60px;
+
+  p {
+    max-width: 100%;
+  }
 }
 
 html {

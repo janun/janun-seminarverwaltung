@@ -1,31 +1,57 @@
+.form {
+  &__optional {
+    font-weight: normal;
+    font-size: 16px;
+    color: $grey;
+  }
+
+  &__helptext {
+    display: block;
+    font-size: 16px;
+    color: $grey;
+    margin-bottom: 5px;
+    margin-top: -3px;
+    ul { margin: 0; }
+
+    &--bottom {
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+  }
+}
+
+
 .form-group {
-  margin-bottom: 30px;
+  margin-bottom: 45px;
 }
 
 .multiField {
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
-
-  .form-check {
-    margin-top: 55px;
-  }
+  flex-wrap: wrap;
 }
 
-.form-control, .numberinput {
+input, select, textarea {
   font-size: inherit;
   font-family: inherit;
   border: 1px solid #ccc;
-  border-radius: 2px;
+  border-radius: 5px;
   padding: 10px 15px;
   background: white;
   color: inherit;
+  max-width: 100%;
+  background-color: rgba(black, 0.015);
+
+  &:focus {
+    @include shadow(1);
+  }
 }
 
-.col-form-label {
+label {
   display: inline-block;
   padding-bottom: 5px;
-  color: inherit;
+  color: $brown;
   font-weight: bold;
 }
 
@@ -33,4 +59,50 @@
   margin-bottom: 10px;
   font-size: 16px;
   color: $red;
+}
+
+.timeinput {
+  width: 100px;
+}
+.dateinput {
+  width: 150px;
+}
+.numberinput {
+  width: 150px;
+}
+.textinput, .textarea {
+  width: 100%;
+  max-width: 640px;
+}
+.urlinput, .emailinput {
+  width: 100%;
+  max-width: 480px;
+}
+
+[name=username] {
+  width: 100%;
+  max-width: 320px;
+}
+
+.password-wrapper {
+  position: relative;
+  [data-password-toggle] {
+    font-size: 16px;
+    color: $grey;
+    position: absolute;
+    right: 10px;
+    bottom: 1px;
+  }
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 60px;
+}
+
+legend {
+  @extend h2;
+  margin-bottom: 30px;
 }

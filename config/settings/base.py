@@ -61,6 +61,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
+    'django.forms',
 ]
 THIRD_PARTY_APPS = [
     'crispy_forms',
@@ -122,6 +123,7 @@ PASSWORD_HASHERS = [
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {'user_attributes': ('username', 'name', 'email')}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -208,8 +210,12 @@ TEMPLATES = [
         },
     },
 ]
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'janunforms'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('janunforms',)
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -287,6 +293,7 @@ STRONGHOLD_PUBLIC_NAMED_URLS = (
 )
 STRONGHOLD_PUBLIC_URLS = (
     r'^/accounts/password/reset/key/.*$',
+    r'^/accounts/confirm-email/.*$'
 )
 
 
@@ -299,13 +306,31 @@ SEMINAR_POLICY_URL = env(
 )
 
 
-from django.conf.locale.de.formats import DATETIME_INPUT_FORMATS
+from django.conf.locale.de.formats import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
 
-DATETIME_INPUT_FORMATS += [
+DATETIME_INPUT_FORMATS = [
+    '%d.%m.%Y %H:%M',        # '25.10.2006 14:30'
+] + DATETIME_INPUT_FORMATS + [
     '%d.%m.%y %H:%M:%S',     # '25.10.06 14:30:59'
     '%d.%m.%y %H:%M:%S.%f',  # '25.10.06 14:30:59.000200'
     '%d.%m.%y %H:%M',        # '25.10.06 14:30'
+    '%d.%m.%y %H.%M',        # '25.10.06 14.30'
     '%d.%m.%y',              # '25.10.06'
+]
+
+DATE_INPUT_FORMATS += [
+    '%d.%m.%y',
+]
+
+TIME_INPUT_FORMATS = [
+    '%H:%M',        # '14:30'
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M:%S.%f',  # '14:30:59.000200'
+    '%H.%M',        # '14.30'
+    '%H.%M Uhr',    # '14.30 Uhr'
+    '%H.%M h',      # '14.30 h'
+    '%H.%MUhr',     # '14.30Uhr'
+    '%H.%Mh',       # '14.30h'
 ]
 
 PHONENUMBER_DEFAULT_REGION = 'DE'

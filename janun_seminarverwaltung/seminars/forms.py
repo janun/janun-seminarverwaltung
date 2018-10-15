@@ -3,8 +3,21 @@ from datetime import timedelta
 from django import forms
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
 
 from seminars.models import Seminar, SeminarComment
+
+
+class SeminarChangeForm(forms.ModelForm):
+    class Meta:
+        model = Seminar
+        fields = ('title', 'start', 'end', 'location', 'content',
+                  'planned_training_days', 'planned_attendees', 'requested_funding', 'group')
+        field_classes = {
+            'start': forms.SplitDateTimeField,
+            'end': forms.SplitDateTimeField
+        }
 
 
 class SeminarCommentForm(forms.ModelForm):
@@ -37,6 +50,8 @@ class ContentSeminarForm(SeminarStepForm):
 
 
 class DatetimeSeminarForm(SeminarStepForm):
+    start = forms.SplitDateTimeField(label="Von")
+    end = forms.SplitDateTimeField(label="Bis")
 
     def clean_start(self):
         start = self.cleaned_data['start']
@@ -48,9 +63,10 @@ class DatetimeSeminarForm(SeminarStepForm):
         title = "Wann findet Dein Seminar statt?"
         short_title = "Datum"
         fields = ('start', 'end')
-        help_texts = {
-            'start': "Bsp.: 1.4.19 10:00"
-        }
+        # field_classes = {
+        #     'start': forms.SplitDateTimeField,
+        #     'end': forms.SplitDateTimeField,
+        # }
 
 
 class LocationSeminarForm(SeminarStepForm):
@@ -75,18 +91,41 @@ class AttendeesSeminarForm(SeminarStepForm):
 
 
 class GroupSeminarForm(SeminarStepForm):
+    has_group = forms.TypedChoiceField(
+        label="",
+        coerce=lambda x: x == 'True',
+        choices=(
+            (False, "Nein, Anmeldung als Einzelperson"),
+            (True, "Ja, für folgende Gruppe:"),
+        ),
+        widget=forms.RadioSelect
+    )
+
     def __init__(self, *args, **kwargs):
         user = kwargs.get('user')
         if user.janun_groups.count() == 1:
             kwargs['initial']['group'] = user.janun_groups.get()
+        kwargs['initial']['has_group'] = user.janun_groups.exists()
         super().__init__(*args, **kwargs)
         if user.role == 'TEAMER':
             self.fields['group'].queryset = user.janun_groups
+        self.fields['group'].empty_label = None
+
+    def clean(self):
+        cleaned_data = super().clean()
+        has_group = cleaned_data.get('has_group')
+        group = cleaned_data.get('group')
+        if has_group and not group:
+            self.add_error('group', "Du musst eine Gruppe auswählen.")
+        if has_group and self.user.role == 'TEAMER' and not self.user.janun_groups.exists():
+            self.add_error('has_group', "Du musst Mitglied in einer Gruppe sein.")
+        if not has_group:
+            cleaned_data['group'] = None
 
     class Meta(SeminarStepForm.Meta):
         title = "Meldest Du das Seminar für eine JANUN-Gruppe an?"
         short_title = "Gruppe"
-        fields = ('group',)
+        fields = ('has_group', 'group')
 
 
 class FundingSeminarForm(SeminarStepForm):
@@ -105,7 +144,7 @@ class BarrierSeminarForm(SeminarStepForm):
 
 class ConfirmSeminarForm(SeminarStepForm):
     confirm_policy = forms.BooleanField(
-        label="Ich habe die <a href='%s'>Seminarabrechnungsrichtlinie</a> gelesen." % settings.SEMINAR_POLICY_URL,
+        label="Ich habe die <a target=\"_blank\" href=\"{}\">Seminarabrechnungsrichtlinie</a> gelesen.".format(settings.SEMINAR_POLICY_URL),
         required=True,
     )
 
@@ -118,7 +157,7 @@ class ConfirmSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         if self.instance.requested_funding:
             self.fields['confirm_funding'] = forms.BooleanField(
-                label="Ich möchte die <b>Förderung von %s €</b> beantragen." % self.instance.requested_funding,
+                label="Ich möchte die <b>Förderung von {} €</b> beantragen.".format(self.instance.requested_funding),
                 required=True,
             )
 

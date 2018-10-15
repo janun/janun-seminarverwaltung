@@ -59,13 +59,16 @@ class Seminar(TimeStampedModel, models.Model):
             return 'red'
         return 'green'
 
-    title = models.CharField("Titel", max_length=255, unique_for_date="start")
+    title = models.CharField(
+        "Titel", max_length=255, unique_for_date="start",
+        help_text="Beschreib oder bennene Dein Seminar in wenigen Worten"
+    )
     content = models.TextField(
         "Inhalt",
-        help_text="Welche Inhalte werden in Deinem Seminar vermittelt?",
+        help_text="Um was genau geht es in Deinem Seminar?<br>Welche Inhalte werden in Deinem Seminar vermittelt?",
     )
-    start = models.DateTimeField("Startzeit")
-    end = models.DateTimeField("Endzeit")
+    start = models.DateTimeField("Anfang")
+    end = models.DateTimeField("Ende")
     location = models.CharField("Ort", max_length=255)
     planned_training_days = models.PositiveSmallIntegerField("Anzahl Bildungstage")
     planned_attendees = IntegerRangeField("Anzahl Teilnehmende")
@@ -379,22 +382,16 @@ def is_seminar_author(user, seminar):
     if seminar:
         return seminar.author == user
     return False
-
-
 @rules.predicate
 def has_group_hat_for_seminar(user, seminar):
     if seminar:
         return seminar.group in user.group_hats.all()
     return False
-
-
 @rules.predicate
 def has_janun_group_for_seminar(user, seminar):
     if seminar:
         return seminar.group in user.janun_groups.all()
     return False
-
-
 @rules.predicate
 def just_created(user, seminar):
     if seminar:

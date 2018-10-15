@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }} {{ object }} bearbeiten{% endblock %}
+
+{% block content %}
+<a class="backlink" href="{{ object.get_absolute_url }}">← {{ object }}</a>
+
+<h1>{{ object }} bearbeiten</h1>
+
+{% include "users/_form.html" %}
+{% endblock %}

@@ -2,11 +2,25 @@
 
 {% load static i18n %}
 {% load django_tables2 %}
+{% load crispy_forms_tags %}
 
-{% block title %}{{ block.super }} Benutzer{% endblock %}
+{% block title %}{{ block.super }} Benutzer_innen{% endblock %}
 
 {% block content %}
-<h2>Benutzer ({{ object_list|length }})</h2>
+<div class="clearfix">
+  <h1 class="float-left">Benutzer_innen ({{ object_list|length }})</h1>
+  <a class="button button-primary float-right" href="{% url 'users:create' %}">Hinzufügen</a>
+</div>
 
-{% render_table table %}
+<form class="filter-form" action="" method="get">
+  {{ filter.form|crispy }}
+  <div class="filter-form__buttons">
+    <button class="button button-primary" type="submit">Suche</button>
+    <a href="?" class="button button" type="submit">zurücksetzen</a>
+  </div>
+</form>
+
+<div class="table-wrapper">
+  {% render_table table %}
+</div>
 {% endblock content %}

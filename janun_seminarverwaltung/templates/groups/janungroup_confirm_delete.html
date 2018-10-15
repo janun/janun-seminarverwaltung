@@ -7,9 +7,9 @@
 
 <form class="alert" method="post">
   {% csrf_token %}
-  <p>Möchtest Du wirklich die JANUN-Gruppe „{{ object }}“ löschen?</p>
+  <p>Möchtest Du wirklich die JANUN-Gruppe <strong>{{ object }}</strong> löschen?</p>
   <a class="button" href="{% url 'groups:detail' object.id %}">Abbrechen</a>
-  <input class="button button-danger" type="submit" value="Ja, löschen" />
+  <input class="button button-danger" type="submit" value="{{ object }} löschen" />
 </form>
 
 {% endblock %}

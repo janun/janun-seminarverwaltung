@@ -114,10 +114,9 @@ class SeminarCommentDeleteView(PermissionRequiredMixin, DeleteView):
 
 class SeminarEditView(PermissionRequiredMixin, UpdateView):
     model = Seminar
-    permission_required = 'seminars.edit_seminar'
+    permission_required = 'seminars.change_seminar'
     raise_exception = True
-    fields = ('title', 'start', 'end', 'location', 'content',
-              'planned_training_days', 'planned_attendees', 'requested_funding', 'group')
+    form_class = seminar_forms.SeminarChangeForm
     template_name_suffix = '_edit_form'
 
 

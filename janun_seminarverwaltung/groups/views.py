@@ -4,18 +4,24 @@ from django.shortcuts import HttpResponseRedirect
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import PrefetchRelatedMixin
-from django_tables2 import SingleTableView
+from django_tables2.views import SingleTableMixin
+from django_filters.views import FilterView
 
 from seminars.models import Seminar
 
 from groups.models import JANUNGroup, ContactPerson
 from .tables import JANUNGroupTable
 from .forms import JANUNGroupForm, ContactPeopleInlineFormSet
+from .filters import JANUNGroupFilter
 
 
-class JANUNGroupListView(SingleTableView):
+class JANUNGroupListView(SingleTableMixin, FilterView):
     model = JANUNGroup
     table_class = JANUNGroupTable
+    filterset_class = JANUNGroupFilter
+    template_name = "groups/janungroup_list.html"
+    paginate_by = 30
+    strict = False
 
     def get_queryset(self):
         if self.request.user.role == "TEAMER":
@@ -88,7 +94,7 @@ class JANUNGroupDeleteView(PermissionRequiredMixin, DeleteView):
 class JANUNGroupUpdateView(PermissionRequiredMixin, UpdateView):
     model = JANUNGroup
     form_class = JANUNGroupForm
-    permission_required = 'groups.edit_janungroup'
+    permission_required = 'groups.change_janungroup'
     raise_exception = True
     template_name_suffix = '_edit'
 

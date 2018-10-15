@@ -7,6 +7,10 @@
   font-size: 18px;
   color: $darkgrey;
 
+  .form__optional {
+    display: none;
+  }
+
   &__buttons {
     display: block;
   }

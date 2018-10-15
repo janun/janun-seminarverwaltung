@@ -1,0 +1,31 @@
+{% extends "seminars/seminar_wizard.html" %}
+
+{% block after_form %}
+  <style>
+    #div_id_group-group .form__optional {
+      display: none;
+    }
+  </style>
+  <script>
+    var groupDiv = document.getElementById('div_id_group-group');
+    var hasGroup = document.getElementById('id_id_group-has_group_0_2');
+    var hasNoGroup = document.getElementById('id_id_group-has_group_0_1');
+
+    function toggleGroup(hasGroup) {
+      if (hasGroup) {
+        groupDiv.style.display = 'block';
+      } else {
+        groupDiv.style.display = 'none';
+      }
+    }
+
+    hasGroup.addEventListener('click', function (event) {
+      toggleGroup(true);
+    });
+    hasNoGroup.addEventListener('click', function (event) {
+      toggleGroup(false);
+    });
+
+    toggleGroup(hasGroup.checked);
+  </script>
+{% endblock %}

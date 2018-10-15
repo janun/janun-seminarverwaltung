@@ -7,7 +7,7 @@
 
 <form class="alert" method="post">
   {% csrf_token %}
-  <p>Möchtest Du wirklich das Seminar „{{ object }}“ löschen?</p>
+  <p>Möchtest Du wirklich das Seminar <strong>{{ object }}</strong> löschen?</p>
   <a class="button" href="{% url 'seminars:detail' object.id %}">Nein, abbrechen</a>
   <input class="button button-danger" type="submit" value="Ja, löschen" />
 </form>

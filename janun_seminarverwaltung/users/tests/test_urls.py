@@ -28,17 +28,17 @@ class TestUserURLs(TestCase):
     def test_detail_reverse(self):
         """users:detail should reverse to /users/testuser/."""
         self.assertEqual(
-            reverse("users:detail", kwargs={"username": "testuser"}), "/users/testuser/"
+            reverse("users:detail", kwargs={"pk": self.user.pk}), "/users/{}/".format(self.user.pk)
         )
 
     def test_detail_resolve(self):
         """/users/testuser/ should resolve to users:detail."""
-        self.assertEqual(resolve("/users/testuser/").view_name, "users:detail")
+        self.assertEqual(resolve("/users/{}/".format(self.user.pk)).view_name, "users:detail")
 
-    def test_update_reverse(self):
-        """users:update should reverse to /users/~update/."""
-        self.assertEqual(reverse("users:update"), "/users/~update/")
-
-    def test_update_resolve(self):
-        """/users/~update/ should resolve to users:update."""
-        self.assertEqual(resolve("/users/~update/").view_name, "users:update")
+    # def test_update_reverse(self):
+    #     """users:update should reverse to /users/~update/."""
+    #     self.assertEqual(reverse("users:update"), "/users/~update/")
+    #
+    # def test_update_resolve(self):
+    #     """/users/~update/ should resolve to users:update."""
+    #     self.assertEqual(resolve("/users/~update/").view_name, "users:update")
