@@ -5,7 +5,7 @@ from .models import Seminar
 
 class SeminarTable(tables.Table):
     title = tables.Column(linkify=True)
-    start = tables.DateColumn()
+    start_date = tables.DateColumn(verbose_name="Datum", format="D, d.m.y")
     created = tables.DateColumn()
     group = tables.Column(linkify=True)
     author = tables.Column(linkify=True)
@@ -14,7 +14,7 @@ class SeminarTable(tables.Table):
         model = Seminar
         # TODO: Förderbedarf, Teilnahmetage nach JFG
         fields = [
-            'title', 'start', 'group', 'author', 'state', 'created'
+            'title', 'start_date', 'group', 'author', 'state', 'created'
         ]
         attrs = {
             'class': 'table'
@@ -22,5 +22,5 @@ class SeminarTable(tables.Table):
         row_attrs = {
             'data-link': lambda record: record.get_absolute_url()
         }
-        order_by = "start"
+        order_by = "-start_date"
         empty_text = "Leider keine Seminare vorhanden."

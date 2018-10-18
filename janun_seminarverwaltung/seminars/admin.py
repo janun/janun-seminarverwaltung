@@ -44,8 +44,8 @@ class SeminarResource(resources.ModelResource):
     class Meta:
         model = Seminar
         widgets = {
-            'start': {'format': '%d.%m.%Y %H:%M'},
-            'end': {'format': '%d.%m.%Y %H:%M'},
+            'start_date': {'format': '%d.%m.%Y'},
+            'end_date': {'format': '%d.%m.%Y'},
             'author': {'model': 'users.User', 'field': 'username'},
             'group': {'model': 'groups.JANUNGroup', 'field': 'name'},
         }
@@ -53,9 +53,9 @@ class SeminarResource(resources.ModelResource):
 
 @admin.register(Seminar)
 class SeminarAdmin(FSMTransitionMixin, ImportExportMixin, admin.ModelAdmin):
-    list_display = ('title', 'start', 'group', 'author', 'state', 'created')
+    list_display = ('title', 'start_date', 'group', 'author', 'state', 'created')
     list_select_related = ('group', 'author')
-    date_hierarchy = 'start'
+    date_hierarchy = 'start_date'
     list_filter = (
         YearListFilter, QuarterListFilter, 'state', 'group', 'author',
     )

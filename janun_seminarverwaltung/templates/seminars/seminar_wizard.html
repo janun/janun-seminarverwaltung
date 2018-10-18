@@ -5,7 +5,14 @@
   {{ wizard.form.media }}
 {% endblock %}
 
-{% block title %}{{ block.super }} Neues Seminar anmelden ({{ form.Meta.short_title }}){% endblock %}
+{% block title %}
+{{ block.super }}
+{% if seminar_title %}
+  „{{ seminar_title }}“ anmelden
+{% else %}
+  Neues Seminar anmelden
+{% endif %} ({{ form.Meta.short_title }})
+{% endblock %}
 
 {% block content %}
 <div class="wizard">

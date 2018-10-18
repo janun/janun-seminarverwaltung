@@ -155,8 +155,8 @@ class SeminarWizardViewTests(TestCase):
         },
         {
             'step': 'datetime',
-            'start': "2021-01-01 12:00",
-            'end': "2021-01-05 20:00",
+            'start_date': "2021-01-01",
+            'end_date': "2021-01-05",
         },
         {
             'step': 'location',
@@ -164,7 +164,8 @@ class SeminarWizardViewTests(TestCase):
         },
         {
             'step': 'group',
-            'group': "",
+            'has_group': 'False',
+            'group': '',
         },
         {
             'step': 'days',

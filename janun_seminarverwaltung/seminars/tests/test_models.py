@@ -40,10 +40,10 @@ class SeminarModelTests(TestCase):
         s.full_clean()
 
     def test_end_after_start(self):
-        s = SeminarFactory.build(end="2019-01-01 20:00")
-        with self.assertValidationErrors(['end']):
+        s = SeminarFactory.build(end_date="2019-01-01")
+        with self.assertValidationErrors(['end_date', 'planned_training_days']):
             s.full_clean()
-        s.end = "2019-01-10 20:00"
+        s.end_date = "2019-01-10"
         s.full_clean()
 
     def test_multiple_validation_errors(self):
@@ -61,7 +61,7 @@ class SeminarModelTests(TestCase):
         s2 = SeminarFactory.build()
         self.assertIsNotNone(s1.pk)
         self.assertEqual(s1.title, s2.title)
-        self.assertEqual(s1.start, s2.start)
+        self.assertEqual(s1.start_date, s2.start_date)
         with self.assertValidationErrors(['title']):
             s2.full_clean()
 
@@ -119,15 +119,15 @@ class SeminarModelTests(TestCase):
 
     def test_get_deadline(self):
         self.assertEqual(
-            SeminarFactory.build(end=parse_datetime("2018-01-01")).get_deadline(),
+            SeminarFactory.build(end_date=parse_datetime("2018-01-01")).get_deadline(),
             parse_datetime("2018-04-15")
         )
         self.assertEqual(
-            SeminarFactory.build(end=parse_datetime("2018-12-31")).get_deadline(),
+            SeminarFactory.build(end_date=parse_datetime("2018-12-31")).get_deadline(),
             parse_datetime("2019-01-15")
         )
         self.assertEqual(
-            SeminarFactory.build(end=parse_datetime("2018-05-15")).get_deadline(),
+            SeminarFactory.build(end_date=parse_datetime("2018-05-15")).get_deadline(),
             parse_datetime("2019-07-15")
         )
 

@@ -7,7 +7,7 @@ TODOS:
  * colors for states? / Object for choices?
 """
 
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import math
 
 from django.utils import timezone
@@ -28,10 +28,10 @@ from janun_seminarverwaltung.users.models import is_verwalter, is_teamer, is_pru
 
 class SeminarQuerySet(models.QuerySet):
     def by_quarter(self, quarter):
-        return self.filter(start__quarter=quarter)
+        return self.filter(start_date__quarter=quarter)
 
     def by_year(self, year):
-        return self.filter(start__year=year)
+        return self.filter(start_date__year=year)
 
 
 class Seminar(TimeStampedModel, models.Model):
@@ -60,15 +60,19 @@ class Seminar(TimeStampedModel, models.Model):
         return 'green'
 
     title = models.CharField(
-        "Titel", max_length=255, unique_for_date="start",
+        "Titel", max_length=255, unique_for_date="start_date",
         help_text="Beschreib oder bennene Dein Seminar in wenigen Worten"
     )
     content = models.TextField(
         "Inhalt",
         help_text="Um was genau geht es in Deinem Seminar?<br>Welche Inhalte werden in Deinem Seminar vermittelt?",
     )
-    start = models.DateTimeField("Anfang")
-    end = models.DateTimeField("Ende")
+    start_date = models.DateField("Anfangsdatum")
+    start_time = models.TimeField("Anfangszeit", blank=True, null=True)
+    end_date = models.DateField("Enddatum")
+    end_time = models.TimeField("Endzeit", blank=True, null=True)
+    # start = models.DateTimeField("Anfangszeit", blank=True)
+    # end = models.DateTimeField("Enddatum")
     location = models.CharField("Ort", max_length=255)
     planned_training_days = models.PositiveSmallIntegerField("Anzahl Bildungstage")
     planned_attendees = IntegerRangeField("Anzahl Teilnehmende")
@@ -125,6 +129,18 @@ class Seminar(TimeStampedModel, models.Model):
     )
 
     @property
+    def start(self):
+        if self.start_time:
+            return datetime.combine(self.start_date, self.start_time)
+        return self.start_date
+
+    @property
+    def end(self):
+        if self.end_time:
+            return datetime.combine(self.end_date, self.end_time)
+        return self.end_date
+
+    @property
     def planned_tnt(self):
         if self.planned_attendees and self.planned_training_days:
             return self.planned_attendees.upper * self.planned_training_days
@@ -158,37 +174,37 @@ class Seminar(TimeStampedModel, models.Model):
         return funding
 
     def get_deadline(self):
-        if not self.end:
+        if not self.end_date:
             return None
-        year = self.end.year
+        year = self.end_date.year
         deadlines = {
             1: date(year, 4, 15),
             2: date(year, 7, 15),
             3: date(year, 10, 15),
             4: date(year, 1, 15)
         }
-        quarter = math.ceil(self.end.month / 3)
+        quarter = math.ceil(self.end_date.month / 3)
         return deadlines[quarter]
 
     def get_duration(self):
-        if self.end and self.start and self.end > self.start:
-            return (self.end - self.start).days + 1
+        if self.end_date and self.start_date:
+            return (self.end_date - self.start_date).days + 1
         return None
 
     def clean_title(self):
-        if self.start and self.title:
-            qs = Seminar.objects.filter(start__date=self.start.date())
+        if self.start_date and self.title:
+            qs = Seminar.objects.filter(start_date=self.start_date)
             qs.filter(title=self.title)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.exists():
                 return ValidationError(
                     "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",
-                    params={'title': self.title, 'date': date_format(self.start)}
+                    params={'title': self.title, 'date': date_format(self.start_date)}
                 )
         return None
 
-    def clean_end(self):
+    def clean_end_date(self):
         if self.end and self.start:
             if self.end < self.start:
                 return ValidationError("Endzeit muss nach Startzeit liegen.")
@@ -216,7 +232,7 @@ class Seminar(TimeStampedModel, models.Model):
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
-        fields = ('title', 'end', 'planned_training_days', 'requested_funding')
+        fields = ('title', 'end_date', 'planned_training_days', 'requested_funding')
         errors = {}
         for field in fields:
             if not exclude or field not in exclude:
@@ -232,7 +248,7 @@ class Seminar(TimeStampedModel, models.Model):
         return reverse('seminars:detail', args=[self.pk])
 
     class Meta:
-        ordering = ["start"]
+        ordering = ['start_date', 'start_time']
         verbose_name = "Seminar"
         verbose_name_plural = "Seminare"
         permissions = (

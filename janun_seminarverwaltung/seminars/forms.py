@@ -12,12 +12,8 @@ from seminars.models import Seminar, SeminarComment
 class SeminarChangeForm(forms.ModelForm):
     class Meta:
         model = Seminar
-        fields = ('title', 'start', 'end', 'location', 'content',
+        fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
                   'planned_training_days', 'planned_attendees', 'requested_funding', 'group')
-        field_classes = {
-            'start': forms.SplitDateTimeField,
-            'end': forms.SplitDateTimeField
-        }
 
 
 class SeminarCommentForm(forms.ModelForm):
@@ -50,23 +46,16 @@ class ContentSeminarForm(SeminarStepForm):
 
 
 class DatetimeSeminarForm(SeminarStepForm):
-    start = forms.SplitDateTimeField(label="Von")
-    end = forms.SplitDateTimeField(label="Bis")
-
-    def clean_start(self):
-        start = self.cleaned_data['start']
-        if self.user.role == 'TEAMER' and start.date() < (timezone.now().date() + timedelta(days=14)):
+    def clean_start_date(self):
+        start_date = self.cleaned_data['start_date']
+        if self.user.role == 'TEAMER' and start_date < (timezone.now().date() + timedelta(days=14)):
             raise forms.ValidationError("Sorry, Du musst Dein Seminar 14 Tage vorher anmelden.")
-        return start
+        return start_date
 
     class Meta(SeminarStepForm.Meta):
         title = "Wann findet Dein Seminar statt?"
         short_title = "Datum"
-        fields = ('start', 'end')
-        # field_classes = {
-        #     'start': forms.SplitDateTimeField,
-        #     'end': forms.SplitDateTimeField,
-        # }
+        fields = ('start_date', 'start_time', 'end_date', 'end_time')
 
 
 class LocationSeminarForm(SeminarStepForm):
