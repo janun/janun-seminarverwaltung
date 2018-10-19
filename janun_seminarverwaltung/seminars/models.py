@@ -102,21 +102,21 @@ class Seminar(TimeStampedModel, models.Model):
     )
     mobility_barriers = models.TextField(
         "Moblitäts-Barrieren",
-        help_text="Zum Bsp.: Müssen Stufen oder Treppen überwunden werden?"
+        help_text="Zum Bsp.: Müssen Stufen oder Treppen überwunden werden? "
                   "Findet ein Workshop im Garten statt? Sind sportliche Betätigungen vorgesehen?",
         blank=True,
         null=True,
     )
     language_barriers = models.TextField(
         "Sprach-Barrieren",
-        help_text="Zum Bsp.: Kommen viele Fachausdrücke vor?"
+        help_text="Zum Bsp.: Kommen viele Fachausdrücke vor? "
                   "Sind die Workshops auch für Menschen geeignet, die wenig Deutsch sprechen?",
         blank=True,
         null=True,
     )
     hearing_barriers = models.TextField(
         "Hör-Barrieren",
-        help_text="Zum Bsp.: Werden Filme mit oder ohne Untertitel gezeigt?"
+        help_text="Zum Bsp.: Werden Filme mit oder ohne Untertitel gezeigt? "
                   "Sind laute (Stör-)Geräusche wahrscheinlich?",
         blank=True,
         null=True,

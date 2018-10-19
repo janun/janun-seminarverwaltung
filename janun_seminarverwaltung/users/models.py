@@ -1,4 +1,3 @@
-#from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.urls import reverse
@@ -6,8 +5,11 @@ from django.db.models import Q
 from django.apps import apps
 from django.utils import timezone
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 
 import rules
+
+from phonenumber_field.modelfields import PhoneNumberField
 
 from model_utils import Choices
 
@@ -45,22 +47,30 @@ def avatar_filename(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField("Voller Name", max_length=255)
+    name = models.CharField(
+        "Voller Name", max_length=255, unique=True
+    )
     email = models.EmailField(
         "E-Mail-Adresse", unique=True,
         help_text="Wichtig für Kontakt. Kann auch zum Anmelden verwendet werden"
     )
     username = models.CharField(
-        "Benutzername", max_length=40, unique=True, blank=True,
-        help_text="Optional. Kann auch zum Anmelden verwendet werden"
+        "Benutzername", max_length=40, blank=True, null="True",
+        help_text="Muss nicht gesetzt sein, da auch die E-Mail-Adresse zum Login genutzt werden kann."
     )
     avatar = models.ImageField(
         verbose_name="Profilbild", blank=True, null=True,
         upload_to=avatar_filename
     )
+    phone_number = PhoneNumberField("Telefonnummer", blank=True)
+    address = models.TextField("Postadresse", blank=True, null=True)
     is_staff = models.BooleanField("Admin-Zugang", default=False)
     is_active = models.BooleanField("aktiv", default=True)
     date_joined = models.DateTimeField("beigetreten", default=timezone.now)
+    is_reviewed = models.BooleanField(
+        "überprüft", default=False,
+        help_text="Darf erst auf Gruppendaten zugreifen, wenn überprüft."
+    )
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
@@ -84,7 +94,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         related_name="members",
         verbose_name="Gruppe(n)",
-        help_text="JANUN-Gruppe(n), in denen der_die Teamer_in Mitglied ist",
     )
 
     group_hats = models.ManyToManyField(
@@ -92,26 +101,45 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         related_name="group_hats",
         verbose_name="Gruppenhüte",
-        help_text="JANUN-Gruppe(n), für die der_die Prüfer_in einen Gruppenhut hat",
     )
 
     objects = UserManager()
 
+    @property
+    def is_teamer(self):
+        return self.role == 'TEAMER'
+
+    @property
+    def is_verwalter(self):
+        return self.role == 'VERWALTER'
+
+    @property
+    def is_pruefer(self):
+        return self.role == 'PRUEFER'
+
     def clean(self):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
+        if self.username:
+            qs = User.objects.filter(username=self.username)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.exists():
+                raise ValidationError({
+                    'username': "Es existiert schon ein Benutzer mit diesem Benutzernamen",
+                })
 
     def get_full_name(self):
         return self.name
 
     def get_short_name(self):
-        return self.name
+        return self.username or self.name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.name or self.username
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"pk": self.pk})
@@ -156,20 +184,32 @@ def get_group_hat_mails(group):
 @rules.predicate
 def is_teamer(user):
     return user.role == "TEAMER"
+
 @rules.predicate
 def is_pruefer(user):
     return user.role == "PRUEFER"
+
 @rules.predicate
 def is_verwalter(user):
     return user.role == "VERWALTER"
+
 @rules.predicate
 def is_own_user(user, obj):
     return user == obj
+
 @rules.predicate
 def is_in_same_group(user, obj):
     return any(group in obj.get_groups() for group in user.get_groups())
+
+@rules.predicate
+def is_reviewed(user):
+    return user.is_reviewed
+
 rules.add_perm('users.see_all_users', is_verwalter | is_pruefer)
 rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_pruefer)
 rules.add_perm('users.add_user', is_verwalter | is_pruefer)
 rules.add_perm('users.change_user', is_verwalter | is_pruefer | is_own_user)
+rules.add_perm('users.change_permissions', is_verwalter | is_pruefer)
 rules.add_perm('users.delete_user', is_verwalter)
+rules.add_perm('users.deactivate_user', is_verwalter | is_pruefer)
+rules.add_perm('users.review', is_verwalter | is_pruefer)

@@ -134,6 +134,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'janun_seminarverwaltung.validators.PwnedPasswordValidator',
+    },
 ]
 
 # MIDDLEWARE
@@ -273,7 +276,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_REDIRECT_URL = LOGIN_URL
 ACCOUNT_PRESERVE_USERNAME_CASING = False
-ACCOUNT_SESSION_REMEMBER = False
+ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 
 

@@ -3,7 +3,7 @@
 {% load rules %}
 {% load humanize %}
 
-{% block title %}{{ block.super }}  {{ object.name }}{% endblock %}
+{% block title %}{{ block.super }}  {{ object }}{% endblock %}
 
 {% block content %}
 
@@ -18,6 +18,11 @@
     <a class="button float-right" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
   {% endif %}
   <br>
+  {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
+  {% if can_deactivate and object.is_active %}
+    <a class="button button--blue float-right" href="{% url 'users:deactivate' object.pk %}">deaktivieren</a>
+  {% endif %}
+  <br>
   {% has_perm 'users.delete_user' request.user object as can_delete %}
   {% if can_delete %}
     <a class="button button-danger float-right" href="{% url 'users:delete' object.pk %}">löschen</a>
@@ -25,19 +30,41 @@
 </div>
 
 
+
 <div style="display: flex; align-items: center;">
   {% if object.avatar %}
     <div class="round-image" style="margin-right: 30px;">
-      <img src="{{ object.avatar.url }}" class="round-image__image" alt="Bild von {{ object.name }}">
+      <img src="{{ object.avatar.url }}" class="round-image__image" alt="Bild von {{ object }}">
     </div>
   {% endif %}
-  <h1>{{ object.name }}</h1>
+  <h1>{{ object }}</h1>
 </div>
+
+{% if not object.is_reviewed %}
+  <div class="alert margin-top-30 clearfix">
+    {% has_perm 'users.review' request.user object as can_review %}
+    {% if can_review %}
+      <a class="button button--blue float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
+    {% endif %}
+    {{ user.get_short_name }} wurde noch nicht überprüft und kann deswegen noch keine Gruppenseiten besuchen.
+  </div>
+{% endif %}
+
+{% if not object.is_active %}
+  <div class="alert margin-top-30 clearfix">
+    {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
+    {% if can_deactivate %}
+      <a class="button button--blue float-right" href="{% url 'users:deactivate' object.pk %}">reaktivieren</a>
+    {% endif %}
+    {{ user.get_short_name }} wurde deaktiviert und kann sich nicht mehr anmelden.
+  </div>
+{% endif %}
 
 <div class="margin-top-60">
   <p>Rolle: {{ object.get_role_display }}</p>
   <p>E-Mail: <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
 </div>
+
 
 <p>
     Letzte Anmeldung:

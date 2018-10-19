@@ -28,7 +28,7 @@
       {% if request.user.is_authenticated %}
         <li><a href="{% url 'users:detail' request.user.pk  %}"
                class="{% if request.path == "users/"|add:request.user.pk %}active{% endif %}">
-               {{ request.user.username }}</a></li>
+               {{ request.user.get_short_name }}</a></li>
         <li><a href="{% url 'account_logout' %}"
                class="{% if request.resolver_match.url_name == "account_logout" %}active{% endif %}">
                {% trans "Sign Out" %}</a></li>

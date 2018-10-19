@@ -96,8 +96,8 @@ class GroupSeminarForm(SeminarStepForm):
             kwargs['initial']['group'] = user.janun_groups.get()
         kwargs['initial']['has_group'] = user.janun_groups.exists()
         super().__init__(*args, **kwargs)
-        if user.role == 'TEAMER':
-            self.fields['group'].queryset = user.janun_groups
+        # if user.role == 'TEAMER':
+        #     self.fields['group'].queryset = user.janun_groups
         self.fields['group'].empty_label = None
 
     def clean(self):
@@ -106,8 +106,8 @@ class GroupSeminarForm(SeminarStepForm):
         group = cleaned_data.get('group')
         if has_group and not group:
             self.add_error('group', "Du musst eine Gruppe auswählen.")
-        if has_group and self.user.role == 'TEAMER' and not self.user.janun_groups.exists():
-            self.add_error('has_group', "Du musst Mitglied in einer Gruppe sein.")
+        # if has_group and self.user.role == 'TEAMER' and not self.user.janun_groups.exists():
+        #     self.add_error('has_group', "Du musst Mitglied in einer Gruppe sein.")
         if not has_group:
             cleaned_data['group'] = None
 

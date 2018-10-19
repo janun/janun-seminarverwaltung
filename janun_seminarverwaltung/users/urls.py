@@ -10,6 +10,7 @@ urlpatterns = [
     # path('~update', views.UserUpdateView.as_view(), name='update'),
     path('<int:pk>/', views.UserDetailView.as_view(), name='detail'),
     path('<int:pk>/delete/', views.UserDeleteView.as_view(), name='delete'),
+    path('<int:pk>/deactivate/', views.UserDeactivateView.as_view(), name='deactivate'),
     path('<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit'),
-
+    path('<int:pk>/review/', views.UserReviewView.as_view(), name='review'),
 ]

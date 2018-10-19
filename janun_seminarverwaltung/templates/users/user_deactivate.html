@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ block.super }} {{ object.name }} löschen?{% endblock %}
+{% block title %}{{ block.super }} {{ object.name }} {{ action }}?{% endblock %}
 
 {% block content %}
 <a class="backlink" href="{{ object.get_absolute_url }}">← {{ object.name }}</a>
 
 <form class="alert" method="post">
   {% csrf_token %}
-  <p>Möchtest Du wirklich Benutzer_in <strong>{{ object }}</strong> löschen?</p>
+  <p>Möchtest Du wirklich Benutzer_in <strong>{{ object }}</strong> {{ action }}?</p>
   <a class="button" href="{{ object.get_absolute_url }}">Abbrechen</a>
-  <input class="button button-danger" type="submit" value="{{ object }} löschen" />
+  <input class="button button--blue" type="submit" name="{{ action_name }}" value="{{ object }} {{ action }}" />
 </form>
 
 {% endblock %}

@@ -6,6 +6,30 @@
     padding-left: 40px;
     line-height: 30px;
     cursor: pointer;
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 30px;
+      border: 2px solid #ccc;
+    }
+
+    &:after {
+      content: "";
+      display: none;
+      position: absolute;
+      top: -8px;
+      left: -2px;
+      width: 40px;
+      height: 40px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background: url("/static/images/check.svg");
+    }
   }
 
   &__input {
@@ -13,27 +37,12 @@
     opacity: 0;
   }
 
-  &__checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30px;
-    height: 30px;
-    border: 2px solid #ccc;
-  }
-  &__checkmark:after {
-    content: "";
+  &__input:checked ~ &__label:after {
     display: block;
-    position: absolute;
-    top: -8px;
-    left: -2px;
-    width: 40px;
-    height: 40px;
-    background-repeat: no-repeat;
-    background-size: contain;
   }
 
-  &__input:checked + &__checkmark:after {
-    background: url("/static/images/check.svg");
+  &__input:disabled ~ &__label {
+    color: $grey;
+    cursor: not-allowed;
   }
 }

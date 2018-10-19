@@ -28,7 +28,7 @@ class UserTable(tables.Table):
     class Meta:
         model = User
         fields = [
-            'avatar', 'name', 'role', 'groups', 'last_login', 'is_active'
+            'avatar', 'name', 'role', 'groups', 'last_login', 'is_active', 'is_reviewed'
         ]
         attrs = {
             'class': 'table',

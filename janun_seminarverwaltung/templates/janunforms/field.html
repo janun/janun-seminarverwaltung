@@ -14,7 +14,7 @@
 
   <{% if tag %}{{ tag }}{% else %}div{% endif %}
     id="div_{{ field.auto_id }}"
-    class="{% if not field|is_checkbox %}form-group{% if 'form-horizontal' in form_class %} row{% endif %}{% else %}checkmark{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    class="{% if field.errors %}form-group--has-errors{% endif %} {% if not field|is_checkbox %}form-group{% if 'form-horizontal' in form_class %} row{% endif %}{% else %}checkmark{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
 
       {% if field.label and not field|is_checkbox and form_show_labels %}
           <label for="{{ field.id_for_label }}" class="col-form-label {{ label_class }}{% if field.field.required %} requiredField{% endif %}">
@@ -34,12 +34,11 @@
 
       {% if not field|is_checkboxselectmultiple and not field|is_radioselect %}
           {% if field|is_checkbox and form_show_labels %}
-              <label for="{{ field.id_for_label }}" class="checkmark__label{% if field.field.required %} requiredField{% endif %}">
-                  {% crispy_field field 'class' 'checkmark__input' %}
-                  <span class="checkmark__checkmark"></span>
-                  {{ field.label|safe }}{% if not field.field.required %} <span class="form__optional">(optional)</span>{% endif %}
-              </label>
-              {% include 'janunforms/layout/help_text_and_errors.html' %}
+            {% crispy_field field 'class' 'checkmark__input' %}
+            <label for="{{ field.id_for_label }}" class="checkmark__label{% if field.field.required %} requiredField{% endif %}">
+              {{ field.label|safe }}{% if not field.field.required %} <span class="form__optional">(optional)</span>{% endif %}
+            </label>
+            {% include 'janunforms/layout/help_text_and_errors.html' %}
           {% else %}
               <div class="{{ field_class }}">
                   {% include 'janunforms/layout/help_text.html' %}

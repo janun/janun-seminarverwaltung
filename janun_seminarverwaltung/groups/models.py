@@ -4,7 +4,7 @@ from django.urls import reverse
 import rules
 from phonenumber_field.modelfields import PhoneNumberField
 
-from janun_seminarverwaltung.users.models import is_verwalter
+from janun_seminarverwaltung.users.models import is_verwalter, is_reviewed
 
 
 def logo_filename(instance, filename):
@@ -61,7 +61,7 @@ def has_group_hat(user, group):
 
 
 rules.add_perm('groups.can_see_all_janungroups', is_verwalter)
-rules.add_perm('groups.detail_janungroup', is_verwalter | is_member | has_group_hat)
+rules.add_perm('groups.detail_janungroup', is_verwalter | is_member & is_reviewed | has_group_hat)
 rules.add_perm('groups.add_janungroup', is_verwalter)
-rules.add_perm('groups.change_janungroup', is_verwalter | is_member | has_group_hat)
+rules.add_perm('groups.change_janungroup', is_verwalter | is_member & is_reviewed | has_group_hat)
 rules.add_perm('groups.delete_janungroup', is_verwalter)

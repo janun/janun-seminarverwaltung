@@ -1,11 +1,26 @@
 {% extends "base.html" %}
 
+{% load utils %}
+
 {% block title %}{{ block.super }} Übersicht{% endblock %}
 
 {% block content %}
 <div class="section">
-  <h1>Willkommen, {{ user.username|title }}!</h1>
+  <h1>Willkommen, {{ user.get_short_name|title }}!</h1>
 </div>
+
+{% if users_to_review %}
+<div class="section">
+  <h2>Ungeprüfte Benutzer_innen</h2>
+  <div>
+    <ul>
+    {% for user in users_to_review %}
+      <li><a href="{% url 'users:review' user.pk %}">{{ user }}</a>, {{ user.get_role_display }}, {{ user.get_groups|link_list }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
 
 {% if janun_groups %}
   <div class="section">
@@ -31,17 +46,21 @@
 {% endif %}
 
 
-{% if seminars %}
-  <div class="section">
-    <div class="clearfix">
-      <h2 class="float-left">Die letzten Seminare</h2>
-      <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
-    </div>
-    <div class="card-grid">
-      {% for seminar in seminars %}
-        {% include "seminars/_seminar.html" with object=seminar %}
-      {% endfor %}
-    </div>
+<div class="section">
+  <div class="clearfix">
+    <h2 class="float-left">Die letzten Seminare</h2>
+    <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
   </div>
-{% endif %}
+  {% if seminars %}
+  <div class="card-grid">
+    {% for seminar in seminars %}
+      {% include "seminars/_seminar.html" with object=seminar %}
+    {% endfor %}
+  </div>
+  {% else %}
+    Noch keine Seminare.
+  {% endif %}
+</div>
+
+
 {% endblock %}

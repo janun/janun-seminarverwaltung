@@ -20,6 +20,10 @@
   }
 }
 
+[disabled] {
+  cursor: not-allowed;
+}
+
 
 .form-group {
   margin-bottom: 45px;
@@ -56,9 +60,16 @@ label {
 }
 
 .invalid-feedback {
+  display: block;
   margin-bottom: 10px;
+  margin-top: 5px;
   font-size: 16px;
   color: $red;
+}
+
+.form-group--has-errors {
+  label { color: $red; }
+  input { background-color: rgba($red, 0.05)}
 }
 
 .timeinput {
@@ -74,24 +85,30 @@ label {
   width: 100%;
   max-width: 640px;
 }
-.urlinput, .emailinput {
+.urlinput, .emailinput, [type=email] {
   width: 100%;
   max-width: 480px;
 }
 
-[name=username] {
+[name=username], [name=login] {
   width: 100%;
   max-width: 320px;
 }
 
 .password-wrapper {
+  display: inline-block;
+  width: 100%;
+  max-width: 640px;
   position: relative;
   [data-password-toggle] {
     font-size: 16px;
     color: $grey;
     position: absolute;
-    right: 10px;
-    bottom: 1px;
+    right: 0;
+    bottom: 0;
+    height: 46px;
+    line-height: 46px;
+    padding-right: 10px;
   }
 }
 
