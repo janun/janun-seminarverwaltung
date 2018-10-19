@@ -10,6 +10,7 @@ from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
 from janun_seminarverwaltung.users.models import User
+from widgets import ThumbnailFileInput
 
 
 class UsernameField(forms.CharField):
@@ -86,7 +87,7 @@ class BaseUserForm(forms.ModelForm):
             # 'role': forms.RadioSelect, # TODO: radio not working with disabled
             'phone_number': PhoneNumberInternationalFallbackWidget,
             'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
-            # 'address': forms.TextInput()
+            'avatar': ThumbnailFileInput
         }
         field_classes = {'username': UsernameField}
 

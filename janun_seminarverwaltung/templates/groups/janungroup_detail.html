@@ -10,7 +10,7 @@
 
 <div>
   <div class="float-right">
-    {% has_perm 'groups.edit_janungroup' user object as can_edit %}
+    {% has_perm 'groups.change_janungroup' user object as can_edit %}
     {% if can_edit %}
       <a class="button float-right" href="{% url 'groups:edit' object.id %}">Gruppe bearbeiten</a>
     {% endif %}

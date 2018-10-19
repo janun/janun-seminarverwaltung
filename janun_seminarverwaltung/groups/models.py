@@ -18,7 +18,7 @@ class JANUNGroup(models.Model):
         upload_to=logo_filename
     )
     homepage = models.URLField("Homepage", blank=True, null=True)
-    email = models.EmailField("Kontakt E-Mail", blank=True, null=True)
+    email = models.EmailField("E-Mail-Adresse", blank=True, null=True)
     address = models.TextField("Postadresse", blank=True, null=True)
 
     def __str__(self):

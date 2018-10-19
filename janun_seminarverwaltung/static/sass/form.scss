@@ -123,3 +123,11 @@ legend {
   @extend h2;
   margin-bottom: 30px;
 }
+
+
+.imageinput {
+  &__img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+}

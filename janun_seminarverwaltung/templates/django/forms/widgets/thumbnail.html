@@ -1,0 +1,14 @@
+<div class="imageinput">
+  {% if widget.is_initial %}
+    <img class="imageinput__img" src="{{ widget.value.url }}" alt=""><br>
+  {% endif %}
+
+  <input class="imageinput__input" type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+
+  {% if not widget.required %}
+    <div class="checkmark margin-top-15">
+      <input class="checkmark__input" type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+      <label class="checkmark__label" for="{{ widget.checkbox_id }}">löschen</label>
+    </div>
+  {% endif %}
+</div>
