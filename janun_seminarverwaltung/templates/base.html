@@ -21,7 +21,7 @@
     <div class="{% block container_class %}container{% endblock %}">
       {% if messages %}
         {% for message in messages %}
-          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          <div class="panel {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
         {% endfor %}
       {% endif %}
 

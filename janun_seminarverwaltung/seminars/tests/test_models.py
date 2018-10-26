@@ -68,51 +68,51 @@ class SeminarModelTests(TestCase):
     def test_get_max_funding(self):
         # mehrtägige Seminare für Gruppen
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=10, planned_attendees=NumericRange(10, 15))
+            SeminarFactory.build(planned_training_days=10, planned_attendees_min=10, planned_attendees_max=15)
             .get_max_funding(), 11.5 * 10 * 15
         )
         # eintägige Seminare für Gruppen
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=1, planned_attendees=NumericRange(10, 15))
+            SeminarFactory.build(planned_training_days=1, planned_attendees_min=10, planned_attendees_max=15)
             .get_max_funding(), 6.5 * 1 * 15
         )
         # mehrtägige Seminare ohne Gruppe
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=5, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=5, planned_attendees_min=10, planned_attendees_max=15, group=None)
             .get_max_funding(), 9 * 5 * 15
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 3 Tage
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=3, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=3, planned_attendees_min=10, planned_attendees_max=15, group=None)
             .get_max_funding(), 300
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 4 Tage
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=4, planned_attendees=NumericRange(10, 15), group=None)
+            SeminarFactory.build(planned_training_days=4, planned_attendees_min=10, planned_attendees_max=15, group=None)
             .get_max_funding(), 500
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 5 Tage
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=5, planned_attendees=NumericRange(15, 20), group=None)
+            SeminarFactory.build(planned_training_days=5, planned_attendees_min=15, planned_attendees_max=20, group=None)
             .get_max_funding(), 700
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze für 6 Tage
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=6, planned_attendees=NumericRange(15, 20), group=None)
+            SeminarFactory.build(planned_training_days=6, planned_attendees_min=15, planned_attendees_max=20, group=None)
             .get_max_funding(), 900
         )
         # mehrtägige Seminare ohne Gruppe; Obergrenze von 1000
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=99, planned_attendees=NumericRange(10, 99), group=None)
+            SeminarFactory.build(planned_training_days=99, planned_attendees_min=10, planned_attendees_max=99, group=None)
             .get_max_funding(), 1000
         )
         # eintägige Seminare ohne Gruppe
         self.assertEqual(
-            SeminarFactory.build(planned_training_days=1, planned_attendees=NumericRange(10, 10), group=None)
+            SeminarFactory.build(planned_training_days=1, planned_attendees_min=10, planned_attendees_max=10, group=None)
             .get_max_funding(), 6.5 * 1 * 10
         )
         # Beispiel aus Seminarabrechnungsrichtlinie 2018
-        s2 = SeminarFactory.build(planned_training_days=3, planned_attendees=NumericRange(10, 15))
+        s2 = SeminarFactory.build(planned_training_days=3, planned_attendees_min=10, planned_attendees_max=15)
         self.assertEqual(s2.get_max_funding(), 517.5)
         s2.group = None
         self.assertEqual(s2.get_max_funding(), 300)

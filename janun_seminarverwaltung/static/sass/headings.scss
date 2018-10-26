@@ -1,7 +1,7 @@
 h1, h2, h3 {
   margin: 0;
   padding: 0;
-  color: $green;
+  color: color(green);
 }
 
 h1 {
@@ -13,11 +13,11 @@ h1 {
 h2 {
   font-size: 30px;
   font-weight: normal;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 h3 {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: normal;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }

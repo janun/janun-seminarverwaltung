@@ -21,14 +21,6 @@ class UserDetailView(PermissionRequiredMixin, DetailView):
     permission_required = 'users.detail_user'
     raise_exception = True
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.object.role == "PRUEFER":
-            context['groups'] = self.object.group_hats.all()
-        if self.object.role == "TEAMER":
-            context['groups'] = self.object.janun_groups.all()
-        return context
-
 
 class UserRedirectView(RedirectView):
     permanent = False

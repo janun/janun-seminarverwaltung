@@ -2,6 +2,7 @@
 {% load static %}
 {% load rules %}
 {% load humanize %}
+{% load thumbnail %}
 
 {% block title %}{{ block.super }}  {{ object }}{% endblock %}
 
@@ -12,79 +13,95 @@
   <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
 {% endif %}
 
-<div class="float-right">
-  {% has_perm 'users.change_user' request.user object as can_edit %}
-  {% if can_edit %}
-    <a class="button float-right" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
-  {% endif %}
-  <br>
-  {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
-  {% if can_deactivate and object.is_active %}
-    <a class="button button--blue float-right" href="{% url 'users:deactivate' object.pk %}">deaktivieren</a>
-  {% endif %}
-  <br>
-  {% has_perm 'users.delete_user' request.user object as can_delete %}
-  {% if can_delete %}
-    <a class="button button-danger float-right" href="{% url 'users:delete' object.pk %}">löschen</a>
-  {% endif %}
-</div>
-
-
-
-<div style="display: flex; align-items: center;">
-  {% if object.avatar %}
-    <div class="round-image" style="margin-right: 30px;">
-      <img src="{{ object.avatar.url }}" class="round-image__image" alt="Bild von {{ object }}">
-    </div>
-  {% endif %}
-  <h1>{{ object }}</h1>
-</div>
-
-{% if not object.is_reviewed %}
-  <div class="alert margin-top-30 clearfix">
-    {% has_perm 'users.review' request.user object as can_review %}
-    {% if can_review %}
-      <a class="button button--blue float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
+<div class="clearfix">
+  <div class="float-right">
+    {% has_perm 'users.change_user' request.user object as can_edit %}
+    {% if can_edit %}
+      <a class="button bg-blue float-right" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
     {% endif %}
-    {{ user.get_short_name }} wurde noch nicht überprüft und kann deswegen noch keine Gruppenseiten besuchen.
+    <br>
+    {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
+    {% if can_deactivate and object.is_active %}
+      <a class="button bg-red float-right" href="{% url 'users:deactivate' object.pk %}">deaktivieren</a>
+    {% endif %}
+    <br>
+    {% has_perm 'users.delete_user' request.user object as can_delete %}
+    {% if can_delete %}
+      <a class="button bg-red float-right" href="{% url 'users:delete' object.pk %}">löschen</a>
+    {% endif %}
   </div>
-{% endif %}
+
+
+  <div style="display: flex; align-items: center;">
+    {% include "common/round-image.html" with image=object.avatar css_class="margin-right-30" %}
+    <div>
+      <h1 style="margin-bottom: 0">{{ object }}{% if request.user == object %} <small class="color-grey">(das bist du)</small>{% endif %}</h1>
+      <strong>Rolle:</strong> {{ object.get_role_display }}<br>
+      <strong>Letzte Anmeldung:</strong>
+      <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
+          {{ object.last_login|naturaltime|default:"noch nie" }}
+      </time><br>
+      <strong>Account seit:</strong>
+      <time datetime="{{ object.date_joined|date:'c' }}" title="{{ object.date_joined|date:"DATETIME_FORMAT" }}">
+          {{ object.date_joined|date }}
+      </time>
+    </div>
+  </div>
+</div>
+
 
 {% if not object.is_active %}
-  <div class="alert margin-top-30 clearfix">
+  <div class="panel bg-red margin-top-30 clearfix">
     {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
     {% if can_deactivate %}
-      <a class="button button--blue float-right" href="{% url 'users:deactivate' object.pk %}">reaktivieren</a>
+      <a class="button bg-green float-right" href="{% url 'users:deactivate' object.pk %}">aktivieren</a>
     {% endif %}
-    {{ user.get_short_name }} wurde deaktiviert und kann sich nicht mehr anmelden.
+    {{ user }} ist <strong>deaktiviert</strong> und kann sich nicht anmelden.
   </div>
 {% endif %}
 
-<div class="margin-top-60">
-  <p>Rolle: {{ object.get_role_display }}</p>
-  <p>E-Mail: <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
-</div>
 
-
-<p>
-    Letzte Anmeldung:
-    <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
-        {{ object.last_login|naturaltime|default:"noch nie" }}
-    </time><br>
-    Account besteht seit:
-    <time datetime="{{ object.date_joined|date:'c' }}" title="{{ object.date_joined|date:"DATETIME_FORMAT" }}">
-        {{ object.date_joined }}
-    </time>
-</p>
-
-{% if groups %}
-<div class="section margin-top-60">
-  <h2>Gruppen</h2>
-  {% for group in groups %}
-    {% include "groups/_group.html" with object=group %}
-  {% endfor %}
-</div>
+{% if not object.is_reviewed %}
+  <div class="panel margin-top-30 clearfix">
+    {% has_perm 'users.review' request.user object as can_review %}
+    {% if can_review %}
+      <a class="button bg-blue float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
+    {% endif %}
+    {{ user }} wurde noch <strong>nicht überprüft</strong> und kann deswegen noch keine Gruppenseiten besuchen.
+  </div>
 {% endif %}
+
+
+<div class="panel margin-top-60">
+  <h2>Kontaktdaten</h2>
+  <strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
+  <strong>Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
+  <p><strong>Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
+</div>
+
+
+<div class="panel section margin-top-60">
+  <h2 style="margin-bottom:0">Gruppen-Mitgliedschaften</h2>
+  <div style="display: flex">
+    {% for group in object.janun_groups.all %}
+      {% include "groups/_group.html" with object=group %}
+    {% empty %}
+      <p>keine</p>
+    {% endfor %}
+  </div>
+</div>
+
+
+<div class="panel">
+    <h2 style="margin-bottom:0">Gruppenhüte</h2>
+    <div style="display: flex">
+      {% for group in object.group_hats.all %}
+        {% include "groups/_group.html" with object=group %}
+        {% empty %}
+          <p>keine</p>
+        {% endfor %}
+    </div>
+</div>
 
 
 </div>

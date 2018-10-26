@@ -11,17 +11,24 @@
 }
 
 
-.color-grey {
-  color: $grey;
-}
-.color-darkgrey {
-  color: $darkgrey;
-}
-.color-red {
-  color: $red;
-}
-.color-green {
-  color: $green;
+@each $color in $color-names {
+  // .color-red { color: red }
+  .color-#{$color} {
+    color: color($color);
+    h1, h2, h3 {
+      color: color($color);
+    }
+  }
+
+  // .bg-red { background-color: red }
+  .bg-#{$color} {
+    background-color: color($color);
+  }
+
+  // // .border-color-red { border-color: red }
+  // .border-color-#{$color} {
+  //   border-color: $color;
+  // }
 }
 
 
@@ -30,21 +37,10 @@
 }
 
 
-.margin-bottom-15 {
-  margin-bottom: 15px;
-}
-.margin-top-15 {
-  margin-top: 15px;
-}
-.margin-bottom-30 {
-  margin-bottom: 30px;
-}
-.margin-top-30 {
-  margin-top: 30px;
-}
-.margin-bottom-60 {
-  margin-bottom: 60px;
-}
-.margin-top-60 {
-  margin-top: 60px;
+@each $dir in left, right, top, bottom {
+  @each $width in 15, 30, 60 {
+    .margin-#{$dir}-#{$width} {
+      margin-#{$dir}: #{$width}px;
+    }
+  }
 }

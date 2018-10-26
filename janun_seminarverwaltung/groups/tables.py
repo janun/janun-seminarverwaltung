@@ -6,12 +6,7 @@ from groups.models import JANUNGroup
 
 class JANUNGroupTable(tables.Table):
     logo = tables.TemplateColumn(
-        """
-        {% if record.logo %}
-            <div class="round-image round-image--small round-image--logo">
-                <img class="round-image__image" src="{{ record.logo.url }}">
-            </div>
-        {% endif %}""",
+        """{% include "common/round-image.html" with image=record.logo small=True logo=True %}""",
         verbose_name=""
     )
     name = tables.LinkColumn('groups:detail', args=[A('pk')])

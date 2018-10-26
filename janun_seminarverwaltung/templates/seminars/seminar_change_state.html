@@ -8,17 +8,21 @@
 <div class="container">
 <a class="backlink" href="{% url 'seminars:detail' object.pk %}">← {{ object.title }}</a>
 
-<h1>Wirklich {{ transition.custom.button_name }}?</h1>
+<div class="panel">
+  <h1>Seminar wirklich {{ transition.custom.button_name|lower }}?</h1>
+  <p>Seminar <strong>{{ object.title }}</strong> wirklich {{ transition.custom.button_name|lower }}?</p>
 
-<form method="post" action="">
-  {% csrf_token %}
+  <form method="post" action="">
+    {% csrf_token %}
 
-  <a class="button" href="{% url 'seminars:detail' object.pk %}">Abbrechen</a>
-
-  <button type="submit" class="button button--{{ transition.custom.color }}">
-    {{ transition.custom.button_name }}
-  </button>
-</form>
+    <div class="panel__footer">
+      <a class="button" href="{% url 'seminars:detail' object.pk %}">Nein, Abbrechen</a>
+      <button type="submit" class="button bg-{{ transition.custom.color }}">
+        Ja, {{ transition.custom.button_name }}
+      </button>
+    </div>
+  </form>
+</div>
 
 </div>
 {% endblock %}

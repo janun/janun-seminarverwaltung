@@ -6,6 +6,15 @@
   margin-top: 20px;
   margin-bottom: 20px;
 
+  @each $color in $color-names {
+    &.bg-#{$color} {
+      color: white;
+      h1, h2, h3 {
+        color: white;
+      }
+    }
+  }
+
   &__footer {
     background-color: rgba(black, 0.05);
     margin-left: -30px;

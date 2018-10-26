@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'stronghold',
     'phonenumber_field',
+    'sorl.thumbnail',
 ]
 LOCAL_APPS = [
     'janun_seminarverwaltung.users.apps.UsersConfig',

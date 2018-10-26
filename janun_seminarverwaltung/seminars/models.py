@@ -33,6 +33,9 @@ class SeminarQuerySet(models.QuerySet):
     def by_year(self, year):
         return self.filter(start_date__year=year)
 
+    def this_year(self):
+        return self.by_year(timezone.now().year)
+
 
 class Seminar(TimeStampedModel, models.Model):
 
@@ -71,11 +74,10 @@ class Seminar(TimeStampedModel, models.Model):
     start_time = models.TimeField("Anfangszeit", blank=True, null=True)
     end_date = models.DateField("Enddatum")
     end_time = models.TimeField("Endzeit", blank=True, null=True)
-    # start = models.DateTimeField("Anfangszeit", blank=True)
-    # end = models.DateTimeField("Enddatum")
     location = models.CharField("Ort", max_length=255)
-    planned_training_days = models.PositiveSmallIntegerField("Anzahl Bildungstage")
-    planned_attendees = IntegerRangeField("Anzahl Teilnehmende")
+    planned_training_days = models.PositiveSmallIntegerField("Bildungstage")
+    planned_attendees_min = models.PositiveSmallIntegerField("Teilnehmende min.")
+    planned_attendees_max = models.PositiveSmallIntegerField("Teilnehmende max.")
     requested_funding = models.DecimalField("Benötigte Förderung", max_digits=10, decimal_places=2)
     group = models.ForeignKey(
         'groups.JANUNGroup',
@@ -142,9 +144,9 @@ class Seminar(TimeStampedModel, models.Model):
 
     @property
     def planned_tnt(self):
-        if self.planned_attendees and self.planned_training_days:
-            return self.planned_attendees.upper * self.planned_training_days
-        return None
+        if self.planned_attendees_max and self.planned_training_days:
+            return self.planned_attendees_max * self.planned_training_days
+        return 0
 
     def get_max_funding(self):
         if not self.planned_tnt:
@@ -230,9 +232,18 @@ class Seminar(TimeStampedModel, models.Model):
                 )
         return None
 
+    def clean_planned_attendees_max(self):
+        if self.planned_attendees_max and self.planned_attendees_min:
+            if self.planned_attendees_min > self.planned_attendees_max:
+                return ValidationError(
+                    "Darf nicht kleiner sein als %(field)s",
+                    params={'field': self._meta.get_field('planned_attendees_min').verbose_name}
+                )
+        return None
+
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
-        fields = ('title', 'end_date', 'planned_training_days', 'requested_funding')
+        fields = ('title', 'end_date', 'planned_training_days', 'requested_funding', 'planned_attendees_max')
         errors = {}
         for field in fields:
             if not exclude or field not in exclude:
@@ -416,6 +427,7 @@ def just_created(user, seminar):
 
 
 rules.add_perm('seminars.can_see_all_seminars', is_verwalter)
+rules.add_perm('seminars.see_stats', is_verwalter | is_pruefer)
 rules.add_perm(
     'seminars.detail_seminar',
     is_verwalter | is_seminar_author | has_group_hat_for_seminar | has_janun_group_for_seminar)

@@ -1,14 +1,23 @@
+$colors: (
+  white: #fff,
+  brown: #644327,
+  green: #3A9D00,
+  red: #C41737,
+  blue: #0076A4,
+  orange: #E95822,
+  darkgrey: #656565,
+  lightgrey: #C4C4C4,
+  grey: #737373,
+);
 
-$brown: #644327;
-$green: #3A9D00;
-$red: #C41737;
-$blue: #0076A4;
-$orange: #E95822;
+@function color($color) {
+  @return map-get($colors, $color);
+}
 
-$darkgrey: #656565;
-$lightgrey: #C4C4C4;
-$grey: #737373;
-
+$color-names: ();
+@each $key, $val in $colors {
+  $color-names: append($color-names, $key);
+}
 
 $font-family: 'Cabin', sans-serif;
 $grid-width: 1000px;

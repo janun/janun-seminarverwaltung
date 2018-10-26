@@ -12,14 +12,14 @@
 {% block content %}
 <div class="clearfix">
   <h1 class="float-left">{{ heading }}</h1>
-  <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+  <a class="button bg-green float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
 </div>
 
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
   <div class="filter-form__buttons">
-    <button class="button button-primary" type="submit">Suche</button>
-    <a href="?" class="button button" type="submit">zurücksetzen</a>
+    <button class="button bg-green" type="submit">Suche</button>
+    <a href="?" class="button" type="submit">zurücksetzen</a>
   </div>
 </form>
 

@@ -9,7 +9,7 @@
   background: white;
   border-radius: 10px;
   @include shadow(1);
-  color: $brown;
+  color: color(brown);
   font-size: 18px;
 
   &__link {
@@ -27,7 +27,7 @@
   }
 
   &__heading {
-    color: $brown;
+    color: color(brown);
     font-size: 20px;
   }
 
@@ -42,7 +42,7 @@
   }
 
   h1, h2, h3, h4 {
-    color: $brown;
+    color: color(brown);
   }
 
   &:hover {

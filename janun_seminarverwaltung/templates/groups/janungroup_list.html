@@ -12,7 +12,7 @@
 <div class="clearfix">
   <h1 class="float-left">{{ heading }}</h1>
   {% if can_add %}
-    <a href="{% url 'groups:create' %}" class="float-right button button-primary">Gruppe hinzufügen</a>
+    <a href="{% url 'groups:create' %}" class="float-right button bg-green">Gruppe hinzufügen</a>
   {% endif %}
 </div>
 
@@ -20,8 +20,8 @@
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
   <div class="filter-form__buttons">
-    <button class="button button-primary" type="submit">Suche</button>
-    <a href="?" class="button button" type="submit">zurücksetzen</a>
+    <button class="button bg-green" type="submit">Suche</button>
+    <a href="?" class="button" type="submit">zurücksetzen</a>
   </div>
 </form>
 {% endif %}

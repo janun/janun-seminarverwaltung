@@ -3,11 +3,11 @@
 {% block title %}{{ block.super }} Keine Berechtigung (403){% endblock %}
 
 {% block content %}
-<div class="alert alert-error">
+<div class="panel bg-red">
   <h1>CSRF-Fehler</h1>
   <p>CSRF-Überprüfung fehlgeschlagen. Das könnte ein Sicherheitsproblem sein.</p>
   <ul>
-    <li>Du kannst versuchen Cookies zu aktivieren</li>
+    <li>Du kannst versuchen Cookies zu aktivieren.</li>
   </ul>
 </div>
 {% endblock content %}

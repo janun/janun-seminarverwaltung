@@ -2,13 +2,13 @@
   &__optional {
     font-weight: normal;
     font-size: 16px;
-    color: $grey;
+    color: color(grey);
   }
 
   &__helptext {
     display: block;
     font-size: 16px;
-    color: $grey;
+    color: color(grey);
     margin-bottom: 5px;
     margin-top: -3px;
     ul { margin: 0; }
@@ -55,7 +55,7 @@ input, select, textarea {
 label {
   display: inline-block;
   padding-bottom: 5px;
-  color: $brown;
+  color: color(brown);
   font-weight: bold;
 }
 
@@ -64,12 +64,12 @@ label {
   margin-bottom: 10px;
   margin-top: 5px;
   font-size: 16px;
-  color: $red;
+  color: color(red);
 }
 
 .form-group--has-errors {
-  label { color: $red; }
-  input { background-color: rgba($red, 0.05)}
+  label { color: color(red); }
+  input { background-color: rgba(color(red), 0.05)}
 }
 
 .timeinput {
@@ -102,7 +102,7 @@ label {
   position: relative;
   [data-password-toggle] {
     font-size: 16px;
-    color: $grey;
+    color: color(grey);
     position: absolute;
     right: 0;
     bottom: 0;

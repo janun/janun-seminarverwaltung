@@ -4,7 +4,7 @@
   @include shadow(1);
   border-radius: 5px;
   margin-top: 30px;
-  color: $brown;
+  color: color(brown);
   border-collapse: collapse;
 
   tr {
@@ -24,12 +24,12 @@
   th {
     text-align: left;
     padding: 10px;
-    border-bottom: 1px $lightgrey solid;
-    color: $darkgrey;
+    border-bottom: 1px color(lightgrey) solid;
+    color: color(darkgrey);
     font-weight: normal;
 
     a {
-      color: $darkgrey;
+      color: color(darkgrey);
       font-weight: normal;
     }
 

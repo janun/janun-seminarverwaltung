@@ -1,5 +1,5 @@
-<div class="margin-top-60 margin-bottom-60">
-  <h4 class="color-grey">Status:</h4>
+<div class="panel margin-top-60 margin-bottom-60">
+  <h2>Status:</h2>
   <div class="seminar-state">
 
     <div class="seminar-state__current font-weight-bold margin-bottom-30 color-{{ object.get_state_color }}">
@@ -13,7 +13,7 @@
         {% for transition in available_transitions %}
           <a
             href="{% url 'seminars:change_state' object.pk transition.name %}"
-            class="button button--{{ transition.custom.color }}-lined">
+            class="button bg-{{ transition.custom.color }}">
             {{ transition.custom.button_name }}
           </a>
         {% endfor %}

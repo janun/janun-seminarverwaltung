@@ -93,7 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         'groups.JANUNGroup',
         blank=True,
         related_name="members",
-        verbose_name="Gruppe(n)",
+        verbose_name="Gruppen-Mitgliedschaften",
     )
 
     group_hats = models.ManyToManyField(

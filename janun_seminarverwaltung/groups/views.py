@@ -1,6 +1,7 @@
 from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import HttpResponseRedirect
+from django.db import models
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import PrefetchRelatedMixin
@@ -8,6 +9,7 @@ from django_tables2.views import SingleTableMixin
 from django_filters.views import FilterView
 
 from seminars.models import Seminar
+from seminars.stats import SeminarStats
 
 from groups.models import JANUNGroup, ContactPerson
 from .tables import JANUNGroupTable
@@ -48,9 +50,10 @@ class JANUNGroupDetailView(PermissionRequiredMixin, DetailView, PrefetchRelatedM
     raise_exception = True
 
     def get_context_data(self, **kwargs):
+        object = self.get_object()
         context = super().get_context_data(**kwargs)
-        context['seminars'] = Seminar.objects.filter(group=self.object)[:6]
-        context['contact_people'] = self.get_object().contact_people.all()
+        context['seminar_stats'] = SeminarStats(object.seminars.this_year())
+        context['contact_people'] = object.contact_people.all()
         return context
 
 
@@ -64,6 +67,11 @@ class JANUNGroupCreateView(PermissionRequiredMixin, CreateView):
     # https://github.com/dfunckt/django-rules/issues/85
     def get_object(self):
         return None
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['request'] = self.request
+        return form_kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -97,6 +105,11 @@ class JANUNGroupUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = 'groups.change_janungroup'
     raise_exception = True
     template_name_suffix = '_edit'
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['request'] = self.request
+        return form_kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -30,3 +30,4 @@ django-tables2==2.0.0
 django-filter==2.0.0
 django-stronghold==0.3.0
 django-phonenumber-field==2.0.1
+sorl-thumbnail==12.5.0

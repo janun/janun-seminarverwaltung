@@ -63,11 +63,11 @@
       </div>
 
       <div class="wizard__footer">
-        <a class="button button-danger" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a>
+        <a class="button bg-red" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a>
         {% if wizard.steps.last == wizard.steps.current %}
-          <input class="button button-primary float-right" type="submit" value="Seminar anmelden"/>
+          <input class="button bg-green float-right" type="submit" value="Seminar anmelden"/>
         {% else %}
-          <input class="button button-primary float-right" type="submit" value="Speichern & Weiter"/>
+          <input class="button bg-green float-right" type="submit" value="Speichern & Weiter"/>
         {% endif %}
       </div>
 

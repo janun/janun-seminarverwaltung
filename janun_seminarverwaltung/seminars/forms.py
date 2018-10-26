@@ -13,7 +13,8 @@ class SeminarChangeForm(forms.ModelForm):
     class Meta:
         model = Seminar
         fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
-                  'planned_training_days', 'planned_attendees', 'requested_funding', 'group')
+                  'planned_training_days', 'planned_attendees_min', 'planned_attendees_max',
+                  'requested_funding', 'group')
 
 
 class SeminarCommentForm(forms.ModelForm):
@@ -76,7 +77,7 @@ class AttendeesSeminarForm(SeminarStepForm):
     class Meta(SeminarStepForm.Meta):
         title = "Mit wievielen Teilnehmenden rechnest Du?"
         short_title = "Teilnehmende"
-        fields = ('planned_attendees',)
+        fields = ('planned_attendees_min', 'planned_attendees_max')
 
 
 class GroupSeminarForm(SeminarStepForm):

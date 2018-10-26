@@ -8,7 +8,7 @@
   <form action="{% url 'seminars:create_comment' object.pk %}" method="POST">
     {% csrf_token %}
     {{ comment_form }}
-    <input type="submit" class="button button-primary float-right" value="Kommentieren" id="id_submit_comment" />
+    <input type="submit" class="button bg-green float-right" value="Kommentieren" id="id_submit_comment" />
   </form>
 </div>
 

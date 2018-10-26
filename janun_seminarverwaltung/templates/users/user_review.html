@@ -38,8 +38,8 @@
 
   <form method="post">
     {% csrf_token %}
-    <a href="{{ object.get_absolute_url }}" class="button button--red">Abbrechen</a>
-    <input type="submit" class="button button--green" value="Ja, das stimmt" name="is_reviewed">
+    <a href="{{ object.get_absolute_url }}" class="button bg-red">Abbrechen</a>
+    <input type="submit" class="button bg-green" value="Ja, das stimmt" name="is_reviewed">
   </form>
 </div>
 

@@ -6,12 +6,7 @@ from janun_seminarverwaltung.users.models import User
 
 class UserTable(tables.Table):
     avatar = tables.TemplateColumn(
-        """
-        {% if record.avatar %}
-            <div class="round-image round-image--small">
-                <img class="round-image__image" src="{{ record.avatar.url }}">
-            </div>
-        {% endif %}""",
+        """{% include "common/round-image.html" with image=record.avatar small=True %}""",
         verbose_name="",
     )
     name = tables.Column(linkify=True)

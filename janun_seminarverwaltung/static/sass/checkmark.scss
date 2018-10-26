@@ -1,4 +1,6 @@
 .checkmark {
+  $self: &;
+
   &__label {
     position: relative;
     margin: 0;
@@ -35,14 +37,16 @@
   &__input {
     position: absolute;
     opacity: 0;
+
+    &:checked ~ #{$self}__label:after {
+      display: block;
+    }
+
+    &:disabled #{self}__label {
+      color: color(grey);
+      cursor: not-allowed;
+    }
   }
 
-  &__input:checked ~ &__label:after {
-    display: block;
-  }
 
-  &__input:disabled ~ &__label {
-    color: $grey;
-    cursor: not-allowed;
-  }
 }

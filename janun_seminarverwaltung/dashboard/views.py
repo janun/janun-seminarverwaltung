@@ -1,5 +1,10 @@
+from django.db import models
 from django.views.generic import TemplateView
+
 from janun_seminarverwaltung.users.models import User
+from groups.models import JANUNGroup
+from seminars.models import Seminar
+from seminars.stats import SeminarStats
 
 
 class Dashboard(TemplateView):
@@ -16,5 +21,11 @@ class Dashboard(TemplateView):
 
         if self.request.user.role == 'VERWALTER':
             context['users_to_review'] = User.objects.filter(is_reviewed=False)
+            context['groups_without_contacts'] = JANUNGroup.objects \
+                .annotate(contact_count=models.Count("contact_people")) \
+                .filter(contact_count__lt=3)
+
+        if user.has_perm('seminars.see_stats'):
+            context['seminar_stats'] = SeminarStats(Seminar.objects.all())
 
         return context

@@ -8,48 +8,67 @@
 {% block content %}
 <a class="backlink" href="{% url 'groups:list' %}">← Alle Gruppen</a>
 
-<div>
+<div class="clearfix margin-bottom-60">
   <div class="float-right">
     {% has_perm 'groups.change_janungroup' user object as can_edit %}
     {% if can_edit %}
-      <a class="button float-right" href="{% url 'groups:edit' object.id %}">Gruppe bearbeiten</a>
+      <a class="button float-right" href="{% url 'groups:edit' object.id %}">bearbeiten</a>
     {% endif %}
     <br>
     {% has_perm 'groups.delete_janungroup' user object as can_delete %}
     {% if can_delete %}
-      <a class="button button-danger float-right" href="{% url 'groups:delete' object.id %}">Gruppe löschen</a>
+      <a class="button bg-red float-right" href="{% url 'groups:delete' object.id %}">löschen</a>
     {% endif %}
   </div>
 
   <div style="display: flex; align-items: center;">
-    {% if object.logo %}
-      <div class="round-image round-image--logo" style="margin-right: 30px;">
-        <img class="round-image__image" src="{{ object.logo.url }}" alt="Logo for {{ object.name }}">
-      </div>
-    {% endif %}
-    <h1>{{ object.name }}</h1>
+    {% include "common/round-image.html" with image=object.logo logo=True css_class="margin-right-30" %}
+    <div>
+      <h1 style="margin-bottom:0">{{ object.name }}</h1>
+      <strong>Gruppenhut:</strong> {{ object.group_hats.all|link_list|default:"niemand" }}<br>
+    </div>
   </div>
 </div>
 
+{% if object.contact_people|length < 3 %}
+  <div class="panel bg-blue color-white clearfix margin-bottom-60">
+    <a class="button float-right" href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
+    Zu dieser Gruppe wurden weniger als drei Konktaktpersonen eingetragen.
+  </div>
+{% endif %}
 
-<div class="margin-top-30">
-  <p><strong>Mitglieder:</strong> {{ object.members.all|link_list|default:"niemand" }}</p>
-  <p><strong>Gruppenhut:</strong> {{ object.group_hats.all|link_list|default:"niemand" }}</p>
-  {% if object.homepage %}
-    <p><strong>Homepage:</strong> <a href="{{ object.homepage }}">{{ object.homepage }}</a></p>
-  {% endif %}
-  {% if object.email %}
-    <p><strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a></p>
-  {% endif %}
-  {% if object.address %}
-    <p><strong>Postadresse:</strong><br> {{ object.address|linebreaksbr }}</p>
-  {% endif %}
+
+<div class="panel margin-top-60 margin-bottom-60">
+  <h2>Seminare</h2>
+
+  <h3>Dieses Jahr (angefragt)</h3>
+  <strong>Anzahl:</strong> {{ seminar_stats.count }}<br>
+  <strong>Förderung:</strong> {{ seminar_stats.requested_funding }} €<br>
+  <strong>TNT:</strong> {{ seminar_stats.requested_tnt }}<br>
+  <strong>Förderung / TNT:</strong> {{ seminar_stats.requested_funding_over_tnt|floatformat:2 }} €/TNT
+
+  <h3 class="margin-top-30">Dieses Jahr (durchgeführt)</h3>
 </div>
 
-<div class="margin-top-60 margin-bottom-60">
-  <h3>Kontaktpersonen</h3>
+
+<div class="panel margin-top-60">
+  <h2>Mitglieder</h2>
+  <div style="display:flex">
+    {% for member in object.members.all %}
+      {% include "users/_user.html" with object=member %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel margin-top-30 margin-bottom-60">
+  <h2>Kontaktdaten</h2>
+  <strong>Homepage:</strong> {% if object.homepage %}<a href="{{ object.homepage }}">{{ object.homepage }}</a>{% else %}keine{% endif %}<br>
+  <strong>E-Mail:</strong> {% if object.email %}<a href="mailto:{{ object.email }}">{{ object.email }}</a>{% else %}keine{% endif %}
+  <p><strong>Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
+
+  <h4 style="margin-bottom: 0;">Kontaktpersonen:</h4>
   {% if contact_people %}
-    <ul style="padding:0">
+    <ul style="padding:0; margin:0">
     {% for person in contact_people %}
       <li style="list-style: none;margin:0">
         {{ person.name }},
@@ -63,25 +82,8 @@
     {% endfor %}
     </ul>
   {% else %}
-    <p>Keine eingetragen 😢<br>
-      <a href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
-    </p>
+    keine
   {% endif %}
 </div>
-
-
-{% if seminars %}
-  <div class="clearfix">
-    <h2>Neueste Seminare</h2>
-    <div class="card-grid">
-      {% for seminar in seminars %}
-        {% include "seminars/_seminar.html" with object=seminar %}
-      {% endfor %}
-    </div>
-    <a href="{% url 'seminars:list' %}?group={{ object.pk }}" class="float-right">Alle Seminare →</a>
-  </div>
-{% else %}
-  <p>Keine Seminare angemeldet.</p>
-{% endif %}
 
 {% endblock %}

@@ -65,3 +65,4 @@ rules.add_perm('groups.detail_janungroup', is_verwalter | is_member & is_reviewe
 rules.add_perm('groups.add_janungroup', is_verwalter)
 rules.add_perm('groups.change_janungroup', is_verwalter | is_member & is_reviewed | has_group_hat)
 rules.add_perm('groups.delete_janungroup', is_verwalter)
+rules.add_perm('groups.change_group_hats', is_verwalter)

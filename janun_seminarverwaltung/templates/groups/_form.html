@@ -13,9 +13,13 @@
       </div>
     {% endif %}
 
-    {% if object.pk %}
-      <a class="button" href="{% url 'groups:detail' object.pk %}">Abbrechen</a>
-    {% endif %}
-    <input class="button button-primary" type="submit" value="Speichern" />
+    <div class="panel__footer">
+      {% if object.pk %}
+        <a class="button" href="{{ object.get_absolute_url }}">Abbrechen</a>
+      {% else %}
+        <a class="button" href="{% url 'groups:list' %}">Abbrechen</a>
+      {% endif %}
+      <input class="button bg-green" type="submit" value="Speichern" />
+    </div>
   </form>
 </div>

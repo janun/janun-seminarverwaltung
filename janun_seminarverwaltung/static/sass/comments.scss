@@ -4,7 +4,7 @@
 
   textarea {
     border-radius: 5px;
-    border: 1px solid $lightgrey;
+    border: 1px solid color(lightgrey);
     background-color: inherit;
     width: 100%;
     max-width: 660px;
@@ -32,14 +32,14 @@
 
   &__meta {
     font-size: 16px;
-    color: $grey;
+    color: color(grey);
     a {
-      color: $grey;
+      color: color(grey);
     }
   }
 
   &--quoted {
     padding-left: 15px;
-    border-left: 6px solid rgba($blue, 0.5);
+    border-left: 6px solid rgba(color(blue), 0.5);
   }
 }

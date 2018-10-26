@@ -173,8 +173,8 @@ class SeminarWizardViewTests(TestCase):
         },
         {
             'step': 'attendees',
-            'planned_attendees_0': "10",
-            'planned_attendees_1': "20",
+            'planned_attendees_min': "10",
+            'planned_attendees_max': "20",
         },
         {
             'step': 'funding',

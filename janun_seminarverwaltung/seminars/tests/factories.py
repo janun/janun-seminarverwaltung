@@ -14,7 +14,8 @@ class SeminarFactory(factory.DjangoModelFactory):
     end_date = parse_date("2019-01-10")
     location = "Hannover"
     planned_training_days = 5
-    planned_attendees = NumericRange(10, 20)
+    planned_attendees_min = 10
+    planned_attendees_max = 20
     requested_funding = 100
     group = factory.SubFactory(JANUNGroupFactory)
 

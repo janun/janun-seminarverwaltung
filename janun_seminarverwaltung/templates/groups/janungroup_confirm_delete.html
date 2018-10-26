@@ -5,11 +5,17 @@
 {% block content %}
 <a class="backlink" href="{% url 'groups:detail' object.id %}">← {{ object.name }}</a>
 
-<form class="alert" method="post">
-  {% csrf_token %}
-  <p>Möchtest Du wirklich die JANUN-Gruppe <strong>{{ object }}</strong> löschen?</p>
-  <a class="button" href="{% url 'groups:detail' object.id %}">Abbrechen</a>
-  <input class="button button-danger" type="submit" value="{{ object }} löschen" />
-</form>
+<div class="panel">
+  <h1>{{ object }} wirklich löschen?</h1>
+  <form method="post">
+    {% csrf_token %}
+    <p>Möchtest Du wirklich die JANUN-Gruppe <strong>{{ object }}</strong> löschen?</p>
+
+    <div class="panel__footer margin-top-60">
+      <a class="button" href="{% url 'groups:detail' object.id %}">Abbrechen</a>
+      <input class="button bg-red" type="submit" value="{{ object }} löschen" />
+    </div>
+  </form>
+</div>
 
 {% endblock %}

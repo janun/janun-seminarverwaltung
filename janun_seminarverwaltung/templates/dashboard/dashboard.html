@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load rules %}
 {% load utils %}
 
 {% block title %}{{ block.super }} Übersicht{% endblock %}
@@ -9,15 +10,60 @@
   <h1>Willkommen, {{ user.get_short_name|title }}!</h1>
 </div>
 
+{% has_perm 'seminars.see_stats' user as can_see_stats %}
+{% if can_see_stats %}
+<div class="panel margin-top-60 margin-bottom-60">
+  <h2>Seminar-Statistik</h2>
+
+  <h3>Dieses Jahr (angefragt)</h3>
+  <table class="">
+    <tr>
+      <td><strong>Anzahl:</strong></td>
+      <td>{{ seminar_stats.count }}</td>
+    </tr>
+    <tr>
+      <td><strong>Förderung:</strong></td>
+      <td>{{ seminar_stats.requested_funding }} €</td>
+    </tr>
+    <tr>
+      <td><strong>TNT:</strong></td>
+      <td>{{ seminar_stats.requested_tnt }}</td>
+    </tr>
+    <tr>
+      <td><strong>Förderung / TNT:</strong></td>
+      <td>{{ seminar_stats.requested_funding_over_tnt|floatformat:2 }} €/TNT</td>
+    </tr>
+  </table>
+
+  <h3 class="margin-top-30">Dieses Jahr (durchgeführt)</h3>
+  TODO
+
+  <h3 class="margin-top-30">Insgesamt</h3>
+  TODO
+</div>
+{% endif %}
+
+
 {% if users_to_review %}
 <div class="section">
   <h2>Ungeprüfte Benutzer_innen</h2>
   <div>
-    <ul>
-    {% for user in users_to_review %}
-      <li><a href="{% url 'users:review' user.pk %}">{{ user }}</a>, {{ user.get_role_display }}, {{ user.get_groups|link_list }}</li>
+    <div style="display: flex">
+      {% for user in users_to_review %}
+        {% include "users/_user.html" with object=user %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if groups_without_contacts %}
+<div class="section">
+  <h2>Gruppen mit weniger als drei Kontaktpersonen</h2>
+  <div style="display: flex">
+    {% for group in groups_without_contacts %}
+      {% include "groups/_group.html" with object=group %}
     {% endfor %}
-    </ul>
   </div>
 </div>
 {% endif %}
@@ -25,7 +71,7 @@
 {% if janun_groups %}
   <div class="section">
     <h2>Gruppen</h2>
-    <div>
+    <div style="display: flex">
       {% for group in janun_groups %}
         {% include "groups/_group.html" with object=group %}
       {% endfor %}
@@ -37,7 +83,7 @@
 {% if group_hats %}
   <div class="section">
     <h2>Gruppenhüte</h2>
-    <div>
+    <div style="display: flex">
       {% for group in group_hats %}
         {% include "groups/_group.html" with object=group %}
       {% endfor %}
@@ -49,7 +95,7 @@
 <div class="section">
   <div class="clearfix">
     <h2 class="float-left">Die letzten Seminare</h2>
-    <a class="button button-primary float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+    <a class="button bg-green float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
   </div>
   {% if seminars %}
   <div class="card-grid">

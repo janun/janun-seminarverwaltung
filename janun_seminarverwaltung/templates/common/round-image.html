@@ -1,0 +1,12 @@
+{% load thumbnail %}
+
+{% thumbnail image "200x200" crop="center" as avatar %}
+  <div class="round-image {% if small %}round-image--small{% endif %} {% if logo %}round-image--logo{% endif %} {{ css_class }}">
+    <img src="{{ avatar.url }}" class="round-image__image" alt="{{ alt }}">
+  </div>
+{% empty %}
+  {% if empty %}
+    <div class="round-image {% if small %}round-image--small{% endif %} {% if logo %}round-image--logo{% endif %} {{ css_class }}">
+    </div>
+  {% endif %}
+{% endthumbnail %}

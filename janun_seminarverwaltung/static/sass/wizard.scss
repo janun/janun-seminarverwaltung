@@ -10,7 +10,7 @@
 
   &__head {
     height: 120px;
-    background-color: $green;
+    background-color: color(green);
     color: white;
     line-height: 120px;
     padding-left: 30px;
@@ -46,7 +46,7 @@
     }
 
     &--valid {
-      color: $green;
+      color: color(green);
     }
 
     li {

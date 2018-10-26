@@ -3,13 +3,19 @@
 {% block title %}{{ block.super }} {{ object.name }} löschen?{% endblock %}
 
 {% block content %}
-<a class="backlink" href="{% url 'seminars:detail' object.id %}">← {{ object.title }}</a>
+<a class="backlink" href="{{ object.get_absolute_url }}">← {{ object.title }}</a>
 
-<form class="alert" method="post">
-  {% csrf_token %}
-  <p>Möchtest Du wirklich das Seminar <strong>{{ object }}</strong> löschen?</p>
-  <a class="button" href="{% url 'seminars:detail' object.id %}">Nein, abbrechen</a>
-  <input class="button button-danger" type="submit" value="Ja, löschen" />
-</form>
+<div class="panel">
+  <h1>Seminar löschen?</h1>
+  <form class="alert" method="post">
+    {% csrf_token %}
+    <p>Möchtest Du wirklich das Seminar <strong>{{ object }}</strong> löschen?</p>
+
+    <div class="panel__footer">
+      <a class="button" href="{{ object.get_absolute_url }}">Nein, abbrechen</a>
+      <input class="button bg-red" type="submit" value="Ja, löschen" />
+    </div>
+  </form>
+</div>
 
 {% endblock %}

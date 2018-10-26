@@ -5,7 +5,7 @@ from django.contrib.auth import password_validation
 from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML
 
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
@@ -47,7 +47,7 @@ class BaseUserForm(forms.ModelForm):
                 'role', 'janun_groups', 'group_hats', 'is_reviewed'
             ),
             ButtonHolder(
-                Submit('submit', 'Speichern', css_class='button button-primary'),
+                Submit('submit', 'Speichern', css_class='button bg-green'),
                 css_class="panel__footer"
             )
         )
@@ -99,6 +99,13 @@ class UserCreationForm(BaseUserForm):
         widget=forms.PasswordInput(render_value=True),
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].required = True
+        self.helper.layout[-1].insert(
+            0, HTML("""<a class="button" href="{% url 'users:list' %}">Abbrechen</a>"""),
+        )
+
 
 class UserChangeForm(BaseUserForm):
     password1 = forms.CharField(
@@ -111,3 +118,6 @@ class UserChangeForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = False
+        self.helper.layout[-1].insert(
+            0, HTML("""<a class="button" href="{}">Abbrechen</a>""".format(self.instance.get_absolute_url())),
+        )
