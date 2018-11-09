@@ -17,7 +17,7 @@ class SeminarTable(tables.Table):
             'title', 'start_date', 'group', 'author', 'state', 'created'
         ]
         attrs = {
-            'class': 'table'
+            'class': 'table panel'
         }
         row_attrs = {
             'data-link': lambda record: record.get_absolute_url()

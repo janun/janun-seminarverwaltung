@@ -23,7 +23,7 @@ import rules
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 
-from janun_seminarverwaltung.users.models import is_verwalter, is_teamer, is_pruefer
+from janun_seminarverwaltung.users.models import is_verwalter, is_teamer, is_pruefer, is_reviewed
 
 
 class SeminarQuerySet(models.QuerySet):
@@ -430,7 +430,7 @@ rules.add_perm('seminars.can_see_all_seminars', is_verwalter)
 rules.add_perm('seminars.see_stats', is_verwalter | is_pruefer)
 rules.add_perm(
     'seminars.detail_seminar',
-    is_verwalter | is_seminar_author | has_group_hat_for_seminar | has_janun_group_for_seminar)
+    is_verwalter | is_seminar_author | has_group_hat_for_seminar | has_janun_group_for_seminar & is_reviewed)
 rules.add_perm('seminars.change_seminar', is_verwalter | is_seminar_author | has_group_hat_for_seminar)
 rules.add_perm('seminars.delete_seminar', is_verwalter | is_seminar_author & just_created)
 

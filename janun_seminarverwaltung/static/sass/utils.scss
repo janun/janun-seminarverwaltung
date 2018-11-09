@@ -44,3 +44,10 @@
     }
   }
 }
+
+
+.hide\@small {
+  @media (max-width: 599px) {
+    display: none !important;
+  }
+}

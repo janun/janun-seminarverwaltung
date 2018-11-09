@@ -4,12 +4,17 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib import messages
 
+from allauth.account.forms import SignupForm
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML
 
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
+from phonenumber_field.formfields import PhoneNumberField
+
 
 from janun_seminarverwaltung.users.models import User
+from groups.models import JANUNGroup
 from widgets import ThumbnailFileInput
 
 
@@ -28,7 +33,7 @@ class BaseUserForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'panel'
@@ -36,27 +41,24 @@ class BaseUserForm(forms.ModelForm):
             'name', 'avatar',
             Fieldset(
                 "Konto",
-                'username', 'password1'
+                'username', 'password1',
+                id="account"
             ),
             Fieldset(
                 "Kontakt-Daten",
-                'email', 'phone_number', 'address'
+                'email', 'phone_number', 'address',
+                id="contact"
             ),
             Fieldset(
                 "Berechtigungen",
-                'role', 'janun_groups', 'group_hats', 'is_reviewed'
+                'role', 'janun_groups', 'group_hats', 'is_reviewed',
+                id="permissions"
             ),
             ButtonHolder(
                 Submit('submit', 'Speichern', css_class='button bg-green'),
                 css_class="panel__footer"
             )
         )
-
-        if not self.request.user.has_perm('users.change_permissions', self.instance):
-            self.fields['role'].disabled = True
-            self.fields['janun_groups'].disabled = True
-            self.fields['group_hats'].disabled = True
-            self.fields['is_reviewed'].disabled = True
 
     def _post_clean(self):
         super()._post_clean()
@@ -72,7 +74,8 @@ class BaseUserForm(forms.ModelForm):
         password = self.cleaned_data['password1']
         if password:
             user.set_password(password)
-            messages.info(self.request, "Passwort wurde geändert.")
+            if self.request:
+                messages.info(self.request, "Passwort wurde geändert.")
         if commit:
             user.save()
         return user
@@ -121,3 +124,62 @@ class UserChangeForm(BaseUserForm):
         self.helper.layout[-1].insert(
             0, HTML("""<a class="button" href="{}">Abbrechen</a>""".format(self.instance.get_absolute_url())),
         )
+        if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
+            self.fields['role'].disabled = True
+            self.fields['janun_groups'].disabled = True
+            self.fields['group_hats'].disabled = True
+            self.fields['is_reviewed'].disabled = True
+
+
+class UserSignupForm(SignupForm):
+
+    name = forms.CharField(label="Voller Name")
+    avatar = forms.FileField(label="Profilbild", required=False)
+    phone_number = PhoneNumberField(label="Telefonnummer", required=False)
+    address = forms.CharField(label="Postadresse", required=False)
+    janun_groups = forms.ModelMultipleChoiceField(
+        label="Gruppen-Mitgliedschaften",
+        queryset=JANUNGroup.objects.all(),
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'panel'
+        self.helper.layout = Layout(
+            'name', 'avatar',
+            Fieldset(
+                "Konto",
+                'username', 'password1'
+            ),
+            Fieldset(
+                "Kontakt-Daten",
+                'email', 'phone_number', 'address'
+            ),
+            Fieldset(
+                "Gruppen",
+                'janun_groups',
+            ),
+            ButtonHolder(
+                Submit('submit', 'Registrieren', css_class='button bg-green'),
+                css_class="panel__footer"
+            )
+        )
+        self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
+
+    def save(self, request):
+        user = super().save(request)
+        user.name = self.cleaned_data['name']
+        user.phone_number = self.cleaned_data['phone_number']
+        user.address = self.cleaned_data['address']
+        user.janun_groups.set(self.cleaned_data['janun_groups'])
+        user.save()
+        return user
+
+    class Meta:
+        widgets = {
+            'phone_number': PhoneNumberInternationalFallbackWidget,
+            'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
+            'avatar': ThumbnailFileInput
+        }

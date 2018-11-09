@@ -26,7 +26,7 @@ class UserTable(tables.Table):
             'avatar', 'name', 'role', 'groups', 'last_login', 'is_active', 'is_reviewed'
         ]
         attrs = {
-            'class': 'table',
+            'class': 'table panel',
         }
         row_attrs = {
             'data-link': lambda record: record.get_absolute_url()

@@ -1,10 +1,8 @@
 .filter-form {
-  background: white;
-  border-radius: 10px;
-  @include shadow(1);
-  margin-top: 20px;
-  padding: 20px;
-  font-size: 18px;
+  font-size: 14px;
+  @media (min-width: 600px) {
+    font-size: 18px;
+  }
   color: color(darkgrey);
 
   .form__optional {
@@ -12,7 +10,7 @@
   }
 
   &__buttons {
-    display: block;
+    display: inline-block;
   }
 
   .col-form-label {

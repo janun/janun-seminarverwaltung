@@ -5,7 +5,6 @@
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
 {% block content %}
-<div class="container">
 <a class="backlink" href="{% url 'seminars:detail' object.pk %}">← {{ object.title }}</a>
 
 <div class="panel">
@@ -22,7 +21,5 @@
       </button>
     </div>
   </form>
-</div>
-
 </div>
 {% endblock %}

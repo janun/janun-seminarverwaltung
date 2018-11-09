@@ -4,7 +4,7 @@
   <nav class="navbar__inner container">
 
     <ul>
-      <li class="color-green"><a style="font-size:20px;" href="/">JANUN-Seminare</a></li>
+      <li class="color-green hide@small"><a style="font-size:20px;" href="/">JANUN-Seminare</a></li>
       <li><a href="{% url 'dashboard:dashboard' %}"
              class="{% if request.resolver_match.namespace == "dashboard" %}active{% endif %}">
              Übersicht</a></li>

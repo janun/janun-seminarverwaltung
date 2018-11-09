@@ -1,4 +1,4 @@
 <a style="display: flex; flex-direction: column; align-items: center; margin: 15px" href="{{ object.get_absolute_url }}">
-  {% include "common/round-image.html" with image=object.avatar empty=True %}
+  {% include "common/round-image.html" with image=object.avatar empty_url="/static/images/person-outline.svg"  %}
   {{ object }}
 </a>

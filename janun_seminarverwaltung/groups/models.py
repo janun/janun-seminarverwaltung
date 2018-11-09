@@ -6,6 +6,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from janun_seminarverwaltung.users.models import is_verwalter, is_reviewed
 
+from seminars.stats import SeminarStats
+
 
 def logo_filename(instance, filename):
     return "groups/{0}/{1}".format(instance.name, filename)
@@ -26,6 +28,17 @@ class JANUNGroup(models.Model):
 
     def get_absolute_url(self):
         return reverse('groups:detail', args=[self.pk])
+
+    def get_stats_this_year(self):
+        return SeminarStats(self.seminars.this_year())
+
+    @property
+    def tnt_this_year(self):
+        return self.get_stats_this_year().requested_tnt
+
+    @property
+    def funding_this_year(self):
+        return self.get_stats_this_year().requested_funding
 
     class Meta:
         ordering = ["name"]

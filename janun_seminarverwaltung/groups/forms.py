@@ -10,7 +10,8 @@ from janun_seminarverwaltung.users.models import User
 class JANUNGroupForm(forms.ModelForm):
     group_hats = forms.ModelMultipleChoiceField(
         label="Gruppenhüte",
-        queryset=User.objects.filter(role__in=("PRUEFER", "VERWALTER"))
+        queryset=User.objects.filter(role__in=("PRUEFER", "VERWALTER")),
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -31,6 +32,7 @@ class JANUNGroupForm(forms.ModelForm):
             instance.group_hats.clear()
             instance.group_hats.add(*self.cleaned_data['group_hats'])
         self.save_m2m = save_m2m
+
         if commit:
             instance.save()
             self.save_m2m()
@@ -40,7 +42,7 @@ class JANUNGroupForm(forms.ModelForm):
         model = JANUNGroup
         fields = ('name', 'logo', 'group_hats', 'homepage', 'email', 'address')
         widgets = {
-            'logo': ThumbnailFileInput,
+            'logo': ThumbnailFileInput(logo=True),
             'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
         }
 

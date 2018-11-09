@@ -22,7 +22,7 @@
   </div>
 
   <div style="display: flex; align-items: center;">
-    {% include "common/round-image.html" with image=object.logo logo=True css_class="margin-right-30" %}
+    {% include "common/round-image.html" with image=object.logo logo=True css_class="margin-right-30" empty_url="/static/images/group-outline.svg" %}
     <div>
       <h1 style="margin-bottom:0">{{ object.name }}</h1>
       <strong>Gruppenhut:</strong> {{ object.group_hats.all|link_list|default:"niemand" }}<br>
@@ -30,10 +30,14 @@
   </div>
 </div>
 
-{% if object.contact_people|length < 3 %}
+{% if object.contact_people.all|length < 3 %}
   <div class="panel bg-blue color-white clearfix margin-bottom-60">
     <a class="button float-right" href="{% url 'groups:edit' object.pk %}#contact_people">eintragen</a>
-    Zu dieser Gruppe wurden weniger als drei Konktaktpersonen eingetragen.
+    {% if object.contact_people.all|length > 0 %}
+      Zu dieser Gruppe wurden weniger als drei Konktaktpersonen eingetragen.
+    {% else %}
+      Zu dieser Gruppe wurden noch keine Konktaktpersonen eingetragen.
+    {% endif %}
   </div>
 {% endif %}
 
@@ -56,8 +60,14 @@
   <div style="display:flex">
     {% for member in object.members.all %}
       {% include "users/_user.html" with object=member %}
+    {% empty %}
+      <p>Keine Mitglieder eingetragen</p>
     {% endfor %}
   </div>
+  {% has_perm 'users.change_permissions' user as can_change_user_perms %}
+  {% if can_change_user_perms %}
+    <p>Klick bei einem Benutzer auf Bearbeiten, um es als Mitglied einer Gruppe hinzuzufügen.</p>
+  {% endif %}
 </div>
 
 <div class="panel margin-top-30 margin-bottom-60">

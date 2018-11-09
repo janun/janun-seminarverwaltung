@@ -6,7 +6,6 @@
 // Plugins
 var gulp = require('gulp'),
       pjson = require('./package.json'),
-      gutil = require('gulp-util'),
       sass = require('gulp-sass'),
       sassGlob = require('gulp-sass-glob');
       autoprefixer = require('gulp-autoprefixer'),

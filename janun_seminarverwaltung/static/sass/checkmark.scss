@@ -42,7 +42,7 @@
       display: block;
     }
 
-    &:disabled #{self}__label {
+    &:disabled ~ #{$self}__label {
       color: color(grey);
       cursor: not-allowed;
     }

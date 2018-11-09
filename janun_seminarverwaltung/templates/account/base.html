@@ -1,16 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{% block head_title %}{% endblock head_title %}{% endblock title %}
+{% block title %}{{block.super}}{% block head_title %}{% endblock head_title %}{% endblock title %}
 
 {% block content %}
-<div style="max-width: 640px;">
-  <h1>JANUN-Seminare</h1>
-  <p class="margin-bottom-60">
-    Hier kannst Du eine Förderung für Dein Jugendbildungsseminar beantragen.
-    Nach deiner Registrierung kannst du dann deine
-    <strong>Seminare anmelden, bearbeiten und ihren Status einsehen.</strong>
-  </p>
-  <div class="panel">
-    {% block inner %}{% endblock %}
-  </div>
-</div>
+  {% block inner %}{% endblock %}
 {% endblock %}

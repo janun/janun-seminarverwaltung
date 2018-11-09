@@ -1,7 +1,7 @@
 <div class="imageinput clearfix">
   {% if widget.is_initial %}
     <div class="float-left margin-right-15">
-      {% include "common/round-image.html" with image=widget.value %}
+      {% include "common/round-image.html" with image=widget.value logo=widget.logo %}
     </div>
   {% endif %}
 

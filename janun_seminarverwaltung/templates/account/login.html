@@ -5,15 +5,15 @@
 {% block title %}{{ block.super }} Anmeldung{% endblock %}
 
 {% block inner %}
-<h2>Anmeldung</h2>
+<h1>Anmeldung Seminarverwaltung</h1>
 <p>Du hast noch kein Konto? Dann <a href="{{ signup_url }}">registrieren</a>.</p>
-<form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
-  <button class="primaryAction button bg-green" type="submit">Anmelden</button>
-</form>
+  <form class="login panel clearfix" method="POST" action="{% url 'account_login' %}" style="max-width:640px">
+    {% csrf_token %}
+    {{ form|crispy }}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <a class="button float-right" href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
+    <button class="button bg-green" type="submit">Anmelden</button>
+  </form>
 {% endblock %}

@@ -1,8 +1,5 @@
 .table {
   width: 100%;
-  background-color: white;
-  @include shadow(1);
-  border-radius: 5px;
   margin-top: 30px;
   color: color(brown);
   border-collapse: collapse;
@@ -22,15 +19,21 @@
   }
 
   th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    box-shadow: 0 2px 0 0 #ccc;
+  }
+
+  th {
     text-align: left;
     padding: 10px;
-    border-bottom: 1px color(lightgrey) solid;
     color: color(darkgrey);
-    font-weight: normal;
+    font-weight: bold;
 
     a {
       color: color(darkgrey);
-      font-weight: normal;
+      font-weight: bold;
     }
 
     &.asc {

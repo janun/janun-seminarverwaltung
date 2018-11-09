@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="section">
-  <h1>Willkommen, {{ user.get_short_name|title }}!</h1>
+  <h1>Willkommen, {{ user }}!</h1>
 </div>
 
 {% has_perm 'seminars.see_stats' user as can_see_stats %}
