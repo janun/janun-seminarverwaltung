@@ -1,6 +1,6 @@
 .panel {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
   @include shadow(1);
   padding: 10px;
   margin-left: -15px;
@@ -20,6 +20,11 @@
         color: white;
       }
     }
+  }
+
+  &--brand {
+    border-left: 6px solid color(green);
+    border-radius: 0;
   }
 
   &__footer {

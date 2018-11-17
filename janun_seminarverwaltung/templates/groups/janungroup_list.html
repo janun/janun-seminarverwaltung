@@ -16,15 +16,17 @@
   {% endif %}
 </div>
 
-{% if filter %}
-<form class="filter-form" action="" method="get">
-  {{ filter.form|crispy }}
-  <span class="filter-form__buttons">
-    <button class="button bg-green" type="submit">Suche</button>
-    <a href="?" class="button" type="submit">zurücksetzen</a>
-  </span>
-</form>
+{% if orig_count > 5 %}
+  <form class="filter-form" action="" method="get">
+    {{ filter.form|crispy }}
+  </form>
+  {% render_table table %}
+{% else %}
+  <div class="card-grid">
+    {% for group in object_list %}
+      {% include "groups/_group.html" with object=group %}
+    {% endfor %}
+  </div>
 {% endif %}
 
-{% render_table table %}
 {% endblock %}

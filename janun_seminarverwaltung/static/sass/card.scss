@@ -12,20 +12,6 @@
   color: color(brown);
   font-size: 18px;
 
-  &__link {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    text-indent: 200%;
-    white-space: nowrap;
-    background: 0 0;
-    z-index: 2;
-    opacity: 0;
-  }
-
   &__heading {
     color: color(brown);
     font-size: 20px;
@@ -45,7 +31,7 @@
     color: color(brown);
   }
 
-  &:hover {
+  &:hover, &:focus {
     @include shadow(2);
   }
 }

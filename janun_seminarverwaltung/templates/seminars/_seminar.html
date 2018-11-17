@@ -1,9 +1,8 @@
-<div class="card">
+<a class="card" href="{% url 'seminars:detail' object.id %}">
   <h3 class="card__heading" style="font-weight:bold">{{ object.title }}</h3>
-  <a class="card__link" href="{% url 'seminars:detail' object.id %}">{{ object.title }}</a>
   <p>{{ object.start|date:"j.n.y" }}–{{ object.end|date:"j.n.y" }} in {{ object.location }}</p>
   <p class="card__footer">
     <span class="color-{{ object.get_state_color }}">{{ object.state.title }}</span>
     <span class="float-right">{{ object.group.name }}</span>
   </p>
-</div>
+</a>

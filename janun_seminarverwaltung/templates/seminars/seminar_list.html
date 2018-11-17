@@ -7,8 +7,6 @@
 
 {% block title %}{{ block.super }} {{ heading }}{% endblock %}
 
-{% block container_class %}big-container{% endblock %}
-
 {% block content %}
 <div class="clearfix">
   <h1 class="float-left">{{ heading }}</h1>
@@ -17,13 +15,15 @@
 
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
-  <div class="filter-form__buttons">
-    <button class="button bg-green" type="submit">Suche</button>
-    <a href="?" class="button" type="submit">zurücksetzen</a>
-  </div>
 </form>
-
-<div class="table-wrapper">
+{% if orig_count > 15 %}
   {% render_table table %}
-</div>
+{% else %}
+  <div class="card-grid">
+    {% for seminar in object_list %}
+      {% include "seminars/_seminar.html" with object=seminar %}
+    {% endfor %}
+  </div>
+{% endif %}
+
 {% endblock %}

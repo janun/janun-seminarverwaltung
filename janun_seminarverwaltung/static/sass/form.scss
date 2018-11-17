@@ -101,7 +101,12 @@ label {
   width: 100%;
   max-width: 640px;
   position: relative;
+
   [data-password-toggle] {
+    display: none;
+  }
+
+  [data-password-toggle] ~ label {
     font-size: 16px;
     color: color(grey);
     position: absolute;
@@ -110,14 +115,22 @@ label {
     height: 46px;
     line-height: 46px;
     padding-right: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #ccc;
+    font-weight: normal;
+    cursor: pointer;
   }
+}
+.no-js [data-password-toggle] {
+  display: none;
 }
 
 fieldset {
   border: none;
   padding: 0;
   margin: 0;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
+  margin-top: 30px;
 }
 
 legend {

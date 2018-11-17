@@ -28,6 +28,14 @@
     @include shadow(2);
   }
 
+  &--blank {
+    background-color: transparent;
+    @include shadow(0);
+    &:hover {
+      @include shadow(0);
+    }
+  }
+
   @each $color in $color-names {
     &.bg-#{$color} {
       color: white;

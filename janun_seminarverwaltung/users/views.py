@@ -42,6 +42,7 @@ class UserReviewView(PermissionRequiredMixin, DetailView):
             instance.is_reviewed = True
             instance.save()
             messages.info(request, "Benutzer_in wurde überprüft.")
+            # TODO E-Mail an Benutzer_in senden
         return HttpResponseRedirect(instance.get_absolute_url())
 
 

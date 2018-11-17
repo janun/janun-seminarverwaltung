@@ -56,6 +56,7 @@ class BaseUserForm(forms.ModelForm):
             ),
             ButtonHolder(
                 Submit('submit', 'Speichern', css_class='button bg-green'),
+                HTML("""<a class="button button--blank" href="{% url 'users:list' %}">Abbrechen</a>"""),
                 css_class="panel__footer"
             )
         )
@@ -105,9 +106,9 @@ class UserCreationForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = True
-        self.helper.layout[-1].insert(
-            0, HTML("""<a class="button" href="{% url 'users:list' %}">Abbrechen</a>"""),
-        )
+        # self.helper.layout[-1].insert(
+        #     0, HTML("""<a class="button" href="{% url 'users:list' %}">Abbrechen</a>"""),
+        # )
 
 
 class UserChangeForm(BaseUserForm):
@@ -121,9 +122,9 @@ class UserChangeForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = False
-        self.helper.layout[-1].insert(
-            0, HTML("""<a class="button" href="{}">Abbrechen</a>""".format(self.instance.get_absolute_url())),
-        )
+        # self.helper.layout[-1].insert(
+        #     0, HTML("""<a class="button" href="{}">Abbrechen</a>""".format(self.instance.get_absolute_url())),
+        # )
         if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
             self.fields['role'].disabled = True
             self.fields['janun_groups'].disabled = True
@@ -146,7 +147,6 @@ class UserSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'panel'
         self.helper.layout = Layout(
             'name', 'avatar',
             Fieldset(
@@ -166,7 +166,15 @@ class UserSignupForm(SignupForm):
                 css_class="panel__footer"
             )
         )
-        self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
+        if not self.errors:
+            self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
+        self.fields['username'].widget.attrs.pop('autofocus', None)
+
+        self.fields['password1'] = forms.CharField(
+            label="Passwort",
+            strip=False,
+            widget=forms.PasswordInput(render_value=True),
+        )
 
     def save(self, request):
         user = super().save(request)

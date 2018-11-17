@@ -1,5 +1,5 @@
 {% load static i18n %}<!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="no-js">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -16,12 +16,14 @@
   </head>
 
   <body>
+    <script>document.documentElement.className=document.documentElement.className.replace("no-js","js");</script>
+
     {% include "_navbar.html" %}
 
     <div class="{% block container_class %}container{% endblock %}">
       {% if messages %}
         {% for message in messages %}
-          <div class="panel {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+          <div class="panel panel--brand {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
         {% endfor %}
       {% endif %}
 

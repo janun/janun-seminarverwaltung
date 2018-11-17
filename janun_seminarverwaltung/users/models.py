@@ -206,7 +206,7 @@ def is_reviewed(user):
     return user.is_reviewed
 
 rules.add_perm('users.see_all_users', is_verwalter | is_pruefer)
-rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_pruefer)
+rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_pruefer | is_in_same_group & is_reviewed)
 rules.add_perm('users.add_user', is_verwalter | is_pruefer)
 rules.add_perm('users.change_user', is_verwalter | is_pruefer | is_own_user)
 rules.add_perm('users.change_permissions', is_verwalter | is_pruefer)

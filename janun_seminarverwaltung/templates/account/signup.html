@@ -6,11 +6,8 @@
 
 {% block inner %}
 <h1>Registrierung Seminarverwaltung</h1>
-<p>
-  Du hast schon ein Konto?
-  Dann <a href="{{ login_url }}">anmelden</a>.
-</p>
-
-{% crispy form %}
+<div class="panel">
+  {% crispy form %}
+</div>
 
 {% endblock %}

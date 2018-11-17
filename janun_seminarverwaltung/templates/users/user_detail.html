@@ -63,7 +63,7 @@
 
 {% if not object.is_reviewed %}
   {% if request.user != object or object.janun_groups.all %}
-    <div class="panel bg-red margin-top-30 clearfix">
+    <div class="panel panel--brand margin-top-30 clearfix" style="border-color: red">
       {% has_perm 'users.review' request.user object as can_review %}
       {% if can_review %}
         <a class="button bg-blue float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
