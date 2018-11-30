@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% load rules %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}{{ block.super }} {{ heading }}{% endblock %}
+
+{% block content %}
+<div class="clearfix my-4">
+  <h1 class="float-left h3 font-weight-bold">{{ heading }}</h1>
+  <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+</div>
+
+<form class="filter-form" action="" method="get">
+  {{ filter.form|crispy }}
+  <span style="white-space: nowrap">
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    <a class="btn btn-sm" href="{% url 'seminars:list' %}">Reset</a>
+  </span>
+</form>
+
+<div class="card mx-neg my-4">
+  <div class="table-responsive-lg">
+    {% render_table table %}
+  </div>
+</div>
+{% endblock %}

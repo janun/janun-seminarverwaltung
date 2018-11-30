@@ -3,11 +3,13 @@ import unicodedata
 from django import forms
 from django.contrib.auth import password_validation
 from django.contrib import messages
+from django.urls import reverse_lazy
 
-from allauth.account.forms import SignupForm
+from allauth.account.forms import LoginForm, SignupForm
+from allauth.account.adapter import get_adapter
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML, Field
 
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.formfields import PhoneNumberField
@@ -36,17 +38,15 @@ class BaseUserForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'panel'
+        self.helper.form_tag = False
         self.helper.layout = Layout(
-            'name', 'avatar',
-            Fieldset(
-                "Konto",
-                'username', 'password1',
-                id="account"
-            ),
+            'name',
+            'email',
+            'username',
+            'avatar',
             Fieldset(
                 "Kontakt-Daten",
-                'email', 'phone_number', 'address',
+                'phone_number', 'address',
                 id="contact"
             ),
             Fieldset(
@@ -54,11 +54,6 @@ class BaseUserForm(forms.ModelForm):
                 'role', 'janun_groups', 'group_hats', 'is_reviewed',
                 id="permissions"
             ),
-            ButtonHolder(
-                Submit('submit', 'Speichern', css_class='button bg-green'),
-                HTML("""<a class="button button--blank" href="{% url 'users:list' %}">Abbrechen</a>"""),
-                css_class="panel__footer"
-            )
         )
 
     def _post_clean(self):
@@ -88,12 +83,15 @@ class BaseUserForm(forms.ModelForm):
             'janun_groups', 'group_hats', 'phone_number', 'address', 'is_reviewed'
         )
         widgets = {
-            # 'role': forms.RadioSelect, # TODO: radio not working with disabled
             'phone_number': PhoneNumberInternationalFallbackWidget,
             'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
             'avatar': ThumbnailFileInput
         }
         field_classes = {'username': UsernameField}
+        help_texts = {
+            'janun_groups': """Für mehrere, drücke <kbd>Strg</kbd>.""",
+            'group_hats': """Für mehrere, drücke <kbd>Strg</kbd>.""",
+        }
 
 
 class UserCreationForm(BaseUserForm):
@@ -106,14 +104,11 @@ class UserCreationForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = True
-        # self.helper.layout[-1].insert(
-        #     0, HTML("""<a class="button" href="{% url 'users:list' %}">Abbrechen</a>"""),
-        # )
 
 
 class UserChangeForm(BaseUserForm):
     password1 = forms.CharField(
-        label="Passwort Ändern",
+        label="Passwort ändern",
         strip=False,
         widget=forms.PasswordInput(render_value=True),
         help_text="Das alte Passwort kann nicht eingesehen werden. Aber es kann hier geändert werden."
@@ -122,72 +117,98 @@ class UserChangeForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = False
-        # self.helper.layout[-1].insert(
-        #     0, HTML("""<a class="button" href="{}">Abbrechen</a>""".format(self.instance.get_absolute_url())),
-        # )
         if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
             self.fields['role'].disabled = True
             self.fields['janun_groups'].disabled = True
             self.fields['group_hats'].disabled = True
             self.fields['is_reviewed'].disabled = True
+            self.helper.layout[-1].insert(
+                0, HTML("""<p>Du kannst hier nichts ändern.</p>"""),
+            )
+
+
+class UserLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['login'].widget.attrs['placeholder'] = ""
+        self.fields['login'].label = "Benutzername oder E-Mail-Adresse"
+        self.fields['login'].widget.attrs['autofocus'] = 'autofocus'
+        self.fields['password'].widget.attrs['placeholder'] = ""
+        self.fields['password'].help_text = """<a href="{}">Passwort vergessen?</a>""".format(
+            reverse_lazy('account_reset_password')
+        )
 
 
 class UserSignupForm(SignupForm):
 
     name = forms.CharField(label="Voller Name")
-    avatar = forms.FileField(label="Profilbild", required=False)
-    phone_number = PhoneNumberField(label="Telefonnummer", required=False)
-    address = forms.CharField(label="Postadresse", required=False)
+    # avatar = forms.FileField(label="Profilbild", widget=ThumbnailFileInput, required=False)
+    # phone_number = PhoneNumberField(label="Telefonnummer", required=False)
+    # address = forms.CharField(
+    #     label="Postadresse", required=False,
+    #     widget=forms.Textarea(attrs={'cols': '20', 'rows': '4'})
+    # )
     janun_groups = forms.ModelMultipleChoiceField(
         label="Gruppen-Mitgliedschaften",
         queryset=JANUNGroup.objects.all(),
-        required=False
+        required=False,
+        help_text="""Wähle die Gruppen aus, in denen Du Mitglied bist. Für mehrere, drücke <kbd>Strg</kbd>."""
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
-            'name', 'avatar',
-            Fieldset(
-                "Konto",
-                'username', 'password1'
-            ),
-            Fieldset(
-                "Kontakt-Daten",
-                'email', 'phone_number', 'address'
-            ),
-            Fieldset(
-                "Gruppen",
-                'janun_groups',
-            ),
-            ButtonHolder(
-                Submit('submit', 'Registrieren', css_class='button bg-green'),
-                css_class="panel__footer"
-            )
+            'name',
+            # 'avatar',
+            'email',
+            'username',
+            'password1',
+            'janun_groups',
+            # Fieldset(
+            #     "Kontakt-Daten",
+            #     'phone_number', 'address'
+            # ),
         )
         if not self.errors:
             self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
-        self.fields['username'].widget.attrs.pop('autofocus', None)
+
+        self.fields['username'].label = "Benutzername"
+        self.fields['username'].help_text = "Du kannst Dich übrigens auch mit Deiner E-Mail-Adresse anmelden."
+        self.fields['username'].widget.attrs['autofocus'] = False
+        self.fields['username'].widget.attrs['placeholder'] = ""
+
+        self.fields['email'].widget.attrs['placeholder'] = ""
+        self.fields['email'].help_text = "Die brauchen wir, um Dich zu Deinem Seminar zu kontaktieren."
 
         self.fields['password1'] = forms.CharField(
             label="Passwort",
             strip=False,
             widget=forms.PasswordInput(render_value=True),
+            help_text="""Regeln: Min. 8 Zeichen, nicht nur Zahlen, nicht zu ähnlich zu Name oder E-Mail.<br>
+                         <strong>Tipp:</strong> Probiere einen Satz, das lässt sich besser merken."""
         )
 
-    def save(self, request):
-        user = super().save(request)
-        user.name = self.cleaned_data['name']
-        user.phone_number = self.cleaned_data['phone_number']
-        user.address = self.cleaned_data['address']
-        user.janun_groups.set(self.cleaned_data['janun_groups'])
-        user.save()
-        return user
+
+    def clean(self):
+        # super().clean()
+        dummy_user = User()
+        dummy_user.username = self.cleaned_data.get("username")
+        dummy_user.email = self.cleaned_data.get("email")
+        dummy_user.name = self.cleaned_data.get("name")
+        password = self.cleaned_data.get('password1')
+        if password:
+            try:
+                get_adapter().clean_password(
+                    password,
+                    user=dummy_user)
+            except forms.ValidationError as e:
+                self.add_error('password1', e)
+        return self.cleaned_data
 
     class Meta:
         widgets = {
             'phone_number': PhoneNumberInternationalFallbackWidget,
-            'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
             'avatar': ThumbnailFileInput
         }

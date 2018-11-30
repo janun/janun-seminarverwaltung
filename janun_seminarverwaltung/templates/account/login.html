@@ -1,19 +1,28 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 
 {% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} Anmeldung{% endblock %}
 
-{% block inner %}
-<h1>Anmeldung Seminarverwaltung</h1>
-<p>Du hast noch kein Konto? Dann <a href="{{ signup_url }}">registrieren</a>.</p>
-  <form class="login panel clearfix" method="POST" action="{% url 'account_login' %}" style="max-width:640px">
-    {% csrf_token %}
-    {{ form|crispy }}
-    {% if redirect_field_value %}
-      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-    {% endif %}
-    <a class="button float-right" href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
-    <button class="button bg-green" type="submit">Anmelden</button>
+{% block container_class %}container mw-500{% endblock %}
+
+{% block content %}
+<div class="card card-bigger card-accent login">
+  <h1 class="h2 font-weight-bold card-header text-center">Anmeldung<br>Seminarverwaltung</h1>
+  <div class="card-body">
+    <p class="card-text">Du hast noch kein Konto? Dann musst Du Dich erst <a href="{{ signup_url }}">registrieren</a>.</p>
+  </div>
+  <form method="POST" action="{% url 'account_login' %}">
+    <div class="card-body">
+      {% csrf_token %}
+      {{ form|crispy }}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+    </div>
+    <div class="card-footer clearfix">
+      <button class="btn btn-primary float-right" type="submit">Anmelden</button>
+    </div>
   </form>
+</div>
 {% endblock %}

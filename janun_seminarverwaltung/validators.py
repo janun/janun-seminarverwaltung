@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import RequestException
 import hashlib
 
 from django.core.exceptions import ValidationError
@@ -11,11 +12,14 @@ PWNED_PASSWORD_CHECK_PATH = 'range/'
 
 class PwnedPasswordValidator(object):
     def _exists_as_pwned(self, password):
-        hash = hashlib.sha1(password.encode("utf8")).hexdigest().upper()
-        head, rest = hash[:5], hash[5:]
-        url = PWNED_ENDPOINT + PWNED_PASSWORD_CHECK_PATH + head
-        req = requests.get(url)
-        return rest in req.content.decode('utf-8')
+        try:
+            hash = hashlib.sha1(password.encode("utf8")).hexdigest().upper()
+            head, rest = hash[:5], hash[5:]
+            url = PWNED_ENDPOINT + PWNED_PASSWORD_CHECK_PATH + head
+            req = requests.get(url)
+            return rest in req.content.decode('utf-8')
+        except RequestException:
+            return False
 
     def validate(self, password, *args, **kwargs):
         if self._exists_as_pwned(password):

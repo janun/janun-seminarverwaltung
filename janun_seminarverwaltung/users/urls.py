@@ -1,4 +1,6 @@
 from django.urls import path
+from django.views.generic import TemplateView
+
 
 from . import views
 
@@ -13,4 +15,5 @@ urlpatterns = [
     path('<int:pk>/deactivate/', views.UserDeactivateView.as_view(), name='deactivate'),
     path('<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit'),
     path('<int:pk>/review/', views.UserReviewView.as_view(), name='review'),
+    # path('anleitung-passphrase', TemplateView.as_view(template_name="users/anleitung-passphrase.html"), name='passphrase')
 ]

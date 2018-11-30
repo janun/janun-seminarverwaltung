@@ -11,4 +11,5 @@ class ThumbnailFileInput(forms.ClearableFileInput):
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context['widget']['logo'] = self.logo
+        # print(context)
         return context

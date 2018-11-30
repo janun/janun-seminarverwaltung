@@ -1,24 +1,53 @@
-<div class="panel margin-top-60 margin-bottom-60">
-  <h2>Status:</h2>
-  <div class="seminar-state">
+<div class="card my-5 mw-500 mx-autos">
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-md">
+        derzeitiger Status:<br>
+        <span style="font-size: 1.25rem" class="font-weight-bold text-{{ object.get_state_color }}">
+          {{ object.get_state_display|title }}
+        </span>
+      </div>
 
-    <div class="seminar-state__current font-weight-bold margin-bottom-30 color-{{ object.get_state_color }}">
-      {{ object.get_state_display|title }}
+      {% if available_transitions %}
+        <div class="col-md text-center text-secondary d-none d-sm-block" style="font-size: 3rem; margin-top: -0.5rem">
+           →
+        </div>
+
+        <div class="col-md">
+          {% for transition in available_transitions %}
+            <a
+              href="{% url 'seminars:change_state' object.pk transition.name %}"
+              class="my-1 float-md-right btn btn-{% if transition.custom.color != 'primary' %}outline-{% endif %}{{ transition.custom.color }}"
+              data-toggle="modal" data-target="#stateModal" data-form-action="{% url 'seminars:change_state' object.pk transition.name %}"
+              data-button-name="{{ transition.custom.button_name|lower }}" data-transition-color="{{ transition.custom.color }}">
+              {{ transition.custom.button_name }}
+            </a><br>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
-    {% if available_transitions %}
-      <div class="seminar-state__arrow">→</div>
+  </div>
+</div>
 
-      <div class="seminar-state__transitions">
-        {% for transition in available_transitions %}
-          <a
-            href="{% url 'seminars:change_state' object.pk transition.name %}"
-            class="button bg-{{ transition.custom.color }}">
-            {{ transition.custom.button_name }}
-          </a>
-        {% endfor %}
+
+<div class="modal" tabindex="-1" role="dialog" id="stateModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seminar ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    {% endif %}
-
+      <div class="modal-body"><p></p></div>
+      <div class="modal-footer">
+        <form method="post" action="">
+          {% csrf_token %}
+          <button type="button" class="btn btn-link" data-dismiss="modal">Abbrechen</button>
+          <button type="submit" class="btn"></button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

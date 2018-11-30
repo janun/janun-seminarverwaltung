@@ -1,80 +1,158 @@
-$table-column-height: 60px;
+$table-row-height: 60px;
 
 .table {
-  width: 100%;
-  margin-top: 30px;
-  color: color(brown);
-  border-collapse: collapse;
+  // td {
+  //   padding: 0 10px;
+  //   vertical-align: middle;
+  //   height: $table-row-height;
+  //   white-space: nowrap;
+  //   text-overflow: ellipsis;
+  //   overflow: hidden;
+  //   max-width: 180px;
+  //   @include media-breakpoint-up(md) {
+  //     max-width: 300px;
+  //   }
+  //
+  //   a {
+  //     display: inline-block;
+  //     height: $table-row-height;
+  //     line-height: $table-row-height;
+  //   }
+  // }
 
-  tr {
-    height: $table-column-height;
-
-    &[data-link] {
-      cursor: pointer;
-    }
-  }
-
-  .odd, .even {
-    &:hover {
-      background-color: #f0f0f0;
-    }
+  tr[data-link] {
+    cursor: pointer;
   }
 
   th {
     position: sticky;
     top: 0;
+    z-index: 100;
     background-color: white;
-    box-shadow: 0 2px 0 0 #ccc;
+    box-shadow: 0 1px 0 0 $gray-400;
+    font-weight: normal;
+    background-color: $gray-100;
+    color: $secondary;
+    a { color: $secondary; }
   }
 
-  th {
-    text-align: left;
-    padding: 10px;
-    color: color(darkgrey);
+  td, td a {
+    color: $gray-600;
+  }
+
+  .asc a {
     font-weight: bold;
-
-    a {
-      color: color(darkgrey);
-      font-weight: bold;
-    }
-
-    &.asc {
-      a {font-weight: bold;}
-      &:after {
-        content: "↑";
-        margin-left: 5px;
-      }
-    }
-
-    &.desc {
-      a {font-weight: bold;}
-      &:after {
-        content: "↓";
-        margin-left: 5px;
-      }
+    &:after {
+      content: "↑";
+      margin-left: 5px;
     }
   }
 
-  td {
-    padding-left: 10px;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 180px;
-    @media (min-width: 600px) {
-      max-width: 300px;
-    }
-
-    a {
-      display: inline-block;
-      height: $table-column-height;
-      line-height: $table-column-height;
+  .desc a {
+    font-weight: bold;
+    &:after {
+      content: "↓";
+      margin-left: 5px;
     }
   }
-
-  &__img {
-    height: 40px;
-  }
-
 }
+
+// @include media-breakpoint-up(md) {
+//   .table-container nav {
+//     position: sticky;
+//     bottom: 0;
+//     // background: white;
+//     // padding-top: 10px;
+//     // padding-bottom: 10px;
+//     // border-top: 2px solid $gray-400;
+//
+//     .pagination {
+//       position: absolute;
+//       right: 10px;
+//       bottom: 0;
+//       margin-bottom: 10px;
+//     }
+//   }
+// }
+
+
+// $table-column-height: 60px;
+//
+// .table {
+//   width: 100%;
+//   margin-top: 30px;
+//   color: color(brown);
+//   border-collapse: collapse;
+//
+//   tr {
+//     height: $table-column-height;
+//
+//     &[data-link] {
+//       cursor: pointer;
+//     }
+//   }
+//
+//   .odd, .even {
+//     &:hover {
+//       background-color: #f0f0f0;
+//     }
+//   }
+//
+//   th {
+//     position: sticky;
+//     top: 0;
+//     background-color: white;
+//     box-shadow: 0 2px 0 0 #ccc;
+//   }
+//
+//   th {
+//     text-align: left;
+//     padding: 10px;
+//     color: color(darkgrey);
+//     font-weight: bold;
+//
+//     a {
+//       color: color(darkgrey);
+//       font-weight: bold;
+//     }
+//
+//     &.asc {
+//       a {font-weight: bold;}
+//       &:after {
+//         content: "↑";
+//         margin-left: 5px;
+//       }
+//     }
+//
+//     &.desc {
+//       a {font-weight: bold;}
+//       &:after {
+//         content: "↓";
+//         margin-left: 5px;
+//       }
+//     }
+//   }
+//
+//   td {
+//     padding-left: 10px;
+//     padding-right: 10px;
+//     white-space: nowrap;
+//     text-overflow: ellipsis;
+//     overflow: hidden;
+//     max-width: 180px;
+//     @media (min-width: 600px) {
+//       max-width: 300px;
+//     }
+//
+//     a {
+//       display: inline-block;
+//       height: $table-column-height;
+//       line-height: $table-column-height;
+//     }
+//   }
+//
+//   &__img {
+//     height: 40px;
+//   }
+//
+// }

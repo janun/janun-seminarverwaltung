@@ -6,107 +6,160 @@
 {% block title %}{{ block.super }} Übersicht{% endblock %}
 
 {% block content %}
-<div class="section">
-  <h1>Willkommen, {{ user }}!</h1>
+<div class="my-3">
+  <h1 class="mb-4">Willkommen, {{ user.get_short_name }}!</h1>
+  <!-- <a class="btn m-1 btn-outline-secondary" href="{% url 'users:edit' request.user.pk  %}">Daten ändern</a> -->
+  <a class="btn m-1 btn-primary" href="{% url 'seminars:create' %}">Seminar anmelden</a>
 </div>
 
-{% has_perm 'seminars.see_stats' user as can_see_stats %}
-{% if can_see_stats %}
-<div class="panel margin-top-60 margin-bottom-60">
-  <h2>Seminar-Statistik</h2>
 
-  <h3>Dieses Jahr (angefragt)</h3>
-  <table class="">
-    <tr>
-      <td><strong>Anzahl:</strong></td>
-      <td>{{ seminar_stats.count }}</td>
-    </tr>
-    <tr>
-      <td><strong>Förderung:</strong></td>
-      <td>{{ seminar_stats.requested_funding }} €</td>
-    </tr>
-    <tr>
-      <td><strong>TNT:</strong></td>
-      <td>{{ seminar_stats.requested_tnt }}</td>
-    </tr>
-    <tr>
-      <td><strong>Förderung / TNT:</strong></td>
-      <td>{{ seminar_stats.requested_funding_over_tnt|floatformat:2 }} €/TNT</td>
-    </tr>
-  </table>
+{% if not request.user.is_reviewed and user.janun_groups.all %}
+  <div class="callout callout-danger my-4 mw-500">
+    <div class="card-body">
+      Dein Konto wurde noch <strong>nicht überprüft</strong> und Du kannst deswegen noch <strong>keine Gruppenseiten</strong> besuchen
+      und <strong>keine Seminare von anderen</strong> betrachten.
+    </div>
+  </div>
+{% endif %}
 
-  <h3 class="margin-top-30">Dieses Jahr (durchgeführt)</h3>
-  TODO
 
-  <h3 class="margin-top-30">Insgesamt</h3>
-  TODO
+
+{% if all_seminars %}
+<div class="my-5 clearfix">
+  <h3 class="h3">Die letzten 6 Seminare <small class="text-secondary">(nach Anmeldezeitpunkt)</small></h3>
+  <div class="row">
+    {% for seminar in all_seminars %}
+      <div class="col-md-6 col-lg-4 my-3">
+        {% include "seminars/_seminar.html" with object=seminar %}
+      </div>
+    {% endfor %}
+  </div>
+  <a href="{% url 'seminars:list' %}" class="btn m-1 btn-outline-secondary float-right">Alle Seminare →</a>
 </div>
 {% endif %}
 
 
-{% if users_to_review %}
-<div class="section">
-  <h2>Ungeprüfte Benutzer_innen</h2>
-  <div>
-    <div style="display: flex">
-      {% for user in users_to_review %}
-        {% include "users/_user.html" with object=user %}
+
+<div class="my-5 clearfix">
+  <h3 class="h3">Deine {% if my_seminars_count > 6 %}letzten 6{% endif %} Seminare</h3>
+  {% if my_seminars %}
+    <div class="row">
+      {% for seminar in my_seminars %}
+        <div class="col-md-6 col-lg-4 my-3">
+          {% include "seminars/_seminar.html" with object=seminar %}
+        </div>
       {% endfor %}
     </div>
+  {% else %}
+    <p>Du hast noch keine Seminare angemeldet.</p>
+  {% endif %}
+  {% if my_seminars_count > 6 %}
+    <a href="{% url 'seminars:list' %}" class="btn m-1 btn-outline-secondary float-right">Alle Seminare →</a>
+  {% endif %}
+</div>
+
+
+{% has_perm 'seminars.see_stats' user as can_see_stats %}
+{% if can_see_stats %}
+<div class="card my-4">
+  <div class="card-header">
+    Seminar-Statistik
   </div>
+
+  <div class="card-body">
+    <table class="table card-text table-sm">
+      <tr>
+        <th><strong>Anzahl:</strong></th>
+        <td>{{ seminar_stats.count }}</td>
+      </tr>
+      <tr>
+        <th><strong>Förderung:</strong></th>
+        <td>{{ seminar_stats.requested_funding }} €</td>
+      </tr>
+      <tr>
+        <th><strong>TNT:</strong></th>
+        <td>{{ seminar_stats.requested_tnt }}</td>
+      </tr>
+      <tr>
+        <th><strong>Förderung / TNT:</strong></th>
+        <td>{{ seminar_stats.requested_funding_over_tnt|floatformat:2 }} €/TNT</td>
+      </tr>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+
+<div class="card-deck">
+{% if users_to_review %}
+<div class="card">
+  <div class="card-header">
+    Ungeprüfte Benutzer_innen
+  </div>
+  <ul class="list-group list-group-flush">
+      {% for user in users_to_review %}
+        <li class="list-group-item">{% include "users/_user.html" with object=user %}</li>
+      {% endfor %}
+  </ul>
 </div>
 {% endif %}
 
 {% if groups_without_contacts %}
-<div class="section">
-  <h2>Gruppen mit weniger als drei Kontaktpersonen</h2>
-  <div style="display: flex">
+<div class="card">
+  <div class="card-header">
+    Gruppen mit weniger als drei Kontaktpersonen
+  </div>
+  <ul class="list-group list-group-flush">
     {% for group in groups_without_contacts %}
-      {% include "groups/_group.html" with object=group %}
+      <li class="list-group-item">{% include "groups/_group.html" with object=group %}</li>
     {% endfor %}
-  </div>
+  </ul>
 </div>
 {% endif %}
+</div>
 
-{% if janun_groups %}
-  <div class="section">
-    <h2>Gruppen</h2>
-    <div style="display: flex">
+
+<!-- <div class="card-deck my-4">
+
+  <div class="card">
+    <div class="card-header">
+      Gruppen-Mitgliedschaften
+    </div>
+    {% if janun_groups %}
+    <ul class="list-group list-group-flush">
       {% for group in janun_groups %}
-        {% include "groups/_group.html" with object=group %}
+        <li class="list-group-item">
+          {% include "groups/_group.html" with object=group %}
+        </li>
       {% endfor %}
-    </div>
+    </ul>
+    {% else %}
+      <div class="card-body">
+        <p class="card-text">Du bist in keinen Gruppen Mitglied.</p>
+      </div>
+    {% endif %}
   </div>
-{% endif %}
 
-
-{% if group_hats %}
-  <div class="section">
-    <h2>Gruppenhüte</h2>
-    <div style="display: flex">
+  <div class="card">
+    <div class="card-header">
+      Gruppen-Hüte
+    </div>
+    {% if group_hats %}
+    <ul class="list-group list-group-flush">
       {% for group in group_hats %}
-        {% include "groups/_group.html" with object=group %}
+        <li class="list-group-item">
+          {% include "groups/_group.html" with object=group %}
+        </li>
       {% endfor %}
-    </div>
+    </ul>
+    {% else %}
+      <div class="card-body">
+        <p class="card-text">Du hast keinen Gruppenhut</p>
+      </div>
+    {% endif %}
   </div>
-{% endif %}
 
-
-<div class="section">
-  <div class="clearfix">
-    <h2 class="float-left">Die letzten Seminare</h2>
-    <a class="button bg-green float-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
-  </div>
-  {% if seminars %}
-  <div class="card-grid">
-    {% for seminar in seminars %}
-      {% include "seminars/_seminar.html" with object=seminar %}
-    {% endfor %}
-  </div>
-  {% else %}
-    Noch keine Seminare.
-  {% endif %}
-</div>
+</div> -->
 
 
 {% endblock %}

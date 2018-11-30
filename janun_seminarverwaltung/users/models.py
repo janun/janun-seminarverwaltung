@@ -48,7 +48,7 @@ def avatar_filename(instance, filename):
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(
-        "Voller Name", max_length=255, unique=True
+        "Voller Name", max_length=255
     )
     email = models.EmailField(
         "E-Mail-Adresse", unique=True,
@@ -56,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     username = models.CharField(
         "Benutzername", max_length=40, blank=True, null="True",
-        help_text="Muss nicht gesetzt sein, da auch die E-Mail-Adresse zum Login genutzt werden kann."
+        help_text=""
     )
     avatar = models.ImageField(
         verbose_name="Profilbild", blank=True, null=True,
@@ -133,7 +133,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.name
 
     def get_short_name(self):
-        return self.username or self.name
+        return self.username or self.name.partition(' ')[0]
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
@@ -161,6 +161,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             | Q(group__in=self.group_hats.all())
             | Q(group__in=self.janun_groups.all())
         )
+
 
     class Meta:
         verbose_name = "Benutzer_in"

@@ -37,7 +37,8 @@ var pathsConfig = function (appName) {
     sass: this.app + '/static/sass',
     fonts: this.app + '/static/fonts',
     images: this.app + '/static/images',
-    js: this.app + '/static/js'
+    js: this.app + '/static/js',
+    nodeModules: vendorsRoot
   }
 };
 
@@ -51,7 +52,7 @@ var paths = pathsConfig();
 gulp.task('styles', function() {
   return gulp.src(paths.sass + '/project.scss')
     .pipe(sassGlob())
-    .pipe(sass({includePaths: [paths.sass]}).on('error', sass.logError))
+    .pipe(sass({includePaths: [paths.sass, paths.nodeModules]}).on('error', sass.logError))
     .pipe(plumber()) // Checks for errors
     .pipe(autoprefixer({browsers: ['last 2 versions']})) // Adds vendor prefixes
     .pipe(pixrem())  // add fallbacks for rem units
@@ -98,6 +99,7 @@ gulp.task('browserSync', function() {
 gulp.task('watch', function() {
 
   gulp.watch(paths.sass + '/*.scss', ['styles']);
+  gulp.watch(paths.sass + '/_*.scss', ['styles']);
   gulp.watch(paths.js + '/*.js', ['scripts']).on("change", reload);
   gulp.watch(paths.images + '/*', ['imgCompression']);
   gulp.watch(paths.templates + '/**/*.html').on("change", reload);

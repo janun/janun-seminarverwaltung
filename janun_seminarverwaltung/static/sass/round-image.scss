@@ -14,11 +14,17 @@
   &__image {
     height: 100%;
     width: auto;
+    // object-fit: cover;
   }
 
   &--small {
     height: 50px;
     width: 50px;
+  }
+
+  &--tiny {
+    height: 20px;
+    width: 20px;
   }
 
   &--logo &__image {

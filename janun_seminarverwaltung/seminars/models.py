@@ -59,12 +59,12 @@ class Seminar(TimeStampedModel, models.Model):
 
     def get_state_color(self):
         if self.state in ('ZURUECKGEZOGEN', 'ABGELEHNT', 'ABGESAGT', 'OHNE_ABRECHNUNG', 'UNMOEGLICH'):
-            return 'red'
-        return 'green'
+            return 'danger'
+        return 'primary'
 
     title = models.CharField(
         "Titel", max_length=255, unique_for_date="start_date",
-        help_text="Beschreib oder bennene Dein Seminar in wenigen Worten"
+        help_text="Beschreibe oder bennene Dein Seminar in wenigen Worten"
     )
     content = models.TextField(
         "Inhalt",
@@ -103,7 +103,7 @@ class Seminar(TimeStampedModel, models.Model):
         verbose_name="Status"
     )
     mobility_barriers = models.TextField(
-        "Moblitäts-Barrieren",
+        "Mobilitäts-Barrieren",
         help_text="Zum Bsp.: Müssen Stufen oder Treppen überwunden werden? "
                   "Findet ein Workshop im Garten statt? Sind sportliche Betätigungen vorgesehen?",
         blank=True,
@@ -207,8 +207,8 @@ class Seminar(TimeStampedModel, models.Model):
         return None
 
     def clean_end_date(self):
-        if self.end and self.start:
-            if self.end < self.start:
+        if self.end_date and self.start_date:
+            if self.end_date < self.start_date:
                 return ValidationError("Endzeit muss nach Startzeit liegen.")
         return None
 
@@ -280,7 +280,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ANGEMELDET', 'ABGELEHNT', 'ABGESAGT'],
                 target='ZUGESAGT',
                 permission='seminars.can_zusagen',
-                custom=dict(button_name="Zusagen", color="green"))
+                custom=dict(button_name="Zusagen", color="primary"))
     def zusagen(self):
         # Email: author, Gruppenhut
         pass
@@ -289,7 +289,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ZUGESAGT'],
                 target='ABGESAGT',
                 permission='seminars.can_absagen',
-                custom=dict(button_name="Absagen", color="red"))
+                custom=dict(button_name="Absagen", color="danger"))
     def absagen(self):
         # Email: author, Gruppenhut, verwalter
         pass
@@ -298,7 +298,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ANGEMELDET', 'ZUGESAGT'],
                 target='ABGELEHNT',
                 permission='seminars.can_ablehnen',
-                custom=dict(button_name="Ablehnen", color="red"))
+                custom=dict(button_name="Ablehnen", color="danger"))
     def ablehnen(self):
         # Email: author, Gruppenhut
         pass
@@ -307,7 +307,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ANGEMELDET', 'ZUGESAGT'],
                 target='ZURUECKGEZOGEN',
                 permission='seminars.can_zurueckziehen',
-                custom=dict(button_name="Zurückziehen", color="red"))
+                custom=dict(button_name="Zurückziehen", color="danger"))
     def zurueckziehen(self):
         # Email: author, Gruppenhut, verwalter
         pass
@@ -316,7 +316,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ZUGESAGT'],
                 target='STATTGEFUNDEN',
                 permission='seminars.can_stattfinden',
-                custom=dict(button_name="Stattfinden bestätigen", color="green"),
+                custom=dict(button_name="Stattfinden bestätigen", color="primary"),
                 conditions=[is_in_the_past])
     def stattfinden(self):
         # Email: an Gruppenhut
@@ -326,7 +326,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['STATTGEFUNDEN'],
                 target='OHNE_ABRECHNUNG',
                 permission='seminars.can_ohne_abrechnung',
-                custom=dict(button_name="ohne Abrechnung", color="red"))
+                custom=dict(button_name="ohne Abrechnung", color="danger"))
     def ohne_abrechnung(self):
         # keine Mail
         pass
@@ -335,7 +335,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['STATTGEFUNDEN'],
                 target='ABGESCHICKT',
                 permission='seminars.can_abschicken',
-                custom=dict(button_name="Abrechnung abgeschickt", color="green"))
+                custom=dict(button_name="Abrechnung abgeschickt", color="primary"))
     def abschicken(self):
         # keine Mail
         pass
@@ -344,7 +344,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['STATTGEFUNDEN', 'ABGESCHICKT'],
                 target='ANGEKOMMEN',
                 permission='seminars.can_ankommen',
-                custom=dict(button_name="Abrechnung angekommen", color="green"))
+                custom=dict(button_name="Abrechnung angekommen", color="primary"))
     def ankommen(self):
         # Mail an Autor
         pass
@@ -353,7 +353,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['ANGEKOMMEN'],
                 target='RECHNERISCH',
                 permission='seminars.can_rechnen',
-                custom=dict(button_name="rechnerische Prüfung", color="green"))
+                custom=dict(button_name="rechnerische Prüfung", color="primary"))
     def rechnen(self):
         # keine Mail
         pass
@@ -362,7 +362,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['RECHNERISCH'],
                 target='INHALTLICH',
                 permission='seminars.can_inhalten',
-                custom=dict(button_name="inhaltliche Prüfung", color="green"))
+                custom=dict(button_name="inhaltliche Prüfung", color="primary"))
     def inhalten(self):
         # keine Mail
         pass
@@ -371,7 +371,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['INHALTLICH'],
                 target='NACHPRUEFUNG',
                 permission='seminars.can_nach_pruefen',
-                custom=dict(button_name="Nachprüfung", color="green"))
+                custom=dict(button_name="Nachprüfung", color="primary"))
     def nach_pruefen(self):
         # keine Mail
         pass
@@ -380,7 +380,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['NACHPRUEFUNG'],
                 target='FERTIG',
                 permission='seminars.can_fertigen',
-                custom=dict(button_name="Prüfung abschließen", color="green"))
+                custom=dict(button_name="Prüfung abschließen", color="primary"))
     def fertigen(self):
         # Mail an Autor
         pass
@@ -389,7 +389,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['FERTIG'],
                 target='UEBERWIESEN',
                 permission='seminars.can_ueberweisen',
-                custom=dict(button_name="Überweisung bestätigen", color="green"))
+                custom=dict(button_name="Überweisung bestätigen", color="primary"))
     def ueberweisen(self):
         # keine Mail
         pass
@@ -398,7 +398,7 @@ class Seminar(TimeStampedModel, models.Model):
                 source=['NACHPRUEFUNG', 'INHALTLICH', 'ANGEKOMMEN'],
                 target='UNMOEGLICH',
                 permission='seminars.can_unmoeglichen',
-                custom=dict(button_name="Abrechnung unmöglich", color="red"))
+                custom=dict(button_name="Abrechnung unmöglich", color="danger"))
     def unmoeglichen(self):
         # keine Mail
         pass

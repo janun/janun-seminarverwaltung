@@ -17,9 +17,12 @@ class Dashboard(TemplateView):
         context['group_hats'] = user.group_hats.all()
         context['janun_groups'] = user.janun_groups.all()
 
-        context['seminars'] = user.get_seminars()[:6]
+        # context['seminars'] = user.get_seminars()[:6]
+        context['my_seminars'] = user.seminars.order_by('-created').all()[:6]
+        context['my_seminars_count'] = user.seminars.count()
 
         if self.request.user.role == 'VERWALTER':
+            context['all_seminars'] = Seminar.objects.order_by('-created').all()[:6]
             context['users_to_review'] = User.objects.filter(is_reviewed=False)
             context['groups_without_contacts'] = JANUNGroup.objects \
                 .annotate(contact_count=models.Count("contact_people")) \

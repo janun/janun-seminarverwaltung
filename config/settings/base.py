@@ -129,9 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -163,6 +163,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [
     str(APPS_DIR.path('static')),
+    str(ROOT_DIR.path('node_modules', 'bootstrap', 'dist')),
+    str(ROOT_DIR.path('node_modules', 'jquery', 'dist')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
@@ -218,8 +220,8 @@ TEMPLATES = [
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'janunforms'
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('janunforms',)
+CRISPY_TEMPLATE_PACK = 'janunbootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('janunbootstrap4',)
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -276,10 +278,17 @@ SOCIALACCOUNT_ADAPTER = 'janun_seminarverwaltung.users.adapters.SocialAccountAda
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_REDIRECT_URL = LOGIN_URL
+ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-ACCOUNT_FORMS = {'signup': 'users.forms.UserSignupForm'}
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.UserSignupForm',
+    'login': 'users.forms.UserLoginForm'
+}
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
+
 
 
 
@@ -299,7 +308,8 @@ STRONGHOLD_PUBLIC_NAMED_URLS = (
 )
 STRONGHOLD_PUBLIC_URLS = (
     r'^/accounts/password/reset/key/.*$',
-    r'^/accounts/confirm-email/.*$'
+    r'^/accounts/confirm-email/.*$',
+    r'^/users/anleitung-passphrase$'
 )
 
 
@@ -341,3 +351,5 @@ TIME_INPUT_FORMATS = [
 
 PHONENUMBER_DEFAULT_REGION = 'DE'
 PHONENUMBER_DB_FORMAT = 'RFC3966'
+
+DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap4.html'

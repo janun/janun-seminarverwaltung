@@ -41,7 +41,7 @@ class UserReviewView(PermissionRequiredMixin, DetailView):
         if is_reviewed:
             instance.is_reviewed = True
             instance.save()
-            messages.info(request, "Benutzer_in wurde überprüft.")
+            messages.success(request, "Benutzer_in wurde überprüft.")
             # TODO E-Mail an Benutzer_in senden
         return HttpResponseRedirect(instance.get_absolute_url())
 
@@ -83,7 +83,7 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
     model = User
     permission_required = 'users.change_user'
     raise_exception = True
-    template_name_suffix = '_edit'
+    template_name_suffix = '_form'
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -119,7 +119,7 @@ class UserCreateView(PermissionRequiredMixin, CreateView):
     form_class = UserCreationForm
     permission_required = 'users.add_user'
     raise_exception = True
-    template_name_suffix = '_create'
+    template_name_suffix = '_form'
 
     # https://github.com/dfunckt/django-rules/issues/85
     def get_object(self):

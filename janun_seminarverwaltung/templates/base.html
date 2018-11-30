@@ -20,10 +20,12 @@
 
     {% include "_navbar.html" %}
 
-    <div class="{% block container_class %}container{% endblock %}">
+    <div class="{% block container_class %}container{% endblock %} pt-4">
       {% if messages %}
         {% for message in messages %}
-          <div class="panel panel--brand {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+          <div class="alert  {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+          </div>
         {% endfor %}
       {% endif %}
 
@@ -35,7 +37,9 @@
     {% block modal %}{% endblock modal %}
 
     {% block javascript %}
+      <script src="{% static 'jquery.min.js' %}"></script>
       <script src="{% static 'js/project.min.js' %}"></script>
+      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% endblock javascript %}
   </body>
 

@@ -1,0 +1,77 @@
+// @import url('https://fonts.googleapis.com/css?family=Cabin:400,700');
+
+
+
+
+$font-family-sans-serif: 'Cabin', Helvetica, Roboto, Arial, sans-serif;
+
+$blue:    #0076A4;
+$red:     #C41737;
+$orange:  #E95822;
+$green:   #3A9D00;
+$brown:   #644327;
+
+// $black: #384133;
+// $gray0: #f9f9f8;
+// $gray1: #ecedeb;
+// $gray2: #dfe1dd;
+// $gray3: #d0d3ce;
+// $gray4: #c0c5be;
+// $gray5: #afb4ac;
+// $gray6: #9ba197;
+// $gray7: #838b7e;
+// $gray8: #646f5e;
+// $gray9: #384133;
+
+$gray-600: #646f5e;
+
+$colors: (
+  "brown":    $brown,
+);
+
+$primary:       $green;
+$info:          $blue;
+
+$body-bg: #f9f9f8;
+$body-color: $brown;
+$headings-color: $green;
+
+$enable-shadows: true;
+
+$btn-border-radius: 50px;
+$btn-padding-x: 25px;
+$btn-box-shadow: bottom-shadow(1), top-shadow(1);
+$btn-font-weight: bold;
+
+
+// $component-active-bg: $blue;
+
+$sizes: (
+    30px: 30px,
+    640px: 640px,
+);
+
+// $card-spacer-y: 30px;
+$card-border-width: 0;
+// $card-cap-bg: #ccc;
+
+$custom-file-text: (
+  de: "Durchsuchen",
+);
+
+$navbar-padding-y: 0;
+$navbar-brand-font-size:            1rem;
+$navbar-light-color:                $brown;
+$navbar-light-hover-color:          $brown;
+$navbar-light-active-color:         $brown;
+$navbar-light-disabled-color:       rgba($brown, .3);
+$navbar-light-toggler-border-color: transparent;
+
+$kbd-color: white;
+$kbd-bg: #999;
+
+
+// $input-border-color: transparent;
+// $input-bg: rgba(black, 0.03);
+
+// $btn-focus-width: 1px;

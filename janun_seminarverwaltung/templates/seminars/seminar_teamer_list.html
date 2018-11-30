@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load rules %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}{{ block.super }} {{ heading }}{% endblock %}
+
+{% block content %}
+<div class="clearfix">
+  <h1 class="float-left">Deine Seminare</h1>
+  <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+</div>
+
+<form class="filter-form my-3" action="" method="get">
+  {{ filter.form|crispy }}
+  <span style="white-space: nowrap">
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    <a class="btn btn-sm" href="{% url 'seminars:list' %}">Reset</a>
+  </span>
+</form>
+
+
+{% if object_list %}
+  {% regroup object_list by start.year as seminars_by_year %}
+  {% for year, seminars in seminars_by_year %}
+    <div class="my-5">
+      <h3 class="h5 text-secondary mb-0">{{ year }}</h3>
+      <div class="row">
+      {% for seminar in seminars %}
+        <div class="col-md-6 col-lg-4 my-3">
+          {% include "seminars/_seminar.html" with object=seminar %}
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Du hast noch keine Seminare angemeldet.</p>
+{% endif %}
+
+
+{% endblock %}

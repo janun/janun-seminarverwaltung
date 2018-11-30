@@ -1,53 +1,53 @@
-.float-right {
-  float: right;
-}
-.float-left {
-  float: left;
-}
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-
-@each $color in $color-names {
-  // .color-red { color: red }
-  .color-#{$color} {
-    color: color($color);
-    h1, h2, h3 {
-      color: color($color);
-    }
-  }
-
-  // .bg-red { background-color: red }
-  .bg-#{$color} {
-    background-color: color($color);
-  }
-
-  // // .border-color-red { border-color: red }
-  // .border-color-#{$color} {
-  //   border-color: $color;
-  // }
-}
-
-
-.font-weight-bold {
-  font-weight: bold;
-}
-
-
-@each $dir in left, right, top, bottom {
-  @each $width in 15, 30, 60 {
-    .margin-#{$dir}-#{$width} {
-      margin-#{$dir}: #{$width}px;
-    }
-  }
-}
-
-
-.hide\@small {
-  @media (max-width: 599px) {
-    display: none !important;
-  }
-}
+// .float-right {
+//   float: right;
+// }
+// .float-left {
+//   float: left;
+// }
+// .clearfix:after {
+//   content: "";
+//   display: table;
+//   clear: both;
+// }
+//
+//
+// @each $color in $color-names {
+//   // .color-red { color: red }
+//   .color-#{$color} {
+//     color: color($color);
+//     h1, h2, h3 {
+//       color: color($color);
+//     }
+//   }
+//
+//   // .bg-red { background-color: red }
+//   .bg-#{$color} {
+//     background-color: color($color);
+//   }
+//
+//   // // .border-color-red { border-color: red }
+//   // .border-color-#{$color} {
+//   //   border-color: $color;
+//   // }
+// }
+//
+//
+// .font-weight-bold {
+//   font-weight: bold;
+// }
+//
+//
+// @each $dir in left, right, top, bottom {
+//   @each $width in 15, 30, 60 {
+//     .margin-#{$dir}-#{$width} {
+//       margin-#{$dir}: #{$width}px;
+//     }
+//   }
+// }
+//
+//
+// .hide\@small {
+//   @media (max-width: 599px) {
+//     display: none !important;
+//   }
+// }

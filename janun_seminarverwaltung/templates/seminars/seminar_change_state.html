@@ -4,21 +4,26 @@
 
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
+{% block container_class %}container mw-500{% endblock %}
+
 {% block content %}
 <a class="backlink" href="{% url 'seminars:detail' object.pk %}">← {{ object.title }}</a>
 
-<div class="panel">
-  <h1>Seminar wirklich {{ transition.custom.button_name|lower }}?</h1>
-  <p>Seminar <strong>{{ object.title }}</strong> wirklich {{ transition.custom.button_name|lower }}?</p>
+<div class="card">
+  <h1 class="card-header h4">Seminar wirklich {{ transition.custom.button_name|lower }}?</h1>
+
+  <div class="card-body">
+    <p class="card-text">Seminar <strong>{{ object.title }}</strong> wirklich {{ transition.custom.button_name|lower }}?</p>
+  </div>
 
   <form method="post" action="">
     {% csrf_token %}
 
-    <div class="panel__footer">
-      <a class="button" href="{% url 'seminars:detail' object.pk %}">Nein, Abbrechen</a>
-      <button type="submit" class="button bg-{{ transition.custom.color }}">
-        Ja, {{ transition.custom.button_name }}
+    <div class="card-footer clearfix">
+      <button type="submit" class="btn btn-{{ transition.custom.color }} float-right">
+        {{ transition.custom.button_name }}
       </button>
+      <a class="btn btn-link text-secondary float-right" href="{% url 'seminars:detail' object.pk %}">Abbrechen</a>
     </div>
   </form>
 </div>

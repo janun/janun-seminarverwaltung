@@ -2,18 +2,22 @@
 
 {% block title %}{{ block.super }} {{ object }} {{ action }}?{% endblock %}
 
+{% block container_class %}container mw-500{% endblock %}
+
+
 {% block content %}
 <a class="backlink" href="{{ object.get_absolute_url }}">← {{ object.name }}</a>
 
-<div class="panel">
-  <h1>{{ object }} deaktivieren?</h1>
+<div class="card mw-500">
+  <h1 class="h3 card-header">{{ object }} deaktivieren?</h1>
   <form method="post">
     {% csrf_token %}
-    <p>Möchtest Du wirklich Benutzer_in <strong>{{ object }}</strong> {{ action }}?</p>
-
-    <div class="panel__footer">
-      <a class="button" href="{{ object.get_absolute_url }}">Abbrechen</a>
-      <input class="button bg-red" type="submit" name="{{ action_name }}" value="{{ object }} {{ action }}" />
+    <div class="card-body">
+      <p class="card-text">Möchtest Du wirklich Benutzer_in <strong>{{ object }}</strong> {{ action }}?</p>
+    </div>
+    <div class="card-footer clearfix">
+      <input class="float-right btn btn-danger" type="submit" name="{{ action_name }}" value="{{ object }} {{ action }}" />
+      <a class="float-right btn btn-link" href="{{ object.get_absolute_url }}">Abbrechen</a>
     </div>
   </form>
 </div>

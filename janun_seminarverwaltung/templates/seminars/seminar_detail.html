@@ -8,14 +8,18 @@
 {% block content %}
 <a class="backlink" href="{% url 'seminars:list' %}">← Alle Seminare</a>
 
-<div class="clearfix">
-  <h1 class="float-left">{{ object.title }}</h1>
 
+<div class="clearfix">
+  <h1 class="h2 float-md-left font-weight-bold">{{ object.title }}</h1>
   {% has_perm 'seminars.delete_seminar' user object as can_delete %}
   {% if can_delete %}
-    <a class="button bg-red float-right" href="{% url 'seminars:delete' object.id %}">Seminar löschen</a>
+    <a class="float-md-right btn btn-outline-danger my-2"
+       href="{% url 'seminars:delete' object.id %}" data-toggle="modal" data-target="#deleteModal">
+       Seminar löschen
+     </a>
   {% endif %}
 </div>
+
 
 <p>
   {% if object.start.date == object.end.date %}
@@ -27,25 +31,28 @@
   {% if object.location %}
     in {{ object.location }}
   {% endif %}
+  <br>
+  <span class="text-secondary">
+    Angemeldet
+    {% if object.author %}
+      von <a href="{{ object.author.get_absolute_url }}">{{ object.author.get_short_name }}</a>
+    {% endif %}
+    am {{ object.created|date:"d.m.y" }}<br>
+    Gruppe:
+    {% if object.group %}
+      <a href="{% url 'groups:detail' object.group.id %}">{{ object.group.name }}</a>
+    {% else %}
+      keine Gruppe
+    {% endif %}
+  </span>
 </p>
 
-<p class="color-grey margin-top-30">
-  Angemeldet
-  {% if object.author %}
-    von <a href="{{ object.author.get_absolute_url }}">{{ object.author }}</a>
-  {% endif %}
-  am {{ object.created|date:"d.m.y" }}<br>
-  {% if object.group %}
-    Für die Gruppe <a href="{% url 'groups:detail' object.group.id %}">{{ object.group.name }}</a>
-  {% else %}
-    (ohne Gruppe)
-  {% endif %}
-</p>
 
 {% include "seminars/_state.html" %}
 
-<div class="panel clearfix">
-  <h2>Seminardaten</h2>
+<div class="card clearfix">
+  <h2 class="card-header h3">Seminardaten</h2>
+  <div class="card-body">
   <h3>Titel & Inhalt</h3>
   <dl>
     <dt>Titel:</dt>
@@ -82,11 +89,58 @@
   <h3>Abrechnung</h3>
   <p>Hier sollen dann die Felder für die Abrechnung angezeigt werden.</p>
 
-  <a class="button bg-blue float-right" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
+  <a class="btn btn-secondary" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
+  </div>
 </div>
 
 
 {% include "seminars/_comments.html" %}
 
+{% endblock %}
 
+
+{% block modal %}
+  <div class="modal" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">Seminar löschen?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="post" action="{% url 'seminars:delete' object.pk %}">
+          <div class="modal-body">
+            <p>Möchtest Du wirklich das Seminar <strong>{{ object }}</strong> löschen?</p>
+            {{ delete_form | crispy }}
+          </div>
+          <div class="modal-footer">
+            {% csrf_token %}
+            <button type="button" class="btn btn-link" data-dismiss="modal">Abbrechen</button>
+            <button type="submit" class="btn btn-danger">Löschen</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+  $('#stateModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var buttonName = button.data('button-name');
+    var transitionColor = button.data('transition-color');
+    var formAction = button.data('form-action')
+    var modal = $(this);
+    modal.find('.modal-title').text('Seminar ' + buttonName + '?');
+    modal.find('.modal-body p').text('Seminar ' + buttonName + '?');
+    modal.find('form').attr('action', formAction);
+    modal.find('[type=submit]').text(buttonName);
+    modal.find('[type=submit]').attr('class', 'btn btn-' + transitionColor);
+    modal.find('.modal-title').attr('class', 'modal-title text-' + transitionColor);
+
+  })
+</script>
 {% endblock %}

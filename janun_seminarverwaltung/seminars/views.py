@@ -1,12 +1,14 @@
 from collections import OrderedDict
 
 from django.views.generic import DetailView, DeleteView, UpdateView, CreateView
+from django.views.generic.edit import FormMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import HttpResponseRedirect, Http404, get_object_or_404
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import SelectRelatedMixin
@@ -17,16 +19,31 @@ from django_fsm import has_transition_perm
 
 from seminars.models import Seminar, SeminarComment
 from seminars.tables import SeminarTable
-from seminars.filters import SeminarFilter
+from seminars.filters import SeminarTeamerFilter, SeminarStaffFilter
 import seminars.forms as seminar_forms
 from .email import send_wizard_done_mails
 
 
-class SeminarListView(SingleTableMixin, FilterView):
+class SeminarTeamerListView(FilterView):
+    model = Seminar
+    filterset_class = SeminarTeamerFilter
+    template_name = "seminars/seminar_teamer_list.html"
+    paginate_by = 25
+    strict = False
+
+    def get_queryset(self):
+        user = self.request.user
+        assert user.role == "TEAMER"
+        qs = Seminar.objects.filter(author=user).order_by('-start_date')
+        qs = qs.select_related('group', 'author')
+        return qs
+
+
+class SeminarStaffListView(SingleTableMixin, FilterView):
     model = Seminar
     table_class = SeminarTable
-    filterset_class = SeminarFilter
-    template_name = "seminars/seminar_list.html"
+    filterset_class = SeminarStaffFilter
+    template_name = "seminars/seminar_staff_list.html"
     paginate_by = 25
     strict = False
 
@@ -35,7 +52,15 @@ class SeminarListView(SingleTableMixin, FilterView):
         self.orig_count = 0  # count before filter
 
     def get_queryset(self):
-        qs = self.request.user.get_seminars()
+        user = self.request.user
+        if user.role == "VERWALTER":
+            qs = Seminar.objects.all()
+        elif user.role == "PRUEFER":
+            qs = Seminar.objects.filter(
+                Q(author=self.request.user)
+                | Q(group__in=user.group_hats.all())
+                | Q(group__in=user.janun_groups.all())
+            )
         qs = qs.select_related('group', 'author')
         self.orig_count = qs.count()
         return qs
@@ -43,11 +68,10 @@ class SeminarListView(SingleTableMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        heading = "Deine Seminare"
         if user.role == "VERWALTER":
             heading = "Alle Seminare"
-        elif user.group_hats.exists() or user.janun_groups.exists():
-            heading += " und die Deiner Gruppen"
+        elif user.role == "PRUEFER":
+            heading = "Deine Seminare und die Deiner Gruppen"
 
         count = len(self.object_list)
         if count != self.orig_count:
@@ -73,6 +97,7 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
         context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
         context['comments'] = self.object.comments.all()
         context['comment_form'] = seminar_forms.SeminarCommentForm()
+        context['delete_form'] = seminar_forms.DeleteForm()
         return context
 
 
@@ -99,8 +124,8 @@ class SeminarCommentDeleteView(PermissionRequiredMixin, DeleteView):
     model = SeminarComment
     permission_required = 'seminars.delete_seminar_comment'
     raise_exception = True
-    permission_required = 'seminars.delete_seminar'
-    raise_exception = True
+    # permission_required = 'seminars.delete_seminar'
+    # raise_exception = True
 
     def get_success_url(self):
         return reverse_lazy('seminars:detail', kwargs={'pk': self.kwargs['seminar_pk']}) + "#comments"
@@ -243,12 +268,24 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         })
 
 
-class SeminarDeleteView(PermissionRequiredMixin, DeleteView):
+class SeminarDeleteView(PermissionRequiredMixin, FormMixin, DeleteView):
     model = Seminar
     success_url = reverse_lazy('seminars:list')
     success_message = "Seminar „%(title)s“ wurde gelöscht."
     permission_required = 'seminars.delete_seminar'
     raise_exception = True
+    form_class = seminar_forms.DeleteForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return super().post(request, *args, **kwargs)
+        return self.get(request)
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message % self.get_object().__dict__)

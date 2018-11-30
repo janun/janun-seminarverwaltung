@@ -14,60 +14,82 @@
 {% endif %} ({{ form.Meta.short_title }})
 {% endblock %}
 
-{% block content %}
-<div class="wizard">
+{% block container_class %}container mw-960{% endblock %}
 
-  <div class="wizard__head">
-    {% if seminar_title %}
-      <h1>„{{ seminar_title }}“ anmelden</h1>
-    {% else %}
-      <h1>Neues Seminar anmelden</h1>
-    {% endif %}
+{% block content %}
+<div class="card card-bigger my-4 mx-neg">
+
+  <div class="card-header border-bottom">
+    <a href="{% url "seminars:create" %}?reset" class="card-text close float-right p-1" aria-label="Abbrechen">
+      <span aria-hidden="true">&times;</span>
+    </a>
+    <h1 class="h4 card-text">
+      {% if seminar_title %}„{{ seminar_title }}“{% else %}Neues Seminar{% endif %}
+      anmelden
+      <small class="text-secondary">(Schritt&nbsp;{{ wizard.steps.step1 }}/{{ wizard.steps.count }})</small>
+    </h1>
   </div>
 
   <form action="" method="post">
     {% csrf_token %}
     {{ wizard.management_form }}
 
-      <div class="wizard__content">
+    <input type="submit" value="Speichern" class="d-none" />
 
-        <ul class="wizard__steps">
-          {% for step_name, step_form in steps.items %}
-            <li class="{% if wizard.steps.current == step_name %}wizard__steps--active{% endif %}
-                       {% if step_form.is_valid %}wizard__steps--valid{% endif %}">
-              <button class="button-reset" name="wizard_goto_step" type="submit" value="{{ step_name }}">
-                {{ step_form.Meta.short_title }}
-              </button>
-            </li>
-          {% endfor %}
-        </ul>
+      <div class="card-body">
+        <div class="row">
 
-        <div class="wizard__form">
-          {% if form.Meta.title %}
-            <h2>{{ form.Meta.title }}</h2>
-          {% endif %}
-
-          {% block before_form %}{% endblock %}
-          {% block form %}
-            {% if wizard.form.forms %}
-              {{ wizard.form.management_form }}
-              {% for form in wizard.form.forms %}
-                {{ form|crispy }}
+          <div class="col-md-4 d-none d-md-block">
+            <ul class="nav flex-column">
+              {% for step_name, step_form in steps.items %}
+                <li class="nav-item">
+                  <button class="btn-reset nav-link d-inline-block text-body {% if wizard.steps.current == step_name %}active font-weight-bold{% endif %}"
+                     name="wizard_goto_step" type="submit" value="{{ step_name }}">
+                    {{ step_form.Meta.short_title }}
+                    {% if step_form.is_valid %}
+                      <span class="badge badge-primary" title="okay">✓</span>
+                    {% endif %}
+                  </button>
+                </li>
               {% endfor %}
-            {% else %}
-              {{ wizard.form|crispy }}
+            </ul>
+          </div>
+
+          <div class="col-md">
+            {% if form.Meta.title %}
+              <h2 class="h4">{{ form.Meta.title }}</h2>
             {% endif %}
-          {% endblock form %}
-          {% block after_form %}{% endblock %}
+
+            {% block before_form %}{% endblock %}
+            {% block form %}
+              {% if wizard.form.forms %}
+                {{ wizard.form.management_form }}
+                {% for form in wizard.form.forms %}
+                  {% crispy form %}
+                {% endfor %}
+              {% else %}
+                {% crispy wizard.form %}
+              {% endif %}
+            {% endblock form %}
+            {% block after_form %}{% endblock %}
+          </div>
+
         </div>
       </div>
 
-      <div class="wizard__footer">
-        <a class="button bg-red" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a>
+      <div class="card-footer clearfix">
+        <!-- <a class="btn btn-danger" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a> -->
+
         {% if wizard.steps.last == wizard.steps.current %}
-          <input class="button bg-green float-right" type="submit" value="Seminar anmelden"/>
+          <input class="btn btn-primary float-right" type="submit" value="Anmelden"/>
         {% else %}
-          <input class="button bg-green float-right" type="submit" value="Speichern & Weiter"/>
+          <input class="btn btn-primary float-right" type="submit" value="Weiter →"/>
+        {% endif %}
+
+        {% if wizard.steps.prev %}
+          <a class="d-inline-block my-1 text-secondary" href="{% url 'seminars:create_step' wizard.steps.prev %}"">
+            ← Zurück
+          </a>
         {% endif %}
       </div>
 

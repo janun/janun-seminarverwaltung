@@ -3,27 +3,36 @@
 
 {% block title %}{{ block.super }} Kommentar wirklich löschen?{% endblock %}
 
+{% block container_class %}container mw-500{% endblock %}
+
+
 {% block content %}
 <a class="backlink" href="{% url 'seminars:detail' seminar.pk %}">← {{ seminar.title }}</a>
 
-<div class="panel">
-  <h1>Kommentar wirklich löschen?</h1>
+<div class="card card-bigger">
+  <div class="card-header">
+    <h1 class="h4">Kommentar wirklich löschen?</h1>
+  </div>
 
-  <div id="c{{ comment.id }}" class="comment comment--quoted">
-    <span class="comment__meta">
-      <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">
-        {{ comment.created|naturaltime }}</time>,
-      <a href="{{ comment.author.get_absolute_url }}">{{ comment.author.name }}</a>
-    </span>
-    <p class="comment__text">{{ comment.comment|linebreaksbr }}</p>
+  <div class="card-body">
+    <div class="card my-3" id="c{{ comment.id }}">
+        <div class="card-body">
+          <small class="text-secondary">
+            <a href="{{ comment.author.get_absolute_url }}">{{ comment.author.get_short_name }}</a>,
+            <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">
+              {{ comment.created|naturaltime }}</time>
+          </small>
+          <p class="card-text">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
+        </div>
+    </div>
   </div>
 
   <form method="post">
     {% csrf_token %}
-    
-    <div class="panel__footer">
-      <a class="button" href="{% url 'seminars:detail' seminar.pk %}#comments">Nein, Abbrechen</a>
-      <input type="submit" class="button bg-red" name="submit" value="Ja, löschen"/>
+
+    <div class="card-footer clearfix">
+      <input type="submit" class="btn btn-danger float-right" name="submit" value="Löschen"/>
+      <a class="btn btn-link text-secondary float-right" href="{% url 'seminars:detail' seminar.pk %}#comments">Abbrechen</a>
     </div>
   </form>
 </div>

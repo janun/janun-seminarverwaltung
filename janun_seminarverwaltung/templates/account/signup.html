@@ -1,13 +1,33 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 
 {% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} Registrierung{% endblock %}
 
-{% block inner %}
-<h1>Registrierung Seminarverwaltung</h1>
-<div class="panel">
-  {% crispy form %}
+{% block container_class %}container mw-500{% endblock %}
+
+{% block content %}
+<div class="card card-bigger card-accent signup">
+  <div class="card-header">
+    <h1 class="h2 font-weight-bold card-text text-center">Registrierung<br>Seminarverwaltung</h1>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      Nach der Registrierung und dem Bestätigen Deiner E-Mail-Adresse
+      bist Du <strong>direkt angemeldet und kannst Dein erstes Seminar anmelden.</strong><br>
+    </p>
+    <p>
+      Daten und Seminare von Deiner Gruppe kannst Du allerdings erst einsehen, <strong>nachdem Dein Konto überprüft wurde.</strong>
+    </p>
+  </div>
+  <form method="POST" action="{% url 'account_signup' %}" enctype="multipart/form-data">
+    <div class="card-body">
+      {% crispy form %}
+    </div>
+    <div class="card-footer clearfix">
+      <button class="btn btn-primary float-right" type="submit">Registrieren</button>
+    </div>
+  </form>
 </div>
 
 {% endblock %}

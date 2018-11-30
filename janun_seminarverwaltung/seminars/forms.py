@@ -1,12 +1,29 @@
 from datetime import timedelta
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div
 
 from seminars.models import Seminar, SeminarComment
+
+
+def validate_delete(value):
+    if value != "löschen":
+        raise ValidationError("Du musst „löschen“ eingeben")
+
+
+class DeleteForm(forms.Form):
+    delete = forms.CharField(
+        label="Gib „löschen“ ein", required=True, validators=[validate_delete],
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['delete'].widget.attrs['pattern'] = "löschen"
 
 
 class SeminarChangeForm(forms.ModelForm):
@@ -22,6 +39,7 @@ class SeminarCommentForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Dein Kommentar"}),
         label='',
     )
+
     class Meta:
         model = SeminarComment
         fields = ('comment',)
@@ -33,6 +51,9 @@ class SeminarStepForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        list(self.fields.values())[0].widget.attrs['autofocus'] = 'autofocus'
 
     class Meta:
         model = Seminar
@@ -47,6 +68,21 @@ class ContentSeminarForm(SeminarStepForm):
 
 
 class DatetimeSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Div(
+                Div('start_date', css_class='col'),
+                Div('start_time', css_class='col'),
+                css_class='row'
+            ),
+            Div(
+                Div('end_date', css_class='col'),
+                Div('end_time', css_class='col'),
+                css_class='row'
+            ),
+        )
+
     def clean_start_date(self):
         start_date = self.cleaned_data['start_date']
         if self.user.role == 'TEAMER' and start_date < (timezone.now().date() + timedelta(days=14)):
@@ -74,6 +110,16 @@ class TrainingDaysSeminarForm(SeminarStepForm):
 
 
 class AttendeesSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Div(
+                Div('planned_attendees_min', css_class='col'),
+                Div('planned_attendees_max', css_class='col'),
+                css_class='row'
+            ),
+        )
+
     class Meta(SeminarStepForm.Meta):
         title = "Mit wievielen Teilnehmenden rechnest Du?"
         short_title = "Teilnehmende"
@@ -130,11 +176,19 @@ class BarrierSeminarForm(SeminarStepForm):
         title = "Auftretende Barrieren"
         short_title = "Barrieren"
         fields = ('mobility_barriers', 'language_barriers', 'hearing_barriers', 'seeing_barriers')
+        widgets = {
+            'mobility_barriers': forms.Textarea(attrs={'rows': '3'}),
+            'language_barriers': forms.Textarea(attrs={'rows': '3'}),
+            'hearing_barriers': forms.Textarea(attrs={'rows': '3'}),
+            'seeing_barriers': forms.Textarea(attrs={'rows': '3'}),
+        }
 
 
 class ConfirmSeminarForm(SeminarStepForm):
     confirm_policy = forms.BooleanField(
-        label="Ich habe die <a target=\"_blank\" href=\"{}\">Seminarabrechnungsrichtlinie</a> gelesen.".format(settings.SEMINAR_POLICY_URL),
+        label="""Ich habe die
+                 <a target=\"_blank\" href=\"{}\">Seminarabrechnungsrichtlinie</a>
+                 gelesen.""".format(settings.SEMINAR_POLICY_URL),
         required=True,
     )
 

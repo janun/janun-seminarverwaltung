@@ -1,51 +1,51 @@
 {% load rules %}
 {% load humanize %}
+{% load crispy_forms_tags %}
 
-<div style="margin-top: 180px;"></div>
+<div style="margin-top: 120px;"></div>
 
-<h3 id="comments" class="margin-bottom-30">Kommentare</h3>
-<div class="comment-form clearfix">
-  <form action="{% url 'seminars:create_comment' object.pk %}" method="POST">
-    {% csrf_token %}
-    {{ comment_form }}
-    <input type="submit" class="button bg-green float-right" value="Kommentieren" id="id_submit_comment" />
-  </form>
-</div>
+<div class="mw-500">
 
-<script>
-  // enable/disable submit button on textarea input
-  var button = document.getElementById('id_submit_comment');
-  var comment = document.getElementById('id_comment');
-  function checkComment() {
-    button.disabled = (comment.value === "");
-  }
-  comment.addEventListener("input", checkComment);
-  checkComment();
-</script>
-
-{% if comments %}
-  <div id="comments" class="comment-list">
-      {% for comment in comments reversed %}
-
-        <div>
-          <div id="c{{ comment.id }}" class="comment">
-            <span class="comment__meta">
-              <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">
-                {{ comment.created|naturaltime }}</time>
-              von <a href="{{ comment.author.get_absolute_url }}">{{ comment.author.name }}</a>
-              {% has_perm 'seminars.delete_seminar_comment' user comment as can_delete %}
-              {% if can_delete %}
-                <span class="float-right">
-                  <a href="{% url 'seminars:delete_comment' seminar.pk comment.pk %}">Löschen</a>
-                </span>
-              {% endif %}
-            </span>
-            <p class="comment__text">{{ comment.comment|linebreaksbr }}</p>
-          </div>
-        </div>
-
-      {% endfor %}
+  <div class="clearfix my-4">
+    <h3 id="comments">Kommentieren</h3>
+    <form action="{% url 'seminars:create_comment' object.pk %}" method="POST">
+      {% csrf_token %}
+      {{ comment_form|crispy }}
+      <input type="submit" class="btn btn-primary float-right" value="Kommentieren" id="id_submit_comment" />
+    </form>
   </div>
-{% else %}
-  <p>Keine Kommentare</p>
-{% endif %}
+
+  <script>
+    // enable/disable submit button on textarea input
+    var button = document.getElementById('id_submit_comment');
+    var comment = document.getElementById('id_comment');
+    function checkComment() {
+      button.disabled = (comment.value === "");
+    }
+    comment.addEventListener("input", checkComment);
+    checkComment();
+  </script>
+
+  {% if comments %}
+      {% for comment in comments reversed %}
+        <div class="card my-3" id="c{{ comment.id }}">
+            <div class="card-body">
+              <small class="text-secondary clearfix">
+                <span class="float-left">
+                  {% include "users/_user.html" with object=comment.author size="25px" %}
+                  <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">{{ comment.created|naturaltime }}</time>
+                </span>
+                {% has_perm 'seminars.delete_seminar_comment' user comment as can_delete %}
+                {% if can_delete %}
+                  <a class="text-secondary float-right" href="{% url 'seminars:delete_comment' seminar.pk comment.pk %}">Löschen</a>
+                {% endif %}
+              </small>
+              <p class="card-text">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
+            </div>
+        </div>
+      {% endfor %}
+  {% else %}
+    <p>Keine Kommentare</p>
+  {% endif %}
+
+</div>

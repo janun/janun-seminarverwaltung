@@ -1,5 +1,5 @@
-var errorElems = document.getElementsByClassName('form-group--has-errors')
+var errorElems = document.getElementsByClassName('is-invalid')
 if (errorElems.length > 0) {
-  errorElems[0].scrollIntoView();
-  errorElems[0].querySelector('input').focus();
+  errorElems[0].scrollIntoView({'inline': 'center'});
+  errorElems[0].focus();
 }

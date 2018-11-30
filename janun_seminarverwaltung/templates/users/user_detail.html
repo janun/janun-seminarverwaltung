@@ -13,48 +13,48 @@
   <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
 {% endif %}
 
-<div class="clearfix">
-  <div class="float-right">
+<div class="row my-4">
+  <div class="col-lg-2">
+    {% include "users/_avatar.html" with avatar=object.avatar %}
+  </div>
+
+  <div class="col col-lg-8">
+    <h1>{{ object }}{% if request.user == object %} <small class="text-info">(das&nbsp;bist&nbsp;du)</small>{% endif %}</h1>
+    <strong>Rolle:</strong> {{ object.get_role_display }}<br>
+    <strong>Letzte Anmeldung:</strong>
+    <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
+        {{ object.last_login|naturaltime|default:"noch nie" }}
+    </time><br>
+    angelegt am
+    <time datetime="{{ object.date_joined|date:'c' }}" title="{{ object.date_joined|date:"DATETIME_FORMAT" }}">
+        {{ object.date_joined|date }}
+    </time>
+  </div>
+
+  <div class="col">
     {% has_perm 'users.change_user' request.user object as can_edit %}
     {% if can_edit %}
-      <a class="button bg-blue float-right" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
+      <a class="btn btn-outline-info my-1" href="{% url 'users:edit' object.pk %}">bearbeiten</a>
     {% endif %}
     <br>
     {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
     {% if can_deactivate and object.is_active %}
-      <a class="button bg-red float-right" href="{% url 'users:deactivate' object.pk %}">deaktivieren</a>
+      <a class="btn btn-outline-danger my-1" href="{% url 'users:deactivate' object.pk %}">deaktivieren</a>
     {% endif %}
     <br>
     {% has_perm 'users.delete_user' request.user object as can_delete %}
     {% if can_delete %}
-      <a class="button bg-red float-right" href="{% url 'users:delete' object.pk %}">löschen</a>
+      <a class="btn btn-outline-danger my-1" href="{% url 'users:delete' object.pk %}">löschen</a>
     {% endif %}
-  </div>
-
-
-  <div style="display: flex; align-items: center;">
-    {% include "common/round-image.html" with image=object.avatar css_class="margin-right-30" empty_url="/static/images/person-outline.svg" %}
-    <div>
-      <h1 style="margin-bottom: 0">{{ object }}{% if request.user == object %} <small class="color-grey">(das bist du)</small>{% endif %}</h1>
-      <strong>Rolle:</strong> {{ object.get_role_display }}<br>
-      <strong>Letzte Anmeldung:</strong>
-      <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
-          {{ object.last_login|naturaltime|default:"noch nie" }}
-      </time><br>
-      angelegt am
-      <time datetime="{{ object.date_joined|date:'c' }}" title="{{ object.date_joined|date:"DATETIME_FORMAT" }}">
-          {{ object.date_joined|date }}
-      </time>
-    </div>
   </div>
 </div>
 
 
 {% if not object.is_active %}
-  <div class="panel bg-red margin-top-30 clearfix">
+  <div class="callout callout-danger my-4 clearfix mw-500">
     {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
     {% if can_deactivate %}
-      <a class="button bg-green float-right" href="{% url 'users:deactivate' object.pk %}">aktivieren</a>
+      <a class="btn btn-outline-primary float-right" href="{% url 'users:deactivate' object.pk %}">aktivieren</a>
     {% endif %}
     {{ user }} ist <strong>deaktiviert</strong> und kann sich nicht anmelden.
   </div>
@@ -63,55 +63,86 @@
 
 {% if not object.is_reviewed %}
   {% if request.user != object or object.janun_groups.all %}
-    <div class="panel panel--brand margin-top-30 clearfix" style="border-color: red">
-      {% has_perm 'users.review' request.user object as can_review %}
-      {% if can_review %}
-        <a class="button bg-blue float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
-      {% endif %}
-      {{ object }} wurde noch <strong>nicht überprüft</strong> und kann deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+    <div class="callout callout-danger clearfix my-4 mw-500">
+      <div class="card-body">
+        {% has_perm 'users.review' request.user object as can_review %}
+        {% if can_review %}
+          <a class="btn btn-outline-secondary float-right" href="{% url 'users:review' object.pk %}">überprüfen</a>
+        {% endif %}
+        <p class="card-text">
+        {% if request.user == object %}
+          Dein Konto wurde noch <strong>nicht überprüft</strong> und Du kannst deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+        {% else %}
+          {{ object }} wurde noch <strong>nicht überprüft</strong> und kann deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+        {% endif %}
+        </p>
+      </div>
     </div>
   {% endif %}
 {% endif %}
 
 
-<div class="panel clearfix margin-top-60">
-  {% if can_edit %}
-    <a class="button bg-blue float-right" href="{% url 'users:edit' object.pk %}#contact">bearbeiten</a>
-  {% endif %}
-  <h2>Kontaktdaten</h2>
-  <strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
-  <strong>Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
-  <p><strong>Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
-</div>
-
-
-<div class="panel clearfix section margin-top-60">
-  {% has_perm 'users.change_permissions' request.user object as can_change_permissions %}
-  {% if can_change_permissions %}
-    <a class="button bg-blue float-right" href="{% url 'users:edit' object.pk %}#permissions">bearbeiten</a>
-  {% endif %}
-  <h2 style="margin-bottom:0">Gruppen-Mitgliedschaften</h2>
-  <div style="display: flex">
-    {% for group in object.janun_groups.all %}
-      {% include "groups/_group.html" with object=group %}
-    {% empty %}
-      <p>keine</p>
-    {% endfor %}
+<div class="row">
+<div class="col-md-6">
+<div class="card my-3">
+  <div class="card-header">Kontaktdaten</div>
+  <div class="card-body">
+    <strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
+    <strong>Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
+    <p><strong>Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
   </div>
 </div>
+</div>
+</div>
 
 
-<div class="panel clearfix">
-  {% if can_change_permissions %}
-    <a class="button bg-blue float-right" href="{% url 'users:edit' object.pk %}#permissions">bearbeiten</a>
-  {% endif %}
-  <h2 style="margin-bottom:0">Gruppenhüte</h2>
-  <div style="display: flex">
-    {% for group in object.group_hats.all %}
-      {% include "groups/_group.html" with object=group %}
-      {% empty %}
-        <p>keine</p>
+<div class="row">
+<div class="col-md-6">
+  <div class="card my-3">
+    <div class="card-header">
+      Gruppen-Mitgliedschaften
+    </div>
+    {% if object.janun_groups.all %}
+    <ul class="list-group list-group-flush">
+      {% for group in object.janun_groups.all %}
+        <li class="list-group-item">
+          {% include "groups/_group.html" with object=group %}
+        </li>
       {% endfor %}
+    </ul>
+    {% else %}
+      <div class="card-body">
+        {% if request.user == object %}
+          <p class="card-text">Du bist in keiner Gruppe Mitglied.</p>
+        {% else %}
+          <p class="card-text">Ist in keiner Gruppe Mitglied.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+<div class="col-md-6">
+  <div class="card my-3">
+    <div class="card-header">
+      Gruppen-Hüte
+    </div>
+    {% if object.group_hats.all %}
+    <ul class="list-group list-group-flush">
+      {% for group in object.group_hats.all %}
+        <li class="list-group-item">
+          {% include "groups/_group.html" with object=group %}
+        </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <div class="card-body">
+        {% if request.user == object %}
+          <p class="card-text">Du hast keinen Gruppenhut.</p>
+        {% else %}
+          <p class="card-text">Hat keinen Gruppenhut.</p>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
 </div>
 

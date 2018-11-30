@@ -2,19 +2,22 @@
 
 {% block title %}{{ block.super }} {{ instance.title }} angemeldet{% endblock %}
 
+{% block container_class %}container mw-960{% endblock %}
+
+
 {% block content %}
-<div class="wizard">
-  <div class="wizard__head">
-    <h1>„{{ instance.title }}“ angemeldet</h1>
+<div class="card">
+  <div class="card-header">
+    <h1 class="h4">„{{ instance.title }}“ angemeldet</h1>
   </div>
 
-  <div class="wizard__content">
-    <div class="wizard__form">
-      <h2>Fertig</h2>
+  <div class="card-body">
+    <div class="">
+      <h4>Fertig</h4>
       <p>
         Das Seminar „{{ instance.title }}“ wurde angemeldet
         und wir haben Dir eine Bestätigungsmail geschickt.
-      </p>
+        <br>
       <p>
         Du erhälst, in der Regel, in 7—14 Tagen von uns eine Antwort,
         ob Dein Seminar gefördert werden kann.
@@ -22,9 +25,9 @@
     </div>
   </div>
 
-  <div class="wizard__footer">
-    <a class="button float-right" href="{% url 'seminars:create' %}">Weiteres anmelden</a>
-    <a class="button bg-green float-right" href="{{ instance.get_absolute_url }}">Zum Seminar</a>
+  <div class="card-footer clearfix">
+    <a class="btn btn-primary float-right" href="{{ instance.get_absolute_url }}">Zum Seminar</a>
+    <a class="btn btn-outline-primary float-right mx-1" href="{% url 'seminars:create' %}">Weiteres anmelden</a>
   </div>
 </div>
 {% endblock content %}

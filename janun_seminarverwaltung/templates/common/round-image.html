@@ -3,24 +3,24 @@
 {% if image %}
   {% if logo %}
     {% thumbnail image "200x200" padding=True as avatar %}
-      <div class="round-image {% if small %}round-image--small{% endif %} round-image--logo {{ css_class }}">
-        <img src="{{ avatar.url }}" class="round-image__image" alt="{{ alt }}">
+      <div class="round-image {% if small %}round-image--small{% endif %} {% if tiny %}round-image--tiny{% endif %} round-image--logo {{ css_class }}">
+        <img id="{{ id }}" src="{{ avatar.url }}" class="round-image__image" alt="{{ alt }}">
       </div>
     {% endthumbnail %}
   {% else %}
     {% thumbnail image "200x200" crop="center" as avatar %}
-      <div class="round-image {% if small %}round-image--small{% endif %} {{ css_class }}">
-        <img src="{{ avatar.url }}" class="round-image__image" alt="{{ alt }}">
+      <div class="round-image {% if small %}round-image--small{% endif %} {% if tiny %}round-image--tiny{% endif %} {{ css_class }}">
+        <img id="{{ id }}" src="{{ avatar.url }}" class="round-image__image" alt="{{ alt }}">
       </div>
     {% endthumbnail %}
   {% endif %}
 {% else %}
   {% if empty %}
-    <div class="round-image {% if small %}round-image--small{% endif %} {{ css_class }}">
+    <div class="round-image {% if small %}round-image--small{% endif %} {% if tiny %}round-image--tiny{% endif %} {{ css_class }}">
     </div>
   {% elif empty_url %}
-    <div class="round-image {% if small %}round-image--small{% endif %} {{ css_class }}">
-      <img src="{{ empty_url }}" class="round-image__image" alt="{{ alt }}">
+    <div class="round-image {% if small %}round-image--small{% endif %} {% if tiny %}round-image--tiny{% endif %} {{ css_class }}">
+      <img id="{{ id }}" src="{{ empty_url }}" class="round-image__image" alt="{{ alt }}">
     </div>
   {% endif %}
 {% endif %}

@@ -37,8 +37,10 @@ class JANUNGroupListView(SingleTableMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.role == "VERWALTER":
+            context['show_table'] = True
             context['heading'] = "Alle Gruppen ({0})".format(len(self.object_list))
         else:
+            context['show_table'] = False
             context['heading'] = "Deine Gruppen ({0})".format(len(self.object_list))
         return context
 
@@ -62,7 +64,7 @@ class JANUNGroupCreateView(PermissionRequiredMixin, CreateView):
     form_class = JANUNGroupForm
     permission_required = 'groups.add_janungroup'
     raise_exception = True
-    template_name_suffix = '_create'
+    template_name_suffix = '_form'
 
     # https://github.com/dfunckt/django-rules/issues/85
     def get_object(self):
@@ -104,7 +106,7 @@ class JANUNGroupUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = JANUNGroupForm
     permission_required = 'groups.change_janungroup'
     raise_exception = True
-    template_name_suffix = '_edit'
+    template_name_suffix = '_form'
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()

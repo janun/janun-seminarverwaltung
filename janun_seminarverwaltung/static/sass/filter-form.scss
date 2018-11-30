@@ -1,25 +1,13 @@
 .filter-form {
-  font-size: 14px;
-  @media (min-width: 600px) {
-    font-size: 18px;
-  }
-  color: color(darkgrey);
-
-  .form__optional {
+  .optionalField {
     display: none;
-  }
-
-  &__buttons {
-    display: inline-block;
   }
 
   .col-form-label {
     font-weight: normal;
     display: block;
-  }
-
-  .form-control, .numberinput {
-    padding: 10px 10px;
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 
   .form-group {
@@ -31,4 +19,9 @@
       display: inline-block;
     }
   }
+
+  select {
+    max-width: 120px;
+  }
+
 }

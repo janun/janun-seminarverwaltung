@@ -46,11 +46,29 @@ def filter_timing(qs, field, value):
     if value == 'future':
         return qs.filter(start_date__gte=datetime.date.today())
     if value == 'running':
-        return qs.filter(start_date__date=datetime.date.today())
+        return qs.filter(start_date=datetime.date.today())
     return qs
 
 
-class SeminarFilter(django_filters.FilterSet):
+class SeminarTeamerFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
+    start_year = YearFilter(label="Jahr", field_name="start_date")
+    timing = django_filters.ChoiceFilter(
+        label="Zeitpunkt", field_name="start_date",
+        choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
+        method=filter_timing
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filters['title'].field.widget.attrs['autofocus'] = True
+
+    class Meta:
+        model = Seminar
+        fields = ['title', 'start_year', 'timing']
+
+
+class SeminarStaffFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
     start_year = YearFilter(label="Jahr", field_name="start_date")
     start_quarter = django_filters.ChoiceFilter(
@@ -64,7 +82,7 @@ class SeminarFilter(django_filters.FilterSet):
         queryset=allowed_users
     )
     timing = django_filters.ChoiceFilter(
-        label="Zeitpunkt d. Stattfindens", field_name="start_date",
+        label="Zeitpunkt", field_name="start_date",
         choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
         method=filter_timing
     )

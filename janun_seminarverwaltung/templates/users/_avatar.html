@@ -1,0 +1,12 @@
+{% load thumbnail %}
+{% load static %}
+
+<div class="d-inline-block rounded-circle"
+      style="height: {{ size|default:'120px' }}; width: {{ size|default:'120px' }};
+             background: #ccc; overflow: hidden; font-size:0">
+  {% thumbnail avatar "200x200" crop="center" as image %}
+    <img id="{{ id }}" src="{{ image.url }}" class="w-100 h-100" alt="{{ alt }}">
+  {% empty %}
+    <img id="{{ id }}" src="{% static 'images/person-outline.svg' %}" class="w-100 h-100" alt="{{ alt }}">
+  {% endthumbnail %}
+</div>

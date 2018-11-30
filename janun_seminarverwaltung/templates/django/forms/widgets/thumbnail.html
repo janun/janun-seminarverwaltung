@@ -1,16 +1,26 @@
-<div class="imageinput clearfix">
-  {% if widget.is_initial %}
-    <div class="float-left margin-right-15">
-      {% include "common/round-image.html" with image=widget.value logo=widget.logo %}
-    </div>
-  {% endif %}
+{% load static %}
 
-  <input class="imageinput__input" type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
-
-  {% if widget.is_initial and not widget.required %}
-    <div class="checkmark margin-top-15">
-      <input class="checkmark__input" type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
-      <label class="checkmark__label" for="{{ widget.checkbox_id }}">löschen</label>
+<div class="">
+  <div class="">
+    {% if widget.is_initial %}
+      {% include "common/round-image.html" with image=widget.value logo=widget.logo id=widget.attrs.id|add:"_img" %}
+    {% else %}
+      <div class="round-image mb-2">
+        <img id="{{ widget.attrs.id|add:"_img" }}" src="{% static 'images/person-outline.svg' %}" class="round-image__image" alt="">
+      </div>
+    {% endif %}
+  </div>
+  <div class="">
+    <div class="custom-file">
+      <input accept=".png, .jpg, .jpeg" data-read-image="{{ widget.attrs.id }}_img" class="custom-file-input" type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+      <label class="custom-file-label" for="customFile">Datei auswählen</label>
     </div>
-  {% endif %}
+  </div>
 </div>
+
+<!-- {% if widget.is_initial and not widget.required %}
+  <div class="checkmark margin-top-15">
+    <input class="checkmark__input" type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+    <label class="checkmark__label" for="{{ widget.checkbox_id }}">löschen</label>
+  </div>
+{% endif %} -->

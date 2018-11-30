@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }} {% if object.pk %}{{ object }} bearbeiten{% else %}Benutzer erstellen{% endif %}{% endblock %}
+
+{% block container_class %}container mw-500{% endblock %}
+
+{% block content %}
+{% if object.pk %}
+  <a class="backlink" href="{{ object.get_absolute_url }}">← {{ object }}</a>
+{% else %}
+  <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
+{% endif %}
+
+<div class="card card-bigger">
+  <h1 class="h3 card-header">
+    {% if object.pk %}{{ object }} bearbeiten{% else %}Benutzer_in erstellen{% endif %}
+  </h1>
+  <form method="POST" action="" enctype="multipart/form-data">
+    <div class="card-body">
+      {% crispy form %}
+    </div>
+    <div class="card-footer clearfix">
+      <button class="btn btn-primary float-right" type="submit">Speichern</button>
+      {% if object.pk %}
+        <a class="btn btn-link float-right" href="{{ object.get_absolute_url }}">Abbrechen</a>
+      {% else %}
+        <a class="btn btn-link float-right" href="{% url 'users:list' %}">Abbrechen</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

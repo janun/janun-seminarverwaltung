@@ -1,46 +1,72 @@
 {% load static i18n %}
 
-<div class="navbar">
-  <nav class="navbar__inner container">
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+  <div class="container">
+    <a href="/" class="navbar-brand">
+      <img src="{% static 'images/janun_logo.svg' %}" width="40" height="40" class="d-inline-block align-top" alt="">
+      <span class="text-primary" style="line-height: 40px;">Seminare</span>
+    </a>
 
-    <ul>
-      <li class="color-green hide@small"><a style="font-size:20px;" href="/">JANUN-Seminare</a></li>
-      <li><a href="{% url 'dashboard:dashboard' %}"
-             class="{% if request.resolver_match.namespace == "dashboard" %}active{% endif %}">
-             Übersicht</a></li>
-      <li><a href="{% url 'groups:list' %}"
-             class="{% if request.resolver_match.namespace == "groups" %}active{% endif %}">
-             Gruppen</a></li>
-      <li><a href="{% url 'seminars:list' %}"
-             class="{% if request.resolver_match.namespace == "seminars" %}active{% endif %}">
-             Seminare</a></li>
-      {% if perms.users.see_all_users %}
-        <li><a href="{% url 'users:list' %}"
-              class="{% if request.resolver_match.namespace == "users" %}active{% endif %}">
-              Benutzer</a></li>
-      {% endif %}
-      {% if user.is_staff  %}
-        <li><a href="{% url 'admin:index' %}">Admin</a></li>
-      {% endif %}
-    </ul>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <ul class="float-right">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      {% if user.is_authenticated %}
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% if request.resolver_match.namespace == "dashboard" %}active{% endif %}">
+            <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Übersicht</a>
+          </li>
+          <li class="nav-item {% if request.resolver_match.namespace == "groups" %}active{% endif %}">
+            <a class="nav-link" href="{% url 'groups:list' %}">Gruppen</a>
+          </li>
+          <li class="nav-item {% if request.resolver_match.namespace == "seminars" %}active{% endif %}">
+            <a class="nav-link" href="{% url 'seminars:list' %}">Seminare</a>
+          </li>
+          {% if perms.users.see_all_users %}
+            <li class="nav-item {% if request.resolver_match.namespace == "users" %}active{% endif %}">
+              <a class="nav-link" href="{% url 'users:list' %}">Benutzer</a>
+            </li>
+          {% endif %}
+          {% if user.is_staff  %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+
       {% if request.user.is_authenticated %}
-        <li><a href="{% url 'users:detail' request.user.pk  %}"
-               class="{% if request.path == request.user.get_absolute_url %}active{% endif %}">
-               {{ request.user.get_short_name }}</a></li>
-        <li><a href="{% url 'account_logout' %}"
-               class="{% if request.resolver_match.url_name == "account_logout" %}active{% endif %}">
-               {% trans "Sign Out" %}</a></li>
-      {% else %}
-        <li><a href="{% url 'account_login' %}"
-               class="{% if request.resolver_match.url_name == "account_login" %}active{% endif %}">
-               {% trans "Sign In" %}</a></li>
-        <li><a href="{% url 'account_signup' %}"
-               class="{% if request.resolver_match.url_name == "account_signup" %}active{% endif %}">
-               {% trans "Sign Up" %}</a></li>
+        <!-- <form class="form-inline">
+          <input class="form-control" type="search" placeholder="Suche" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form> -->
       {% endif %}
-    </ul>
 
-  </nav>
-</div>
+      <ul class="navbar-nav">
+        {% if request.user.is_authenticated %}
+          <li class="d-none d-md-inline-block nav-item dropdown {% if request.path == request.user.get_absolute_url %}active{% endif %}">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ request.user.get_short_name }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'users:detail' request.user.pk %}">Profil</a>
+              <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
+            </div>
+          </li>
+          <li class="d-md-none nav-item {% if request.path == request.user.get_absolute_url %}active{% endif %}">
+            <a class="nav-link" href="{% url 'users:detail' request.user.pk %}">Profil</a>
+          </li>
+          <li class="d-md-none nav-item">
+              <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item {% if request.resolver_match.url_name == "account_login" %}active{% endif %}">
+            <a class="nav-link" href="{% url 'account_login' %}">Anmelden</a>
+          </li>
+          <li class="nav-item {% if request.resolver_match.url_name == "account_signup" %}active{% endif %}">
+            <a class="nav-link" href="{% url 'account_signup' %}">Registrieren</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{{ block.super }} Nicht gefunden{% endblock %}
+{% block title %}{{ block.super }} Nicht gefunden (404){% endblock %}
 
 {% block content %}
-<div class="panel bg-red">
-  <h1>Nicht gefunden</h1>
-  <p>Sorry, das haben wir nicht gefunden.</p>
+<div class="callout callout-danger">
+  <div class="card-body">
+    <h1 class="text-danger">Nicht gefunden (404)</h1>
+    <p>Sorry, das haben wir nicht gefunden.</p>
+  </div>
 </div>
 {% endblock content %}
