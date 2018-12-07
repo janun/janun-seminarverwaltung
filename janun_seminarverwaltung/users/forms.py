@@ -153,7 +153,7 @@ class UserLoginForm(LoginForm):
 class UserSignupForm(SignupForm):
     name = forms.CharField(label="Voller Name")
     phone_number = PhoneNumberField(
-        label="Telefonnummer", required=False,
+        label="Telefonnummer", required=False, widget=PhoneNumberInternationalFallbackWidget,
         help_text="Damit wir Rückfragen zu Deinem Seminar zeitnah mit Dir klären können."
     )
     janun_groups = forms.ModelMultipleChoiceField(
@@ -169,10 +169,10 @@ class UserSignupForm(SignupForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             'name',
-            'phone_number'
             'email',
             'username',
             'password1',
+            'phone_number',
             'janun_groups',
         )
         if not self.errors:
@@ -212,7 +212,6 @@ class UserSignupForm(SignupForm):
 
     class Meta:
         widgets = {
-            'phone_number': PhoneNumberInternationalFallbackWidget,
             'avatar': ThumbnailFileInput
         }
 
