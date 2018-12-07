@@ -39,6 +39,7 @@
               {% else %}
                 {% crispy_field field 'class' 'form-control custom-select' %}
               {% endif %}
+              {% include 'janunbootstrap4/layout/help_text_and_errors.html' %}
             {% else %}
                 <div class="{{ field_class }}">
                     {% if field.errors %}
