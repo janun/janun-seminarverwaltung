@@ -40,9 +40,15 @@ class SeminarCommentForm(forms.ModelForm):
         label='',
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        if not self.request or not self.request.user.has_perm('seminars.create_internal_comment', self.instance):
+            self.fields['is_internal'].widget = forms.HiddenInput()
+
     class Meta:
         model = SeminarComment
-        fields = ('comment',)
+        fields = ('comment', 'is_internal')
 
 
 class SeminarStepForm(forms.ModelForm):

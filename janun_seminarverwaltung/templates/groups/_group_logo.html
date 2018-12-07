@@ -1,0 +1,12 @@
+{% load thumbnail %}
+{% load static %}
+
+<div class="d-inline-flex rounded-circle justify-content-center align-items-center shadow-sm"
+      style="height: {{ size|default:'120px' }}; width: {{ size|default:'120px' }};
+             background: white; overflow: hidden; font-size:0">
+  {% thumbnail logo "200x200" padding=True as image %}
+    <img id="{{ id }}" src="{{ image.url }}" style="max-width: 80%; max-height: 80%;" alt="{{ alt }}">
+  {% empty %}
+    <img id="{{ id }}" src="{% static 'images/group-outline.svg' %}" class="w-100 h-100" alt="{{ alt }}">
+  {% endthumbnail %}
+</div>

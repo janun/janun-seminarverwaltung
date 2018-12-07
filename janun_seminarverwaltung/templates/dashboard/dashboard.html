@@ -6,22 +6,16 @@
 {% block title %}{{ block.super }} Übersicht{% endblock %}
 
 {% block content %}
-<div class="my-3">
+<div>
   <h1 class="mb-4">Willkommen, {{ user.get_short_name }}!</h1>
   <!-- <a class="btn m-1 btn-outline-secondary" href="{% url 'users:edit' request.user.pk  %}">Daten ändern</a> -->
   <a class="btn m-1 btn-primary" href="{% url 'seminars:create' %}">Seminar anmelden</a>
 </div>
 
 
-{% if not request.user.is_reviewed and user.janun_groups.all %}
-  <div class="callout callout-danger my-4 mw-500">
-    <div class="card-body">
-      Dein Konto wurde noch <strong>nicht überprüft</strong> und Du kannst deswegen noch <strong>keine Gruppenseiten</strong> besuchen
-      und <strong>keine Seminare von anderen</strong> betrachten.
-    </div>
-  </div>
-{% endif %}
+{% include "users/_callout_not_reviewed.html" with user=request.user %}
 
+{% include "users/_callout_no_phone_number.html" with user=request.user %}
 
 
 {% if all_seminars %}

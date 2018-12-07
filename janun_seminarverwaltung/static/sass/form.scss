@@ -2,6 +2,14 @@
   display: block;
 }
 
-// input:not([type="checkbox"]):not([type="button"]):not([type="submit"]):not([type=radio]), select, textarea {
-//   @extend .form-control;
-// }
+legend {
+  color: $green;
+}
+
+.optionalField {
+  font-size: 70%;
+}
+
+[data-password-toggle] {
+  display: none;
+}

@@ -68,7 +68,6 @@ THIRD_PARTY_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'rest_framework',
     'import_export',
     'fsm_admin',
     'rules',
@@ -77,6 +76,7 @@ THIRD_PARTY_APPS = [
     'stronghold',
     'phonenumber_field',
     'sorl.thumbnail',
+    'django_inlinecss',
 ]
 LOCAL_APPS = [
     'janun_seminarverwaltung.users.apps.UsersConfig',
@@ -209,6 +209,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'context_processors.janun_context'
             ],
             'libraries': {
                 'utils': 'templatetags'
@@ -262,6 +263,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_serializer
 CELERY_RESULT_SERIALIZER = 'json'
+
+
 # django-allauth
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
@@ -284,7 +287,9 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_FORMS = {
     'signup': 'users.forms.UserSignupForm',
-    'login': 'users.forms.UserLoginForm'
+    'login': 'users.forms.UserLoginForm',
+    'reset_password_from_key': 'users.forms.ResetPasswordKeyForm',
+
 }
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
@@ -320,6 +325,20 @@ SEMINAR_POLICY_URL = env(
     'SEMINAR_POLICY_URL',
     default="https://janunde.s3.amazonaws.com/documents/JANUN-Seminarabrechnungsrichtlinie_2018.pdf"
 )
+HELP_EMAIL = env(
+    'HELP_EMAIL',
+    default="seminar@janun.de"
+)
+HELP_PHONE = env(
+    'HELP_PHONE',
+    default="0511 3940515"
+)
+HELP_PHONE_LINK = env(
+    'HELP_PHONE_LINK',
+    default="tel:+49-511-3940515"
+)
+DEFAULT_FROM_EMAIL = "seminare@janun.de"
+DEFAULT_EMAIL_HEADERS = {'REPLY-TO': DEFAULT_FROM_EMAIL}
 
 
 from django.conf.locale.de.formats import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS

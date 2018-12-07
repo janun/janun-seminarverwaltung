@@ -1,0 +1,40 @@
+{% extends "templated_email/base.email" %}
+
+{% block subject %}{{ block.super }} Willkommen{% endblock %}
+
+{% block plain %}Hallo {{ user }},
+Du hast ein neues Konto bei der JANUN-Seminarverwaltung erstellt.
+Bitte bestätige Deine E-Mail-Adresse, indem Du auf folgenden Link klickst:
+
+  {{ activate_url }}
+
+{{ block.super }}
+{% endblock %}
+
+{% block html_content %}
+<tr>
+  <td class="content-block">
+    <h1>Willkommen bei der JANUN-Seminarverwaltung</h1>
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Hallo {{ user }},
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Du hast ein neues Konto bei der JANUN-Seminarverwaltung erstellt.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Bitte bestätige Deine E-Mail-Adresse, indem Du auf folgenden Button klickst:
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    <a href="{{ activate_url }}" class="btn-primary">E-Mail bestätigen</a>
+  </td>
+</tr>
+{% endblock %}

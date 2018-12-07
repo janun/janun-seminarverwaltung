@@ -50,46 +50,47 @@
 
 {% include "seminars/_state.html" %}
 
-<div class="card clearfix">
-  <h2 class="card-header h3">Seminardaten</h2>
+
+<div class="card card-bigger clearfix">
+  <h2 class="card-header h3 border-bottom">Seminardaten</h2>
   <div class="card-body">
-  <h3>Titel & Inhalt</h3>
-  <dl>
-    <dt>Titel:</dt>
-    <dd>{{ object.title }}</dd>
-    <dt>Beschreibung:</dt>
-    <dd>{{ object.content|default:"Keine" }}</dd>
-  </dl>
+    <h3>Titel & Inhalt</h3>
+    <dl>
+      <dt>Titel:</dt>
+      <dd>{{ object.title }}</dd>
+      <dt>Beschreibung:</dt>
+      <dd>{{ object.content|default:"Keine" }}</dd>
+    </dl>
 
-  <h3>Zeit & Ort</h3>
-  <dl>
-    <dt>Startzeitpunkt:</dt>
-    <dd>{{ object.start }}</dd>
-    <dt>Endzeitpunkt:</dt>
-    <dd>{{ object.end }}</dd>
-    <dt>Ort:</dt>
-    <dd>{{ object.location }}</dd>
-  </dl>
+    <h3>Zeit & Ort</h3>
+    <dl>
+      <dt>Startzeitpunkt:</dt>
+      <dd>{{ object.start }}</dd>
+      <dt>Endzeitpunkt:</dt>
+      <dd>{{ object.end }}</dd>
+      <dt>Ort:</dt>
+      <dd>{{ object.location }}</dd>
+    </dl>
 
-  <h3>Tage, Gruppe, Zuschuss</h3>
-  <dl>
-    <dt>JANUN-Gruppe:</dt>
-    <dd>{{ object.group|default:"Keine" }}</dd>
-    <dt>Anzahl Bildungstage:</dt>
-    <dd>{{ object.planned_training_days }}</dd>
-    <dt>Anzahl Teilnehmende:</dt>
-    <dd>{{ object.planned_attendees_min }}—{{ object.planned_attendees_max }}</dd>
-    <dt>Benötigte Förderung:</dt>
-    <dd>{{ object.requested_funding }}</dd>
-  </dl>
+    <h3>Tage, Gruppe, Zuschuss</h3>
+    <dl>
+      <dt>JANUN-Gruppe:</dt>
+      <dd>{{ object.group|default:"Keine" }}</dd>
+      <dt>Anzahl Bildungstage:</dt>
+      <dd>{{ object.planned_training_days }}</dd>
+      <dt>Anzahl Teilnehmende:</dt>
+      <dd>{{ object.planned_attendees_min }}—{{ object.planned_attendees_max }}</dd>
+      <dt>Benötigte Förderung:</dt>
+      <dd>{{ object.requested_funding }}</dd>
+    </dl>
 
-  <h3>Website</h3>
-  <p>Hier sollen dann die Felder für die Website angezeigt werden.</p>
+    <h3>Website</h3>
+    <p>Hier sollen dann die Felder für die Website angezeigt werden.</p>
 
-  <h3>Abrechnung</h3>
-  <p>Hier sollen dann die Felder für die Abrechnung angezeigt werden.</p>
+    <h3>Abrechnung</h3>
+    <p>Hier sollen dann die Felder für die Abrechnung angezeigt werden.</p>
 
-  <a class="btn btn-secondary" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
+    <a class="btn btn-secondary" href="{% url 'seminars:edit' object.pk %}">Bearbeiten</a>
   </div>
 </div>
 

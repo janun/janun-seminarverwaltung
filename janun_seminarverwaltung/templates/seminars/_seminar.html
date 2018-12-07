@@ -1,12 +1,13 @@
-<a class="card" style="min-height: 175px" href="{% url 'seminars:detail' object.id %}">
-  <div class="card-body">
-    <div class="row mb-2">
-      <div class="col"><small class="text-secondary">{{ object.start|date:"j.n.Y" }}</small></div>
-      <div class="col">
-        <span class="float-right badge badge-pill badge-{{ object.get_state_color }}">{{ object.get_state_display }}</span>
-      </div>
-    </div>
-    <h3 class="h5 text-body">{{ object.title }}</h3>
-    <!-- <span class="text-body">{{ object.group.name }}</span> -->
+<a class="card" style="min-height: 180px" href="{% url 'seminars:detail' object.id %}">
+
+  <div class="card-body text-body">
+    <small class="text-secondary">{{ object.start|date:"j.n.Y" }}</small>
+    <span class="float-right shadow-sm badge badge-pill badge-{{ object.get_state_color }}">{{ object.get_state_display }}</span>
+    <h3 class="h4 my-2 text-body">{{ object.title }}</h3>
+
+    {% if object.group %}
+      {% include "groups/_group.html" with group=object.group nolink=True %}
+    {% endif %}
+
   </div>
 </a>

@@ -1,0 +1,21 @@
+{% load rules %}
+
+{% if not user.is_reviewed %}
+  {% if request.user != user or user.janun_groups.all %}
+    <div class="callout callout-danger clearfix my-4 mw-500">
+      <div class="card-body">
+        {% has_perm 'users.review' request.user user as can_review %}
+        {% if can_review %}
+          <a class="btn btn-outline-secondary float-right" href="{% url 'users:review' user.pk %}">überprüfen</a>
+        {% endif %}
+        <p class="card-text">
+        {% if request.user == user %}
+          Dein Konto wurde noch <strong>nicht überprüft</strong> und Du kannst deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+        {% else %}
+          {{ user }} wurde noch <strong>nicht überprüft</strong> und kann deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+        {% endif %}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}

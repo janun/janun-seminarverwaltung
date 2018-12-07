@@ -1,7 +1,7 @@
 {% load thumbnail %}
 {% load static %}
 
-<div class="d-inline-block rounded-circle"
+<div class="d-inline-block rounded-circle shadow-sm"
       style="height: {{ size|default:'120px' }}; width: {{ size|default:'120px' }};
              background: #ccc; overflow: hidden; font-size:0">
   {% thumbnail avatar "200x200" crop="center" as image %}

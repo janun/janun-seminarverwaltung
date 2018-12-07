@@ -17,11 +17,12 @@ from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
 from django_fsm import has_transition_perm
 
+from janun_seminarverwaltung.users.models import get_verwalter_mails
 from seminars.models import Seminar, SeminarComment
 from seminars.tables import SeminarTable
 from seminars.filters import SeminarTeamerFilter, SeminarStaffFilter
 import seminars.forms as seminar_forms
-from .email import send_wizard_done_mails
+from .email import send_seminar_mail
 
 
 class SeminarTeamerListView(FilterView):
@@ -95,8 +96,11 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
-        context['comments'] = self.object.comments.all()
-        context['comment_form'] = seminar_forms.SeminarCommentForm()
+        if self.request.user.has_perm('seminars.see_internal_comment'):
+            context['comments'] = self.object.comments.all()
+        else:
+            context['comments'] = self.object.comments.filter(is_internal=False)
+        context['comment_form'] = seminar_forms.SeminarCommentForm(request=self.request)
         context['delete_form'] = seminar_forms.DeleteForm()
         return context
 
@@ -262,7 +266,9 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         self.instance.author = self.request.user
         self.instance.save()
         messages.success(self.request, 'Seminar "{0}" gespeichert.'.format(self.instance.title))
-        send_wizard_done_mails(seminar=self.instance, request=self.request)
+        # send_wizard_done_mails(seminar=self.instance, request=self.request)
+        send_seminar_mail("seminar_wizard_done_author", self.instance.author.email, self.instance, self.request)
+        send_seminar_mail("seminar_wizard_done_verwalter", get_verwalter_mails(), self.instance, self.request)
         return render(self.request, 'seminars/seminar_wizard_done.html', {
             'instance': self.instance,
         })

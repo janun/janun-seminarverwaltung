@@ -1,0 +1,11 @@
+{% load rules %}
+
+{% if not user.is_active %}
+  <div class="callout callout-danger my-4 clearfix mw-500">
+    {% has_perm 'users.deactivate_user' request.user user as can_deactivate %}
+    {% if can_deactivate %}
+      <a class="btn btn-outline-primary float-right" href="{% url 'users:deactivate' user.pk %}">aktivieren</a>
+    {% endif %}
+    {{ user }} ist <strong>deaktiviert</strong> und kann sich nicht anmelden.
+  </div>
+{% endif %}

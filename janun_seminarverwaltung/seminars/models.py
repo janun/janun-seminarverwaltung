@@ -74,7 +74,10 @@ class Seminar(TimeStampedModel, models.Model):
     start_time = models.TimeField("Anfangszeit", blank=True, null=True)
     end_date = models.DateField("Enddatum")
     end_time = models.TimeField("Endzeit", blank=True, null=True)
-    location = models.CharField("Ort", max_length=255)
+    location = models.CharField(
+        "Ort", max_length=255,
+        help_text="Stadt, in der das Seminar stattfinden soll."
+    )
     planned_training_days = models.PositiveSmallIntegerField("Bildungstage")
     planned_attendees_min = models.PositiveSmallIntegerField("Teilnehmende min.")
     planned_attendees_max = models.PositiveSmallIntegerField("Teilnehmende max.")
@@ -193,18 +196,19 @@ class Seminar(TimeStampedModel, models.Model):
             return (self.end_date - self.start_date).days + 1
         return None
 
-    def clean_title(self):
-        if self.start_date and self.title:
-            qs = Seminar.objects.filter(start_date=self.start_date)
-            qs.filter(title=self.title)
-            if self.pk:
-                qs = qs.exclude(pk=self.pk)
-            if qs.exists():
-                return ValidationError(
-                    "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",
-                    params={'title': self.title, 'date': date_format(self.start_date)}
-                )
-        return None
+    # def clean_title(self):
+    #     if self.start_date and self.title:
+    #         qs = Seminar.objects.filter(start_date=self.start_date)
+    #         qs.filter(title=self.title)
+    #         if self.pk:
+    #             qs = qs.exclude(pk=self.pk)
+    #         if qs.exists():
+    #             print(self.__dict__ )
+    #             return ValidationError(
+    #                 "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",
+    #                 params={'title': self.title, 'date': date_format(self.start_date)}
+    #             )
+    #     return None
 
     def clean_end_date(self):
         if self.end_date and self.start_date:
@@ -243,7 +247,7 @@ class Seminar(TimeStampedModel, models.Model):
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
-        fields = ('title', 'end_date', 'planned_training_days', 'requested_funding', 'planned_attendees_max')
+        fields = ('end_date', 'planned_training_days', 'requested_funding', 'planned_attendees_max')
         errors = {}
         for field in fields:
             if not exclude or field not in exclude:
@@ -271,7 +275,7 @@ class Seminar(TimeStampedModel, models.Model):
         return self.title
 
     def is_in_the_past(self):
-        return timezone.now() > self.end
+        return timezone.now().date() > self.end_date
 
     # TODO: Wenn Abrechnungszeitraum abläuft, Erinnerungsmail an Autor schicken.
     # TODO: Wenn Seminar stattgefunden hat, E-Mail an Autor, mit Link, um Stattfinden zu bestätigen
@@ -451,7 +455,6 @@ rules.add_perm('seminars.can_ueberweisen',      is_verwalter | has_group_hat_for
 rules.add_perm('seminars.can_unmoeglichen',     is_verwalter | has_group_hat_for_seminar)
 
 
-
 class SeminarComment(TimeStampedModel, models.Model):
     seminar = models.ForeignKey(
         Seminar,
@@ -467,6 +470,10 @@ class SeminarComment(TimeStampedModel, models.Model):
         null=True,
     )
     comment = models.TextField("Kommentartext")
+    is_internal = models.BooleanField(
+        "interner Vermerk", default=False,
+        help_text="Kann nur von Prüfern und Verwaltern gelesen werden"
+    )
 
 
 @rules.predicate
@@ -477,3 +484,5 @@ def is_comment_author(user, comment):
 
 
 rules.add_perm('seminars.delete_seminar_comment', is_verwalter | is_comment_author)
+rules.add_perm('seminars.see_internal_comment', is_verwalter | is_pruefer | is_comment_author)
+rules.add_perm('seminars.create_internal_comment', is_verwalter | is_pruefer)

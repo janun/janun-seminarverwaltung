@@ -41,7 +41,7 @@ class JANUNGroupListView(SingleTableMixin, FilterView):
             context['heading'] = "Alle Gruppen ({0})".format(len(self.object_list))
         else:
             context['show_table'] = False
-            context['heading'] = "Deine Gruppen ({0})".format(len(self.object_list))
+            context['heading'] = "Deine Gruppen"
         return context
 
 

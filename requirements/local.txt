@@ -28,3 +28,5 @@ pytest-django==3.2.1  # https://github.com/pytest-dev/pytest-django
 pylint-common==0.2.5
 pylint-django==0.11
 pylint-celery==0.3
+
+django-naomi==0.8

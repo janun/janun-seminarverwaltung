@@ -1,0 +1,26 @@
+{% load rules %}
+{% load humanize %}
+
+<div class="card my-3 border" id="c{{ comment.id }}" style="box-shadow: none">
+    <div class="card-body">
+      <small class="text-secondary d-flex align-items-center">
+        <a class="mr-1 text-secondary" href="{{ comment.author.get_absolute_url }}">
+          {% include "users/_avatar.html" with avatar=comment.author.avatar size="25px" %}
+        </a>
+        <a class="mx-1 text-secondary" href="{{ comment.author.get_absolute_url }}">
+          {{ comment.author.name }}
+        </a>
+        <time class="mx-1" datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">{{ comment.created|naturaltime }}</time>
+        {% if show_delete %}
+          {% has_perm 'seminars.delete_seminar_comment' user comment as can_delete %}
+          {% if can_delete %}
+            <a class="text-secondary ml-auto" href="{% url 'seminars:delete_comment' seminar.pk comment.pk %}">Löschen</a>
+          {% endif %}
+        {% endif %}
+      </small>
+      <p class="card-text mt-2 mb-1">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
+      {% if comment.is_internal %}
+        <small class="text-secondary">(interner Vermerk)</small>
+      {% endif %}
+    </div>
+</div>

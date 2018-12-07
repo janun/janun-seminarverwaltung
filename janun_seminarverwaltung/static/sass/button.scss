@@ -1,0 +1,17 @@
+.btn-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+// @each $color, $value in $theme-colors {
+//   .btn-outline-#{$color}:hover, .btn-outline-#{$color}:active, .btn-outline-#{$color}:focus {
+//     background-color: inherit !important;
+//     color: inherit !important;
+//   }
+// }
+
+.btn-link:active {
+  box-shadow: none !important;
+}

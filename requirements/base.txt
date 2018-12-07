@@ -31,3 +31,7 @@ django-filter==2.0.0
 django-stronghold==0.3.0
 django-phonenumber-field==2.0.1
 sorl-thumbnail==12.5.0
+
+django-inlinecss==0.1.2
+django-templated-email=2.2.0
+html2text==2018.1.9

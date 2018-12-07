@@ -1,0 +1,49 @@
+{% extends "templated_email/base.email" %}
+
+{% block subject %}{{ block.super }} Bestätigung Seminar-Anmeldung „{{ seminar.title }}“{% endblock %}
+
+
+{% block plain %}Liebe_r {{ user.username }},
+
+dein Seminar "{{ seminar.title }}" am {{ seminar.start|date:'SHORT_DATE_FORMAT' }} wurde gespeichert.
+Wir werden nun prüfen, ob es gefördert werden kann.
+
+Du kannst den Status deines Seminars unter {{ seminar_url }} einsehen.
+Über wichtige Änderungen werden wir dich auch per E-Mail informieren.
+
+{{ block.super }}
+{% endblock %}
+
+
+{% block html_content %}
+<tr>
+  <td class="content-block">
+    <h1>Bestätigung Seminar-Anmeldung</h1>
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Liebe_r {{ user.username }},
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    dein Seminar <strong>{{ seminar.title }}</strong> am {{ seminar.start|date:'SHORT_DATE_FORMAT' }} wurde gespeichert.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Wir werden nun prüfen, ob es gefördert werden kann.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Du kannst den Status deines Seminars <a href="{{ seminar_url }}">hier</a> einsehen.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Über wichtige Änderungen werden wir dich auch per E-Mail informieren.
+  </td>
+</tr>
+{% endblock %}

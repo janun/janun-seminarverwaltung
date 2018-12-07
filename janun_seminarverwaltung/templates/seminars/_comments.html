@@ -1,5 +1,3 @@
-{% load rules %}
-{% load humanize %}
 {% load crispy_forms_tags %}
 
 <div style="margin-top: 120px;"></div>
@@ -8,7 +6,7 @@
 
   <div class="clearfix my-4">
     <h3 id="comments">Kommentieren</h3>
-    <form action="{% url 'seminars:create_comment' object.pk %}" method="POST">
+    <form class="comment-form" action="{% url 'seminars:create_comment' object.pk %}" method="POST">
       {% csrf_token %}
       {{ comment_form|crispy }}
       <input type="submit" class="btn btn-primary float-right" value="Kommentieren" id="id_submit_comment" />
@@ -28,21 +26,7 @@
 
   {% if comments %}
       {% for comment in comments reversed %}
-        <div class="card my-3" id="c{{ comment.id }}">
-            <div class="card-body">
-              <small class="text-secondary clearfix">
-                <span class="float-left">
-                  {% include "users/_user.html" with object=comment.author size="25px" %}
-                  <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">{{ comment.created|naturaltime }}</time>
-                </span>
-                {% has_perm 'seminars.delete_seminar_comment' user comment as can_delete %}
-                {% if can_delete %}
-                  <a class="text-secondary float-right" href="{% url 'seminars:delete_comment' seminar.pk comment.pk %}">Löschen</a>
-                {% endif %}
-              </small>
-              <p class="card-text">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
-            </div>
-        </div>
+          {% include "seminars/_comment.html" with show_delete=True %}
       {% endfor %}
   {% else %}
     <p>Keine Kommentare</p>

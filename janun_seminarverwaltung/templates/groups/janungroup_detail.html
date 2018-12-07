@@ -12,18 +12,18 @@
   <div class="float-right">
     {% has_perm 'groups.change_janungroup' user object as can_edit %}
     {% if can_edit %}
-      <a class="btn btn-outline-info float-right" href="{% url 'groups:edit' object.id %}">bearbeiten</a>
+      <a class="btn my-1 btn-outline-info float-right" href="{% url 'groups:edit' object.id %}">bearbeiten</a>
     {% endif %}
     <br>
     {% has_perm 'groups.delete_janungroup' user object as can_delete %}
     {% if can_delete %}
-      <a class="btn btn-outline-danger float-right" href="{% url 'groups:delete' object.id %}">löschen</a>
+      <a class="btn my-1 btn-outline-danger float-right" href="{% url 'groups:delete' object.id %}">löschen</a>
     {% endif %}
   </div>
 
   <div class="row">
     <div class="col-lg-2">
-      {% include "common/round-image.html" with image=object.logo logo=True empty_url="/static/images/group-outline.svg" %}
+      {% include "groups/_group_logo.html" with logo=object.logo %}
     </div>
     <div class="col col-lg-8">
       <h1>{{ object.name }}</h1>

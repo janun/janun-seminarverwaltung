@@ -1,40 +1,27 @@
-// .navbar {
-//   height: 65px;
-//   background-color: white;
-//   @include shadow(1);
-//
-//   &__inner {
-//     height: 100%;
-//   }
-//
-//   ul {
-//     display: inline-block;
-//     height: 100%;
-//     margin: 0;
-//     padding: 0;
-//   }
-//
-//   li {
-//     display: inline-block;
-//     height: 100%;
-//     margin: 0;
-//     padding: 0;
-//   }
-//
-//   li+li {
-//     margin-left: 16px;
-//   }
-//
-//   a {
-//     color: inherit;
-//     display: inline-block;
-//     height: 100%;
-//     line-height: 65px;
-//     text-decoration: none;
-//     font-size: 16px;
-//   }
-//
-//   .active {
-//     border-bottom: 4px solid color(green);
-//   }
-// }
+.navbar {
+  @include shadow(2);
+}
+
+
+$navbar-height: 60px;
+
+@include media-breakpoint-up(md) {
+  .navbar {
+    .nav-link {
+      display: inline;
+      line-height: $navbar-height;
+    }
+
+    &, .nav-item {
+      height: $navbar-height;
+    }
+
+    .nav-item.active {
+      border-bottom: 4px solid $green;
+    }
+  }
+}
+
+.navbar-brand {
+  font-weight: bold;
+}

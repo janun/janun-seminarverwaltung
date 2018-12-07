@@ -62,7 +62,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name="Profilbild", blank=True, null=True,
         upload_to=avatar_filename
     )
-    phone_number = PhoneNumberField("Telefonnummer", blank=True)
+    phone_number = PhoneNumberField(
+        "Telefonnummer", blank=True,
+        help_text="Damit wir Rückfragen zu Deinem Seminar zeitnah mit Dir klären können."
+    )
     address = models.TextField("Postadresse", blank=True, null=True)
     is_staff = models.BooleanField("Admin-Zugang", default=False)
     is_active = models.BooleanField("aktiv", default=True)
@@ -94,6 +97,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         related_name="members",
         verbose_name="Gruppen-Mitgliedschaften",
+        help_text="Für mehrere, drücke <kbd>Strg</kbd>.",
     )
 
     group_hats = models.ManyToManyField(
@@ -101,6 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         related_name="group_hats",
         verbose_name="Gruppenhüte",
+        help_text="Für mehrere, drücke <kbd>Strg</kbd>.",
     )
 
     objects = UserManager()
@@ -207,7 +212,7 @@ def is_reviewed(user):
     return user.is_reviewed
 
 rules.add_perm('users.see_all_users', is_verwalter | is_pruefer)
-rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_pruefer | is_in_same_group & is_reviewed)
+rules.add_perm('users.detail_user', is_verwalter | is_own_user | is_pruefer)
 rules.add_perm('users.add_user', is_verwalter | is_pruefer)
 rules.add_perm('users.change_user', is_verwalter | is_pruefer | is_own_user)
 rules.add_perm('users.change_permissions', is_verwalter | is_pruefer)

@@ -15,16 +15,7 @@
   </div>
 
   <div class="card-body">
-    <div class="card my-3" id="c{{ comment.id }}">
-        <div class="card-body">
-          <small class="text-secondary">
-            <a href="{{ comment.author.get_absolute_url }}">{{ comment.author.get_short_name }}</a>,
-            <time datetime="{{ comment.created|date:'c' }}" title="{{ comment.created|date:"DATETIME_FORMAT" }}">
-              {{ comment.created|naturaltime }}</time>
-          </small>
-          <p class="card-text">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
-        </div>
-    </div>
+    {% include "seminars/_comment.html" %}
   </div>
 
   <form method="post">

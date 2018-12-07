@@ -5,8 +5,9 @@ from django.contrib.auth import password_validation
 from django.contrib import messages
 from django.urls import reverse_lazy
 
-from allauth.account.forms import LoginForm, SignupForm
+from allauth.account.forms import LoginForm, SignupForm, SetPasswordField
 from allauth.account.adapter import get_adapter
+from allauth.account.models import EmailAddress
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML, Field
@@ -43,6 +44,7 @@ class BaseUserForm(forms.ModelForm):
             'name',
             'email',
             'username',
+            'password1',
             'avatar',
             Fieldset(
                 "Kontakt-Daten",
@@ -70,7 +72,7 @@ class BaseUserForm(forms.ModelForm):
         password = self.cleaned_data['password1']
         if password:
             user.set_password(password)
-            if self.request:
+            if user.pk and self.request:
                 messages.info(self.request, "Passwort wurde geändert.")
         if commit:
             user.save()
@@ -88,10 +90,6 @@ class BaseUserForm(forms.ModelForm):
             'avatar': ThumbnailFileInput
         }
         field_classes = {'username': UsernameField}
-        help_texts = {
-            'janun_groups': """Für mehrere, drücke <kbd>Strg</kbd>.""",
-            'group_hats': """Für mehrere, drücke <kbd>Strg</kbd>.""",
-        }
 
 
 class UserCreationForm(BaseUserForm):
@@ -104,6 +102,19 @@ class UserCreationForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = True
+
+    def save(self, commit=True):
+        user = super().save()
+        # set email as verified
+        email_address = EmailAddress(
+            user=user,
+            email=user.email,
+            verified=True,
+            primary=True
+        )
+        email_address.save()
+        return user
+
 
 
 class UserChangeForm(BaseUserForm):
@@ -123,7 +134,7 @@ class UserChangeForm(BaseUserForm):
             self.fields['group_hats'].disabled = True
             self.fields['is_reviewed'].disabled = True
             self.helper.layout[-1].insert(
-                0, HTML("""<p>Du kannst hier nichts ändern.</p>"""),
+                0, HTML("""<p>Du kannst hier nichts ändern.<br>Bei Bedarf melde Dich (per E-Mail) bei uns.</p>"""),
             )
 
 
@@ -140,14 +151,11 @@ class UserLoginForm(LoginForm):
 
 
 class UserSignupForm(SignupForm):
-
     name = forms.CharField(label="Voller Name")
-    # avatar = forms.FileField(label="Profilbild", widget=ThumbnailFileInput, required=False)
-    # phone_number = PhoneNumberField(label="Telefonnummer", required=False)
-    # address = forms.CharField(
-    #     label="Postadresse", required=False,
-    #     widget=forms.Textarea(attrs={'cols': '20', 'rows': '4'})
-    # )
+    phone_number = PhoneNumberField(
+        label="Telefonnummer", required=False,
+        help_text="Damit wir Rückfragen zu Deinem Seminar zeitnah mit Dir klären können."
+    )
     janun_groups = forms.ModelMultipleChoiceField(
         label="Gruppen-Mitgliedschaften",
         queryset=JANUNGroup.objects.all(),
@@ -161,15 +169,11 @@ class UserSignupForm(SignupForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             'name',
-            # 'avatar',
+            'phone_number'
             'email',
             'username',
             'password1',
             'janun_groups',
-            # Fieldset(
-            #     "Kontakt-Daten",
-            #     'phone_number', 'address'
-            # ),
         )
         if not self.errors:
             self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
@@ -189,7 +193,6 @@ class UserSignupForm(SignupForm):
             help_text="""Regeln: Min. 8 Zeichen, nicht nur Zahlen, nicht zu ähnlich zu Name oder E-Mail.<br>
                          <strong>Tipp:</strong> Probiere einen Satz, das lässt sich besser merken."""
         )
-
 
     def clean(self):
         # super().clean()
@@ -212,3 +215,17 @@ class UserSignupForm(SignupForm):
             'phone_number': PhoneNumberInternationalFallbackWidget,
             'avatar': ThumbnailFileInput
         }
+
+
+class ResetPasswordKeyForm(forms.Form):
+
+    password1 = SetPasswordField(label="Neues Passwort")
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        self.temp_key = kwargs.pop("temp_key", None)
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].user = self.user
+
+    def save(self):
+        get_adapter().set_password(self.user, self.cleaned_data["password1"])

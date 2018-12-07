@@ -1,0 +1,30 @@
+{% extends "templated_email/base.email" %}
+
+{% block subject %}{{ block.super }} Neues Seminar {{ seminar.title }}{% endblock %}
+
+
+{% block plain %}{{ user.name }} ({{ user.username }}) hat das Seminar „{{ seminar.title }}“ angemeldet.
+
+Siehe: {{ seminar_url }}
+
+{{ block.super }}
+{% endblock %}
+
+
+{% block html_content %}
+<tr>
+  <td class="content-block">
+    <h1>Neues Seminar</h1>
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    {{ user.name }} ({{ user.username }}) hat das Seminar <strong>{{ seminar.title }}</strong> angemeldet.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Siehe: <a href="{{ seminar_url }}">{{ seminar_url }}</a>
+  </td>
+</tr>
+{% endblock %}

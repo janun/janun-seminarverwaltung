@@ -54,7 +54,8 @@ coverage.xml
 staticfiles/
 
 # Output of css compilation
-janun_seminarverwaltung/static/css/*.css
+janun_seminarverwaltung/static/css/project.css
+janun_seminarverwaltung/static/css/project.min.css
 
 # Output of js minification
 janun_seminarverwaltung/static/js/*.min.js

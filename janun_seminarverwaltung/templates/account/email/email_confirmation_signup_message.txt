@@ -1,0 +1,13 @@
+{% extends "emails/base.txt" %}
+
+{% block content %}Willkommen zur JANUN-Seminarverwaltung!
+
+Hallo {{ user }},
+bitte bestätige Deine E-Mail-Adresse, indem Du auf folgenden Link klickst:
+
+    {{ activate_url }}
+
+Du wirst dann auch direkt eingeloggt.
+
+Viele Grüße
+{% endblock %}

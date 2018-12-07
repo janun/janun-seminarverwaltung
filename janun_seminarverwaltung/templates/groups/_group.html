@@ -1,4 +1,6 @@
-<a style="display: flex; flex-direction: row; align-items: center" href="{{ object.get_absolute_url }}">
-  {% include "common/round-image.html" with image=object.logo small=True logo=True empty_url="/static/images/group-outline.svg" %}
-  <span class="ml-2">{{ object.name }}</span>
-</a>
+{% if not nolink %}<a href="{{ group.get_absolute_url }}">{% endif %}
+<span class="text-body d-flex align-items-center">
+  {% include "groups/_group_logo.html" with logo=group.logo size=size|default:"40px" %}
+  <span class="ml-2">{{ group.name }}</span>
+</span>
+{% if not nolink %}</a>{% endif %}
