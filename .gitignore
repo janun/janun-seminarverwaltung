@@ -298,3 +298,5 @@ janun_seminarverwaltung/media/
 .env
 .envs/*
 !.envs/.local/
+
+package-lock.json
