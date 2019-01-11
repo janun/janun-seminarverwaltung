@@ -9,10 +9,10 @@ for (var i=0; i<elems.length; i++) {
     var password = document.getElementById(passwordId);
     if (password.type === 'text') {
       password.type = 'password';
-      label.textContent = "anzeigen";
+      label.innerHTML = '<i class="fas fa-eye"></i>';
     } else {
       password.type = 'text';
-      label.textContent = "verstecken";
+      label.innerHTML = '<i class="fas fa-eye-slash"></i>';
     }
     password.focus();
   })

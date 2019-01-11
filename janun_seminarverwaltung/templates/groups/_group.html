@@ -1,5 +1,5 @@
 {% if not nolink %}<a href="{{ group.get_absolute_url }}">{% endif %}
-<span class="text-body d-flex align-items-center">
+<span class="text-body d-inline-flex align-items-center">
   {% include "groups/_group_logo.html" with logo=group.logo size=size|default:"40px" %}
   <span class="ml-2">{{ group.name }}</span>
 </span>

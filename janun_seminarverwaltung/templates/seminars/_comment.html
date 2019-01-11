@@ -1,7 +1,7 @@
 {% load rules %}
 {% load humanize %}
 
-<div class="card my-3 border" id="c{{ comment.id }}" style="box-shadow: none">
+<div class="card my-4 shadow-sm" id="c{{ comment.id }}">
     <div class="card-body">
       <small class="text-secondary d-flex align-items-center">
         <a class="mr-1 text-secondary" href="{{ comment.author.get_absolute_url }}">
@@ -20,7 +20,7 @@
       </small>
       <p class="card-text mt-2 mb-1">{{ comment.comment|linebreaksbr|urlizetrunc:50 }}</p>
       {% if comment.is_internal %}
-        <small class="text-secondary">(interner Vermerk)</small>
+        <small title="Kann nur von Prüfern und Verwaltern gelesen werden." class="float-right text-secondary">(interner Vermerk)</small>
       {% endif %}
     </div>
 </div>

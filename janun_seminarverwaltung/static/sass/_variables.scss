@@ -1,7 +1,4 @@
-// @import url('https://fonts.googleapis.com/css?family=Cabin:400,700');
-
-
-
+@import url('https://fonts.googleapis.com/css?family=Cabin:400,700');
 
 $font-family-sans-serif: 'Cabin', Helvetica, Roboto, Arial, sans-serif;
 
@@ -23,7 +20,7 @@ $brown:   #644327;
 // $gray8: #646f5e;
 // $gray9: #384133;
 
-$gray-600: #646f5e;
+// $gray-600: #646f5e;
 
 $colors: (
   "brown":    $brown,
@@ -32,11 +29,12 @@ $colors: (
 $primary:       $green;
 $info:          $blue;
 
-$body-bg: #f9f9f8;
+
+$body-bg: #F9FCF7;
 $body-color: $brown;
 $headings-color: $green;
 
-$enable-shadows: true;
+// $enable-shadows: true;
 
 $btn-border-radius: 50px;
 $btn-padding-x: 25px;
@@ -67,11 +65,22 @@ $navbar-light-active-color:         $brown;
 $navbar-light-disabled-color:       rgba($brown, .3);
 $navbar-light-toggler-border-color: transparent;
 
+$nav-tabs-link-active-bg: white;
+
 $kbd-color: white;
 $kbd-bg: #999;
 
 
-// $input-border-color: transparent;
-// $input-bg: rgba(black, 0.03);
+// $input-bg: #f5f5f5;
+// $input-bg: rgba(black, 0.05);
+// $input-border-color: $input-bg;
+$input-btn-focus-width: .1rem;
+$input-btn-focus-color: rgba($blue, 0.3);
+$input-focus-border-color: rgba($blue, 0.3);
+// $input-group-addon-bg: $input-bg;
 
 // $btn-focus-width: 1px;
+
+// $pagination-color: $gray-600;
+// $pagination-active-bg: transparent;
+// $pagination-active-color: $gray-600;

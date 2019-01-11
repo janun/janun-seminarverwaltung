@@ -22,7 +22,7 @@ class UserFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(label="Suche", method=search)
     role = django_filters.ChoiceFilter(choices=User.ROLES)
     group = django_filters.ModelChoiceFilter(
-        label="Gruppe", queryset=JANUNGroup.objects.all(), method=filter_group
+        label="Gruppe", queryset=JANUNGroup.objects.all(), method=filter_group,
     )
 
     def __init__(self, *args, **kwargs):

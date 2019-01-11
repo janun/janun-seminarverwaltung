@@ -6,7 +6,11 @@
 
 
 #div_id_is_internal {
-  .custom-control, .form-text {
-    display: inline;
-  }
+  float: left;
+}
+
+
+h5, .h5 {
+  font-weight: bold;
+  color: $secondary;
 }

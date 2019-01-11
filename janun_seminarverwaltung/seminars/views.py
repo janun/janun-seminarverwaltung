@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from django.views.generic import DetailView, DeleteView, UpdateView, CreateView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, ModelFormMixin, ProcessFormView
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import HttpResponseRedirect, Http404, get_object_or_404
 from django.contrib import messages
@@ -85,12 +85,13 @@ class SeminarStaffListView(SingleTableMixin, FilterView):
         return context
 
 
-class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView):
+class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, ModelFormMixin, DetailView):
     model = Seminar
     select_related = ['author', 'group']
     permission_required = 'seminars.detail_seminar'
     raise_exception = True
     template_name_suffix = '_detail'
+    form_class = seminar_forms.SeminarChangeForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,7 +103,28 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, DetailView)
             context['comments'] = self.object.comments.filter(is_internal=False)
         context['comment_form'] = seminar_forms.SeminarCommentForm(request=self.request)
         context['delete_form'] = seminar_forms.DeleteForm()
+        # context['change_form'] = self.get_form()
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Deine Änderungen wurden gespeichert.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Es gab Probleme beim Speichern. Schau in’s Formular.")
+        return super().form_invalid(form)
 
 
 class SeminarCommentCreateView(CreateView):
@@ -201,7 +223,7 @@ class SeminarWizardView(NamedUrlSessionWizardView):
         ('days', seminar_forms.TrainingDaysSeminarForm),
         ('attendees', seminar_forms.AttendeesSeminarForm),
         ('funding', seminar_forms.FundingSeminarForm),
-        ('barriers', seminar_forms.BarrierSeminarForm),
+        # ('barriers', seminar_forms.BarrierSeminarForm), #  for website
         ('confirm', seminar_forms.ConfirmSeminarForm),
     )
 

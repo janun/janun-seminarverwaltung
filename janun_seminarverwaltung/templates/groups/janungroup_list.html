@@ -9,20 +9,16 @@
 {% block content %}
 
 {% has_perm 'groups.add_janungroup' user as can_add %}
-<div class="clearfix">
-  <h1 class="h1 float-left">{{ heading }}</h1>
+<div class="clearfix my-4">
+  <h1 class="h3 font-weight-bold float-left">{{ heading }}</h1>
   {% if can_add %}
-    <a href="{% url 'groups:create' %}" class="float-md-right btn btn-outline-primary">Gruppe hinzufügen</a>
+    <a href="{% url 'groups:create' %}" class="float-md-right btn btn-outline-primary"><i class="fas fa-plus"></i> Gruppe hinzufügen</a>
   {% endif %}
 </div>
 
 {% if show_table %}
   <form class="filter-form" action="" method="get">
     {{ filter.form|crispy }}
-    <span style="white-space: nowrap">
-      <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-      <a class="btn btn-sm" href="{% url 'groups:list' %}">Reset</a>
-    </span>
   </form>
 
   <div class="card mx-neg my-4">

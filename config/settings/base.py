@@ -166,7 +166,7 @@ STATICFILES_DIRS = [
     str(ROOT_DIR.path('node_modules', 'jquery', 'dist')),
     str(ROOT_DIR.path('node_modules', 'popper.js', 'dist')),
     str(ROOT_DIR.path('node_modules', 'bootstrap', 'dist')),
-
+    str(ROOT_DIR.path('node_modules', '@fortawesome/fontawesome-free')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [

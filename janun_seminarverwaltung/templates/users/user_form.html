@@ -12,7 +12,7 @@
   <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
 {% endif %}
 
-<div class="card card-bigger">
+<div class="card card-bigger mx-neg">
   <h1 class="h3 card-header">
     {% if object.pk %}{{ object }} bearbeiten{% else %}Benutzer_in erstellen{% endif %}
   </h1>

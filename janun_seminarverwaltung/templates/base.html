@@ -12,6 +12,7 @@
     <![endif]-->
     {% block css %}
       <link href="{% static 'css/project.min.css' %}" rel="stylesheet">
+      <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     {% endblock %}
   </head>
 
@@ -39,6 +40,7 @@
     {% block javascript %}
       <script src="{% static 'jquery.min.js' %}"></script>
       <script src="{% static 'js/project.min.js' %}"></script>
+      <script src="{% static 'umd/popper.min.js' %}"></script>
       <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% endblock javascript %}
   </body>

@@ -7,10 +7,10 @@
 {% block container_class %}container mw-500{% endblock %}
 
 {% block content %}
-<div class="card card-bigger card-accent login">
-  <h1 class="h2 font-weight-bold card-header text-center">Anmeldung<br>Seminarverwaltung</h1>
+<div class="card card-bigger card-accent login mx-neg">
+  <h1 class="h3 card-header bg-white">Anmeldung zur Seminarverwaltung</h1>
   <div class="card-body">
-    <p class="card-text">Du hast noch kein Konto? Dann musst Du Dich erst <a href="{{ signup_url }}">registrieren</a>.</p>
+    <p class="card-text">Du hast noch kein Konto? Dann kannst Du <a href="{{ signup_url }}">eins anlegen</a>.</p>
   </div>
   <form method="POST" action="{% url 'account_login' %}">
     <div class="card-body">

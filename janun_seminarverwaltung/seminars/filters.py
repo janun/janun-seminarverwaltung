@@ -15,7 +15,7 @@ class YearFilter(django_filters.ChoiceFilter):
     @property
     def field(self):
         qs = self.model._default_manager.distinct()
-        qs = qs.order_by(self.field_name).dates(self.field_name, 'year')
+        qs = qs.order_by(self.field_name).dates(self.field_name, 'year', order='DESC')
         self.extra['choices'] = [(o.year, o.year) for o in qs]
         return super().field
 
@@ -53,11 +53,6 @@ def filter_timing(qs, field, value):
 class SeminarTeamerFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(label="Titel", lookup_expr='icontains')
     start_year = YearFilter(label="Jahr", field_name="start_date")
-    timing = django_filters.ChoiceFilter(
-        label="Zeitpunkt", field_name="start_date",
-        choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
-        method=filter_timing
-    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,7 +60,7 @@ class SeminarTeamerFilter(django_filters.FilterSet):
 
     class Meta:
         model = Seminar
-        fields = ['title', 'start_year', 'timing']
+        fields = ['title', 'start_year']
 
 
 class SeminarStaffFilter(django_filters.FilterSet):
@@ -76,16 +71,19 @@ class SeminarStaffFilter(django_filters.FilterSet):
         choices=[(i, "{0}. Quartal".format(i)) for i in range(1, 5)]
     )
     group = django_filters.ModelChoiceFilter(
-        null_label='-- keine --', queryset=allowed_groups
+        null_label='-- keine --', queryset=allowed_groups,
     )
     author = django_filters.ModelChoiceFilter(
         queryset=allowed_users
     )
-    timing = django_filters.ChoiceFilter(
-        label="Zeitpunkt", field_name="start_date",
-        choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
-        method=filter_timing
+    state = django_filters.ChoiceFilter(
+        choices=Seminar.STATUS
     )
+    # timing = django_filters.ChoiceFilter(
+    #     label="Zeitpunkt", field_name="start_date",
+    #     choices=[('past', "Vergangenheit"), ('running', 'Läuft'), ('future', "Zukunft")],
+    #     method=filter_timing
+    # )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

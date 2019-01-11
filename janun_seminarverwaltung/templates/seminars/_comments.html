@@ -1,15 +1,13 @@
 {% load crispy_forms_tags %}
 
-<div style="margin-top: 120px;"></div>
+<div class="mw-500" style="margin-top: 100px">
 
-<div class="mw-500">
-
-  <div class="clearfix my-4">
-    <h3 id="comments">Kommentieren</h3>
-    <form class="comment-form" action="{% url 'seminars:create_comment' object.pk %}" method="POST">
+  <div class="clearfix mb-5">
+    <h3 id="comments"><i class="fas fa-comment"></i> Kommentieren</h3>
+    <form class="comment-form my-3" action="{% url 'seminars:create_comment' object.pk %}" method="POST">
       {% csrf_token %}
       {{ comment_form|crispy }}
-      <input type="submit" class="btn btn-primary float-right" value="Kommentieren" id="id_submit_comment" />
+      <button id="id_submit_comment" class="btn btn-primary float-right" type="submit"><i class="fas fa-comment"></i> Kommentieren</button>
     </form>
   </div>
 

@@ -10,15 +10,11 @@
 {% block content %}
 <div class="clearfix my-4">
   <h1 class="float-left h3 font-weight-bold">{{ heading }}</h1>
-  <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}">Seminar anmelden</a>
+  <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}"><i class="fas fa-plus"></i> Seminar anmelden</a>
 </div>
 
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
-  <span style="white-space: nowrap">
-    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-    <a class="btn btn-sm" href="{% url 'seminars:list' %}">Reset</a>
-  </span>
 </form>
 
 <div class="card mx-neg my-4">

@@ -1,0 +1,11 @@
+{% load crispy_forms_tags %}
+
+<form action="" method="post">
+  <div class="card mw-960 my-4" style="min-height: 400px">
+    {% csrf_token %}
+    {% crispy form %}
+    <div class="card-footer">
+      <input class="btn btn-primary float-right" type="submit" value="Speichern">
+    </div>
+  </div>
+</form>

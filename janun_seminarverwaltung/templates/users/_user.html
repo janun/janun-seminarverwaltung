@@ -1,4 +1,4 @@
 <a class="text-body {% if not noflex %}d-inline-flex align-items-center{% endif %}" href="{{ object.get_absolute_url }}">
   {% include "users/_avatar.html" with avatar=object.avatar size=size|default:'40px' %}
-  <span class="ml-2">{{ object.get_short_name }}</span>
+  <span class="ml-2">{{ object }}</span>
 </a>

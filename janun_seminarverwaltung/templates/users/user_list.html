@@ -9,15 +9,11 @@
 {% block content %}
 <div class="clearfix my-4">
   <h1 class="float-left h3 font-weight-bold">Benutzer_innen ({{ object_list|length }})</h1>
-  <a class="btn btn-outline-primary float-md-right" href="{% url 'users:create' %}">Benutzer_in hinzufügen</a>
+  <a class="btn btn-outline-primary float-md-right" href="{% url 'users:create' %}"><i class="fas fa-plus"></i> Benutzer_in hinzufügen</a>
 </div>
 
 <form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
-  <span style="white-space: nowrap">
-    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-    <a class="btn btn-sm" href="{% url 'users:list' %}">Reset</a>
-  </span>
 </form>
 
 <div class="card mx-neg my-4">

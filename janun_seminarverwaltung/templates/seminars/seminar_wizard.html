@@ -20,7 +20,7 @@
 <div class="card card-bigger my-4 mx-neg">
 
   <div class="card-header border-bottom">
-    <a href="{% url "seminars:create" %}?reset" class="card-text close float-right p-1" aria-label="Abbrechen">
+    <a href="{% url "seminars:create" %}?reset" class="card-text close float-right p-1 mr-3" aria-label="Abbrechen">
       <span aria-hidden="true">&times;</span>
     </a>
     <h1 class="h4 card-text">
@@ -78,8 +78,6 @@
       </div>
 
       <div class="card-footer clearfix">
-        <!-- <a class="btn btn-danger" onclick="return confirm('Wirklich Abbrechen?')" href="{% url "seminars:create" %}?reset">Abbrechen</a> -->
-
         {% if wizard.steps.last == wizard.steps.current %}
           <input class="btn btn-primary float-right" type="submit" value="Anmelden"/>
         {% else %}

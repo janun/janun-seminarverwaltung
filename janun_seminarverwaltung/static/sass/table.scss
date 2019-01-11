@@ -1,24 +1,24 @@
 $table-row-height: 60px;
 
 .table {
-  // td {
-  //   padding: 0 10px;
-  //   vertical-align: middle;
-  //   height: $table-row-height;
-  //   white-space: nowrap;
-  //   text-overflow: ellipsis;
-  //   overflow: hidden;
-  //   max-width: 180px;
-  //   @include media-breakpoint-up(md) {
-  //     max-width: 300px;
-  //   }
-  //
-  //   a {
-  //     display: inline-block;
-  //     height: $table-row-height;
-  //     line-height: $table-row-height;
-  //   }
-  // }
+  td {
+    padding: 0 10px;
+    vertical-align: middle;
+    height: $table-row-height;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    // max-width: 180px;
+    // @include media-breakpoint-up(md) {
+    //   max-width: 300px;
+    // }
+
+    a {
+      display: inline-block;
+      height: $table-row-height;
+      line-height: $table-row-height;
+    }
+  }
 
   tr[data-link] {
     cursor: pointer;

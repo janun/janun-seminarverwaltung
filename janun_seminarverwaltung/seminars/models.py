@@ -63,12 +63,12 @@ class Seminar(TimeStampedModel, models.Model):
         return 'primary'
 
     title = models.CharField(
-        "Titel", max_length=255, unique_for_date="start_date",
-        help_text="Beschreibe oder bennene Dein Seminar in wenigen Worten"
+        "Titel", max_length=255,
+        help_text="Beschreibe oder bennene das Seminar in wenigen Worten"
     )
     content = models.TextField(
         "Inhalt",
-        help_text="Um was genau geht es in Deinem Seminar?<br>Welche Inhalte werden in Deinem Seminar vermittelt?",
+        help_text="Um was genau geht es in dem Seminar?<br>Welche Inhalte werden vermittelt?",
     )
     start_date = models.DateField("Anfangsdatum")
     start_time = models.TimeField("Anfangszeit", blank=True, null=True)
@@ -196,20 +196,6 @@ class Seminar(TimeStampedModel, models.Model):
             return (self.end_date - self.start_date).days + 1
         return None
 
-    # def clean_title(self):
-    #     if self.start_date and self.title:
-    #         qs = Seminar.objects.filter(start_date=self.start_date)
-    #         qs.filter(title=self.title)
-    #         if self.pk:
-    #             qs = qs.exclude(pk=self.pk)
-    #         if qs.exists():
-    #             print(self.__dict__ )
-    #             return ValidationError(
-    #                 "Es existiert schon ein Seminar mit diesem Titel und Startzeitpunkt am %(date)s.",
-    #                 params={'title': self.title, 'date': date_format(self.start_date)}
-    #             )
-    #     return None
-
     def clean_end_date(self):
         if self.end_date and self.start_date:
             if self.end_date < self.start_date:
@@ -221,7 +207,7 @@ class Seminar(TimeStampedModel, models.Model):
             max_days = self.get_duration()
             if max_days and self.planned_training_days > max_days:
                 return ValidationError(
-                    "Darf nicht größer sein, als die Dauer Deines Seminars (%(days)s Tage).",
+                    "Darf nicht größer sein, als die Dauer des Seminars (%(days)s Tage).",
                     params={'days': max_days}
                 )
         return None
@@ -231,7 +217,7 @@ class Seminar(TimeStampedModel, models.Model):
             max_funding = self.get_max_funding()
             if max_funding and self.requested_funding > max_funding:
                 return ValidationError(
-                    "Sorry, die maximale Förderung für Dein Seminar beträgt %(max_funding).2f €.",
+                    "Sorry, die maximale Förderung für das Seminar beträgt %(max_funding)d €.",
                     params={'max_funding': max_funding}
                 )
         return None
@@ -472,7 +458,7 @@ class SeminarComment(TimeStampedModel, models.Model):
     comment = models.TextField("Kommentartext")
     is_internal = models.BooleanField(
         "interner Vermerk", default=False,
-        help_text="Kann nur von Prüfern und Verwaltern gelesen werden"
+        help_text="Sehen nur Prüfer und Verwalter"
     )
 
 

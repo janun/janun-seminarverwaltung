@@ -7,6 +7,8 @@ from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div
+from crispy_forms.bootstrap import Tab, TabHolder
+
 
 from seminars.models import Seminar, SeminarComment
 
@@ -27,6 +29,50 @@ class DeleteForm(forms.Form):
 
 
 class SeminarChangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            TabHolder(
+                Tab('Inhalt',
+                    'title',
+                    'content',
+                   ),
+                Tab('Zeit & Ort',
+                    Div(
+                        Div('start_date', css_class='col col-md-3'),
+                        Div('start_time', css_class='col col-md-3'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('end_date', css_class='col col-md-3'),
+                        Div('end_time', css_class='col col-md-3'),
+                        css_class='row'
+                    ),
+                    'location',
+                   ),
+                Tab('Förderung',
+                    'planned_training_days',
+                    Div(
+                        Div('planned_attendees_min', css_class='col col-md-3'),
+                        Div('planned_attendees_max', css_class='col col-md-3'),
+                        css_class='row'
+                    ),
+                    'group',
+                    'requested_funding',
+                   ),
+               Tab('Abrechnung',
+
+                  )
+            )
+        )
+        # disable editing for teamers:
+        if not self.request or (self.request.user.role == 'TEAMER' and self.instance.state != 'ANGEMELDET'):
+            for key in self.Meta.fields:
+                self.fields[key].disabled = True
+
     class Meta:
         model = Seminar
         fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',

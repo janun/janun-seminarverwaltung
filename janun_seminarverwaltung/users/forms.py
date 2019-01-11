@@ -57,6 +57,7 @@ class BaseUserForm(forms.ModelForm):
                 id="permissions"
             ),
         )
+        self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
 
     def _post_clean(self):
         super()._post_clean()

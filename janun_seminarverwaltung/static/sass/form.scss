@@ -13,3 +13,23 @@ legend {
 [data-password-toggle] {
   display: none;
 }
+
+.password-toggle-label {
+  border: none;
+  cursor: pointer;
+}
+
+
+.numberinput {
+  max-width: 150px;
+}
+
+
+#id_group.select {
+  display: block;
+  max-width: 200px;
+}
+
+#id_location.textinput {
+  max-width: 350px;
+}
