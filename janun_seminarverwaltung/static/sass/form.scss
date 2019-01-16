@@ -33,3 +33,16 @@ legend {
 #id_location.textinput {
   max-width: 350px;
 }
+
+small.form-text {
+  margin-bottom: 5px;
+}
+
+label + small.form-text {
+  margin-top: -5px;
+}
+
+:read-only.is-invalid {
+  background: $red;
+  color: white;
+}
