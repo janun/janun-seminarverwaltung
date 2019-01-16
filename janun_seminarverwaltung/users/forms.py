@@ -57,7 +57,8 @@ class BaseUserForm(forms.ModelForm):
                 id="permissions"
             ),
         )
-        self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
+        if not self.errors:
+            self.fields['name'].widget.attrs['autofocus'] = 'autofocus'
 
     def _post_clean(self):
         super()._post_clean()
@@ -123,20 +124,30 @@ class UserChangeForm(BaseUserForm):
         label="Passwort ändern",
         strip=False,
         widget=forms.PasswordInput(render_value=True),
-        help_text="Das alte Passwort kann nicht eingesehen werden. Aber es kann hier geändert werden."
+        help_text="Das alte Passwort kann nicht eingesehen werden. Aber es kann hier geändert werden.",
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = False
         if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
-            self.fields['role'].disabled = True
+            self.fields['role'].widget.attrs['readonly'] = True
             self.fields['janun_groups'].disabled = True
             self.fields['group_hats'].disabled = True
             self.fields['is_reviewed'].disabled = True
             self.helper.layout[-1].insert(
                 0, HTML("""<p>Du kannst hier nichts ändern.<br>Bei Bedarf melde Dich (per E-Mail) bei uns.</p>"""),
             )
+            # remove group_hats for Teamers:
+            if self.request.user.role == 'TEAMER':
+                self.fields['group_hats'] .widget = forms.HiddenInput()
+
+    # return the instance value in case user is not allowed to edit role
+    def clean_role(self):
+        if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
+            return self.instance.role
+        return self.cleaned_data['role']
 
 
 class UserLoginForm(LoginForm):
@@ -146,6 +157,7 @@ class UserLoginForm(LoginForm):
         self.fields['login'].label = "Benutzername oder E-Mail-Adresse"
         self.fields['login'].widget.attrs['autofocus'] = 'autofocus'
         self.fields['password'].widget.attrs['placeholder'] = ""
+        self.fields['password'].widget.attrs['help_below'] = "True"
         self.fields['password'].help_text = """<a href="{}">Passwort vergessen?</a>""".format(
             reverse_lazy('account_reset_password')
         )

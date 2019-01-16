@@ -90,9 +90,14 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
         form_kwargs['request'] = self.request
         return form_kwargs
 
+    def form_invalid(self, form):
+        messages.error(self.request, "Es gab Probleme beim Speichern der Änderungen.")
+        return super().form_invalid(form)
+
     def form_valid(self, form):
         return_value = super().form_valid(form)
         update_session_auth_hash(self.request, form.instance)
+        messages.success(self.request, "Änderungen am Benutzer_in-Profil wurden gespeichert.")
         return return_value
 
 

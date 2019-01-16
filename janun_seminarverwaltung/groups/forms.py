@@ -22,6 +22,7 @@ class JANUNGroupForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.request.user.has_perm('groups.change_group_hats', self.instance):
             self.fields['group_hats'].disabled = True
+            self.fields['group_hats'].required = False
 
     def save(self, commit=True):
         instance = super().save(commit=False)
