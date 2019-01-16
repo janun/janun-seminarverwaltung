@@ -6,9 +6,10 @@ from django.conf import settings
 from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div
+from crispy_forms.layout import Layout, Div, Fieldset
 from crispy_forms.bootstrap import Tab, TabHolder
 
+from widgets import HTML5DateInput
 
 from seminars.models import Seminar, SeminarComment
 
@@ -26,9 +27,18 @@ class DeleteForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['delete'].widget.attrs['pattern'] = "löschen"
+        self.fields['delete'].widget.attrs['autocomplete'] = "off"
 
 
 class SeminarChangeForm(forms.ModelForm):
+    tage_insg = forms.IntegerField(label="Kalendartage", required=False)
+    ausgaben_insg = forms.DecimalField(label="Ausgaben", required=False)
+    einnahmen_insg = forms.DecimalField(label="Einnahmen", required=False)
+    foerderbedarf = forms.DecimalField(label="Förderbedarf", required=False)
+    resterstattung = forms.DecimalField(label="Resterstattung", required=False)
+    foerdersatz = forms.DecimalField(label="Fördersatz", required=False)
+    foerder_max = forms.DecimalField(label="Max. Förderung", required=False)
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
@@ -40,6 +50,7 @@ class SeminarChangeForm(forms.ModelForm):
                     'title',
                     'content',
                    ),
+
                 Tab('Zeit & Ort',
                     Div(
                         Div('start_date', css_class='col col-md-3'),
@@ -53,6 +64,7 @@ class SeminarChangeForm(forms.ModelForm):
                     ),
                     'location',
                    ),
+
                 Tab('Förderung',
                     'planned_training_days',
                     Div(
@@ -63,21 +75,106 @@ class SeminarChangeForm(forms.ModelForm):
                     'group',
                     'requested_funding',
                    ),
-               Tab('Abrechnung',
 
+                Tab('Abrechnung',
+                    Fieldset("Ausgaben",
+                        Div(
+                            Div('ausgaben_verpflegung', css_class='col-md-2'),
+                            Div('ausgaben_unterkunft', css_class='col-md-2'),
+                            Div('ausgaben_referenten', css_class='col-md-2'),
+                            Div('ausgaben_fahrtkosten', css_class='col-md-2'),
+                            Div('ausgaben_sonstiges', css_class='col-md-2'),
+                            Div('ausgaben_insg', css_class='ml-auto col-md-2'),
+                            css_class='row'
+                        )
+                    ),
+                    Fieldset("Einnahmen",
+                        Div(
+                            Div('einnahmen_beitraege', css_class='col-md-2'),
+                            Div('einnahmen_oeffentlich', css_class='col-md-2'),
+                            Div('einnahmen_sonstiges', css_class='col-md-2'),
+                            Div('einnahmen_insg', css_class='ml-auto col-md-2'),
+                            css_class='row'
+                        )
+                    ),
+                    Fieldset("Teilnehmende (TN)",
+                        Div(
+                            Div('tn_total', css_class='col-md-2'),
+                            Div('tn_jfg', css_class='col-md-2'),
+                            Div('landkreise', css_class='col-md-2'),
+                            css_class='row'
+                        )
+                    ),
+                    # Fieldset("Tage",
+                    #     Div(
+                    #         Div('tage_insg', css_class='col-md-2'),
+                    #         Div('training_days', css_class='col-md-2'),
+                    #         css_class='row'
+                    #     )
+                    # ),
+                    Fieldset("Teilnahmetage (TNT)",
+                        Div(
+                            Div('tnt_jfg', css_class='col-md-2'),
+                            Div('tnt_total', css_class='col-md-2'),
+                            css_class='row'
+                        )
+                    ),
+                    Fieldset("Förderung",
+                        Div(
+                            Div('foerdersatz', css_class='col-md-2'),
+                            Div('foerder_max', css_class='col-md-2'),
+                            Div('foerderbedarf', css_class='col-md-2'),
+                            Div('vorschuss', css_class='col-md-2'),
+                            Div('resterstattung', css_class='col-md-2'),
+                            css_class='row'
+                        )
+                    ),
+                    'verwendungsnachweis',
                   )
             )
         )
-        # disable editing for teamers:
+        # calculated dummy fields
+        self.fields['tage_insg'].widget.attrs['readonly'] = True
+        self.fields['tage_insg'].initial = self.instance.get_duration()
+        self.fields['ausgaben_insg'].widget.attrs['readonly'] = True
+        self.fields['ausgaben_insg'].initial = self.instance.ausgaben
+        self.fields['einnahmen_insg'].widget.attrs['readonly'] = True
+        self.fields['einnahmen_insg'].initial = self.instance.einnahmen
+        self.fields['foerderbedarf'].widget.attrs['readonly'] = True
+        self.fields['foerderbedarf'].initial = self.instance.foerderbedarf
+        self.fields['resterstattung'].widget.attrs['readonly'] = True
+        self.fields['resterstattung'].initial = self.instance.resterstattung
+        self.fields['foerdersatz'].widget.attrs['readonly'] = True
+        self.fields['foerdersatz'].initial = self.instance.rate
+        self.fields['foerder_max'].widget.attrs['readonly'] = True
+        self.fields['foerder_max'].initial = self.instance.max_funding
+
+
+        # disable editing for teamers if state not angemeldet:
         if not self.request or (self.request.user.role == 'TEAMER' and self.instance.state != 'ANGEMELDET'):
             for key in self.Meta.fields:
+                self.fields[key].disabled = True
+        # disable editing for teamers of abrechnung in any case
+        if not self.request or self.request.user.role == 'TEAMER':
+            for key in self.Meta.fields_abrechnung:
                 self.fields[key].disabled = True
 
     class Meta:
         model = Seminar
+        fields_abrechnung = (
+            'verwendungsnachweis', 'tn_total', 'tn_jfg', 'tnt_total', 'tnt_jfg',
+            'vorschuss', 'training_days', 'ausgaben_verpflegung', 'ausgaben_unterkunft',
+            'ausgaben_referenten', 'ausgaben_fahrtkosten', 'ausgaben_sonstiges',
+            'einnahmen_beitraege', 'einnahmen_oeffentlich', 'einnahmen_sonstiges',
+            'landkreise',
+        )
         fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
                   'planned_training_days', 'planned_attendees_min', 'planned_attendees_max',
-                  'requested_funding', 'group')
+                  'requested_funding', 'group') + fields_abrechnung
+        widgets = {
+            'start_date': HTML5DateInput,
+            'end_date': HTML5DateInput
+        }
 
 
 class SeminarCommentForm(forms.ModelForm):
@@ -113,8 +210,12 @@ class SeminarStepForm(forms.ModelForm):
 
 
 class ContentSeminarForm(SeminarStepForm):
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['content'].label = ""
+
     class Meta(SeminarStepForm.Meta):
-        title = "Um was geht es bei Deinem Seminar?"
+        title = "Seminarinhalte"
         short_title = "Inhalt"
         fields = ('title', 'content')
 
@@ -145,6 +246,10 @@ class DatetimeSeminarForm(SeminarStepForm):
         title = "Wann findet Dein Seminar statt?"
         short_title = "Datum"
         fields = ('start_date', 'start_time', 'end_date', 'end_time')
+        widgets = {
+            'start_date': HTML5DateInput,
+            'end_date': HTML5DateInput
+        }
 
 
 class LocationSeminarForm(SeminarStepForm):

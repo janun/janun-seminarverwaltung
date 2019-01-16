@@ -64,7 +64,7 @@ class Seminar(TimeStampedModel, models.Model):
 
     title = models.CharField(
         "Titel", max_length=255,
-        help_text="Beschreibe oder bennene das Seminar in wenigen Worten"
+        help_text="Beschreibe oder benenne das Seminar in wenigen Worten"
     )
     content = models.TextField(
         "Inhalt",
@@ -105,6 +105,51 @@ class Seminar(TimeStampedModel, models.Model):
         choices=STATUS,
         verbose_name="Status"
     )
+
+    ### Abrechnungsfelder:
+    verwendungsnachweis = models.BooleanField(
+        "Verwendungsnachweis",
+        default=True,
+        help_text="Soll das Seminar im Verwendungsnachweis auftauchen?"
+    )
+
+    tn_total = models.PositiveSmallIntegerField("TN insgesamt", blank=True, null=True)
+    tn_jfg = models.PositiveSmallIntegerField("TN nach JFG", blank=True, null=True)
+
+    tnt_total = models.PositiveSmallIntegerField("nach Richtlinie", blank=True, null=True)
+    tnt_jfg = models.PositiveSmallIntegerField("nach JFG", blank=True, null=True)
+
+    vorschuss = models.DecimalField("Vorschuss", max_digits=10, decimal_places=2, blank=True, null=True)
+
+    ausgaben_verpflegung = models.DecimalField("Verpflegung", max_digits=10, decimal_places=2, blank=True, null=True)
+    ausgaben_unterkunft = models.DecimalField("Unterkunft", max_digits=10, decimal_places=2, blank=True, null=True)
+    ausgaben_referenten = models.DecimalField("Referent_innen", max_digits=10, decimal_places=2, blank=True, null=True)
+    ausgaben_fahrtkosten = models.DecimalField("Fahrtkosten", max_digits=10, decimal_places=2, blank=True, null=True)
+    ausgaben_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, blank=True, null=True)
+
+    einnahmen_beitraege = models.DecimalField("TN-Beiträge", max_digits=10, decimal_places=2, blank=True, null=True)
+    einnahmen_oeffentlich = models.DecimalField("Öffentlich", max_digits=10, decimal_places=2, blank=True, null=True)
+    einnahmen_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, blank=True, null=True)
+
+    training_days = models.PositiveSmallIntegerField("Bildungstage", blank=True, null=True)
+
+    LANDKREISE = Choices(
+        ('1', '1 Landkreis'),
+        ('2', '2–3 Landkreisen'),
+        ('4', '4 oder mehr Landkreisen'),
+    )
+
+    landkreise = models.CharField(
+        verbose_name="TN-Landkreise",
+        help_text="Alle Teilnehmenden kommen aus…",
+        max_length=100,
+        choices=LANDKREISE,
+        blank=True,
+    )
+
+    ### website Felder:
+    # (werden z.Z. noch nicht benutzt)
+
     mobility_barriers = models.TextField(
         "Mobilitäts-Barrieren",
         help_text="Zum Bsp.: Müssen Stufen oder Treppen überwunden werden? "
@@ -134,6 +179,28 @@ class Seminar(TimeStampedModel, models.Model):
     )
 
     @property
+    def ausgaben(self):
+        return sum(filter(None, [
+            self.ausgaben_unterkunft, self.ausgaben_verpflegung, self.ausgaben_referenten,
+            self.ausgaben_fahrtkosten, self.ausgaben_sonstiges
+        ]))
+
+    @property
+    def einnahmen(self):
+        return sum(filter(None, [
+            self.einnahmen_beitraege, self.einnahmen_oeffentlich, self.einnahmen_sonstiges,
+        ]))
+
+    @property
+    def foerderbedarf(self):
+        return (self.ausgaben or 0) - (self.einnahmen or 0)
+
+    @property
+    def resterstattung(self):
+        return (self.foerderbedarf or 0) - (self.vorschuss or 0)
+
+
+    @property
     def start(self):
         if self.start_time:
             return datetime.combine(self.start_date, self.start_time)
@@ -151,19 +218,26 @@ class Seminar(TimeStampedModel, models.Model):
             return self.planned_attendees_max * self.planned_training_days
         return 0
 
-    def get_max_funding(self):
-        if not self.planned_tnt:
-            return None
-        # calc rate
+    @property
+    def rate(self):
         if self.planned_training_days == 1:
-            rate = 6.5
-        elif self.group:
-            rate = 11.5
-        else:
-            rate = 9.0
-        # tnt * rate
-        funding = self.planned_tnt * rate
+            return 7.5
+        if self.group:
+            return 12.5
+        return 9.0
 
+    @property
+    def max_funding(self):
+        return self.get_max_funding(self.tnt_total)
+
+    def get_max_funding(self, tnt=None):
+        if tnt is None:
+            tnt = self.planned_tnt
+        if not tnt:
+            return None
+        funding = tnt * self.rate
+
+        # no limit if group
         if self.group:
             return funding
 

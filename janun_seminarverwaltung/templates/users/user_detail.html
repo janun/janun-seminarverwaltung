@@ -64,9 +64,9 @@
 <div class="card my-3">
   <div class="card-body">
     <h3 class="h5 mb-3">Kontaktdaten</h3>
-    <strong><i class="fas fa-at"></i> E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
-    <strong><i class="fas fa-phone"></i> Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
-    <p><strong><i class="fas fa-envelope"></i> Postadresse:</strong> {{ object.address|default:"keine"|linebreaksbr }}</p>
+    <strong><i class="fas fa-at text-secondary"></i> E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
+    <strong><i class="fas fa-phone text-secondary"></i> Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
+    <p><strong><i class="fas fa-envelope text-secondary"></i> Postadresse:</strong> {{ object.address|default:"keine"|linebreaksbr }}</p>
   </div>
 </div>
 </div>

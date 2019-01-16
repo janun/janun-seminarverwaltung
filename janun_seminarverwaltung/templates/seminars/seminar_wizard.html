@@ -49,6 +49,10 @@
                     {% if step_form.is_valid %}
                       <span class="badge badge-primary" title="okay">✓</span>
                     {% endif %}
+                    {% if step_form.errors %}
+                      <!-- not working -->
+                      <span class="badge badge-danger" title="Fehler">×</span>
+                    {% endif %}
                   </button>
                 </li>
               {% endfor %}

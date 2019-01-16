@@ -106,4 +106,88 @@
 
   })
 </script>
+
+<script type="text/javascript">
+function get_total(fields) {
+  var newValue = 0.0;
+  $.each(fields, function (index, field) {
+    value = $('#id_' + field).val();
+    if ($.isNumeric(value)) {
+      newValue = newValue + parseFloat(value);
+    }
+  });
+  return newValue;
+}
+
+var ausgaben_fields = ['ausgaben_verpflegung', 'ausgaben_unterkunft', 'ausgaben_referenten', 'ausgaben_fahrtkosten', 'ausgaben_sonstiges']
+$.each(ausgaben_fields, function (index, field) {
+  $('#id_' + field).change(function () {
+    $('#id_ausgaben_insg').val(get_total(ausgaben_fields)).change();
+  });
+});
+
+var einnahmen_fields = ['einnahmen_beitraege', 'einnahmen_oeffentlich', 'einnahmen_sonstiges']
+$.each(einnahmen_fields, function (index, field) {
+  $('#id_' + field).change(function () {
+    $('#id_einnahmen_insg').val(get_total(einnahmen_fields)).change();
+  });
+});
+
+$.each(['einnahmen_insg', 'ausgaben_insg'], function (index, field) {
+  $('#id_' + field).change(function () {
+    $('#id_foerderbedarf').val(get_total(['ausgaben_insg']) - get_total(['einnahmen_insg'])).change();
+  });
+});
+
+$.each(['foerderbedarf', 'vorschuss'], function (index, field) {
+  $('#id_' + field).change(function () {
+    $('#id_resterstattung').val(get_total(['foerderbedarf']) - get_total(['vorschuss'])).change();
+  });
+});
+
+$('#id_tnt_total').change(function() {
+  var rate = parseFloat($('#id_foerdersatz').val());
+  var tnt = parseInt($('#id_tnt_total').val());
+  var hasGroup = $('#id_group').val() !== '';
+  var days = $('#id_planned_training_days').val();
+  var limit;
+  var foerder = rate * tnt;
+
+  if (!hasGroup) {
+    if (days <= 3) {
+      limit = 300;
+    } else {
+      limit = 300 + 200 * (days - 3);
+    }
+    if (limit > 1000) limit = 1000;
+    console.log('limit: ' + limit + '; foerder: ' + foerder);
+    if (foerder >= limit) {
+      console.log('TEST2')
+      foerder = limit;
+      console.log(foerder);
+    }
+  }
+
+  $('#id_foerder_max').val(foerder).change();
+})
+
+
+function check_foerderbedarf() {
+  var foerderbedarf = parseFloat($('#id_foerderbedarf').val());
+  var foerder_max = parseFloat($('#id_foerder_max').val());
+  if (foerderbedarf > foerder_max) {
+    $('#id_foerderbedarf').addClass('is-invalid');
+  } else {
+    $('#id_foerderbedarf').removeClass('is-invalid');
+  }
+}
+$('#id_foerder_max').change(check_foerderbedarf);
+$('#id_foerderbedarf').change(check_foerderbedarf);
+check_foerderbedarf();
+
+
+
+
+</script>
+
 {% endblock %}

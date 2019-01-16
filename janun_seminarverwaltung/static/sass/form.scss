@@ -4,6 +4,8 @@
 
 legend {
   color: $green;
+  font-size: 1.2rem;
+  margin-bottom: 0;
 }
 
 .optionalField {
@@ -42,7 +44,7 @@ label + small.form-text {
   margin-top: -5px;
 }
 
-:read-only.is-invalid {
-  background: $red;
-  color: white;
-}
+// :read-only.is-invalid {
+//   background: $red;
+//   color: white;
+// }
