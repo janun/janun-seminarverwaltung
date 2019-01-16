@@ -30,3 +30,5 @@ pylint-django==2.0.5
 pylint-celery==0.3
 
 django-naomi==0.8
+
+django-debug-toolbar-template-profiler==1.0.2
