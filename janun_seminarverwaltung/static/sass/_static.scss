@@ -1,0 +1,3 @@
+@function static($url) {
+  @return "../#{$url}";
+}

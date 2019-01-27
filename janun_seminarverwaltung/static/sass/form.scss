@@ -1,11 +1,48 @@
+input, textarea {
+  max-width: 640px;
+}
+
+label {
+  color: #646464;
+}
+
+
+.form-control:disabled, .form-control[readonly],
+.form-control[readonly] + .input-group-append .input-group-text,
+.form-control:disabled + .input-group-append .input-group-text {
+  border: none;
+  background-color: rgba(black, 0.02);
+  cursor: default;
+}
+
+.input-group>.form-control:not(:last-child) {
+    border-right: none;
+}
+
+.custom-select {
+  background-position: right;
+}
+
+
+
 .invalid-feedback {
   display: block;
 }
 
+fieldset {
+  margin-bottom: 30px;
+}
+
+fieldset + fieldset {
+  border-top: 1px $secondary solid;
+}
+
 legend {
   color: $green;
+  // color: $secondary;
   font-size: 1.2rem;
-  margin-bottom: 0;
+  font-weight: bold;
+  margin-bottom: 0px;
 }
 
 .optionalField {
@@ -24,13 +61,14 @@ legend {
 
 .numberinput {
   max-width: 150px;
+  // text-align: right;
 }
 
 
-#id_group.select {
-  display: block;
-  max-width: 200px;
-}
+// #id_group.select {
+//   display: block;
+//   max-width: 200px;
+// }
 
 #id_location.textinput {
   max-width: 350px;

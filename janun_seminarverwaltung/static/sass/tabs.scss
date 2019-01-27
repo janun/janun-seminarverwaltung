@@ -1,0 +1,28 @@
+.card-tabs-header {
+  background: transparent;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 5px;
+  padding-top: 0;
+}
+
+.card-header-tabs {
+  // height: 80px;
+}
+
+.nav-tabs {
+  .nav-link {
+    color: $body-color;
+    padding-top: 20px;
+    padding-bottom: 15px;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .nav-link.active {
+    color: inherit;
+    background: transparent;
+    border-bottom: 4px solid $green;
+  }
+}

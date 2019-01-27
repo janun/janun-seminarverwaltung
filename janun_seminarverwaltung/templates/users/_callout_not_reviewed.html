@@ -8,9 +8,11 @@
         {% if can_review %}
           <a class="btn btn-outline-secondary float-right" href="{% url 'users:review' user.pk %}">überprüfen</a>
         {% endif %}
+        <!-- <h4 class="text-body">Nicht überprüft</h4> -->
         <p class="card-text">
         {% if request.user == user %}
-          Dein Konto wurde noch <strong>nicht überprüft</strong> und Du kannst deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
+          Dein Konto wurde noch <strong>nicht überprüft</strong>.<br>
+          Du kannst deswegen <strong>keine Gruppenseiten</strong> besuchen.
         {% else %}
           {{ user }} wurde noch <strong>nicht überprüft</strong> und kann deswegen noch <strong>keine Gruppenseiten</strong> besuchen und <strong>keine Seminare von anderen</strong> betrachten.
         {% endif %}

@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <form action="" method="post">
-  <div class="card mw-960 my-4" style="min-height: 400px">
+  <div class="card my-4 mx-neg" style="min-height: 400px">
     {% csrf_token %}
     {% crispy form %}
     <div class="card-footer">
@@ -14,9 +14,4 @@
 #abrechnung .optionalField {
   display: none;
 }
-
-fieldset {
-  margin-bottom: 30px;
-}
-
 </style>

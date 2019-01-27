@@ -1,6 +1,9 @@
-$table-row-height: 60px;
+$table-row-height: 75px;
 
 .table {
+  border-spacing: 0 10px;
+  border-collapse: separate;
+
   td {
     padding: 0 10px;
     vertical-align: middle;
@@ -8,15 +11,28 @@ $table-row-height: 60px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    // max-width: 180px;
-    // @include media-breakpoint-up(md) {
-    //   max-width: 300px;
-    // }
 
-    a {
-      display: inline-block;
-      height: $table-row-height;
-      line-height: $table-row-height;
+    max-width: 200px;
+    @media (min-width: 1300px) {
+      max-width: 300px;
+    }
+
+    &:first-child {
+      padding-left: 20px;
+    }
+    &:last-child {
+      padding-right: 20px;
+    }
+
+    // show abbreviated cells on hover
+    &:hover {
+      position: relative;
+      overflow: visible;
+      a {
+        position: relative;
+        background: #fbfbfb;
+        z-index: 5;
+      }
     }
   }
 
@@ -24,24 +40,56 @@ $table-row-height: 60px;
     cursor: pointer;
   }
 
+  tr[scope=row] {
+    background: white;
+    transform: scale(1);
+    box-shadow: 0px 0px 1px rgba($green, 0.2);
+
+    &:hover:not(.no-hover) {
+      box-shadow: 0px 0px 2px rgba($green, 0.5);
+      background: #fbfbfb;
+    }
+
+    td:first-child {
+      a:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
   th {
+    vertical-align: bottom;
+    padding: 10px 10px;
+    border: none;
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: white;
-    box-shadow: 0 1px 0 0 $gray-400;
-    font-weight: normal;
-    background-color: $gray-100;
-    color: $secondary;
-    a { color: $secondary; }
+    background-color: $body-bg;
+    font-weight: bold;
+    font-size: 12px;
+
+    &:first-child {
+      padding-left: 20px;
+    }
+    &:last-child {
+      padding-right: 20px;
+    }
+
+    color: $gray6;
+    a {
+      color: $gray6;
+      &:hover {
+        text-decoration: none;
+      }
+    }
   }
 
   td, td a {
-    color: $gray-600;
+    color: $brown;
   }
 
+
   .asc a {
-    font-weight: bold;
     &:after {
       content: "↑";
       margin-left: 5px;
@@ -49,7 +97,6 @@ $table-row-height: 60px;
   }
 
   .desc a {
-    font-weight: bold;
     &:after {
       content: "↓";
       margin-left: 5px;

@@ -78,7 +78,7 @@ class Seminar(TimeStampedModel, models.Model):
         "Ort", max_length=255,
         help_text="Stadt, in der das Seminar stattfinden soll."
     )
-    planned_training_days = models.PositiveSmallIntegerField("Bildungstage")
+    planned_training_days = models.PositiveSmallIntegerField("gepl. Bildungstage")
     planned_attendees_min = models.PositiveSmallIntegerField("Teilnehmende min.")
     planned_attendees_max = models.PositiveSmallIntegerField("Teilnehmende max.")
     requested_funding = models.DecimalField("Benötigte Förderung", max_digits=10, decimal_places=2)
@@ -94,7 +94,7 @@ class Seminar(TimeStampedModel, models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="seminars",
-        verbose_name="Autor_in",
+        verbose_name="Anmelder_in",
         blank=True,
         null=True,
         on_delete=models.SET_NULL
@@ -116,22 +116,24 @@ class Seminar(TimeStampedModel, models.Model):
     tn_total = models.PositiveSmallIntegerField("TN insgesamt", blank=True, null=True)
     tn_jfg = models.PositiveSmallIntegerField("TN nach JFG", blank=True, null=True)
 
-    tnt_total = models.PositiveSmallIntegerField("nach Richtlinie", blank=True, null=True)
-    tnt_jfg = models.PositiveSmallIntegerField("nach JFG", blank=True, null=True)
+    tnt_total = models.PositiveSmallIntegerField("TNT nach RL", blank=True, null=True)
+    tnt_jfg = models.PositiveSmallIntegerField("TNT nach JFG", blank=True, null=True)
 
-    vorschuss = models.DecimalField("Vorschuss", max_digits=10, decimal_places=2, blank=True, null=True)
+    vorschuss = models.DecimalField("Vorschuss", max_digits=10, decimal_places=2, default=0)
 
-    ausgaben_verpflegung = models.DecimalField("Verpflegung", max_digits=10, decimal_places=2, blank=True, null=True)
-    ausgaben_unterkunft = models.DecimalField("Unterkunft", max_digits=10, decimal_places=2, blank=True, null=True)
-    ausgaben_referenten = models.DecimalField("Referent_innen", max_digits=10, decimal_places=2, blank=True, null=True)
-    ausgaben_fahrtkosten = models.DecimalField("Fahrtkosten", max_digits=10, decimal_places=2, blank=True, null=True)
-    ausgaben_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, blank=True, null=True)
+    ausgaben_verpflegung = models.DecimalField("Verpflegung", max_digits=10, decimal_places=2, default=0)
+    ausgaben_unterkunft = models.DecimalField("Unterkunft", max_digits=10, decimal_places=2, default=0)
+    ausgaben_referenten = models.DecimalField("Referent_innen", max_digits=10, decimal_places=2, default=0)
+    ausgaben_fahrtkosten = models.DecimalField("Fahrtkosten", max_digits=10, decimal_places=2, default=0)
+    ausgaben_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, default=0)
 
-    einnahmen_beitraege = models.DecimalField("TN-Beiträge", max_digits=10, decimal_places=2, blank=True, null=True)
-    einnahmen_oeffentlich = models.DecimalField("Öffentlich", max_digits=10, decimal_places=2, blank=True, null=True)
-    einnahmen_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, blank=True, null=True)
+    einnahmen_beitraege = models.DecimalField("TN-Beiträge", max_digits=10, decimal_places=2, default=0)
+    einnahmen_oeffentlich = models.DecimalField("Öff. Zuwendg.", max_digits=10, decimal_places=2, default=0)
+    einnahmen_sonstiges = models.DecimalField("Sonstiges", max_digits=10, decimal_places=2, blank=True, default=0)
 
-    training_days = models.PositiveSmallIntegerField("Bildungstage", blank=True, null=True)
+    training_days = models.PositiveSmallIntegerField("tats. Bildungstage", blank=True, null=True)
+
+    foerderbedarf = models.DecimalField("Förderbedarf", max_digits=10, decimal_places=2, blank=True, null=True)
 
     LANDKREISE = Choices(
         ('1', '1 Landkreis'),
@@ -141,7 +143,6 @@ class Seminar(TimeStampedModel, models.Model):
 
     landkreise = models.CharField(
         verbose_name="TN-Landkreise",
-        help_text="Alle Teilnehmenden kommen aus…",
         max_length=100,
         choices=LANDKREISE,
         blank=True,
@@ -178,26 +179,28 @@ class Seminar(TimeStampedModel, models.Model):
         null=True,
     )
 
+
+    @property
+    def ausgaben_unterkunft_verpflegung(self):
+        return self.ausgaben_unterkunft + self.ausgaben_verpflegung
+
     @property
     def ausgaben(self):
-        return sum(filter(None, [
-            self.ausgaben_unterkunft, self.ausgaben_verpflegung, self.ausgaben_referenten,
-            self.ausgaben_fahrtkosten, self.ausgaben_sonstiges
-        ]))
+        return self.ausgaben_unterkunft + self.ausgaben_verpflegung + self.ausgaben_referenten + self.ausgaben_fahrtkosten + self.ausgaben_sonstiges
 
     @property
     def einnahmen(self):
-        return sum(filter(None, [
-            self.einnahmen_beitraege, self.einnahmen_oeffentlich, self.einnahmen_sonstiges,
-        ]))
+        return self.einnahmen_beitraege + self.einnahmen_oeffentlich + self.einnahmen_sonstiges
 
     @property
-    def foerderbedarf(self):
-        return (self.ausgaben or 0) - (self.einnahmen or 0)
+    def ausgaben_minus_einnahmen(self):
+        return self.ausgaben - self.einnahmen
 
     @property
     def resterstattung(self):
-        return (self.foerderbedarf or 0) - (self.vorschuss or 0)
+        if self.foerderbedarf:
+            return self.foerderbedarf - self.vorschuss
+        return None
 
 
     @property
@@ -211,6 +214,18 @@ class Seminar(TimeStampedModel, models.Model):
         if self.end_time:
             return datetime.combine(self.end_date, self.end_time)
         return self.end_date
+
+    @property
+    def tnt(self):
+        if self.tnt_jfg:
+            return self.tnt_jfg
+        return self.planned_tnt
+
+    @property
+    def funding(self):
+        if self.foerderbedarf:
+            return self.foerderbedarf
+        return self.max_funding
 
     @property
     def planned_tnt(self):
@@ -514,6 +529,8 @@ rules.add_perm('seminars.can_fertigen',         is_verwalter | has_group_hat_for
 rules.add_perm('seminars.can_ueberweisen',      is_verwalter | has_group_hat_for_seminar)
 rules.add_perm('seminars.can_unmoeglichen',     is_verwalter | has_group_hat_for_seminar)
 
+rules.add_perm('seminars.verwendungsnachweis',     is_verwalter)
+
 
 class SeminarComment(TimeStampedModel, models.Model):
     seminar = models.ForeignKey(
@@ -525,7 +542,7 @@ class SeminarComment(TimeStampedModel, models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="comments",
-        verbose_name="Autor",
+        verbose_name="Autor_in",
         on_delete=models.SET_NULL,
         null=True,
     )

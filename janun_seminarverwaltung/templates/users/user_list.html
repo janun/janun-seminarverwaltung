@@ -2,21 +2,30 @@
 
 {% load static i18n %}
 {% load django_tables2 %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags svg %}
 
 {% block title %}{{ block.super }} Benutzer_innen{% endblock %}
 
 {% block content %}
 <div class="clearfix my-4">
-  <h1 class="float-left h3 font-weight-bold">Benutzer_innen ({{ object_list|length }})</h1>
-  <a class="btn btn-outline-primary float-md-right" href="{% url 'users:create' %}"><i class="fas fa-plus"></i> Benutzer_in hinzufügen</a>
+  <h1 class="float-left h3 text-body">
+    Benutzer_innen
+    {% if count != total_count %}
+      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
+    {% endif %}
+    <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
+  </h1>
+  <a class="btn btn-outline-primary float-md-right" href="{% url 'users:create' %}">
+    <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
+    Benutzer_in hinzufügen
+  </a>
 </div>
 
 <form class="filter-form" action="" method="get">
-  {{ filter.form|crispy }}
+  {% crispy filter.form %}
 </form>
 
-<div class="card mx-neg my-4">
+<div class="mx-neg my-4">
   <div class="table-responsive-lg">
     {% render_table table %}
   </div>

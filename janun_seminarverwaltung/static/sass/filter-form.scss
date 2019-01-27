@@ -1,27 +1,31 @@
+#filters .card {
+  position: sticky;
+  top: 0;
+}
+
 .filter-form {
+  font-size: 14px;
+
   .optionalField {
     display: none;
   }
 
-  .col-form-label {
-    font-weight: normal;
-    display: block;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
+  @include media-breakpoint-down(lg) {
+    .col-form-label {
+      font-weight: normal;
+      display: block;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
 
-  .form-group {
-    display: inline-block;
-    margin-bottom: 10px;
-    margin-right: 5px;
-
-    div {
+    .form-group {
       display: inline-block;
+      margin-bottom: 10px;
+      margin-right: 5px;
+
+      div {
+        display: inline-block;
+      }
     }
   }
-
-  select {
-    max-width: 120px;
-  }
-
 }

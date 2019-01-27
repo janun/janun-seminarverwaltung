@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
-{% load rules %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags rules svg %}
 
 {% block title %}{{ block.super }} {{ object.title }}{% endblock %}
 
@@ -20,7 +19,8 @@
   {% if can_delete %}
     <a class="float-md-right btn btn-outline-danger my-2"
        href="{% url 'seminars:delete' object.id %}" data-toggle="modal" data-target="#deleteModal">
-       <i class="fas fa-trash"></i> Seminar löschen
+       <span style="margin-left: -8px">{% svg 'icon-trash' %}</span>
+       löschen
      </a>
   {% endif %}
 </div>
@@ -122,26 +122,30 @@ function get_total(fields) {
 var ausgaben_fields = ['ausgaben_verpflegung', 'ausgaben_unterkunft', 'ausgaben_referenten', 'ausgaben_fahrtkosten', 'ausgaben_sonstiges']
 $.each(ausgaben_fields, function (index, field) {
   $('#id_' + field).change(function () {
-    $('#id_ausgaben_insg').val(get_total(ausgaben_fields)).change();
+    var ausgaben_insg = get_total(ausgaben_fields)
+    $('#id_ausgaben_insg').val(ausgaben_insg.toFixed(2)).change();
   });
 });
 
 var einnahmen_fields = ['einnahmen_beitraege', 'einnahmen_oeffentlich', 'einnahmen_sonstiges']
 $.each(einnahmen_fields, function (index, field) {
   $('#id_' + field).change(function () {
-    $('#id_einnahmen_insg').val(get_total(einnahmen_fields)).change();
+    var einnahmen_insg = get_total(einnahmen_fields)
+    $('#id_einnahmen_insg').val(einnahmen_insg.toFixed(2)).change();
   });
 });
 
 $.each(['einnahmen_insg', 'ausgaben_insg'], function (index, field) {
   $('#id_' + field).change(function () {
-    $('#id_foerderbedarf').val(get_total(['ausgaben_insg']) - get_total(['einnahmen_insg'])).change();
+    var ausgaben_minus_einnahmen = get_total(['ausgaben_insg']) - get_total(['einnahmen_insg']);
+    $('#id_ausgaben_minus_einnahmen').val(ausgaben_minus_einnahmen.toFixed(2)).change();
   });
 });
 
 $.each(['foerderbedarf', 'vorschuss'], function (index, field) {
   $('#id_' + field).change(function () {
-    $('#id_resterstattung').val(get_total(['foerderbedarf']) - get_total(['vorschuss'])).change();
+    var resterstattung = get_total(['foerderbedarf']) - get_total(['vorschuss']);
+    $('#id_resterstattung').val(resterstattung.toFixed(2)).change();
   });
 });
 
@@ -162,32 +166,52 @@ $('#id_tnt_total').change(function() {
     if (limit > 1000) limit = 1000;
     console.log('limit: ' + limit + '; foerder: ' + foerder);
     if (foerder >= limit) {
-      console.log('TEST2')
       foerder = limit;
-      console.log(foerder);
     }
   }
 
-  $('#id_foerder_max').val(foerder).change();
+  $('#id_foerder_max').val(foerder.toFixed(2)).change();
 })
 
 
-function check_foerderbedarf() {
-  var foerderbedarf = parseFloat($('#id_foerderbedarf').val());
-  var foerder_max = parseFloat($('#id_foerder_max').val());
-  if (foerderbedarf > foerder_max) {
-    $('#id_foerderbedarf').addClass('is-invalid');
-  } else {
-    $('#id_foerderbedarf').removeClass('is-invalid');
+function updateTrainingDays() {
+  if ($('#id_training_days').val() === '') {
+    $('#id_training_days').val($('#id_planned_training_days').val()).change()
   }
 }
-$('#id_foerder_max').change(check_foerderbedarf);
-$('#id_foerderbedarf').change(check_foerderbedarf);
-check_foerderbedarf();
+updateTrainingDays();
 
 
+function updateTntJfg() {
+  if ($('#id_tnt_jfg')[0].defaultValue !== '') return;
+  var tn_jfg = $('#id_tn_jfg').val();
+  var training_days = $('#id_training_days').val();
+  if (tn_jfg !== '' && training_days !== '') {
+    var tnt_jfg = parseInt(tn_jfg) * parseInt(training_days);
+    $('#id_tnt_jfg').val(tnt_jfg).change();
+  }
+}
+$('#id_tn_jfg').change(updateTntJfg);
+$('#id_training_days').change(updateTntJfg);
 
 
+function updateTntRl() {
+  if ($('#id_tnt_total')[0].defaultValue !== '') return;
+  var tn_total = $('#id_tn_total').val();
+  var training_days = $('#id_training_days').val();
+  if (tn_total !== '' && training_days !== '') {
+    var tnt_total = parseInt(tn_total) * parseInt(training_days);
+    $('#id_tnt_total').val(tnt_total).change();
+  }
+}
+$('#id_tn_total').change(updateTntRl);
+$('#id_training_days').change(updateTntRl);
 </script>
+
+<style>
+  .input-group-text {
+    background: transparent;
+  }
+</style>
 
 {% endblock %}

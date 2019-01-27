@@ -9,6 +9,7 @@ urlpatterns = [
     url(settings.ADMIN_URL, admin.site.urls),
     path('', include("janun_seminarverwaltung.dashboard.urls")),
     path('seminare/', include("janun_seminarverwaltung.seminars.urls")),
+    path('vwn/', include("janun_seminarverwaltung.verwendungsnachweis.urls")),
     path('gruppen/', include("janun_seminarverwaltung.groups.urls")),
     path('users/', include("janun_seminarverwaltung.users.urls")),
     path('accounts/', include("allauth.urls")),

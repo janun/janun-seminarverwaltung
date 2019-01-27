@@ -41,20 +41,21 @@ class BaseUserForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            'name',
-            'email',
-            'username',
-            'password1',
-            'avatar',
-            Fieldset(
-                "Kontakt-Daten",
-                'phone_number', 'address',
-                id="contact"
+            Fieldset("Account-Daten",
+                'name',
+                'email',
+                'username',
+                'password1',
+                'avatar',
+                id='account'
             ),
-            Fieldset(
-                "Berechtigungen",
+            Fieldset("Kontakt-Daten",
+                'phone_number', 'address',
+                id='contact'
+            ),
+            Fieldset("Berechtigungen",
                 'role', 'janun_groups', 'group_hats', 'is_reviewed',
-                id="permissions"
+                id='permissions'
             ),
         )
         if not self.errors:
@@ -82,10 +83,12 @@ class BaseUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = (
-            'name', 'avatar', 'email', 'username', 'role',
-            'janun_groups', 'group_hats', 'phone_number', 'address', 'is_reviewed'
+        perm_fields = (
+            'role', 'janun_groups', 'group_hats', 'is_reviewed'
         )
+        fields = (
+            'name', 'avatar', 'email', 'username', 'role', 'phone_number', 'address',
+        ) + perm_fields
         widgets = {
             'phone_number': PhoneNumberInternationalFallbackWidget,
             'address': forms.Textarea(attrs={'cols': '20', 'rows': '4'}),
@@ -132,22 +135,25 @@ class UserChangeForm(BaseUserForm):
         super().__init__(*args, **kwargs)
         self.fields['password1'].required = False
         if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
-            self.fields['role'].widget.attrs['readonly'] = True
-            self.fields['janun_groups'].disabled = True
-            self.fields['group_hats'].disabled = True
-            self.fields['is_reviewed'].disabled = True
-            self.helper.layout[-1].insert(
-                0, HTML("""<p>Du kannst hier nichts ändern.<br>Bei Bedarf melde Dich (per E-Mail) bei uns.</p>"""),
-            )
-            # remove group_hats for Teamers:
-            if self.request.user.role == 'TEAMER':
-                self.fields['group_hats'] .widget = forms.HiddenInput()
+            for field in self.Meta.perm_fields:
+                del self.fields[field]
+                self.helper.layout[2] = ""
+            # self.fields['role'].disabled = True
+            # self.fields['janun_groups'].disabled = True
+            # self.fields['group_hats'].disabled = True
+            # self.fields['is_reviewed'].disabled = True
+            # self.helper.layout[-1].insert(
+            #     0, HTML("""<p>Du kannst hier nichts ändern.<br>Bei Bedarf melde Dich (per E-Mail) bei uns.</p>"""),
+            # )
+            # # remove group_hats for Teamers:
+            # if self.request.user.role == 'TEAMER':
+            #     self.fields['group_hats'] .widget = forms.HiddenInput()
 
     # return the instance value in case user is not allowed to edit role
-    def clean_role(self):
-        if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
-            return self.instance.role
-        return self.cleaned_data['role']
+    # def clean_role(self):
+    #     if not self.request or not self.request.user.has_perm('users.change_permissions', self.instance):
+    #         return self.instance.role
+    #     return self.cleaned_data['role']
 
 
 class UserLoginForm(LoginForm):

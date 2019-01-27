@@ -33,24 +33,29 @@ var paths = pathsConfig();
 
 
 const styles = function(cb) {
-  return src(paths.sass + '/project.scss')
+  return src(paths.sass + '/project.scss', {sourcemaps: true})
     .pipe(sassGlob())
     .pipe(sass({includePaths: [paths.sass, paths.nodeModules]}).on('error', sass.logError))
     .pipe(plumber())
     .pipe(autoprefixer())
     .pipe(pixrem())
-    .pipe(dest(paths.css))
+    .pipe(dest(paths.css, {sourcemaps: true}))
     .pipe(rename({ suffix: '.min' }))
     .pipe(cssnano())
-    .pipe(dest(paths.css));
+    .pipe(dest(paths.css, {sourcemaps: true}));
 };
 
 const scripts = function(cb) {
-  return src([paths.js + '/**/*.js', '!**/*.min.js'])
+  return src([
+      paths.nodeModules + 'jquery/dist/jquery.slim.js',
+      // paths.nodeModules + 'popper.js/dist/umd/popper.js',
+      paths.nodeModules + 'bootstrap/dist/js/bootstrap.bundle.js',
+    ], {sourcemaps: true})
+    .pipe(src([paths.js + '/**/*.js', '!**/*.min.js'], {sourcemaps: true}))
     .pipe(concat("project.min.js"))
     .pipe(plumber())
     .pipe(uglify())
-    .pipe(dest(paths.js));
+    .pipe(dest(paths.js, {sourcemaps: true}));
 };
 
 const imgCompression = function(cb) {
@@ -60,7 +65,7 @@ const imgCompression = function(cb) {
 };
 
 const runServer = function(cb) {
-  const cmd = spawn('python', ['manage.py', 'runserver'], {stdio: 'inherit'});
+  const cmd = spawn('python', ['manage.py', 'runserver', '0.0.0.0:8000'], {stdio: 'inherit'});
   cmd.on('close', code => {
     console.log('runServer exited with code ' + code);
     cb(code);

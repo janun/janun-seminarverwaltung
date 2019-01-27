@@ -4,9 +4,11 @@
 
 {% block container_class %}container mw-960{% endblock %}
 
+{% block body_class %}wizard-page{% endblock %}
+
 
 {% block content %}
-<div class="card">
+<div class="wizard card card-bigger mx-neg">
   <div class="card-header">
     <h1 class="h4">„{{ instance.title }}“ angemeldet</h1>
   </div>
@@ -27,7 +29,7 @@
 
   <div class="card-footer clearfix">
     <a class="btn btn-primary float-right" href="{{ instance.get_absolute_url }}">Zum Seminar</a>
-    <a class="btn btn-outline-primary float-right mx-1" href="{% url 'seminars:create' %}">Weiteres anmelden</a>
+    <!-- <a class="btn btn-outline-primary float-right mx-1" href="{% url 'seminars:create' %}">Weiteres anmelden</a> -->
   </div>
 </div>
 {% endblock content %}

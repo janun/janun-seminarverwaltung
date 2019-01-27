@@ -1,0 +1,100 @@
+
+.icon-check {
+  width: 20px;
+  .primary { fill: $green; }
+  .secondary { fill: white; }
+  margin-top: -3px;
+}
+
+.icon-view-visible, .icon-view-hidden {
+  width: 24px;
+  fill: currentColor;
+}
+
+.icon-chat {
+  width: 20px;
+  fill: currentColor;
+  margin-top: -3px;
+}
+
+.icon-mood-sad {
+  width: 20px;
+  .primary { fill: currentColor; }
+  .secondary { fill: white }
+  margin-top: -3px;
+}
+
+.icon-document {
+  width: 20px;
+  fill: currentColor;
+  margin-top: -3px;
+}
+
+.icon-edit {
+  width: 20px;
+  fill: currentColor;
+  margin-top: -3px;
+}
+
+.icon-trash {
+  width: 20px;
+  fill: currentColor;
+  margin-top: -3px;
+}
+
+.icon-close-circle {
+  width: 20px;
+  .primary { fill: $red; }
+  .secondary { fill: white; }
+  margin-top: -3px;
+}
+
+.icon-arrow-thin-right-circle {
+  width: 24px;
+  .primary {
+    display: none;
+  }
+  fill: currentColor;
+  margin-right: -8px;
+  margin-top: -3px;
+}
+
+.icon-arrow-thin-down-circle {
+  width: 24px;
+  .primary {
+    display: none;
+  }
+  .secondary {
+    fill: currentColor
+  }
+  margin-top: -3px;
+}
+
+.icon-arrow-thin-left-circle {
+  width: 24px;
+  .primary {
+    display: none;
+  }
+  fill: currentColor;
+  // margin-right: -8px;
+  margin-top: -3px;
+}
+
+.icon-close {
+  width: 24px;
+  fill: currentColor;
+  // fill: $secondary;
+  margin-top: -3px;
+}
+
+.icon-user-alt {
+  width: 24px;
+  fill: $brown;
+  margin-top: -3px;
+  // stroke: $brown;
+}
+
+.icon-add {
+  width: 24px;
+  fill: currentColor;
+}

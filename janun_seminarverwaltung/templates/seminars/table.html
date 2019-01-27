@@ -1,0 +1,17 @@
+{% extends "django_tables2/bootstrap4.html" %}
+
+{% load svg %}
+
+{% block table.tbody.empty_text %}
+  <tr scope="" class="no-hover">
+    <td colspan="{{ table.columns|length }}">
+      <div class="text-center" style="height: 120px; padding: 30px">
+        Keine Ergebnisse.
+        <br><br>
+        <a class="text-secondary" href="?" style="text-decoration: underline; font-size: 12px">
+          Filter zurücksetzen
+        </a>
+      </div>
+    </td>
+  </tr>
+{% endblock table.tbody.empty_text %}

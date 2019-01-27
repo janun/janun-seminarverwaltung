@@ -3,20 +3,39 @@
 
 {% block title %}{{ block.super }} {% if object.pk %}{{ object }} bearbeiten{% else %}Benutzer erstellen{% endif %}{% endblock %}
 
-{% block container_class %}container mw-500{% endblock %}
-
 {% block content %}
 {% if object.pk %}
-  <a class="backlink" href="{{ object.get_absolute_url }}">← {{ object }}</a>
+  <a class="backlink float-md-left" href="{{ object.get_absolute_url }}">
+    {% if request.user == user %}
+      ← Profil
+    {% else %}
+      ← {{ object }}
+    {% endif %}
+  </a>
 {% else %}
-  <a class="backlink" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
+  <a class="backlink float-md-left" href="{% url 'users:list' %}">← Alle Benutzer_innen</a>
 {% endif %}
 
-<div class="card card-bigger mx-neg">
-  <h1 class="h3 card-header">
-    {% if object.pk %}{{ object }} bearbeiten{% else %}Benutzer_in erstellen{% endif %}
-  </h1>
-  <form method="POST" action="" enctype="multipart/form-data">
+<div class="container mw-640">
+<form method="POST" action="" enctype="multipart/form-data">
+  <div class="card card-bigger mx-neg">
+    <div class="card-body" style="background-color: rgba(0,0,0,.03);">
+      <!-- <h1 class="float-left h3">
+        {% if object.pk %}
+          {% if request.user == user %}
+            Profil bearbeiten
+          {% else %}
+            {{ object }} bearbeiten
+          {% endif %}
+        {% else %}Benutzer_in erstellen{% endif %}
+      </h1> -->
+      <button class="btn btn-primary float-right" type="submit">Speichern</button>
+      {% if object.pk %}
+        <a class="btn btn-link float-right" href="{{ object.get_absolute_url }}">Abbrechen</a>
+      {% else %}
+        <a class="btn btn-link float-right" href="{% url 'users:list' %}">Abbrechen</a>
+      {% endif %}
+    </div>
     <div class="card-body">
       {% crispy form %}
     </div>
@@ -28,6 +47,8 @@
         <a class="btn btn-link float-right" href="{% url 'users:list' %}">Abbrechen</a>
       {% endif %}
     </div>
-  </form>
+  </div>
+</form>
+
 </div>
 {% endblock %}

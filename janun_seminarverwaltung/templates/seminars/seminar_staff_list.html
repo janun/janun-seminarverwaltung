@@ -3,23 +3,67 @@
 {% load rules %}
 {% load django_tables2 %}
 {% load crispy_forms_tags %}
-{% load static %}
+{% load static svg %}
 
-{% block title %}{{ block.super }} {{ heading }}{% endblock %}
+{% block title %}{{ block.super }} Alle Seminare{% endblock %}
+
+{% block container_class %}container-fluid{% endblock %}
 
 {% block content %}
-<div class="clearfix my-4">
-  <h1 class="float-left h3 font-weight-bold">{{ heading }}</h1>
-  <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}"><i class="fas fa-plus"></i> Seminar anmelden</a>
-</div>
+<div class="pt-4">
 
-<form class="filter-form" action="" method="get">
-  {{ filter.form|crispy }}
-</form>
-
-<div class="card mx-neg my-4">
-  <div class="table-responsive-lg">
-    {% render_table table %}
+  <div class="clearfix">
+    <h1 class="float-left h3 text-body">
+      Alle Seminare
+      {% if count != total_count %}
+        <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
+      {% endif %}
+      <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
+    </h1>
+    <div class="float-md-right">
+      <a class="ml-3 btn btn-outline-primary" href="{% url 'seminars:create' %}">
+        <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
+        Seminar anmelden
+      </a>
+    </div>
   </div>
+
+  <a class="mt-3 d-xl-none btn btn-sm btn-secondary" data-toggle="collapse" href="#filters" role="button" aria-expanded="false" aria-controls="filters">
+    Filter-Optionen
+  </a>
+
+  <div class="row my-4">
+
+    <div id="filters" class="d-xl-block col-xl my-3 order-xl-9 mmw-xl-300 collapse">
+      <h4 style="font-size: 12px; margin-top: 6px; margin-bottom: 22px; font-weight:bold; color:#9ba197">Filter</h4>
+      <div class="card">
+        <div class="card-body">
+          <form class="filter-form" action="" method="get">
+            {% crispy filter.form %}
+            <div class="mt-4">
+              <a class="btn btn-link text-secondary pl-0" href="?">Reset</a>
+              <button class="btn btn-outline-primary float-right">Filter</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <h4 style="font-size: 12px; margin-top: 30px; margin-bottom: 0px; font-weight:bold; color:#9ba197">Export</h4>
+      <a class="my-3 btn btn-outline-secondary font-weight-normal" href="{% querystring 'export'='ods' %}">
+        <span style="margin-left: -8px">{% svg 'icon-arrow-thin-down-circle' %}</span>
+        {{ count }} exportieren
+      </a>
+    </div>
+
+    <div class="col-xl">
+      <div class="mx-neg">
+        <div class="table-responsive-lg">
+          {% render_table table %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 {% endblock %}

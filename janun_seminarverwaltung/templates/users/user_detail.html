@@ -2,7 +2,7 @@
 {% load static %}
 {% load rules %}
 {% load humanize %}
-{% load thumbnail %}
+{% load thumbnail svg %}
 
 {% block title %}{{ block.super }}  {{ object }}{% endblock %}
 
@@ -19,7 +19,7 @@
   </div>
 
   <div class="col col-lg-8">
-    <h1>{{ object }}{% if request.user == object %} <small class="text-info">(das&nbsp;bist&nbsp;du)</small>{% endif %}</h1>
+    <h1>{{ object }}</h1>
     <strong>Rolle:</strong> {{ object.get_role_display }}<br>
     <strong>Letzte Anmeldung:</strong>
     <time datetime="{{ object.last_login|date:'c' }}" title="{{ object.last_login|date:"DATETIME_FORMAT" }}">
@@ -34,17 +34,26 @@
   <div class="col-12 col-lg-2 mt-3">
     {% has_perm 'users.change_user' request.user object as can_edit %}
     {% if can_edit %}
-      <a class="btn btn-outline-info my-1" href="{% url 'users:edit' object.pk %}"><i class="fas fa-edit"></i> bearbeiten</a>
+      <a class="btn btn-outline-info my-1" href="{% url 'users:edit' object.pk %}">
+        <span style="margin-left: -8px;">{% svg 'icon-edit' %}</span>
+        Bearbeiten
+      </a>
     {% endif %}
     <br>
     {% has_perm 'users.deactivate_user' request.user object as can_deactivate %}
     {% if can_deactivate and object.is_active %}
-      <a class="btn btn-outline-danger my-1" href="{% url 'users:deactivate' object.pk %}"><i class="fas fa-ban"></i> deaktivieren</a>
+      <a class="btn btn-outline-danger my-1" href="{% url 'users:deactivate' object.pk %}">
+        <span style="margin-left: -8px">{% svg 'icon-close' %}</span>
+        Deaktivieren
+      </a>
     {% endif %}
     <br>
     {% has_perm 'users.delete_user' request.user object as can_delete %}
     {% if can_delete %}
-      <a class="btn btn-outline-danger my-1" href="{% url 'users:delete' object.pk %}"><i class="fas fa-trash"></i> löschen</a>
+      <a class="btn btn-outline-danger my-1" href="{% url 'users:delete' object.pk %}">
+        <span style="margin-left: -8px">{% svg 'icon-trash' %}</span>
+        Löschen
+      </a>
     {% endif %}
   </div>
 </div>
@@ -64,9 +73,9 @@
 <div class="card my-3">
   <div class="card-body">
     <h3 class="h5 mb-3">Kontaktdaten</h3>
-    <strong><i class="fas fa-at text-secondary"></i> E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
-    <strong><i class="fas fa-phone text-secondary"></i> Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
-    <p><strong><i class="fas fa-envelope text-secondary"></i> Postadresse:</strong> {{ object.address|default:"keine"|linebreaksbr }}</p>
+    <strong>E-Mail:</strong> <a href="mailto:{{ object.email }}">{{ object.email }}</a><br>
+    <strong>Telefonnummer:</strong> {% if object.phone_number %}<a href="{{ object.phone_number.as_rfc3966 }}">{{ object.phone_number.as_national }}</a>{% else %}keine{% endif %}<br>
+    <p><strong>Postadresse:</strong> {{ object.address|default:"keine"|linebreaksbr }}</p>
   </div>
 </div>
 </div>

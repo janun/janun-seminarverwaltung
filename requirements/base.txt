@@ -35,3 +35,5 @@ sorl-thumbnail==12.5.0
 django-inlinecss==0.1.2
 django-templated-email==2.2.0
 html2text==2018.1.9
+
+django-inline-svg==0.1.1

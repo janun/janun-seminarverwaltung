@@ -1,4 +1,4 @@
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView, ListView
 from django.urls import reverse_lazy
 from django.shortcuts import HttpResponseRedirect
 from django.db import models
@@ -17,32 +17,36 @@ from .forms import JANUNGroupForm, ContactPeopleInlineFormSet
 from .filters import JANUNGroupFilter
 
 
-class JANUNGroupListView(SingleTableMixin, FilterView):
+class JANUNGroupStaffListView(SingleTableMixin, FilterView):
     model = JANUNGroup
     table_class = JANUNGroupTable
     filterset_class = JANUNGroupFilter
-    template_name = "groups/janungroup_list.html"
-    paginate_by = 30
+    template_name = "groups/janungroup_staff_list.html"
+    paginate_by = 100
     strict = False
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.total_count = 0  # count before filter
+
     def get_queryset(self):
-        if self.request.user.role == "TEAMER":
-            return self.request.user.janun_groups.all()
-        if self.request.user.role == "PRUEFER":
-            return self.request.user.group_hats.all()
-        if self.request.user.role == "VERWALTER":
-            return JANUNGroup.objects.all()
-        return None
+        qs = JANUNGroup.objects.all()
+        self.total_count = qs.count()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.role == "VERWALTER":
-            context['show_table'] = True
-            context['heading'] = "Alle Gruppen ({0})".format(len(self.object_list))
-        else:
-            context['show_table'] = False
-            context['heading'] = "Deine Gruppen"
+        context['count'] = len(self.object_list)
+        context['total_count'] = self.total_count
         return context
+
+
+class JANUNGroupTeamerListView(ListView):
+    model = JANUNGroup
+    template_name = "groups/janungroup_teamer_list.html"
+
+    def get_queryset(self):
+        return self.request.user.janun_groups.all()
 
 
 class JANUNGroupDetailView(PermissionRequiredMixin, DetailView, PrefetchRelatedMixin):

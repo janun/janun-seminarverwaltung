@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load rules django_tables2 crispy_forms_tags svg %}
+
+{% block title %}{{ block.super }} Alle Gruppen{% endblock %}
+
+{% block content %}
+
+{% has_perm 'groups.add_janungroup' user as can_add %}
+<div class="clearfix my-4">
+  <h1 class="float-left h3 text-body">
+    Alle Gruppen
+    {% if count != total_count %}
+      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
+    {% endif %}
+    <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
+  </h1>
+  {% if can_add %}
+    <a href="{% url 'groups:create' %}" class="float-md-right btn btn-outline-primary">
+      <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
+      Gruppe hinzufügen</a>
+  {% endif %}
+</div>
+
+<form class="filter-form" style="max-width:300px" action="" method="get">
+  {{ filter.form|crispy }}
+</form>
+
+<div class="mx-neg my-4">
+  <div class="table-responsive-lg">
+    {% render_table table %}
+  </div>
+</div>
+
+{% endblock %}

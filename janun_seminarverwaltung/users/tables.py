@@ -9,7 +9,7 @@ class UserTable(tables.Table):
         """{% if record.avatar %}{% include "users/_avatar.html" with avatar=record.avatar size="40px" %}{% endif %}""",
         verbose_name="", orderable=False
     )
-    name = tables.Column(linkify=True, attrs={'td': {'class': 'font-weight-bold'}})
+    name = tables.Column(linkify=True, attrs={'a': {'class': 'font-weight-bold'}})
     groups = tables.ManyToManyColumn(
         accessor=A('get_groups'), linkify_item=True, verbose_name="Gruppen"
     )

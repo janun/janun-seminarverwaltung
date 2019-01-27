@@ -1,5 +1,7 @@
 .card {
   box-shadow: 0 .1rem .6rem rgba(black, .15);
+  overflow: hidden;
+  border-radius: 5px;
 
   &-bigger {
     .card-header {
@@ -16,6 +18,9 @@
   }
 }
 
+.card-footer {
+  background-color: #f7f7f7;
+}
 
 .card-accent {
   border-top-width: 8px;

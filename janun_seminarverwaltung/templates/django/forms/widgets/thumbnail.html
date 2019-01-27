@@ -1,7 +1,7 @@
 {% load static %}
 
 <div class="">
-  <div class="">
+  <!-- <div class="">
     {% if widget.is_initial %}
       {% include "common/round-image.html" with image=widget.value logo=widget.logo id=widget.attrs.id|add:"_img" %}
     {% else %}
@@ -9,7 +9,7 @@
         <img id="{{ widget.attrs.id|add:"_img" }}" src="{% static 'images/person-outline.svg' %}" class="round-image__image" alt="">
       </div>
     {% endif %}
-  </div>
+  </div> -->
   <div class="">
     <div class="custom-file">
       <input accept=".png, .jpg, .jpeg" data-read-image="{{ widget.attrs.id }}_img" class="custom-file-input" type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

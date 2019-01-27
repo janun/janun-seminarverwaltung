@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.views import View
 from django.views.generic import DetailView, DeleteView, UpdateView, CreateView
 from django.views.generic.edit import FormMixin, ModelFormMixin, ProcessFormView
 from django.views.generic.detail import SingleObjectMixin
@@ -9,10 +10,12 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.http import HttpResponse
 
 from rules.contrib.views import PermissionRequiredMixin
 from braces.views import SelectRelatedMixin
 from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 from django_filters.views import FilterView
 from formtools.wizard.views import NamedUrlSessionWizardView
 from django_fsm import has_transition_perm
@@ -23,66 +26,76 @@ from seminars.tables import SeminarTable
 from seminars.filters import SeminarTeamerFilter, SeminarStaffFilter
 import seminars.forms as seminar_forms
 from .email import send_seminar_mail
+from .export import SeminarResource
+# from verwendungsnachweis.templateddocs import fill_template, FileResponse
+
+
 
 
 class SeminarTeamerListView(FilterView):
     model = Seminar
     filterset_class = SeminarTeamerFilter
     template_name = "seminars/seminar_teamer_list.html"
-    paginate_by = 25
+    paginate_by = 100
     strict = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.total_count = 0  # count before filter
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['count'] = len(self.object_list)
+        context['total_count'] = self.total_count
+        return context
 
     def get_queryset(self):
         user = self.request.user
         assert user.role == "TEAMER"
         qs = Seminar.objects.filter(author=user).order_by('-start_date')
         qs = qs.select_related('group', 'author')
+        self.total_count = qs.count()
         return qs
 
 
-class SeminarStaffListView(SingleTableMixin, FilterView):
+class SeminarStaffListView(SingleTableMixin, ExportMixin, FilterView):
     model = Seminar
     table_class = SeminarTable
     filterset_class = SeminarStaffFilter
     template_name = "seminars/seminar_staff_list.html"
-    paginate_by = 25
+    paginate_by = 100
     strict = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.orig_count = 0  # count before filter
+        self.total_count = 0  # count before filter
 
     def get_queryset(self):
-        user = self.request.user
-        if user.role == "VERWALTER":
-            qs = Seminar.objects.all()
-        elif user.role == "PRUEFER":
-            qs = Seminar.objects.filter(
-                Q(author=self.request.user)
-                | Q(group__in=user.group_hats.all())
-                | Q(group__in=user.janun_groups.all())
-            )
+        qs = Seminar.objects.all()
         qs = qs.select_related('group', 'author')
-        self.orig_count = qs.count()
+        self.total_count = qs.count()
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        if user.role == "VERWALTER":
-            heading = "Alle Seminare"
-        elif user.role == "PRUEFER":
-            heading = "Deine Seminare und die Deiner Gruppen"
-
-        count = len(self.object_list)
-        if count != self.orig_count:
-            heading = heading + " (%s/%s)" % (count, self.orig_count)
-        else:
-            heading = heading + " (%s)" % count
-
-        context['heading'] = heading
-        context['orig_count'] = self.orig_count
+        context['count'] = len(self.object_list)
+        context['total_count'] = self.total_count
         return context
+
+    def export(self, request, *args, **kwargs):
+        filterset_class = self.get_filterset_class()
+        filterset = self.get_filterset(filterset_class)
+        export = SeminarResource().export(queryset=filterset.qs)
+        response = HttpResponse(content_type="application/vnd.oasis.opendocument.spreadsheet")
+        response["Content-Disposition"] = 'attachment; filename="Seminare.ods"'
+        response.write(export.ods)
+        return response
+
+    def get(self, request, *args, **kwargs):
+        export_param = request.GET.get('export', None)
+        if export_param == 'ods':
+            return self.export(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, ModelFormMixin, DetailView):
@@ -249,7 +262,7 @@ class SeminarWizardView(NamedUrlSessionWizardView):
     def get(self, *args, **kwargs):
         if 'reset' in self.request.GET:
             self.storage.reset()
-            messages.info(self.request, "Seminaranmeldung abgebrochen")
+            # messages.info(self.request, "Seminaranmeldung abgebrochen")
             return HttpResponseRedirect('/')
         return super().get(*args, **kwargs)
 

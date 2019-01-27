@@ -1,13 +1,16 @@
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags svg %}
 
 <div class="mw-500" style="margin-top: 100px">
 
   <div class="clearfix mb-5">
-    <h3 id="comments"><i class="fas fa-comment"></i> Kommentieren</h3>
+    <h3 id="comments">{% svg 'icon-chat' %} Kommentieren</h3>
     <form class="comment-form my-3" action="{% url 'seminars:create_comment' object.pk %}" method="POST">
       {% csrf_token %}
       {{ comment_form|crispy }}
-      <button id="id_submit_comment" class="btn btn-primary float-right" type="submit"><i class="fas fa-comment"></i> Kommentieren</button>
+      <button id="id_submit_comment" class="btn btn-primary float-right" type="submit">
+        <span style="margin-left: -8px">{% svg 'icon-chat' %}</span>
+        Kommentieren
+      </button>
     </form>
   </div>
 

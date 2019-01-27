@@ -77,6 +77,7 @@ THIRD_PARTY_APPS = [
     'phonenumber_field',
     'sorl.thumbnail',
     'django_inlinecss',
+    'svg',
 ]
 LOCAL_APPS = [
     'janun_seminarverwaltung.users.apps.UsersConfig',
@@ -163,10 +164,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [
     str(APPS_DIR.path('static')),
-    str(ROOT_DIR.path('node_modules', 'jquery', 'dist')),
-    str(ROOT_DIR.path('node_modules', 'popper.js', 'dist')),
-    str(ROOT_DIR.path('node_modules', 'bootstrap', 'dist')),
-    str(ROOT_DIR.path('node_modules', '@fortawesome/fontawesome-free')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
@@ -385,3 +382,5 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+FILTERS_EMPTY_CHOICE_LABEL = ''

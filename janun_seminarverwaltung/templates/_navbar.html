@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n svg %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shado">
   <div class="container">
@@ -14,15 +14,22 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       {% if user.is_authenticated %}
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item {% if request.resolver_match.namespace == "dashboard" %}active{% endif %}">
+          <!-- <li class="nav-item {% if request.resolver_match.namespace == "dashboard" %}active{% endif %}">
             <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Übersicht</a>
-          </li>
-          <li class="nav-item {% if request.resolver_match.namespace == "groups" %}active{% endif %}">
-            <a class="nav-link" href="{% url 'groups:list' %}">Gruppen</a>
-          </li>
+          </li> -->
+          {% if request.user.role != 'TEAMER' or request.user.janun_groups %}
+            <li class="nav-item {% if request.resolver_match.namespace == "groups" %}active{% endif %}">
+              <a class="nav-link" href="{% url 'groups:list' %}">Gruppen</a>
+            </li>
+          {% endif %}
           <li class="nav-item {% if request.resolver_match.namespace == "seminars" %}active{% endif %}">
             <a class="nav-link" href="{% url 'seminars:list' %}">Seminare</a>
           </li>
+          {% if request.user.role == 'VERWALTER' %}
+            <li class="nav-item {% if request.resolver_match.namespace == "verwendungsnachweis" %}active{% endif %}">
+              <a class="nav-link" title="Verwendungsnachweis" href="{% url 'verwendungsnachweis:index' %}">VWN</a>
+            </li>
+          {% endif %}
           {% if perms.users.see_all_users %}
             <li class="nav-item {% if request.resolver_match.namespace == "users" %}active{% endif %}">
               <a class="nav-link" href="{% url 'users:list' %}">Benutzer</a>
@@ -38,7 +45,8 @@
         {% if request.user.is_authenticated %}
           <li class="d-none d-md-inline-block nav-item dropdown {% if request.path == request.user.get_absolute_url %}active{% endif %}">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="far fa-user"></i> {{ request.user.get_short_name }}
+              {% svg 'icon-user-alt' %}
+              {{ request.user.get_short_name }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{% url 'users:detail' request.user.pk %}">Profil</a>

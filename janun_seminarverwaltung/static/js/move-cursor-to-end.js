@@ -3,7 +3,7 @@ function moveCursorToEnd(el) {
     el.setSelectionRange(index,index);
 }
 
-var autofocusEls = document.querySelectorAll('[autofocus]');
+var autofocusEls = document.querySelectorAll('.filter-form input[autofocus]');
 for (var i=0; i < autofocusEls.length; i++) {
   autofocusEls[i].addEventListener('focus', function (event) {
     moveCursorToEnd(event.target)

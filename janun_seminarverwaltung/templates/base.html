@@ -12,16 +12,17 @@
     <![endif]-->
     {% block css %}
       <link href="{% static 'css/project.min.css' %}" rel="stylesheet">
-      <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     {% endblock %}
   </head>
 
-  <body>
+  <body class="{% block body_class %}{% endblock %}">
     <script>document.documentElement.className=document.documentElement.className.replace("no-js","js");</script>
 
-    {% include "_navbar.html" %}
+    {% block navbar %}
+      {% include "_navbar.html" %}
+    {% endblock %}
 
-    <div class="{% block container_class %}container{% endblock %} pt-4">
+    <div class="{% block container_class %}container{% endblock %} pt-3 pt-lg-5">
       {% if messages %}
         {% for message in messages %}
           <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible" role="alert">
@@ -36,15 +37,14 @@
       {% block content %}{% endblock content %}
     </div>
 
-    {% include "_footer.html" %}
+    {% block footer %}
+      {% include "_footer.html" %}
+    {% endblock %}
 
     {% block modal %}{% endblock modal %}
 
     {% block javascript %}
-      <script src="{% static 'jquery.min.js' %}"></script>
       <script src="{% static 'js/project.min.js' %}"></script>
-      <script src="{% static 'umd/popper.min.js' %}"></script>
-      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% endblock javascript %}
   </body>
 

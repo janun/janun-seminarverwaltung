@@ -108,8 +108,24 @@ class UserListView(PermissionRequiredMixin, SingleTableMixin, FilterView):
     permission_required = 'users.see_all_users'
     raise_exception = True
     template_name = "users/user_list.html"
-    paginate_by = 25
+    paginate_by = 100
     strict = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.total_count = 0  # count before filter
+
+    def get_queryset(self):
+        qs = User.objects.all()
+        self.total_count = qs.count()
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['count'] = len(self.object_list)
+        context['total_count'] = self.total_count
+        return context
+
 
 
 class UserDeleteView(PermissionRequiredMixin, DeleteView):

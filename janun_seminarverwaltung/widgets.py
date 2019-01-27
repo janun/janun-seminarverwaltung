@@ -16,7 +16,10 @@ class ThumbnailFileInput(forms.ClearableFileInput):
 
 
 class HTML5DateInput(forms.DateInput):
-    template_name = 'django/forms/widgets/html5date.html'
+    input_type = 'date'
 
     def format_value(self, value):
         return value
+
+class HTML5TimeInput(forms.TimeInput):
+    input_type = 'time'

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
-{% load rules %}
-{% load utils %}
+{% load rules utils svg %}
 
 {% block title %}{{ block.super }} {{ object.name }}{% endblock %}
 
@@ -12,12 +11,18 @@
   <div class="float-right">
     {% has_perm 'groups.change_janungroup' user object as can_edit %}
     {% if can_edit %}
-      <a class="btn my-1 btn-outline-info float-right" href="{% url 'groups:edit' object.id %}"><i class="fas fa-edit"></i> bearbeiten</a>
+      <a class="btn my-1 btn-outline-info float-right" href="{% url 'groups:edit' object.id %}">
+        <span style="margin-left: -8px">{% svg 'icon-edit' %}</span>
+        bearbeiten
+      </a>
     {% endif %}
     <br>
     {% has_perm 'groups.delete_janungroup' user object as can_delete %}
     {% if can_delete %}
-      <a class="btn my-1 btn-outline-danger float-right" href="{% url 'groups:delete' object.id %}"><i class="fas fa-trash"></i> löschen</a>
+      <a class="btn my-1 btn-outline-danger float-right" href="{% url 'groups:delete' object.id %}">
+        <span style="margin-left: -8px">{% svg 'icon-trash' %}</span>
+        löschen
+      </a>
     {% endif %}
   </div>
 
@@ -90,9 +95,9 @@
 <div class="card">
   <h2 class="card-header bg-white mt-2 h5">Kontaktdaten</h2>
   <div class="card-body">
-    <strong><i class="fas fa-globe"></i> Homepage:</strong> {% if object.homepage %}<a href="{{ object.homepage }}">{{ object.homepage }}</a>{% else %}keine{% endif %}<br>
-    <strong><i class="fas fa-at"></i> E-Mail:</strong> {% if object.email %}<a href="mailto:{{ object.email }}">{{ object.email }}</a>{% else %}keine{% endif %}
-    <p><strong><i class="fas fa-envelope"></i> Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
+    <strong>Homepage:</strong> {% if object.homepage %}<a href="{{ object.homepage }}">{{ object.homepage }}</a>{% else %}keine{% endif %}<br>
+    <strong>E-Mail:</strong> {% if object.email %}<a href="mailto:{{ object.email }}">{{ object.email }}</a>{% else %}keine{% endif %}
+    <p><strong>Postadresse:</strong><br> {{ object.address|default:"keine"|linebreaksbr }}</p>
   </div>
 
   <h4 class="card-header bg-white font-weight-normal h5">Kontaktpersonen</h4>

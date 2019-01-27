@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load svg %}
+
+
+
+{% block body_class %}wizard-page{% endblock %}
 
 {% block head %}
   {{ wizard.form.media }}
@@ -17,15 +22,14 @@
 {% block container_class %}container mw-960{% endblock %}
 
 {% block content %}
-<div class="card card-bigger my-4 mx-neg">
+<div class="wizard card card-bigger mx-neg">
 
   <div class="card-header border-bottom">
-    <a href="{% url "seminars:create" %}?reset" class="card-text close float-right p-1 mr-3" aria-label="Abbrechen">
-      <span aria-hidden="true">&times;</span>
+    <a onclick="return confirmCancel()" href="{% url "seminars:create" %}?reset" class="card-text close float-right p-1" aria-label="Abbrechen">
+      <span aria-hidden="true">{% svg 'icon-close' %}</span>
     </a>
     <h1 class="h4 card-text">
-      {% if seminar_title %}„{{ seminar_title }}“{% else %}Neues Seminar{% endif %}
-      anmelden
+      Neues Seminar anmelden
       <small class="text-secondary">(Schritt&nbsp;{{ wizard.steps.step1 }}/{{ wizard.steps.count }})</small>
     </h1>
   </div>
@@ -43,15 +47,16 @@
             <ul class="nav flex-column">
               {% for step_name, step_form in steps.items %}
                 <li class="nav-item">
-                  <button class="btn-reset nav-link d-inline-block text-body {% if wizard.steps.current == step_name %}active font-weight-bold{% endif %}"
+                  <button class="btn-reset nav-link d-inline-block text-secondary {% if wizard.steps.current == step_name %}active text-body font-weight-bold{% endif %}"
                      name="wizard_goto_step" type="submit" value="{{ step_name }}">
-                    {{ step_form.Meta.short_title }}
                     {% if step_form.is_valid %}
-                      <span class="badge badge-primary" title="okay">✓</span>
-                    {% endif %}
-                    {% if step_form.errors %}
-                      <!-- not working -->
-                      <span class="badge badge-danger" title="Fehler">×</span>
+                      <span class="text-body">{{ step_form.Meta.short_title }}</span>
+                      <span title="Okay">{% svg 'icon-check' %}</span>
+                    {% elif step_form.errors %}
+                      <span class="text-body">{{ step_form.Meta.short_title }}</span>
+                      <span title="Fehler">{% svg 'icon-close-circle' %}</span>
+                    {% else %}
+                      {{ step_form.Meta.short_title }}
                     {% endif %}
                   </button>
                 </li>
@@ -59,7 +64,7 @@
             </ul>
           </div>
 
-          <div class="col-md">
+          <div class="col-md mr-3">
             {% if form.Meta.title %}
               <h2 class="h4">{{ form.Meta.title }}</h2>
             {% endif %}
@@ -85,16 +90,32 @@
         {% if wizard.steps.last == wizard.steps.current %}
           <input class="btn btn-primary float-right" type="submit" value="Anmelden"/>
         {% else %}
-          <input class="btn btn-primary float-right" type="submit" value="Weiter →"/>
+          <button class="btn btn-primary float-right" type="submit">
+            Weiter {% svg 'icon-arrow-thin-right-circle' %}
+          </button>
         {% endif %}
 
         {% if wizard.steps.prev %}
-          <a class="d-inline-block my-1 text-secondary" href="{% url 'seminars:create_step' wizard.steps.prev %}"">
-            ← Zurück
+          <a class="btn btn-link ml-0 pl-1 text-secondary" href="{% url 'seminars:create_step' wizard.steps.prev %}"">
+            {% svg 'icon-arrow-thin-left-circle' %}
+            Zurück
+          </a>
+        {% else %}
+          <a class="btn btn-link ml-0 pl-1 text-secondary"
+            onclick="return confirmCancel()"
+            href="{% url "seminars:create" %}?reset">
+            {% svg 'icon-close' %}
+            Abbrechen
           </a>
         {% endif %}
       </div>
 
   </form>
 </div>
+
+<script>
+  function confirmCancel() {
+    return confirm('Wirklich Abbrechen? Deine Angaben gehen verloren, wenn Du jetzt abbrichst.');
+  }
+</script>
 {% endblock content %}

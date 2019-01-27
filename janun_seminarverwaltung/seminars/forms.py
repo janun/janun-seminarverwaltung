@@ -6,10 +6,10 @@ from django.conf import settings
 from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Fieldset
-from crispy_forms.bootstrap import Tab, TabHolder
+from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
+from crispy_forms.bootstrap import Tab, TabHolder, AppendedText
 
-from widgets import HTML5DateInput
+from widgets import HTML5DateInput, HTML5TimeInput
 
 from seminars.models import Seminar, SeminarComment
 
@@ -32,12 +32,16 @@ class DeleteForm(forms.Form):
 
 class SeminarChangeForm(forms.ModelForm):
     tage_insg = forms.IntegerField(label="Kalendartage", required=False)
-    ausgaben_insg = forms.DecimalField(label="Ausgaben", required=False)
-    einnahmen_insg = forms.DecimalField(label="Einnahmen", required=False)
-    foerderbedarf = forms.DecimalField(label="Förderbedarf", required=False)
+    ausgaben_insg = forms.DecimalField(label="Ausgaben insg.", required=False)
+    einnahmen_insg = forms.DecimalField(label="Einnahmen insg.", required=False)
+    ausgaben_minus_einnahmen = forms.DecimalField(label="Ausgb.-Einnn.", required=False)
     resterstattung = forms.DecimalField(label="Resterstattung", required=False)
     foerdersatz = forms.DecimalField(label="Fördersatz", required=False)
+    zugesagte_foerderung = forms.DecimalField(label="Zuges. Förderung", required=False)
     foerder_max = forms.DecimalField(label="Max. Förderung", required=False)
+    planned_training_days2 = forms.IntegerField(label="Gepl. Bildungstage", required=False)
+    planned_attendees = forms.IntegerField(label="Geplante TN", required=False)
+
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -77,55 +81,56 @@ class SeminarChangeForm(forms.ModelForm):
                    ),
 
                 Tab('Abrechnung',
+                    Fieldset("Förderung",
+                        Div(
+                            Div(AppendedText('foerdersatz', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('foerder_max', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_minus_einnahmen', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('zugesagte_foerderung', '€'), css_class='col-lg-2'),
+                            css_class='row'
+                        ),
+                        Div(
+                            Div(AppendedText('foerderbedarf', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('vorschuss', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('resterstattung', '€'), css_class='col-lg-2 ml-auto'),
+                            css_class='row'
+                        )
+                    ),
                     Fieldset("Ausgaben",
                         Div(
-                            Div('ausgaben_verpflegung', css_class='col-md-2'),
-                            Div('ausgaben_unterkunft', css_class='col-md-2'),
-                            Div('ausgaben_referenten', css_class='col-md-2'),
-                            Div('ausgaben_fahrtkosten', css_class='col-md-2'),
-                            Div('ausgaben_sonstiges', css_class='col-md-2'),
-                            Div('ausgaben_insg', css_class='ml-auto col-md-2'),
+                            Div(AppendedText('ausgaben_verpflegung', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_unterkunft', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_referenten', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_fahrtkosten', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_sonstiges', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('ausgaben_insg', '€'), css_class='ml-auto col-lg-2'),
                             css_class='row'
                         )
                     ),
                     Fieldset("Einnahmen",
                         Div(
-                            Div('einnahmen_beitraege', css_class='col-md-2'),
-                            Div('einnahmen_oeffentlich', css_class='col-md-2'),
-                            Div('einnahmen_sonstiges', css_class='col-md-2'),
-                            Div('einnahmen_insg', css_class='ml-auto col-md-2'),
+                            Div(AppendedText('einnahmen_beitraege', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('einnahmen_oeffentlich', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('einnahmen_sonstiges', '€'), css_class='col-lg-2'),
+                            Div(AppendedText('einnahmen_insg', '€'), css_class='ml-auto col-lg-2'),
                             css_class='row'
                         )
                     ),
                     Fieldset("Teilnehmende (TN)",
                         Div(
-                            Div('tn_total', css_class='col-md-2'),
-                            Div('tn_jfg', css_class='col-md-2'),
-                            Div('landkreise', css_class='col-md-2'),
+                            Div('planned_attendees', css_class='col-lg-2'),
+                            Div('tn_total', css_class='col-lg-2'),
+                            Div('tn_jfg', css_class='col-lg-2'),
+                            Div('landkreise', css_class='col-lg-2'),
                             css_class='row'
                         )
                     ),
-                    # Fieldset("Tage",
-                    #     Div(
-                    #         Div('tage_insg', css_class='col-md-2'),
-                    #         Div('training_days', css_class='col-md-2'),
-                    #         css_class='row'
-                    #     )
-                    # ),
                     Fieldset("Teilnahmetage (TNT)",
                         Div(
-                            Div('tnt_jfg', css_class='col-md-2'),
-                            Div('tnt_total', css_class='col-md-2'),
-                            css_class='row'
-                        )
-                    ),
-                    Fieldset("Förderung",
-                        Div(
-                            Div('foerdersatz', css_class='col-md-2'),
-                            Div('foerder_max', css_class='col-md-2'),
-                            Div('foerderbedarf', css_class='col-md-2'),
-                            Div('vorschuss', css_class='col-md-2'),
-                            Div('resterstattung', css_class='col-md-2'),
+                            Div('planned_training_days2', css_class='col-lg-2'),
+                            Div('training_days', css_class='col-lg-2'),
+                            Div('tnt_jfg', css_class='col-lg-2'),
+                            Div('tnt_total', css_class='col-lg-2'),
                             css_class='row'
                         )
                     ),
@@ -140,24 +145,44 @@ class SeminarChangeForm(forms.ModelForm):
         self.fields['ausgaben_insg'].initial = self.instance.ausgaben
         self.fields['einnahmen_insg'].widget.attrs['readonly'] = True
         self.fields['einnahmen_insg'].initial = self.instance.einnahmen
-        self.fields['foerderbedarf'].widget.attrs['readonly'] = True
-        self.fields['foerderbedarf'].initial = self.instance.foerderbedarf
+        self.fields['ausgaben_minus_einnahmen'].widget.attrs['readonly'] = True
+        self.fields['ausgaben_minus_einnahmen'].initial = self.instance.ausgaben_minus_einnahmen
         self.fields['resterstattung'].widget.attrs['readonly'] = True
         self.fields['resterstattung'].initial = self.instance.resterstattung
         self.fields['foerdersatz'].widget.attrs['readonly'] = True
         self.fields['foerdersatz'].initial = self.instance.rate
         self.fields['foerder_max'].widget.attrs['readonly'] = True
         self.fields['foerder_max'].initial = self.instance.max_funding
-
+        self.fields['zugesagte_foerderung'].widget.attrs['readonly'] = True
+        self.fields['zugesagte_foerderung'].initial = self.instance.requested_funding
+        self.fields['planned_training_days2'].widget.attrs['readonly'] = True
+        self.fields['planned_training_days2'].initial = self.instance.planned_training_days
+        self.fields['planned_attendees'].widget.attrs['readonly'] = True
+        self.fields['planned_attendees'].initial = self.instance.planned_attendees_max
 
         # disable editing for teamers if state not angemeldet:
         if not self.request or (self.request.user.role == 'TEAMER' and self.instance.state != 'ANGEMELDET'):
             for key in self.Meta.fields:
                 self.fields[key].disabled = True
+            self.helper.layout[0][0].insert(0,
+                HTML("""<div class="alert alert-light">
+                    <h5 class="alert-heading">Nicht editierbar</h5>
+                    <p class="mb-0"><b>In diesem Status</b> können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>
+                    Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
+                    </div>
+                """)
+            )
         # disable editing for teamers of abrechnung in any case
         if not self.request or self.request.user.role == 'TEAMER':
             for key in self.Meta.fields_abrechnung:
                 self.fields[key].disabled = True
+            self.helper.layout[0][-1].insert(0,
+                HTML("""<div class="alert alert-light">
+                    <h5 class="alert-heading">Nicht editierbar</h5>
+                    <p class="mb-0">Die Abrechnungsdetails können <b>nicht von Teamern</b> bearbeitet werden.<br>
+                    Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
+                </div>""")
+            )
 
     class Meta:
         model = Seminar
@@ -166,14 +191,16 @@ class SeminarChangeForm(forms.ModelForm):
             'vorschuss', 'training_days', 'ausgaben_verpflegung', 'ausgaben_unterkunft',
             'ausgaben_referenten', 'ausgaben_fahrtkosten', 'ausgaben_sonstiges',
             'einnahmen_beitraege', 'einnahmen_oeffentlich', 'einnahmen_sonstiges',
-            'landkreise',
+            'landkreise', 'foerderbedarf',
         )
         fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
                   'planned_training_days', 'planned_attendees_min', 'planned_attendees_max',
                   'requested_funding', 'group') + fields_abrechnung
         widgets = {
             'start_date': HTML5DateInput,
-            'end_date': HTML5DateInput
+            'start_time': HTML5TimeInput,
+            'end_date': HTML5DateInput,
+            'end_time': HTML5TimeInput,
         }
 
 
@@ -225,13 +252,13 @@ class DatetimeSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             Div(
-                Div('start_date', css_class='col'),
-                Div('start_time', css_class='col'),
+                Div('start_date', css_class='col-md'),
+                Div('start_time', css_class='col-md'),
                 css_class='row'
             ),
             Div(
-                Div('end_date', css_class='col'),
-                Div('end_time', css_class='col'),
+                Div('end_date', css_class='col-md'),
+                Div('end_time', css_class='col-md'),
                 css_class='row'
             ),
         )
@@ -248,7 +275,9 @@ class DatetimeSeminarForm(SeminarStepForm):
         fields = ('start_date', 'start_time', 'end_date', 'end_time')
         widgets = {
             'start_date': HTML5DateInput,
-            'end_date': HTML5DateInput
+            'end_date': HTML5DateInput,
+            'start_time': HTML5TimeInput,
+            'end_time': HTML5TimeInput
         }
 
 

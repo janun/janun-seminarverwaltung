@@ -14,34 +14,29 @@ function debounce(func, wait, immediate) {
 };
 
 
-// submits the form on change
-var filterForms = document.getElementsByClassName('filter-form');
-for (var i=0; i<filterForms.length; i++) {
-  var form = filterForms[i];
+$('.filter-form').each(function () {
+	var form = $(this);
 
-  // submit on select
-  var selects = form.querySelectorAll('select');
-  for (var j=0; j<selects.length; j++) {
-    selects[j].addEventListener('change', function (e) {
-      form.submit();
-    });
-  }
+	// reset on ESC
+	$(document).keyup(function(e) {
+	  if (e.keyCode === 27) {
+			window.location = window.location.href.split("?")[0];
+		}
+	});
 
-  // reset on ESC
-  form.addEventListener('keyup', function (e) {
-    if (e.keyCode === 27) {
-      window.location = window.location.href.split("?")[0];
-    }
-  });
+	// submit on input text change
+	form.find('input[type=text]').each(function () {
+		$(this).change(function () { form.submit(); });
+		$(this).on('input', debounce(function () {form.submit();}, 500));
+	})
 
-  // submit on input text change
-  var inputs = form.querySelectorAll('input[type=text]');
-  for (var j=0; j<inputs.length; j++) {
-    inputs[j].addEventListener('change', function (e) {
-      form.submit();
-    });
-    inputs[j].addEventListener('input',
-      debounce(function (e) {form.submit();}, 300)
-    );
-  }
-}
+	// submit on select change
+	form.find('select').each(function () {
+		$(this).change(function () { form.submit(); });
+	})
+
+	// // submit on autocomplete input change
+	// form.find('input.es-input').each(function () {
+	// 	$(this).on('select.editable-select', function () {form.submit();});
+	// })
+})
