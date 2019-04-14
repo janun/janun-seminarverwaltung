@@ -11,7 +11,10 @@ class JANUNGroupTable(tables.Table):
     )
     name = tables.LinkColumn('groups:detail', args=[A('pk')], attrs={'a': {'class': 'font-weight-bold'}})
     tnt_this_year = tables.Column(verbose_name="TNT (dieses Jahr)", attrs={'cell': {'class': 'text-right'}})
-    funding_this_year = tables.Column(verbose_name="Förderung (dieses Jahr)", attrs={'cell': {'class': 'text-right'}})
+    funding_this_year = tables.TemplateColumn(
+        """{{ record.funding_this_year|default:0|default_if_none:'?'|floatformat:2 }} €""",
+        verbose_name="Förderung (dieses Jahr)", attrs={'cell': {'class': 'text-right'}}
+    )
     group_hats = tables.ManyToManyColumn(linkify_item=True)
 
     class Meta:

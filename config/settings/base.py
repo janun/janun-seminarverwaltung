@@ -383,4 +383,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-FILTERS_EMPTY_CHOICE_LABEL = ''
+FILTERS_EMPTY_CHOICE_LABEL = 'Alle'

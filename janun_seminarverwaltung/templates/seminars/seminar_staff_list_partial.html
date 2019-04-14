@@ -1,0 +1,14 @@
+{% load django_tables2 %}
+<div id="result" class="mx-neg">
+  <div class="float-lg-left">
+    {% if count != total_count %}
+      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
+    {% endif %}
+    <small style="font-size: 0.9rem; color: #888" class="ml-1">{{ total_count }} insgesamt</small>
+    <a id="exportLink" class="btn btn-sm btn-link text-secondary font-weight-bold" href="{% querystring 'export'='ods' %}">Export</a>
+  </div>
+
+  <div class="table-responsive-lg">
+    {% render_table table %}
+  </div>
+</div>

@@ -7,13 +7,9 @@
 {% block content %}
 
 {% has_perm 'groups.add_janungroup' user as can_add %}
-<div class="clearfix my-4">
-  <h1 class="float-left h3 text-body">
+<div class="clearfix">
+  <h1 class="float-left h3">
     Alle Gruppen
-    {% if count != total_count %}
-      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
-    {% endif %}
-    <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
   </h1>
   {% if can_add %}
     <a href="{% url 'groups:create' %}" class="float-md-right btn btn-outline-primary">
@@ -22,9 +18,18 @@
   {% endif %}
 </div>
 
-<form class="filter-form" style="max-width:300px" action="" method="get">
+<form class="filter-form" action="" method="get">
   {{ filter.form|crispy }}
+  <span>
+    <a class="btn btn-sm btn-link text-secondary" href="?">Reset</a>
+    <button class="btn btn-sm btn-outline-secondary" type="submit">Filter</button>
+  </span>
 </form>
+
+{% if count != total_count %}
+  <small style="font-size: 0.9rem; color: #666" class="mr-1">{{ count }} gefunden</small>
+{% endif %}
+<small style="font-size: 0.9rem; color: #999">{{ total_count }} insgesamt</small>
 
 <div class="mx-neg my-4">
   <div class="table-responsive-lg">

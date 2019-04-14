@@ -4,7 +4,11 @@
   }
 }
 
-
 #div_id_is_internal {
   float: left;
+}
+
+// prevent jumping
+html {
+  overflow-y: scroll;
 }

@@ -5,7 +5,6 @@
 {% block title %}{{ block.super }} Deine Gruppen{% endblock %}
 
 {% block content %}
-
 <div class="clearfix">
   <h1 class="float-left h3 text-body">
     Deine Gruppen
@@ -14,14 +13,11 @@
 
 {% include "users/_callout_not_reviewed.html" with user=request.user %}
 
-<div>
-  {% for group in object_list %}
-    <div class="my-3">
-      {% include "groups/_group.html" with object=group %}
-    </div>
-  {% empty %}
-    <p>Du bist in keiner Gruppe Mitglied</p>
-  {% endfor %}
-</div>
-
+{% for group in object_list %}
+  <div class="my-3">
+    {% include "groups/_group.html" with object=group %}
+  </div>
+{% empty %}
+  <p>Du bist in keiner Gruppe Mitglied</p>
+{% endfor %}
 {% endblock %}

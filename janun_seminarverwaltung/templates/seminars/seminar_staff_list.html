@@ -7,63 +7,60 @@
 
 {% block title %}{{ block.super }} Alle Seminare{% endblock %}
 
-{% block container_class %}container-fluid{% endblock %}
 
 {% block content %}
-<div class="pt-4">
-
-  <div class="clearfix">
-    <h1 class="float-left h3 text-body">
-      Alle Seminare
-      {% if count != total_count %}
-        <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
-      {% endif %}
-      <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
-    </h1>
-    <div class="float-md-right">
-      <a class="ml-3 btn btn-outline-primary" href="{% url 'seminars:create' %}">
-        <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
-        Seminar anmelden
-      </a>
-    </div>
+<div class="clearfix">
+  <h1 class="float-left h3">Alle Seminare</h1>
+  <div class="float-md-right">
+    <a class="btn btn-outline-primary" href="{% url 'seminars:create' %}">
+      <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
+      Seminar anmelden
+    </a>
   </div>
-
-  <a class="mt-3 d-xl-none btn btn-sm btn-secondary" data-toggle="collapse" href="#filters" role="button" aria-expanded="false" aria-controls="filters">
-    Filter-Optionen
-  </a>
-
-  <div class="row my-4">
-
-    <div id="filters" class="d-xl-block col-xl my-3 order-xl-9 mmw-xl-300 collapse">
-      <h4 style="font-size: 12px; margin-top: 6px; margin-bottom: 22px; font-weight:bold; color:#9ba197">Filter</h4>
-      <div class="card">
-        <div class="card-body">
-          <form class="filter-form" action="" method="get">
-            {% crispy filter.form %}
-            <div class="mt-4">
-              <a class="btn btn-link text-secondary pl-0" href="?">Reset</a>
-              <button class="btn btn-outline-primary float-right">Filter</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <h4 style="font-size: 12px; margin-top: 30px; margin-bottom: 0px; font-weight:bold; color:#9ba197">Export</h4>
-      <a class="my-3 btn btn-outline-secondary font-weight-normal" href="{% querystring 'export'='ods' %}">
-        <span style="margin-left: -8px">{% svg 'icon-arrow-thin-down-circle' %}</span>
-        {{ count }} exportieren
-      </a>
-    </div>
-
-    <div class="col-xl">
-      <div class="mx-neg">
-        <div class="table-responsive-lg">
-          {% render_table table %}
-        </div>
-      </div>
-    </div>
-
-  </div>
-
 </div>
+
+<a class="my-3 d-lg-none btn btn-sm btn-secondary" data-toggle="collapse" href="#filters" role="button" aria-expanded="false" aria-controls="filters">
+  Filter-Optionen
+</a>
+
+<form id="filters" class="d-lg-block filter-form collapse" action="" method="get">
+  {% crispy filter.form %}
+  <span class="">
+    <a class="btn btn-sm btn-link text-secondary" href="?">Reset</a>
+    <button class="btn btn-sm btn-outline-secondary" type="submit">Filter</button>
+  </span>
+</form>
+
+{% include "seminars/seminar_staff_list_partial.html" %}
+
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+
+<script>
+function openURL(url) {
+  $.get(url, function (response) {
+    $('#result').replaceWith(response);
+    window.history.replaceState({"url": url}, "", url);
+    registerDataLinks();
+  });
+}
+
+function submitFilterForm(form) {
+  openURL("?" + form.serialize());
+}
+
+var form = $('#filters')
+form.find('input[type=text], input[type=number], select').each(function () {
+	$(this).change(function() {submitFilterForm(form)});
+	$(this).on('input', debounce(function () {submitFilterForm(form)}, 300));
+});
+
+$(document).keyup(function(e) {
+  if (e.keyCode === 27) {
+		window.location = window.location.href.split("?")[0];
+	}
+});
+</script>
 {% endblock %}

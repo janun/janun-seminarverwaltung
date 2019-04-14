@@ -7,14 +7,8 @@
 {% block title %}{{ block.super }} Benutzer_innen{% endblock %}
 
 {% block content %}
-<div class="clearfix my-4">
-  <h1 class="float-left h3 text-body">
-    Benutzer_innen
-    {% if count != total_count %}
-      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
-    {% endif %}
-    <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
-  </h1>
+<div class="clearfix">
+  <h1 class="float-left h3">Benutzer_innen</h1>
   <a class="btn btn-outline-primary float-md-right" href="{% url 'users:create' %}">
     <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
     Benutzer_in hinzufügen
@@ -23,7 +17,16 @@
 
 <form class="filter-form" action="" method="get">
   {% crispy filter.form %}
+  <span>
+    <a class="btn btn-sm btn-link text-secondary" href="?">Reset</a>
+    <button class="btn btn-sm btn-outline-secondary" type="submit">Filter</button>
+  </span>
 </form>
+
+{% if count != total_count %}
+  <small style="font-size: 0.9rem; color: #666" class="mr-1">{{ count }} gefunden</small>
+{% endif %}
+<small style="font-size: 0.9rem; color: #999">{{ total_count }} insgesamt</small>
 
 <div class="mx-neg my-4">
   <div class="table-responsive-lg">

@@ -12,9 +12,10 @@ $table-row-height: 75px;
     text-overflow: ellipsis;
     overflow: hidden;
 
-    max-width: 200px;
-    @media (min-width: 1300px) {
-      max-width: 300px;
+    max-width: 150px;
+    &.primary-column {
+      max-width: 350px;
+      font-weight: bold;
     }
 
     &:first-child {
@@ -26,12 +27,13 @@ $table-row-height: 75px;
 
     // show abbreviated cells on hover
     &:hover {
-      position: relative;
       overflow: visible;
       a {
         position: relative;
         background: #fbfbfb;
         z-index: 5;
+        padding-right: 20px;
+        margin-right: -20px;
       }
     }
   }
@@ -79,6 +81,7 @@ $table-row-height: 75px;
     a {
       color: $gray6;
       &:hover {
+        color: $gray8;
         text-decoration: none;
       }
     }
@@ -88,8 +91,8 @@ $table-row-height: 75px;
     color: $brown;
   }
 
-
   .asc a {
+    color: $gray8;
     &:after {
       content: "↑";
       margin-left: 5px;
@@ -97,6 +100,7 @@ $table-row-height: 75px;
   }
 
   .desc a {
+    color: $gray8;
     &:after {
       content: "↓";
       margin-left: 5px;

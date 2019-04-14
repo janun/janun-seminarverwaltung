@@ -1,9 +1,22 @@
 {% load crispy_forms_tags %}
 
-<form action="" method="post">
+<form id="fields" action="" method="post">
   <div class="card my-4 mx-neg" style="min-height: 400px">
-    {% csrf_token %}
-    {% crispy form %}
+    <div class="card-header card-tabs-header">
+      <input class="btn btn-primary float-right mt-2" type="submit" value="Speichern">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'detail' %}active{% endif %}" href="{% url 'seminars:detail' object.pk %}#fields">Allgemeines</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'abrechnung' %}active{% endif %}" href="{% url 'seminars:abrechnung' object.pk %}#fields">Abrechnung</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      {% csrf_token %}
+      {% crispy form %}
+    </div>
     <div class="card-footer">
       <input class="btn btn-primary float-right" type="submit" value="Speichern">
     </div>
@@ -11,7 +24,7 @@
 </form>
 
 <style>
-#abrechnung .optionalField {
+.optionalField {
   display: none;
 }
 </style>

@@ -31,6 +31,83 @@ class DeleteForm(forms.Form):
 
 
 class SeminarChangeForm(forms.ModelForm):
+
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset("",
+                'title',
+                'content',
+            ),
+            Fieldset("Zeit & Ort",
+                Div(
+                    Div('start_date', css_class='col col-md-3'),
+                    Div('start_time', css_class='col col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('end_date', css_class='col col-md-3'),
+                    Div('end_time', css_class='col col-md-3'),
+                    css_class='row'
+                ),
+                'location',
+            ),
+            Fieldset("Förderung",
+                'planned_training_days',
+                Div(
+                    Div('planned_attendees_min', css_class='col col-md-3'),
+                    Div('planned_attendees_max', css_class='col col-md-3'),
+                    css_class='row'
+                ),
+                'group',
+                'requested_funding',
+            )
+        )
+
+
+        # disable editing for teamers if state not angemeldet:
+        if not self.request or (self.request.user.role == 'TEAMER' and self.instance.state != 'ANGEMELDET'):
+            for key in self.Meta.fields:
+                self.fields[key].disabled = True
+            self.helper.layout[0][0].insert(0,
+                HTML("""<div class="alert alert-light">
+                    <h5 class="alert-heading">Nicht editierbar</h5>
+                    <p class="mb-0"><b>In diesem Status</b> können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>
+                    Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
+                    </div>
+                """)
+            )
+        # disable editing for teamers of abrechnung in any case
+        # if not self.request or self.request.user.role == 'TEAMER':
+        #     for key in self.Meta.fields_abrechnung:
+        #         self.fields[key].disabled = True
+        #     self.helper.layout[0][-1].insert(0,
+        #         HTML("""<div class="alert alert-light">
+        #             <h5 class="alert-heading">Nicht editierbar</h5>
+        #             <p class="mb-0">Die Abrechnungsdetails können <b>nicht von Teamern</b> bearbeitet werden.<br>
+        #             Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
+        #         </div>""")
+        #     )
+
+    class Meta:
+        model = Seminar
+        fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
+                  'planned_training_days', 'planned_attendees_min', 'planned_attendees_max',
+                  'requested_funding', 'group')
+        widgets = {
+            'start_date': HTML5DateInput,
+            'start_time': HTML5TimeInput,
+            'end_date': HTML5DateInput,
+            'end_time': HTML5TimeInput,
+        }
+
+
+class SeminarAbrechnungForm(forms.ModelForm):
     tage_insg = forms.IntegerField(label="Kalendartage", required=False)
     ausgaben_insg = forms.DecimalField(label="Ausgaben insg.", required=False)
     einnahmen_insg = forms.DecimalField(label="Einnahmen insg.", required=False)
@@ -49,95 +126,62 @@ class SeminarChangeForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            TabHolder(
-                Tab('Inhalt',
-                    'title',
-                    'content',
-                   ),
-
-                Tab('Zeit & Ort',
-                    Div(
-                        Div('start_date', css_class='col col-md-3'),
-                        Div('start_time', css_class='col col-md-3'),
-                        css_class='row'
-                    ),
-                    Div(
-                        Div('end_date', css_class='col col-md-3'),
-                        Div('end_time', css_class='col col-md-3'),
-                        css_class='row'
-                    ),
-                    'location',
-                   ),
-
-                Tab('Förderung',
-                    'planned_training_days',
-                    Div(
-                        Div('planned_attendees_min', css_class='col col-md-3'),
-                        Div('planned_attendees_max', css_class='col col-md-3'),
-                        css_class='row'
-                    ),
-                    'group',
-                    'requested_funding',
-                   ),
-
-                Tab('Abrechnung',
-                    Fieldset("Förderung",
-                        Div(
-                            Div(AppendedText('foerdersatz', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('foerder_max', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_minus_einnahmen', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('zugesagte_foerderung', '€'), css_class='col-lg-2'),
-                            css_class='row'
-                        ),
-                        Div(
-                            Div(AppendedText('foerderbedarf', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('vorschuss', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('resterstattung', '€'), css_class='col-lg-2 ml-auto'),
-                            css_class='row'
-                        )
-                    ),
-                    Fieldset("Ausgaben",
-                        Div(
-                            Div(AppendedText('ausgaben_verpflegung', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_unterkunft', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_referenten', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_fahrtkosten', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_sonstiges', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('ausgaben_insg', '€'), css_class='ml-auto col-lg-2'),
-                            css_class='row'
-                        )
-                    ),
-                    Fieldset("Einnahmen",
-                        Div(
-                            Div(AppendedText('einnahmen_beitraege', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('einnahmen_oeffentlich', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('einnahmen_sonstiges', '€'), css_class='col-lg-2'),
-                            Div(AppendedText('einnahmen_insg', '€'), css_class='ml-auto col-lg-2'),
-                            css_class='row'
-                        )
-                    ),
-                    Fieldset("Teilnehmende (TN)",
-                        Div(
-                            Div('planned_attendees', css_class='col-lg-2'),
-                            Div('tn_total', css_class='col-lg-2'),
-                            Div('tn_jfg', css_class='col-lg-2'),
-                            Div('landkreise', css_class='col-lg-2'),
-                            css_class='row'
-                        )
-                    ),
-                    Fieldset("Teilnahmetage (TNT)",
-                        Div(
-                            Div('planned_training_days2', css_class='col-lg-2'),
-                            Div('training_days', css_class='col-lg-2'),
-                            Div('tnt_jfg', css_class='col-lg-2'),
-                            Div('tnt_total', css_class='col-lg-2'),
-                            css_class='row'
-                        )
-                    ),
-                    'verwendungsnachweis',
-                  )
-            )
+            Fieldset("Förderung",
+                Div(
+                    Div(AppendedText('foerdersatz', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('foerder_max', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_minus_einnahmen', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('zugesagte_foerderung', '€'), css_class='col-lg-2'),
+                    css_class='row'
+                ),
+                Div(
+                    Div(AppendedText('foerderbedarf', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('vorschuss', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('resterstattung', '€'), css_class='col-lg-2 ml-auto'),
+                    css_class='row'
+                )
+            ),
+            Fieldset("Ausgaben",
+                Div(
+                    Div(AppendedText('ausgaben_verpflegung', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_unterkunft', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_referenten', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_fahrtkosten', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_sonstiges', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('ausgaben_insg', '€'), css_class='ml-auto col-lg-2'),
+                    css_class='row'
+                )
+            ),
+            Fieldset("Einnahmen",
+                Div(
+                    Div(AppendedText('einnahmen_beitraege', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('einnahmen_oeffentlich', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('einnahmen_sonstiges', '€'), css_class='col-lg-2'),
+                    Div(AppendedText('einnahmen_insg', '€'), css_class='ml-auto col-lg-2'),
+                    css_class='row'
+                )
+            ),
+            Fieldset("Teilnehmende (TN)",
+                Div(
+                    Div('planned_attendees', css_class='col-lg-2'),
+                    Div('tn_total', css_class='col-lg-2'),
+                    Div('tn_jfg', css_class='col-lg-2'),
+                    Div('landkreise', css_class='col-lg-2'),
+                    css_class='row'
+                )
+            ),
+            Fieldset("Teilnahmetage (TNT)",
+                Div(
+                    Div('planned_training_days2', css_class='col-lg-2'),
+                    Div('training_days', css_class='col-lg-2'),
+                    Div('tnt_jfg', css_class='col-lg-2'),
+                    Div('tnt_total', css_class='col-lg-2'),
+                    css_class='row'
+                )
+            ),
+            'verwendungsnachweis',
         )
+
         # calculated dummy fields
         self.fields['tage_insg'].widget.attrs['readonly'] = True
         self.fields['tage_insg'].initial = self.instance.get_duration()
@@ -160,48 +204,15 @@ class SeminarChangeForm(forms.ModelForm):
         self.fields['planned_attendees'].widget.attrs['readonly'] = True
         self.fields['planned_attendees'].initial = self.instance.planned_attendees_max
 
-        # disable editing for teamers if state not angemeldet:
-        if not self.request or (self.request.user.role == 'TEAMER' and self.instance.state != 'ANGEMELDET'):
-            for key in self.Meta.fields:
-                self.fields[key].disabled = True
-            self.helper.layout[0][0].insert(0,
-                HTML("""<div class="alert alert-light">
-                    <h5 class="alert-heading">Nicht editierbar</h5>
-                    <p class="mb-0"><b>In diesem Status</b> können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>
-                    Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
-                    </div>
-                """)
-            )
-        # disable editing for teamers of abrechnung in any case
-        if not self.request or self.request.user.role == 'TEAMER':
-            for key in self.Meta.fields_abrechnung:
-                self.fields[key].disabled = True
-            self.helper.layout[0][-1].insert(0,
-                HTML("""<div class="alert alert-light">
-                    <h5 class="alert-heading">Nicht editierbar</h5>
-                    <p class="mb-0">Die Abrechnungsdetails können <b>nicht von Teamern</b> bearbeitet werden.<br>
-                    Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
-                </div>""")
-            )
-
     class Meta:
         model = Seminar
-        fields_abrechnung = (
+        fields = (
             'verwendungsnachweis', 'tn_total', 'tn_jfg', 'tnt_total', 'tnt_jfg',
             'vorschuss', 'training_days', 'ausgaben_verpflegung', 'ausgaben_unterkunft',
             'ausgaben_referenten', 'ausgaben_fahrtkosten', 'ausgaben_sonstiges',
             'einnahmen_beitraege', 'einnahmen_oeffentlich', 'einnahmen_sonstiges',
             'landkreise', 'foerderbedarf',
         )
-        fields = ('title', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'content',
-                  'planned_training_days', 'planned_attendees_min', 'planned_attendees_max',
-                  'requested_funding', 'group') + fields_abrechnung
-        widgets = {
-            'start_date': HTML5DateInput,
-            'start_time': HTML5TimeInput,
-            'end_date': HTML5DateInput,
-            'end_time': HTML5TimeInput,
-        }
 
 
 class SeminarCommentForm(forms.ModelForm):

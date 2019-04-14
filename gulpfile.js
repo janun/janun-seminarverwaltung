@@ -33,29 +33,31 @@ var paths = pathsConfig();
 
 
 const styles = function(cb) {
-  return src(paths.sass + '/project.scss', {sourcemaps: true})
+  return src(paths.sass + '/project.scss')
     .pipe(sassGlob())
     .pipe(sass({includePaths: [paths.sass, paths.nodeModules]}).on('error', sass.logError))
     .pipe(plumber())
     .pipe(autoprefixer())
     .pipe(pixrem())
-    .pipe(dest(paths.css, {sourcemaps: true}))
+    // .pipe(dest(paths.css))
     .pipe(rename({ suffix: '.min' }))
     .pipe(cssnano())
-    .pipe(dest(paths.css, {sourcemaps: true}));
+    .pipe(dest(paths.css));
 };
 
 const scripts = function(cb) {
   return src([
-      paths.nodeModules + 'jquery/dist/jquery.slim.js',
+      paths.nodeModules + 'jquery/dist/jquery.js',
+      // paths.nodeModules + 'zepto/dist/zepto.js',
       // paths.nodeModules + 'popper.js/dist/umd/popper.js',
       paths.nodeModules + 'bootstrap/dist/js/bootstrap.bundle.js',
-    ], {sourcemaps: true})
-    .pipe(src([paths.js + '/**/*.js', '!**/*.min.js'], {sourcemaps: true}))
+      paths.nodeModules + 'jquery.are-you-sure/jquery.are-you-sure.js',
+    ])
+    .pipe(src([paths.js + '/**/*.js', '!**/*.min.js']))
     .pipe(concat("project.min.js"))
     .pipe(plumber())
     .pipe(uglify())
-    .pipe(dest(paths.js, {sourcemaps: true}));
+    .pipe(dest(paths.js));
 };
 
 const imgCompression = function(cb) {

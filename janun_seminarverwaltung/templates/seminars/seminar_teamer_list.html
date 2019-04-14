@@ -9,13 +9,7 @@
 
 {% block content %}
 <div class="clearfix">
-  <h1 class="float-left h3 text-body">
-    Deine Seminare
-    {% if count != total_count %}
-      <small style="font-size: 0.9rem; color: #666" class="ml-1">{{ count }} gefunden</small>
-    {% endif %}
-    <small style="font-size: 0.9rem; color: #999" class="ml-1">{{ total_count }} insgesamt</small>
-  </h1>
+  <h1 class="float-left h3 text-body">Deine Seminare</h1>
   <a class="btn btn-primary float-md-right" href="{% url 'seminars:create' %}">
     <span style="margin-left: -8px">{% svg 'icon-add' %}</span>
     Seminar anmelden
@@ -26,8 +20,11 @@
   <form class="filter-form my-3" style="max-width: 300px" action="" method="get">
     {{ filter.form|crispy }}
   </form>
+  {% if count != total_count %}
+    <small style="font-size: 0.9rem; color: #666" class="mr-1">{{ count }} gefunden</small>
+  {% endif %}
+  <small style="font-size: 0.9rem; color: #999">{{ total_count }} insgesamt</small>
 {% endif %}
-
 
 {% if total_count != 0 %}
   {% if object_list %}

@@ -29,23 +29,16 @@ class UserFilter(django_filters.FilterSet):
         choices=User.ROLES,
     )
     group = django_filters.ModelChoiceFilter(
-        label="Gruppe", queryset=JANUNGroup.objects.all(), method=filter_group,
+        label="Gruppe", queryset=JANUNGroup.objects.order_by('name').all(), method=filter_group,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filters['name'].field.widget.attrs['autofocus'] = 'autofocus'
+        self.filters['name'].field.widget.attrs['autocomplete'] = 'off'
         self.form.helper = FormHelper()
         self.form.helper.form_tag = False
         self.form.helper.disable_csrf = True
-        self.form.helper.layout = Layout(
-            Div(
-                Div('name', css_class='col-lg'),
-                Div('role', css_class='col-lg'),
-                Div('group', css_class='col-lg'),
-                css_class='row'
-            )
-        )
 
     class Meta:
         model = User

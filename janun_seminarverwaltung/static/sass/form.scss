@@ -1,4 +1,4 @@
-input, textarea {
+input, textarea, select {
   max-width: 640px;
 }
 
@@ -6,6 +6,9 @@ label {
   color: #646464;
 }
 
+.custom-select {
+  display: block;
+}
 
 .form-control:disabled, .form-control[readonly],
 .form-control[readonly] + .input-group-append .input-group-text,
@@ -61,7 +64,17 @@ legend {
 
 .numberinput {
   max-width: 150px;
-  // text-align: right;
+  text-align: right;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 
@@ -70,9 +83,9 @@ legend {
 //   max-width: 200px;
 // }
 
-#id_location.textinput {
-  max-width: 350px;
-}
+// #id_location.textinput {
+//   max-width: 350px;
+// }
 
 small.form-text {
   margin-bottom: 5px;

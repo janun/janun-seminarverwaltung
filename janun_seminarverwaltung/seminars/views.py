@@ -21,6 +21,7 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 from django_fsm import has_transition_perm
 
 from janun_seminarverwaltung.users.models import get_verwalter_mails
+from groups.models import JANUNGroup
 from seminars.models import Seminar, SeminarComment
 from seminars.tables import SeminarTable
 from seminars.filters import SeminarTeamerFilter, SeminarStaffFilter
@@ -95,6 +96,8 @@ class SeminarStaffListView(SingleTableMixin, ExportMixin, FilterView):
         export_param = request.GET.get('export', None)
         if export_param == 'ods':
             return self.export(request, *args, **kwargs)
+        if request.is_ajax():
+            self.template_name = "seminars/seminar_staff_list_partial.html"
         return super().get(request, *args, **kwargs)
 
 
@@ -105,6 +108,48 @@ class SeminarDetailView(PermissionRequiredMixin, SelectRelatedMixin, ModelFormMi
     raise_exception = True
     template_name_suffix = '_detail'
     form_class = seminar_forms.SeminarChangeForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['available_transitions'] = list(self.object.get_available_user_state_transitions(user))
+        if self.request.user.has_perm('seminars.see_internal_comment'):
+            context['comments'] = self.object.comments.all()
+        else:
+            context['comments'] = self.object.comments.filter(is_internal=False)
+        context['comment_form'] = seminar_forms.SeminarCommentForm(request=self.request)
+        context['delete_form'] = seminar_forms.DeleteForm()
+        # context['change_form'] = self.get_form()
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Deine Änderungen wurden gespeichert.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Es gab Probleme beim Speichern. Schau in’s Formular.")
+        return super().form_invalid(form)
+
+
+class SeminarAbrechnungDetailView(PermissionRequiredMixin, SelectRelatedMixin, ModelFormMixin, DetailView):
+    model = Seminar
+    select_related = ['author', 'group']
+    permission_required = 'seminars.detail_seminar'
+    raise_exception = True
+    template_name_suffix = '_detail'
+    form_class = seminar_forms.SeminarAbrechnungForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -174,14 +219,6 @@ class SeminarCommentDeleteView(PermissionRequiredMixin, DeleteView):
         context['seminar'] = get_object_or_404(Seminar, pk=self.kwargs['seminar_pk'])
         context['comment'] = context['object']
         return context
-
-
-class SeminarEditView(PermissionRequiredMixin, UpdateView):
-    model = Seminar
-    permission_required = 'seminars.change_seminar'
-    raise_exception = True
-    form_class = seminar_forms.SeminarChangeForm
-    template_name_suffix = '_edit_form'
 
 
 class SeminarChangeStateView(DetailView):
