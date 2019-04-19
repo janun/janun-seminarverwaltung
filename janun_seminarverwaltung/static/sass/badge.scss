@@ -1,9 +1,0 @@
-.badge-pill {
-  padding: 7px 12px;
-  @each $color, $value in $theme-colors {
-    &.badge-#{$color} {
-      background: lighten(desaturate($value, 35%), 40%);
-      color: $gray-700;
-    }
-  }
-}

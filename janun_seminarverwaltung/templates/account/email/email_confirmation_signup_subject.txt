@@ -1,3 +1,0 @@
-{% autoescape off %}
-Willkommen bei der JANUN-Seminarverwaltung
-{% endautoescape %}

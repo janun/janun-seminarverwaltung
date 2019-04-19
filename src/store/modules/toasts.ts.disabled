@@ -1,0 +1,76 @@
+const state = {
+  toasts: []
+};
+
+const getters = {
+  toasts(state) {
+    return state.toasts;
+  },
+  getToast(state) {
+    return function(id) {
+      const idx = state.toasts.findIndex(obj => obj.id === id);
+      if (idx > -1) return state.toasts[idx];
+      return null;
+    };
+  }
+};
+
+const mutations = {
+  addToast(state, toast) {
+    state.toasts.push(toast);
+  },
+  removeToast(state, id) {
+    state.toasts = state.toasts.filter(toast => toast.id !== id);
+  },
+  updateToast(state, toast) {
+    const idx = state.toasts.findIndex(obj => obj.id === toast.id);
+    state.toasts[idx] = toast;
+  }
+};
+
+const actions = {
+  toast({ commit }, payload) {
+    let toast = payload;
+    if (typeof payload === String) {
+      toast = {
+        message: payload
+      };
+    }
+    toast.id = Date.now();
+    if (toast.duration === undefined) toast.duration = Math.max(0, 75 * toast.message.length + 400);
+    toast.start = new Date();
+    if (toast.duration !== 0) {
+      toast.timeoutId = setTimeout(() => {
+        commit("removeToast", toast.id);
+      }, toast.duration);
+    } else if (toast.close === undefined) {
+      toast.close = true;
+    }
+    commit("addToast", toast);
+  },
+  pauseToast({ commit, getters }, id) {
+    let toast = getters.getToast(id);
+    if (toast.duration !== 0) {
+      clearTimeout(toast.timeoutId);
+      toast.duration -= new Date() - toast.start;
+      commit("updateToast", toast);
+    }
+  },
+  resumeToast({ commit, getters }, id) {
+    let toast = getters.getToast(id);
+    if (toast.duration !== 0) {
+      toast.timeoutId = setTimeout(() => {
+        commit("removeToast", toast.id);
+      }, toast.duration);
+      commit("updateToast", toast);
+    }
+  }
+};
+
+export default {
+  namespaced: false,
+  state,
+  getters,
+  mutations,
+  actions
+};
