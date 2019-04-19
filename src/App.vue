@@ -1,19 +1,22 @@
 <template>
   <div id="app">
     <Navbar />
-    <b-container fluid>
-      <Alerts />
+    <div class="section">
       <router-view />
-    </b-container>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Navbar from "@/components/Navbar.vue";
-import Alerts from "@/components/Alerts.vue";
 
 export default Vue.extend({
-  components: { Navbar, Alerts }
+  components: { Navbar }
 });
 </script>
+
+<style lang="sass">
+  @import "@/assets/styles/bulma.scss"
+</style>
+

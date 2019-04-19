@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 from django.db import models
 from django.core.cache import cache
@@ -115,9 +116,9 @@ class Seminar(models.Model):
 
     @property
     def tnt_cost(self):
-        if self.tnt != 0:
-            return self.requested_funding / self.tnt
-        return 0
+        if self.tnt == 0:
+            return 0
+        return round(Decimal(self.requested_funding / self.tnt), 2)
 
     def __str__(self):
         return self.title

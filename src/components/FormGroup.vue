@@ -1,22 +1,38 @@
 <template>
-  <BFormGroup
-    :invalid-feedback="firstErrorMessage"
-    :state="isValid"
+  <b-field
+    :horizontal="horizontal"
     :label="label"
-    :labelFor="labelFor"
+    :custom-class="customClass"
+    :type="type"
+    :message="[message, firstErrorMessage]"
+    :label-for="labelFor"
   >
-    <slot :attrs="{ state: isValid }" :listeners="{ input: () => preferredValidator.$touch() }" />
-  </BFormGroup>
+    <slot />
+  </b-field>
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import { singleErrorExtractorMixin } from "vuelidate-error-extractor";
 
-export default {
-  name: "FormGroup",
+export default Vue.extend({
   extends: singleErrorExtractorMixin,
   props: {
-    labelFor: { type: String, default: "" }
+    horizontal: { type: Boolean, default: false },
+    labelFor: { type: String, default: "" },
+    message: { type: String, default: "" }
+  },
+  computed: {
+    type(): string | null {
+      return (this as any).hasErrors ? "is-danger" : (this as any).isValid ? "is-success" : null;
+    },
+    customClass(): string | null {
+      return (this as any).hasErrors
+        ? "has-text-danger"
+        : (this as any).isValid
+        ? "has-text-success"
+        : null;
+    }
   }
-};
+});
 </script>

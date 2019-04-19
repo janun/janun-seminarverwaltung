@@ -1,22 +1,24 @@
 <template>
-  <BDropdown class="m-md-2" :variant="active ? 'secondary' : 'outline-secondary'">
-    <template slot="button-content">
-      {{ label }}:
-      <span v-if="!active">Alle</span>
-      <span class="d-inline-flex" style="font-size: 0.9rem;" v-else>
-        {{ value.slice(0, 3).join(", ") }}
-        <template v-if="value.length > 3">
-          , …
-        </template>
-      </span>
-    </template>
-    <BDropdownForm>
-      <BFormCheckboxGroup stacked :checked="value" :name="label" @input="onInput">
-        <BFormCheckbox class="text-nowrap" v-for="option in options" :key="option" :value="option">
-          {{ option }}
-        </BFormCheckbox>
-      </BFormCheckboxGroup>
-    </BDropdownForm>
+  <BDropdown>
+    <button class="button" slot="trigger">
+      <div>
+        {{ label }}:
+        <span v-if="value.length === 0 || value.length === options.length">Alle</span>
+        <span v-else>
+          {{ value.slice(0, 3).join(", ") }}
+          <template v-if="value.length > 3">
+            , …
+          </template>
+        </span>
+      </div>
+      <b-icon icon="menu-down"></b-icon>
+    </button>
+
+    <BDropdownItem custom v-for="option in options" :key="option">
+      <BCheckbox v-model="selectedValues" @input="onInput" :native-value="option">
+        <span style="white-space: nowrap">{{ option }}</span>
+      </BCheckbox>
+    </BDropdownItem>
   </BDropdown>
 </template>
 
@@ -28,14 +30,19 @@ export default Vue.extend({
     value: { type: Array as () => string[], required: true },
     options: { type: Array as () => string[], required: true }
   },
-  methods: {
-    onInput(selectedValues: string[]) {
-      this.$emit("input", selectedValues);
+  data() {
+    return {
+      selectedValues: this.value
+    };
+  },
+  watch: {
+    value(value) {
+      this.selectedValues = value;
     }
   },
-  computed: {
-    active(): boolean {
-      return this.value.length !== 0;
+  methods: {
+    onInput() {
+      this.$emit("input", this.selectedValues);
     }
   }
 });

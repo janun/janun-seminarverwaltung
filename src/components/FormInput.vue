@@ -1,6 +1,12 @@
 <template>
-  <FormGroup :labelFor="'input_' + uuid" :validator="validator" :label="label">
-    <BFormInput
+  <FormGroup
+    :horizontal="horizontal"
+    :label-for="'input_' + uuid"
+    :validator="validator"
+    :label="label"
+    :message="message"
+  >
+    <b-input
       :id="'input_' + uuid"
       slot-scope="{ attrs, listeners }"
       v-bind="{ ...attrs, ...$attrs }"
@@ -21,10 +27,13 @@ export default Vue.extend({
   props: {
     validator: { type: Object as () => Validation, default: undefined },
     label: { type: String, default: "" },
-    value: { type: [String, Number], default: "" }
+    value: { type: [String, Number], default: "" },
+    horizontal: { type: Boolean, default: false },
+    message: { type: String, default: "" }
   },
   methods: {
     onInput(value: string) {
+      this.validator.$touch();
       this.$emit("input", value);
     }
   }

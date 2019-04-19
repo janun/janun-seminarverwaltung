@@ -1,22 +1,25 @@
 <template>
-  <div class="mx-auto" style="max-width: 320px">
-    <h1>Login</h1>
-    <b-form @submit.prevent="login">
-      <b-form-group label="Benutzername" label-for="username">
-        <b-form-input ref="username" id="username" v-model="form.username" />
-      </b-form-group>
-      <b-form-group label="Passwort" label-for="password">
-        <b-form-input id="password" v-model="form.password" type="password" />
-      </b-form-group>
-      <b-button
-        type="submit"
-        variant="primary"
-        :disabled="!form.username || !form.password || loading"
-      >
-        <b-spinner small v-if="loading" label="Loading..."></b-spinner>
-        Login
-      </b-button>
-    </b-form>
+  <div class="container">
+    <div class="box" style="max-width: 320px">
+      <h1 class="title">Login</h1>
+      <form @submit.prevent="login">
+        <b-field label="Benutzername">
+          <b-input ref="username" v-model="form.username" />
+        </b-field>
+        <b-field label="Passwort">
+          <b-input v-model="form.password" type="password" />
+        </b-field>
+
+        <b-button
+          native-type="submit"
+          variant="primary"
+          :disabled="!form.username || !form.password || loading"
+        >
+          <b-spinner small v-if="loading" label="Loading..."></b-spinner>
+          Login
+        </b-button>
+      </form>
+    </div>
   </div>
 </template>
 

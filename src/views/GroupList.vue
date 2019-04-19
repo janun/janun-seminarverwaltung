@@ -1,65 +1,38 @@
 <template>
   <div>
-    <div>
-      <h1>Gruppen</h1>
-      <BFormInput
-        v-model="nameFilter"
-        class="d-inline-block"
-        style="width: auto"
-        placeholder="Filter nach Name"
-      />
-    </div>
+    <h1 class="title">Gruppen</h1>
 
-    <div class="mt-2">
-      <div class="d-flex my-3">
-        <span> {{ rows }} Gruppen gefunden </span>
-      </div>
+    <b-field grouped group-multiline>
+      <b-field>
+        <b-input
+          ref="nameFilter"
+          v-model="nameFilter"
+          style="width: auto"
+          placeholder="Filter nach Name"
+        />
+      </b-field>
+    </b-field>
 
-      <BTable
-        id="group-table"
-        hover
-        :items="filteredGroups"
-        :busy="loading"
-        :fields="fields"
-        primary-key="pk"
-      >
-        <div slot="table-busy" class="text-center text-danger my-2">
-          <BSpinner class="align-middle mr-2"></BSpinner>
-          <strong>Laden...</strong>
-        </div>
-        <div slot="name" slot-scope="{ value, item }">
-          <b-link :to="{ name: 'GroupDetail', params: { id: item.pk } }">
-            {{ value }}
-          </b-link>
-        </div>
-      </BTable>
-    </div>
+    <b-table :data="filteredGroups" hoverable default-sort="name" :loading="loading">
+      <template slot-scope="{ row }">
+        <b-table-column field="name" label="Name" sortable>
+          <router-link :to="{ name: 'GroupDetail', params: { pk: row.pk } }">
+            {{ row.name }}
+          </router-link>
+        </b-table-column>
+      </template>
+    </b-table>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { TableFieldArray } from "bootstrap-vue";
-
 import { Group } from "@/types";
 
 export default Vue.extend({
   data: () => ({
     loading: true,
-    nameFilter: "",
-    fields: [
-      {
-        label: "Nr.",
-        key: "pk",
-        sortable: true
-      },
-      {
-        label: "Name",
-        key: "name",
-        sortable: true,
-        isRowHeader: true
-      }
-    ] as TableFieldArray
+    nameFilter: ""
   }),
   async mounted() {
     this.loading = true;
@@ -73,6 +46,7 @@ export default Vue.extend({
     } finally {
       this.loading = false;
     }
+    (this.$refs.nameFilter as HTMLFormElement).focus();
   },
   computed: {
     filteredGroups(): Group[] {

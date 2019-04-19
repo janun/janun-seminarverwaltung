@@ -1,29 +1,40 @@
 <template>
   <div>
-    <h1>Seminare</h1>
-    <div class="d-flex flex-wrap align-items-center mx-n2">
-      <BFormInput
-        v-model="titleFilter"
-        class="d-inline-block m-md-2"
-        style="width: auto"
-        placeholder="Filter nach Titel"
-      />
-      <FilterDropdown
-        label="Jahr"
-        v-model="yearFilter"
-        :options="$store.getters['seminars/occuringYears']"
-      />
-      <FilterDropdown label="Quartal" v-model="quarterFilter" :options="[1, 2, 3, 4]" />
-      <FilterDropdown label="Status" v-model="stateFilter" :options="possibleStates" />
-      <FilterDropdown
-        label="Gruppe"
-        v-model="groupFilter"
-        :options="$store.getters['seminars/occuringGroupNames']"
-      />
-      <BButton @click="resetFilters" variant="link">Reset</BButton>
-    </div>
+    <h1 class="title has-text-primary">Seminare</h1>
 
-    <div class="d-flex align-items-start my-3">
+    <b-field grouped group-multiline>
+      <b-field>
+        <b-input
+          ref="titleFilter"
+          v-model="titleFilter"
+          style="width: auto"
+          placeholder="Filter nach Titel"
+        />
+      </b-field>
+      <b-field>
+        <FilterDropdown
+          label="Jahr"
+          v-model="yearFilter"
+          :options="$store.getters['seminars/occuringYears']"
+        />
+      </b-field>
+      <b-field>
+        <FilterDropdown label="Quartal" v-model="quarterFilter" :options="[1, 2, 3, 4]" />
+      </b-field>
+      <b-field>
+        <FilterDropdown label="Status" v-model="stateFilter" :options="possibleStates" />
+      </b-field>
+      <b-field>
+        <FilterDropdown
+          label="Gruppe"
+          v-model="groupFilter"
+          :options="$store.getters['seminars/occuringGroupNames']"
+        />
+      </b-field>
+      <b-field> <BButton @click="resetFilters" type="is-light">Reset</BButton></b-field>
+    </b-field>
+
+    <!-- <div class="level">
       <div class="d-flex flex-column align-items-end mr-4">
         <div class="text-secondary"># Seminare</div>
         <div style="font-size:1.5rem">{{ rows | number }}</div>
@@ -55,66 +66,55 @@
         <div>Ø {{ tnt_cost_average | euro }}</div>
         <div>Max {{ Math.max(...filteredSeminars.map((s) => s.tnt_cost)) | euro }}</div>
       </div>
+    </div> -->
 
-      <BPagination
-        v-if="rows > perPage"
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        aria-controls="seminar-table"
-        align="right"
-        class="ml-auto mt-auto"
-      />
-    </div>
-
-    <BTable
-      id="seminar-table"
-      hover
-      :items="filteredSeminars"
-      :busy="loading"
-      :fields="fields"
+    <b-table
+      :data="filteredSeminars"
+      hoverable
+      paginated
       :per-page="perPage"
-      :current-page="currentPage"
-      sort-by="start_date"
-      :sort-desc="true"
-      primary-key="pk"
+      default-sort="start_date"
+      default-sort-direction="desc"
+      :loading="loading"
     >
-      <div slot="table-busy" class="text-center text-danger my-2">
-        <BSpinner class="align-middle mr-2"></BSpinner>
-        <strong>Laden...</strong>
-      </div>
-      <div slot="title" slot-scope="{ value, item }">
-        <b-link :to="{ name: 'SeminarDetail', params: { pk: item.pk } }">
-          {{ value }}
-        </b-link>
-      </div>
-      <div slot="group.name" slot-scope="{ value, item }">
-        <b-link :to="{ name: 'GroupDetail', params: { pk: item.pk } }">
-          {{ value }}
-        </b-link>
-      </div>
-      <div slot="owner.name" slot-scope="{ value, item }">
-        <b-link :to="{ name: 'UserDetail', params: { pk: item.pk } }">
-          {{ value }}
-        </b-link>
-      </div>
-    </BTable>
-
-    <BPagination
-      v-if="rows > perPage"
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="seminar-table"
-      align="center"
-    />
+      <template slot-scope="{ row }">
+        <b-table-column field="title" label="Titel" sortable>
+          <router-link :to="{ name: 'SeminarDetail', params: { pk: row.pk } }">
+            {{ row.title }}
+          </router-link>
+        </b-table-column>
+        <b-table-column field="start_date" label="Datum" sortable numeric>
+          {{ row.start_date | date }}
+        </b-table-column>
+        <b-table-column field="status" label="Status" sortable>
+          {{ row.status }}
+        </b-table-column>
+        <b-table-column field="owner.name" label="Besitzer" sortable>
+          {{ row.owner.name }}
+        </b-table-column>
+        <b-table-column field="group.name" label="Gruppe" sortable>
+          {{ row.group ? row.group.name : "" }}
+        </b-table-column>
+        <b-table-column field="planned_attendees_max" label="TN" sortable numeric>
+          {{ row.planned_attendees_max }}
+        </b-table-column>
+        <b-table-column field="tnt" label="TNT" sortable numeric>
+          {{ row.tnt }}
+        </b-table-column>
+        <b-table-column field="requested_funding" label="Förderung" sortable numeric>
+          {{ row.requested_funding }}
+        </b-table-column>
+        <b-table-column field="tnt_cost" label="€/TNT" sortable numeric>
+          {{ row.tnt_cost }}
+        </b-table-column>
+      </template>
+    </b-table>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Seminar, SeminarStatus } from "@/types";
-import { TableFieldArray } from "bootstrap-vue";
 import FilterDropdown from "@/components/FilterDropdown.vue";
 
 function getQuarter(date: Date): number {
@@ -138,91 +138,35 @@ export default Vue.extend({
   components: { FilterDropdown },
   data: () => ({
     loading: true,
-    perPage: 50,
+    perPage: 25,
     currentPage: 1,
     yearFilter: [new Date().getFullYear()] as number[],
     quarterFilter: [] as number[],
     titleFilter: "",
     groupFilter: [] as string[],
     stateFilter: [] as SeminarStatus[],
-    fields: [
-      {
-        label: "Nr.",
-        key: "pk",
-        sortable: true
-      },
-      {
-        label: "Titel",
-        key: "title",
-        sortable: true,
-        isRowHeader: true
-      },
-      {
-        key: "start_date",
-        label: "Datum",
-        sortable: true,
-        formatter: (d: string): string => new Date(d).toLocaleDateString(),
-        class: "text-right",
-        sortDirection: "desc"
-      },
-      {
-        key: "status",
-        sortable: true
-      },
-      {
-        key: "owner.name",
-        label: "Anmelder_in",
-        sortable: true
-      },
-      {
-        key: "group.name",
-        label: "Gruppe",
-        sortable: true
-      },
-      {
-        key: "planned_attendees_max",
-        label: "TN",
-        headerTitle: "Anzahl Teilnehmer_innen",
-        formatter: "formatNumber",
-        sortable: true,
-        class: "text-right"
-      },
-      {
-        key: "tnt",
-        label: "TNT",
-        headerTitle: "Anzahl Teilnehmer_innen-Tage",
-        formatter: "formatNumber",
-        sortable: true,
-        class: "text-right"
-      },
-      {
-        key: "requested_funding",
-        label: "Förderung",
-        sortable: true,
-        formatter: "formatEuro",
-        class: "text-right"
-      },
-      {
-        key: "tnt_cost",
-        label: "€/TNT",
-        formatter: "formatEuro",
-        sortable: true,
-        class: "text-right"
-      }
-    ] as TableFieldArray
+    columns: [
+      { field: "title", label: "Titel", sortable: true },
+      { field: "start_date", label: "Datum", sortable: true },
+      { field: "status", label: "Status", sortable: true },
+      { field: "owner.name", label: "Besitzer", sortable: true },
+      // { field: "group ? group.name: ''", label: "Gruppe", sortable: true },
+      { field: "planned_attendees_max", label: "TN", sortable: true },
+      { field: "tnt", label: "TNT", sortable: true },
+      { field: "requested_funding", label: "Förderung", sortable: true },
+      { field: "tnt_cost", label: "€/TNT", sortable: true }
+    ]
   }),
   async mounted() {
     this.loading = true;
     try {
       await this.$store.dispatch("seminars/fetchAll");
     } catch (e) {
-      this.$store.commit("alerts/add", {
-        variant: "danger",
-        text: "Seminare konnten nicht geladen werden."
-      });
+      alert("Seminare konnten nicht geladen werden.");
     } finally {
       this.loading = false;
     }
+    (this.$refs.titleFilter as HTMLFormElement).focus();
   },
   methods: {
     formatNumber(value: number): string {

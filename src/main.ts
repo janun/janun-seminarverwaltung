@@ -4,12 +4,31 @@ import FormInput from "@/components/FormInput.vue";
 import FormTextarea from "@/components/FormTextarea.vue";
 import router from "@/router/index";
 import store from "@/store/index";
-import BootstrapVue from "bootstrap-vue";
-import "bootstrap-vue/dist/bootstrap-vue.css";
-import "bootstrap/dist/css/bootstrap.css";
+import Buefy from "buefy";
+// import "buefy/dist/buefy.css";
 import Vue from "vue";
 import Vuelidate from "vuelidate";
 import vuelidateErrorExtractor from "vuelidate-error-extractor";
+
+Vue.use(Buefy, {
+  defaultDayNames: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+  defaultFirstDayOfWeek: 1,
+  defaultMonthNames: [
+    "Januar",
+    "Februar",
+    "März",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Dezember"
+  ]
+  // defaultDateParser: (date: string) => Date.parse(date)
+});
 
 Vue.use(vuelidateErrorExtractor, {
   // template: templates.singleErrorExtractor.Bootstrap4,
@@ -19,7 +38,6 @@ Vue.use(vuelidateErrorExtractor, {
   }
 });
 
-Vue.use(BootstrapVue);
 Vue.use(Vuelidate);
 
 Vue.component("FormGroup", FormGroup);

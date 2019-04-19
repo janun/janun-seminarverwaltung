@@ -1,101 +1,116 @@
 <template>
-  <b-form @submit.prevent="submit">
-    <BFormGroup label="Inhalt">
-      <FormInput :validator="$v.form.title" label="Titel" v-model="form.title" />
-      <FormTextarea
-        :validator="$v.form.description"
-        label="Beschreibung"
-        v-model="form.description"
-      />
-    </BFormGroup>
+  <form @submit.prevent="save">
+    <div class="columns">
+      <div class="column is-one-quarter"><h2 class="label">Inhalt</h2></div>
+      <div class="column">
+        <FormInput label="Titel" v-model="form.title" :validator="$v.form.title" />
+        <FormGroup :validator="$v.form.description" label="Beschreibung">
+          <b-input
+            type="textarea"
+            v-model="form.description"
+            @input="$v.form.description.$touch()"
+          />
+        </FormGroup>
+      </div>
+    </div>
 
-    <BFormGroup label="Zeit &amp; Ort">
-      <BFormRow>
-        <BCol>
+    <hr />
+
+    <div class="columns">
+      <div class="column is-one-quarter"><h2 class="label">Zeit &amp; Ort</h2></div>
+      <div class="column">
+        <b-field grouped>
           <FormInput
             type="date"
-            :validator="$v.form.start_date"
             label="Start-Datum"
             v-model="form.start_date"
+            :validator="$v.form.start_date"
           />
-        </BCol>
-        <BCol>
           <FormInput
             type="time"
-            :validator="$v.form.start_time"
             label="Start-Zeit"
             v-model="form.start_time"
+            :validator="$v.form.start_time"
           />
-        </BCol>
-      </BFormRow>
-      <BFormRow>
-        <BCol>
+        </b-field>
+        <b-field grouped>
           <FormInput
             type="date"
-            :validator="$v.form.end_date"
             label="End-Datum"
             v-model="form.end_date"
+            :validator="$v.form.end_date"
           />
-        </BCol>
-        <BCol>
           <FormInput
             type="time"
-            :validator="$v.form.end_time"
             label="End-Zeit"
             v-model="form.end_time"
+            :validator="$v.form.end_time"
           />
-        </BCol>
-      </BFormRow>
+        </b-field>
 
-      <FormInput :validator="$v.form.location" label="Ort" v-model="form.location" />
-    </BFormGroup>
+        <FormInput label="Ort" v-model="form.location" :validator="$v.form.location" />
+      </div>
+    </div>
 
-    <BFormGroup label="Förderung">
-      <FormInput
-        :validator="$v.form.planned_training_days"
-        label="gepl. Bildungstage"
-        v-model="form.planned_training_days"
-        type="number"
-        min="0"
-        step="1"
-      />
-      <BFormRow>
-        <BCol>
-          <FormInput
-            type="number"
-            :validator="$v.form.planned_attendees_min"
-            label="gepl. Teilnehmende min."
-            v-model="form.planned_attendees_min"
-            min="0"
-            step="1"
-          />
-        </BCol>
-        <BCol>
-          <FormInput
-            type="number"
-            :validator="$v.form.planned_attendees_max"
-            label="gepl. Teilnehmende max."
-            v-model="form.planned_attendees_max"
-            :min="form.planned_attendees_min"
-            step="1"
-          />
-        </BCol>
-      </BFormRow>
-      <FormInput
-        :validator="$v.form.requested_funding"
-        label="Beantragte Förderung in EUR"
-        v-model="form.requested_funding"
-        type="number"
-        min="0"
-        step="0.01"
-      />
-    </BFormGroup>
+    <hr />
 
-    <b-button type="submit" :disabled="!hasChanges || $v.form.$invalid || saving" variant="primary">
-      <b-spinner small v-if="saving" label="Speichern..." />
+    <div class="columns">
+      <div class="column is-one-quarter"><h2 class="label">Förderung</h2></div>
+      <div class="column">
+        <FormInput
+          label="geplante Bildungstage"
+          type="number"
+          min="0"
+          step="1"
+          v-model="form.planned_training_days"
+          :validator="$v.form.planned_training_days"
+        />
+
+        <fieldset>
+          <span class="label">geplante Anzahl Teilnehmende</span>
+          <b-field grouped>
+            <FormInput
+              type="number"
+              message="minimal"
+              min="0"
+              step="1"
+              v-model="form.planned_attendees_min"
+              :validator="$v.form.planned_attendees_min"
+            />
+            <FormInput
+              type="number"
+              message="maximal"
+              :min="form.planned_attendees_min"
+              step="1"
+              v-model="form.planned_attendees_max"
+              :validator="$v.form.planned_attendees_max"
+            />
+          </b-field>
+        </fieldset>
+
+        <FormInput
+          label="beantragte Förderung in €"
+          type="number"
+          min="0"
+          step="0.01"
+          v-model="form.requested_funding"
+          :validator="$v.form.requested_funding"
+        />
+      </div>
+    </div>
+
+    <hr />
+
+    <b-button
+      class="is-pulled-right"
+      native-type="submit"
+      :disabled="!hasChanges || $v.form.$invalid || saving"
+      type="is-primary"
+      :loading="saving"
+    >
       Speichern
     </b-button>
-  </b-form>
+  </form>
 </template>
 
 <script lang="ts">
@@ -105,10 +120,10 @@ import { required } from "vuelidate/lib/validators";
 
 export default Vue.extend({
   props: {
-    object: { type: Object as () => Seminar, required: true },
-    saving: { type: Boolean, default: false }
+    object: { type: Object as () => Seminar, required: true }
   },
   data: () => ({
+    saving: false,
     form: {
       title: "",
       description: "",
@@ -136,7 +151,7 @@ export default Vue.extend({
         planned_training_days: { required },
         planned_attendees_min: { required },
         planned_attendees_max: { required },
-        requested_funding: {required}
+        requested_funding: { required }
       }
     };
   },
@@ -153,10 +168,22 @@ export default Vue.extend({
     }
   },
   methods: {
-    submit() {
-      this.$emit("submit", this.form);
+    async save() {
+      this.saving = true;
+      try {
+        await this.$store.dispatch("seminars/update", {
+          pk: this.object.pk,
+          data: this.form
+        });
+        this.copyFields();
+        this.$snackbar.open(`Seminar gespeichert.`);
+      } catch (error) {
+        this.$snackbar.open({ message: `Fehler beim speichern des Seminars`, type: "is-warning" });
+      }
+      this.saving = false;
     },
     copyFields() {
+      this.$v.$reset();
       if (this.object) {
         for (const key in this.form) {
           if (this.form.hasOwnProperty(key)) {
