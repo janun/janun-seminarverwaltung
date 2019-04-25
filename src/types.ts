@@ -1,7 +1,7 @@
 export enum UserRole {
-  Verwalter_in = "Verwalter_in",
-  Teamer_in = "Teamer_in",
-  Prüfer_in = "Prüfer_in"
+  Verwalter_in = 'Verwalter_in',
+  Teamer_in = 'Teamer_in',
+  Prüfer_in = 'Prüfer_in'
 }
 
 export interface User {
@@ -29,27 +29,27 @@ export interface Group {
   name: string;
 }
 
-export enum SeminarStatus {
-  angemeldet = "angemeldet",
-  zurückgezogen = "zurückgezogen",
-  zugesagt = "zugesagt",
-  abgelehnt = "abgelehnt",
-  abgesagt = "abgesagt",
-  stattgefunden = "stattgefunden",
-  ohne_Abrechnung = "ohne Abrechnung",
-  Abrechnung_abgeschickt = "Abrechnung abgeschickt",
-  Abrechnung_angekommen = "Abrechnung angekommen",
-  Abrechnung_unmöglich = "Abrechnung unmöglich",
-  rechnerische_Prüfung = "rechnerische Prüfung",
-  inhaltliche_Prüfung = "inhaltliche Prüfung",
-  Nachprüfung = "Nachprüfung",
-  fertig_geprüft = "fertig geprüft",
-  überwiesen = "überwiesen"
-}
+// export enum SeminarStatus {
+//   angemeldet = 'angemeldet',
+//   zurückgezogen = 'zurückgezogen',
+//   zugesagt = 'zugesagt',
+//   abgelehnt = 'abgelehnt',
+//   abgesagt = 'abgesagt',
+//   stattgefunden = 'stattgefunden',
+//   ohne_Abrechnung = 'ohne Abrechnung',
+//   Abrechnung_abgeschickt = 'Abrechnung abgeschickt',
+//   Abrechnung_angekommen = 'Abrechnung angekommen',
+//   Abrechnung_unmöglich = 'Abrechnung unmöglich',
+//   rechnerische_Prüfung = 'rechnerische Prüfung',
+//   inhaltliche_Prüfung = 'inhaltliche Prüfung',
+//   Nachprüfung = 'Nachprüfung',
+//   fertig_geprüft = 'fertig geprüft',
+//   überwiesen = 'überwiesen'
+// }
 
 export interface Seminar {
   pk: number;
-  status: SeminarStatus;
+  status: string;
   title: string;
   description: string;
   start_date: string;
@@ -67,10 +67,18 @@ export interface Seminar {
   requested_funding: number;
   tnt: number;
   tnt_cost: number;
+  deadline: string;
 }
 
 export interface Alert {
   id: number;
   text: string;
   variant: string;
+}
+
+export interface Toast {
+  id?: number;
+  duration?: number;
+  type?: 'error';
+  text?: string;
 }

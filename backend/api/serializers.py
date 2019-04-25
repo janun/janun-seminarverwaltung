@@ -139,7 +139,8 @@ class SeminarSerializer(serializers.ModelSerializer):
             'planned_attendees_max',
             'requested_funding',
             'tnt',
-            'tnt_cost'
+            'tnt_cost',
+            'deadline'
         )
 
 

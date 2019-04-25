@@ -1,17 +1,17 @@
-import Vue from "vue";
+import Vue from 'vue';
 
-import { User } from "@/types";
+import { User } from '@/types';
 
 export default Vue.extend({
   computed: {
     user(): User {
-      return this.$store.getters["auth/user"];
+      return this.$store.getters['auth/user'];
     },
     isAuthenticated(): boolean {
-      return this.$store.getters["auth/isAuthenticated"];
+      return this.$store.getters['auth/isAuthenticated'];
     },
     isStaff(): boolean {
-      return this.$store.getters["auth/isStaff"];
+      return this.$store.getters['auth/isStaff'];
     }
   }
 });

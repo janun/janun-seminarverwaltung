@@ -1,0 +1,12 @@
+@import "./font-faces.css";
+
+@tailwind base;
+
+@tailwind components;
+
+@import "./card.css";
+@import "./buttons.css";
+@import "./spinner.css";
+@import "./transitions.css";
+
+@tailwind utilities;

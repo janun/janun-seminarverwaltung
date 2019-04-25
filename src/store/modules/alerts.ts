@@ -1,7 +1,7 @@
 // tslint:disable:no-shadowed-variable
 
-import { Alert } from "@/types";
-import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
+import { Alert } from '@/types';
+import { ActionTree, GetterTree, Module, MutationTree } from 'vuex';
 
 interface AlertsState {
   alerts: Alert[];

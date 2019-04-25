@@ -1,12 +1,12 @@
-import Vue from "vue";
-import Router from "vue-router";
-import store from "@/store/index";
-import routes from "./routes";
+import Vue from 'vue';
+import Router from 'vue-router';
+import store from '@/store/index';
+import routes from './routes';
 
 Vue.use(Router);
 
 const router = new Router({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
   routes,
   scrollBehavior(to, from, savedPosition) {
@@ -22,16 +22,16 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const isPublic = to.matched.some((record) => record.meta.public);
   const onlyWhenLoggedOut = to.matched.some((record) => record.meta.onlyWhenLoggedOut);
-  const loggedIn = store.getters["auth/isAuthenticated"];
+  const loggedIn = store.getters['auth/isAuthenticated'];
 
   if (!isPublic && !loggedIn) {
     return next({
-      path: "/login",
+      path: '/login',
       query: { redirect: to.fullPath }
     });
   }
   if (loggedIn && onlyWhenLoggedOut) {
-    return next("/");
+    return next('/');
   }
   next();
 });

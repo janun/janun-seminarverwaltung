@@ -1,46 +1,69 @@
 <template>
-  <div class="container">
-    <div class="box" style="max-width: 320px">
-      <h1 class="title">Login</h1>
-      <form @submit.prevent="login">
-        <b-field label="Benutzername">
-          <b-input ref="username" v-model="form.username" />
-        </b-field>
-        <b-field label="Passwort">
-          <b-input v-model="form.password" type="password" />
-        </b-field>
+  <div class="card max-w-xs mx-auto relative">
+    <h1 class="text-2xl mb-4 text-green-500 -mt-2">Login</h1>
 
-        <b-button
-          native-type="submit"
-          variant="primary"
+    <div class="fullspinner" v-if="loading"></div>
+
+    <div
+      class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
+      v-if="nonFieldErrors && nonFieldErrors.length"
+    >
+      <span v-for="message in nonFieldErrors">
+        {{ message }}
+      </span>
+    </div>
+
+    <form @submit.prevent="login">
+      <BaseField label="Benutzername">
+        <BaseInput ref="username" v-model="form.username" class="w-full" />
+      </BaseField>
+
+      <BaseField label="Passwort">
+        <BaseInput v-model="form.password" type="password" class="w-full" />
+      </BaseField>
+
+      <div class="card-footer flex items-center">
+        <router-link class="btn tertiary" :to="{ name: 'Signup' }">Signup</router-link>
+        <button
+          type="submit"
+          class="ml-auto btn primary"
           :disabled="!form.username || !form.password || loading"
         >
-          <b-spinner small v-if="loading" label="Loading..."></b-spinner>
           Login
-        </b-button>
-      </form>
-    </div>
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue';
+import BaseInput from '@/components/BaseInput.vue';
+import BaseField from '@/components/BaseField.vue';
+
 export default Vue.extend({
+  components: {
+    BaseInput,
+    BaseField
+  },
   data: () => ({
     loading: false,
+    nonFieldErrors: [] as string[],
     form: {
-      username: "",
-      password: ""
+      username: '',
+      password: ''
     }
   }),
   methods: {
     async login() {
       this.loading = true;
       try {
-        await this.$store.dispatch("auth/login", this.form);
-        this.$router.push("/");
-      } catch (e) {
-        alert("Anmelden fehlgeschlagen");
+        await this.$store.dispatch('auth/login', this.form);
+        this.$router.push('/');
+      } catch (error) {
+        if (error.response.status === 400) {
+          this.nonFieldErrors = error.response.data.non_field_errors;
+        }
       } finally {
         this.loading = false;
       }

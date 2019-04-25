@@ -29,22 +29,22 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { User } from "@/types";
+import Vue from 'vue';
+import { User } from '@/types';
 
 export default Vue.extend({
   data: () => ({
     loading: true,
-    nameFilter: ""
+    nameFilter: ''
   }),
   async mounted() {
     this.loading = true;
     try {
-      await this.$store.dispatch("users/fetchAll");
+      await this.$store.dispatch('users/fetchAll');
     } catch (e) {
-      this.$store.commit("alerts/add", {
-        variant: "danger",
-        text: "Benutzer konnten nicht geladen werden."
+      this.$store.commit('alerts/add', {
+        variant: 'danger',
+        text: 'Benutzer konnten nicht geladen werden.'
       });
     } finally {
       this.loading = false;
@@ -53,7 +53,7 @@ export default Vue.extend({
   },
   computed: {
     filteredUsers(): User[] {
-      let filtered: User[] = this.$store.getters["users/all"];
+      let filtered: User[] = this.$store.getters['users/all'];
       if (this.nameFilter) {
         filtered = filtered.filter(
           (user) => user.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1

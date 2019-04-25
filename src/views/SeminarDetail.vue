@@ -1,57 +1,71 @@
 <template>
-  <div
-    class="container"
-    style="position: relative; max-width: 960px; margin-left: auto; margin-right: auto"
-  >
-    <b-loading :is-full-page="false" :active="loading" />
+  <div class="mx-auto px-4" style="max-width: 50rem">
+    <div class="fullspinner" v-if="loading" />
 
     <div v-if="object">
-      <h1 class="title has-text-primary" style="margin-bottom:0.5rem">{{ object.title }}</h1>
+      <h1 class="text-2xl text-green-500 font-bold">{{ object.title }}</h1>
 
-      <div style="font-weight:bold; margin-bottom: 1rem">
+      <div class="mb-5">
         Am {{ object.start_date | date }}
         <span v-if="object.location">in {{ object.location }}</span>
       </div>
 
-      <div>
+      <div class="text-gray-700 text-sm">
+        <div class="">Deadline zur Abrechnung: {{ object.deadline | date }}</div>
         <div>
           angemeldet von
-          <router-link :to="{ name: 'UserDetail', params: { pk: object.owner.pk } }">
+          <router-link
+            class="text-green-500"
+            :to="{ name: 'UserDetail', params: { pk: object.owner.pk } }"
+          >
             {{ object.owner.name }}
           </router-link>
           am {{ object.created_at | date }}
           <br />
-          geändert am {{ object.updated_at | date }}
+          zuletzt geändert am {{ object.updated_at | date }}
         </div>
         <div v-if="object.group">
           Gruppe:
-          <router-link :to="{ name: 'GroupDetail', params: { pk: object.group.pk } }">
+          <router-link
+            class="text-green-500"
+            :to="{ name: 'GroupDetail', params: { pk: object.group.pk } }"
+          >
             {{ object.group.name }}
           </router-link>
         </div>
       </div>
 
-      <SeminarStatus :value="object.status" :seminar="object" class="is-pulled-right" />
-      <hr />
       <SeminarForm ref="seminarForm" :object="object" />
+
+      <div class="flex flex-wrap mt-20">
+        <div class="w-full md:w-1/3 mb-5">
+          <h2 class="text-green-500 font-bold text-lg">Kommentare</h2>
+        </div>
+
+        <div class="w-full md:w-2/3">
+          <CommentList class="w-full" :seminarId="pk" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Seminar } from "@/types";
+import Vue from 'vue';
+import { Seminar } from '@/types';
 
-import SeminarForm from "@/components/SeminarForm.vue";
-import SeminarStatus from "@/components/SeminarStatus.vue";
+import SeminarForm from '@/components/SeminarForm.vue';
+import SeminarStatus from '@/components/SeminarStatus.vue';
+import CommentList from '@/components/CommentList.vue';
 
 export default Vue.extend({
   components: {
     SeminarForm,
-    SeminarStatus
+    SeminarStatus,
+    CommentList
   },
   props: {
-    pk: { type: [Number], required: true }
+    pk: { type: Number, required: true }
   },
   data: () => ({
     loading: true,
@@ -59,16 +73,16 @@ export default Vue.extend({
   }),
   computed: {
     object(): Seminar | undefined {
-      return this.$store.getters["seminars/byPk"](this.pk);
+      return this.$store.getters['seminars/byPk'](this.pk);
     }
   },
   async created() {
     this.loading = true;
     try {
-      await this.$store.dispatch("seminars/fetchSingle", this.pk);
-      (this.$refs.seminarForm as any).copyFields();
+      await this.$store.dispatch('seminars/fetchSingle', this.pk);
+      // (this.$refs.seminarForm as any).copyFields();
     } catch (error) {
-      alert("Fehler beim Laden des Seminars");
+      alert('Fehler beim Laden des Seminars');
     } finally {
       this.loading = false;
     }

@@ -1,255 +1,298 @@
 <template>
-  <div>
-    <h1 class="title has-text-primary">Seminare</h1>
+  <div class="mx-auto sm:px-4" style="max-width:100rem">
+    <div class="fullspinner" v-if="loading" />
 
-    <b-field grouped group-multiline>
-      <b-field>
-        <b-input
-          ref="titleFilter"
-          v-model="titleFilter"
-          style="width: auto"
-          placeholder="Filter nach Titel"
-        />
-      </b-field>
-      <b-field>
-        <FilterDropdown
-          label="Jahr"
-          v-model="yearFilter"
-          :options="$store.getters['seminars/occuringYears']"
-        />
-      </b-field>
-      <b-field>
-        <FilterDropdown label="Quartal" v-model="quarterFilter" :options="[1, 2, 3, 4]" />
-      </b-field>
-      <b-field>
-        <FilterDropdown label="Status" v-model="stateFilter" :options="possibleStates" />
-      </b-field>
-      <b-field>
-        <FilterDropdown
-          label="Gruppe"
-          v-model="groupFilter"
-          :options="$store.getters['seminars/occuringGroupNames']"
-        />
-      </b-field>
-      <b-field> <BButton @click="resetFilters" type="is-light">Reset</BButton></b-field>
-    </b-field>
+    <h1 class="text-green-500 text-2xl font-bold mb-5">Seminare</h1>
 
-    <!-- <div class="level">
-      <div class="d-flex flex-column align-items-end mr-4">
-        <div class="text-secondary"># Seminare</div>
-        <div style="font-size:1.5rem">{{ rows | number }}</div>
+    <div class="flex flex-wrap items-center -mx-2 my-4">
+      <BaseInput
+        ref="titleFitler"
+        v-model="titleFilter"
+        placeholder="Filter nach Titel"
+        class="m-2"
+      />
+      <DropdownFilter v-model="quarterFilter" label="Quartal" :options="[1, 2, 3, 4]" class="m-2" />
+      <DropdownFilter
+        v-model="yearFilter"
+        label="Jahr"
+        :options="$store.getters['seminars/occuringYears']"
+        class="m-2"
+      />
+      <DropdownFilter v-model="stateFilter" label="Status" :options="allStates" class="m-2" />
+      <DropdownFilter
+        v-model="groupFilter"
+        label="Gruppe"
+        :options="$store.getters['seminars/occuringGroupNames']"
+        class="m-2"
+      />
+      <BaseCheckbox
+        title="Deadline abgelaufen"
+        v-model="deadlineFilter"
+        class="mx-2 px-4 bg-white py-2 shadow rounded border flex items-center"
+      >
+        Deadline
+      </BaseCheckbox>
+
+      <button type="button" @click="resetFilters" class="m-2">Reset</button>
+    </div>
+
+    <div class="flex items-stretch flex-wrap -mx-5 my-6">
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">Seminare</span>
+        <span class="text-xl font-bold">{{ total | number }}</span>
       </div>
 
-      <div class="d-flex flex-column align-items-end mx-4">
-        <div class="text-secondary">Förderung</div>
-        <div style="font-size:1.5rem">{{ funding_total | euro }}</div>
-        <div>Min {{ Math.min(...filteredSeminars.map((s) => s.requested_funding)) | euro }}</div>
-        <div>Med {{ funding_median | euro }}</div>
-        <div>Ø {{ funding_average | euro }}</div>
-        <div>Max {{ Math.max(...filteredSeminars.map((s) => s.requested_funding)) | euro }}</div>
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">Förderung</span>
+        <span class="text-xl font-bold">{{ fundingTotal | euro }}</span>
+        <div class="text-sm text-center">
+          <div>Ø: {{ fundingAverage | euro }}</div>
+          <div>Median: {{ fundingMedian | euro }}</div>
+        </div>
       </div>
 
-      <div class="d-flex flex-column align-items-end mx-4">
-        <div class="text-secondary">TNT</div>
-        <div style="font-size:1.5rem">{{ tnt_total | number }}</div>
-        <div>Min {{ Math.min(...filteredSeminars.map((s) => s.tnt)) | number }}</div>
-        <div>Med {{ tnt_median | number }}</div>
-        <div>Ø {{ tnt_average | number }}</div>
-        <div>Max {{ Math.max(...filteredSeminars.map((s) => s.tnt)) | number }}</div>
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">TNT</span>
+        <span class="text-xl font-bold">{{ tntTotal | number }}</span>
+        <div class="text-sm text-center">
+          <div>Ø: {{ tntAverage | number }}</div>
+          <div>Median: {{ tntMedian | number }}</div>
+        </div>
       </div>
 
-      <div class="d-flex flex-column align-items-end mx-4">
-        <div class="text-secondary">€/TNT</div>
-        <div style="font-size:1.5rem">Ø {{ tnt_cost_average | euro }}</div>
-        <div>Min {{ Math.min(...filteredSeminars.map((s) => s.tnt_cost)) | euro }}</div>
-        <div>Med. {{ tnt_cost_median | euro }}</div>
-        <div>Ø {{ tnt_cost_average | euro }}</div>
-        <div>Max {{ Math.max(...filteredSeminars.map((s) => s.tnt_cost)) | euro }}</div>
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">Ø €/TNT</span>
+        <span class="text-xl font-bold">{{ tntCostAverage | euro }}</span>
+        <span class="text-sm">Median: {{ tntCostMedian | euro }}</span>
       </div>
-    </div> -->
 
-    <b-table
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">Ø TN</span>
+        <span class="text-xl font-bold">{{ tnAverage | number }}</span>
+        <span class="text-sm">Median: {{ tnMedian | number }}</span>
+      </div>
+
+      <div class="flex flex-col items-center mx-5">
+        <span class="text-sm">Ø Tage</span>
+        <span class="text-xl font-bold">{{ daysAverage | number }}</span>
+        <span class="text-sm">Median: {{ daysMedian | number }}</span>
+      </div>
+
+      <BasePagination
+        class="ml-auto self-end mx-5"
+        :perPage="perPage"
+        :total="total"
+        v-model="currentPage"
+      />
+    </div>
+
+    <BaseDatatable
+      class="my-4"
+      :perPage="perPage"
+      :currentPage="currentPage"
       :data="filteredSeminars"
-      hoverable
-      paginated
-      :per-page="perPage"
-      default-sort="start_date"
-      default-sort-direction="desc"
+      :columns="columns"
       :loading="loading"
+      @sortChanged="currentPage = 1"
+      emptyMessage="Keine Seminare gefunden."
+      defaultSortField="start_date"
+      :defaultSortDir="-1"
     >
-      <template slot-scope="{ row }">
-        <b-table-column field="title" label="Titel" sortable>
-          <router-link :to="{ name: 'SeminarDetail', params: { pk: row.pk } }">
-            {{ row.title }}
-          </router-link>
-        </b-table-column>
-        <b-table-column field="start_date" label="Datum" sortable numeric>
-          {{ row.start_date | date }}
-        </b-table-column>
-        <b-table-column field="status" label="Status" sortable>
-          {{ row.status }}
-        </b-table-column>
-        <b-table-column field="owner.name" label="Besitzer" sortable>
-          {{ row.owner.name }}
-        </b-table-column>
-        <b-table-column field="group.name" label="Gruppe" sortable>
-          {{ row.group ? row.group.name : "" }}
-        </b-table-column>
-        <b-table-column field="planned_attendees_max" label="TN" sortable numeric>
-          {{ row.planned_attendees_max }}
-        </b-table-column>
-        <b-table-column field="tnt" label="TNT" sortable numeric>
-          {{ row.tnt }}
-        </b-table-column>
-        <b-table-column field="requested_funding" label="Förderung" sortable numeric>
-          {{ row.requested_funding }}
-        </b-table-column>
-        <b-table-column field="tnt_cost" label="€/TNT" sortable numeric>
-          {{ row.tnt_cost }}
-        </b-table-column>
+      <router-link
+        slot="title"
+        slot-scope="{ value, row }"
+        class="font-bold"
+        :to="{ name: 'SeminarDetail', params: { pk: row.pk } }"
+      >
+        {{ value }}
+      </router-link>
+      <router-link
+        slot="owner"
+        slot-scope="{ value, row }"
+        :to="{ name: 'UserDetail', params: { pk: value.pk } }"
+      >
+        {{ value.name }}
+      </router-link>
+      <template slot="group" slot-scope="{ value, row }">
+        <router-link v-if="value" :to="{ name: 'GroupDetail', params: { pk: value.pk } }">
+          {{ value.name }}
+        </router-link>
       </template>
-    </b-table>
+      <template slot="status" slot-scope="{ value, formatter }">
+        <span
+          class="px-3 py-1 rounded-full text-gray-800 text-sm border border-white"
+          :class="{
+            'bg-green-200': formatter(value).color === 'green',
+            'bg-red-200': formatter(value).color === 'red',
+            'bg-yellow-200': formatter(value).color === 'yellow'
+          }"
+        >
+          {{ value }}
+        </span>
+      </template>
+    </BaseDatatable>
+    <div class="clearfix">
+      <BasePagination class="float-right" :perPage="perPage" :total="total" v-model="currentPage" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Seminar, SeminarStatus } from "@/types";
-import FilterDropdown from "@/components/FilterDropdown.vue";
-
-function getQuarter(date: Date): number {
-  return Math.floor((date.getMonth() + 3) / 3);
-}
-
-function sum(values: number[]): number {
-  return values.reduce((accumulator, value) => accumulator + value, 0);
-}
-
-function median(values: number[]): number {
-  values.sort((a, b) => a - b);
-  const half = Math.floor(values.length / 2);
-  if (values.length % 2) {
-    return values[half];
-  }
-  return (values[half - 1] + values[half]) / 2.0;
-}
+import Vue from 'vue';
+import { Seminar, User, Group } from '@/types';
+import BaseDatatable from '@/components/BaseDatatable.vue';
+import BaseInput from '@/components/BaseInput.vue';
+import DropdownFilter from '@/components/DropdownFilter.vue';
+import BasePagination from '@/components/BasePagination.vue';
+import BaseCheckbox from '@/components/BaseCheckbox.vue';
+import { Column } from '@/components/BaseDatatable.vue';
+import { formatDate, formatEuro } from '@/utils/formatters.ts';
+import { sum, median } from '@/utils/math.ts';
+import { getQuarter } from '@/utils/date.ts';
+import { states, getStateInfo } from '../utils/status';
 
 export default Vue.extend({
-  components: { FilterDropdown },
+  components: { BaseDatatable, DropdownFilter, BaseInput, BasePagination, BaseCheckbox },
   data: () => ({
-    loading: true,
-    perPage: 25,
+    perPage: 20,
     currentPage: 1,
+    loading: true,
     yearFilter: [new Date().getFullYear()] as number[],
     quarterFilter: [] as number[],
-    titleFilter: "",
+    titleFilter: '',
     groupFilter: [] as string[],
-    stateFilter: [] as SeminarStatus[],
+    stateFilter: [] as string[],
+    deadlineFilter: false,
     columns: [
-      { field: "title", label: "Titel", sortable: true },
-      { field: "start_date", label: "Datum", sortable: true },
-      { field: "status", label: "Status", sortable: true },
-      { field: "owner.name", label: "Besitzer", sortable: true },
-      // { field: "group ? group.name: ''", label: "Gruppe", sortable: true },
-      { field: "planned_attendees_max", label: "TN", sortable: true },
-      { field: "tnt", label: "TNT", sortable: true },
-      { field: "requested_funding", label: "Förderung", sortable: true },
-      { field: "tnt_cost", label: "€/TNT", sortable: true }
-    ]
+      { field: 'title', label: 'Titel', sortable: true, width: '26rem' },
+      { field: 'start_date', label: 'Datum', sortable: true, formatter: formatDate },
+      {
+        field: 'status',
+        label: 'Status',
+        sortable: true,
+        width: '12rem',
+        formatter: (s) => getStateInfo(s)
+      },
+      { field: 'owner', label: 'Besitzer', width: '10rem' },
+      { field: 'group', label: 'Gruppe', width: '10rem' },
+      { field: 'planned_training_days', label: 'Tage', sortable: true, width: '4rem' },
+      { field: 'planned_attendees_max', label: 'TN', sortable: true, width: '4rem' },
+      { field: 'tnt', label: 'TNT', sortable: true, width: '4rem' },
+      {
+        field: 'requested_funding',
+        label: 'Förderung',
+        sortable: true,
+        formatter: formatEuro
+      },
+      { field: 'tnt_cost', label: '€/TNT', sortable: true, formatter: formatEuro },
+      { field: 'deadline', label: 'Deadline', sortable: true, formatter: formatDate }
+    ] as Column[]
   }),
   async mounted() {
     this.loading = true;
     try {
-      await this.$store.dispatch("seminars/fetchAll");
+      await this.$store.dispatch('seminars/fetchAll');
     } catch (e) {
-      alert("Seminare konnten nicht geladen werden.");
+      alert('Seminare konnten nicht geladen werden.');
     } finally {
       this.loading = false;
     }
-    (this.$refs.titleFilter as HTMLFormElement).focus();
+    (this.$refs.titleFitler as HTMLInputElement).focus();
   },
   methods: {
-    formatNumber(value: number): string {
-      return value.toLocaleString();
-    },
-    formatEuro(value: number): string {
-      return value.toLocaleString("de-DE", {
-        style: "currency",
-        currency: "EUR"
-      });
-    },
     resetFilters() {
       this.yearFilter = [new Date().getFullYear()];
       this.quarterFilter = [];
-      this.titleFilter = "";
+      this.titleFilter = '';
       this.groupFilter = [];
       this.stateFilter = [];
+      this.deadlineFilter = false;
+    }
+  },
+  watch: {
+    filteredSeminars() {
+      this.currentPage = 1;
     }
   },
   computed: {
-    funding_total(): number {
+    total(): number {
+      return this.filteredSeminars.length;
+    },
+    fundingTotal(): number {
       return sum(this.filteredSeminars.map((s) => s.requested_funding));
     },
-    funding_average(): number {
-      return this.rows ? this.funding_total / this.rows : 0;
+    fundingAverage(): number {
+      return this.total ? this.fundingTotal / this.total : 0;
     },
-    funding_median(): number {
+    fundingMedian(): number {
       return median(this.filteredSeminars.map((s) => s.requested_funding));
     },
 
-    tnt_total(): number {
+    tntTotal(): number {
       return sum(this.filteredSeminars.map((s) => s.tnt));
     },
-    tnt_average(): number {
-      return this.rows ? this.tnt_total / this.rows : 0;
+    tntAverage(): number {
+      return this.total ? this.tntTotal / this.total : 0;
     },
-    tnt_median(): number {
+    tntMedian(): number {
       return median(this.filteredSeminars.map((s) => s.tnt));
     },
 
-    tnt_cost_average(): number {
-      return this.tnt_total ? this.funding_total / this.tnt_total : 0;
+    tntCostAverage(): number {
+      return this.tntTotal ? this.fundingTotal / this.tntTotal : 0;
     },
-    tnt_cost_median(): number {
+    tntCostMedian(): number {
       return median(this.filteredSeminars.map((s) => s.tnt_cost));
     },
 
-    possibleStates(): string[] {
-      return Object.values(SeminarStatus);
+    tnAverage(): number {
+      const tnSum = sum(this.filteredSeminars.map((s) => s.planned_attendees_max));
+      return this.total ? tnSum / this.total : 0;
+    },
+    tnMedian(): number {
+      return median(this.filteredSeminars.map((s) => s.planned_attendees_max));
+    },
+
+    daysAverage(): number {
+      const daySum = sum(this.filteredSeminars.map((s) => s.planned_training_days));
+      return this.total ? daySum / this.total : 0;
+    },
+    daysMedian(): number {
+      return median(this.filteredSeminars.map((s) => s.planned_training_days));
+    },
+
+    allStates(): string[] {
+      return states;
     },
     filteredSeminars(): Seminar[] {
-      let filtered: Seminar[] = this.$store.getters["seminars/all"];
+      let filtered: Seminar[] = this.$store.getters['seminars/all'];
       if (this.titleFilter) {
         filtered = filtered.filter(
           (seminar) => seminar.title.toLowerCase().indexOf(this.titleFilter.toLowerCase()) > -1
         );
       }
-
       if (this.yearFilter.length > 0) {
         filtered = filtered.filter((seminar) =>
           this.yearFilter.includes(new Date(seminar.start_date).getFullYear())
         );
       }
-
       if (this.stateFilter.length > 0) {
         filtered = filtered.filter((seminar) => this.stateFilter.includes(seminar.status));
       }
-
+      if (this.deadlineFilter) {
+        filtered = filtered.filter((seminar) => new Date(seminar.deadline) < new Date());
+      }
       if (this.groupFilter.length > 0) {
         filtered = filtered.filter((seminar) => {
-          return this.groupFilter.includes(seminar.group ? seminar.group.name : "- keine -");
+          return this.groupFilter.includes(seminar.group ? seminar.group.name : '- keine -');
         });
       }
-
       if (this.quarterFilter.length > 0) {
         filtered = filtered.filter((seminar) => {
           return this.quarterFilter.includes(getQuarter(new Date(seminar.start_date)));
         });
       }
       return filtered;
-    },
-    rows(): number {
-      return this.filteredSeminars.length;
     }
   }
 });

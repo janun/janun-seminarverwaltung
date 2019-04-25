@@ -8,6 +8,8 @@ from django.db.models.signals import post_save, post_delete
 
 from model_utils import Choices
 
+from .utils import get_quarter
+
 
 def change_api_updated_at(sender=None, instance=None, *args, **kwargs):
     cache.set('api_updated_at_timestamp', datetime.datetime.utcnow())
@@ -54,7 +56,7 @@ class User(AbstractUser):
 
 
 class Seminar(models.Model):
-    # manual data migrations needed if changed!
+    # manual data migrations needed if STATES changed
     STATES = Choices(
         'angemeldet',
         'zurückgezogen',
@@ -72,19 +74,7 @@ class Seminar(models.Model):
         'fertig geprüft',
         'überwiesen',
     )
-    # NORMAL_STATES = Choices(
-    #     'angemeldet',
-    #     'zugesagt',
-    #     'abgesagt',
-    #     'stattgefunden',
-    #     'Abrechnung abgeschickt',
-    #     'Abrechnung angekommen',
-    #     'rechnerische Prüfung',
-    #     'inhaltliche Prüfung',
-    #     'Nachprüfung',
-    #     'fertig geprüft',
-    #     'überwiesen',
-    # )
+    
     title = models.CharField(max_length=255)
     status = models.CharField(
         max_length=255, choices=STATES, default=STATES.angemeldet)
@@ -119,6 +109,18 @@ class Seminar(models.Model):
         if self.tnt == 0:
             return 0
         return round(Decimal(self.requested_funding / self.tnt), 2)
+
+    @property
+    def deadline(self):
+        quarter = get_quarter(self.end_date)
+        year = self.end_date.year
+        deadlines = [
+            datetime.date(year, 4, 15),
+            datetime.date(year, 7, 15),
+            datetime.date(year, 10, 15),
+            datetime.date(year + 1, 1, 15)
+        ]
+        return deadlines[quarter]
 
     def __str__(self):
         return self.title
