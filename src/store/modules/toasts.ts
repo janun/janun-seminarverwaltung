@@ -35,7 +35,7 @@ const actions: ActionTree<ToastsState, {}> = {
     }
 
     if (!newToast.duration) {
-      newToast.duration = 2000;
+      newToast.duration = 4000;
     }
 
     const id = Date.now();

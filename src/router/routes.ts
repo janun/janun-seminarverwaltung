@@ -3,9 +3,9 @@ import { Route } from 'vue-router';
 import Dashboard from '@/views/Dashboard.vue';
 import Login from '@/views/Login.vue';
 import Signup from '@/views/Signup.vue';
-// import PasswordReset from "@/views/PasswordReset.vue";
-import Profile from '@/views/Profile.vue';
-import ApplySeminar from '@/views/ApplySeminar.vue';
+import PasswordReset from '@/views/PasswordReset.vue';
+import UserProfile from '@/views/UserProfile.vue';
+import SeminarApply from '@/views/SeminarApply.vue';
 import GroupList from '@/views/GroupList.vue';
 import GroupDetail from '@/views/GroupDetail.vue';
 import SeminarList from '@/views/SeminarList.vue';
@@ -41,22 +41,27 @@ export default [
       public: true
     }
   },
-  // {
-  //   path: "/password-reset",
-  //   name: "password-reset",
-  //   component: PasswordReset,
-  //   meta: {
-  //     public: true,
-  //     onlyWhenLoggedOut: true
-  //   }
-  // },
+  {
+    path: '/password-reset',
+    name: 'PasswordReset',
+    component: PasswordReset,
+    meta: {
+      public: true,
+      onlyWhenLoggedOut: true
+    }
+  },
 
   {
     path: '/seminare/',
     name: 'SeminarList',
     component: SeminarList
   },
-  { path: '/seminare/anmelden', name: 'seminar-apply', component: ApplySeminar },
+  {
+    path: '/seminare/anmelden',
+    name: 'SeminarApply',
+    component: SeminarApply,
+    meta: { title: 'Seminar anmelden' }
+  },
   {
     path: '/seminare/:pk',
     name: 'SeminarDetail',
@@ -67,7 +72,7 @@ export default [
   { path: '/groups', name: 'GroupList', component: GroupList },
   { path: '/gruppen/:pk', name: 'GroupDetail', component: GroupDetail, props: parsePk },
 
-  { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/profile', name: 'UserProfile', component: UserProfile },
   { path: '/users', name: 'UserList', component: UserList },
   { path: '/users/:pk', name: 'UserDetail', component: UserDetail, props: parsePk },
 

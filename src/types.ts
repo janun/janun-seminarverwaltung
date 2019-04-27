@@ -42,7 +42,7 @@ export interface Group {
 //   Abrechnung_unmöglich = 'Abrechnung unmöglich',
 //   rechnerische_Prüfung = 'rechnerische Prüfung',
 //   inhaltliche_Prüfung = 'inhaltliche Prüfung',
-//   Nachprüfung = 'Nachprüfung',
+//   Zweitprüfung = 'Zweitprüfung',
 //   fertig_geprüft = 'fertig geprüft',
 //   überwiesen = 'überwiesen'
 // }

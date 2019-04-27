@@ -1,8 +1,10 @@
 <template>
-  <div class="card max-w-xs mx-auto relative">
-    <h1 class="text-2xl mb-4 text-green-500 -mt-2">Login</h1>
-
+  <div class="card max-w-sm mx-auto relative">
     <div class="fullspinner" v-if="loading"></div>
+
+    <h1 class="text-center mb-6 text-green-500 font-bold text-xl">
+      Anmelden zur JANUN-Seminarverwaltung
+    </h1>
 
     <div
       class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
@@ -20,13 +22,16 @@
 
       <BaseField label="Passwort">
         <BaseInput v-model="form.password" type="password" class="w-full" />
+        <router-link class="btn tertiary" :to="{ name: 'PasswordReset' }">
+          Passwort vergessen?
+        </router-link>
       </BaseField>
 
-      <div class="card-footer flex items-center">
-        <router-link class="btn tertiary" :to="{ name: 'Signup' }">Signup</router-link>
+      <div class="flex items-center">
+        <router-link class="btn tertiary" :to="{ name: 'Signup' }">Konto anlegen</router-link>
         <button
           type="submit"
-          class="ml-auto btn primary"
+          class="ml-auto btn primary px-10"
           :disabled="!form.username || !form.password || loading"
         >
           Login

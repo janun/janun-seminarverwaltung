@@ -1,4 +1,4 @@
-interface StateInfo {
+export interface StateInfo {
   title: string;
   description: string;
   sources: string[];
@@ -83,7 +83,7 @@ export const stateInfos: StateInfo[] = [
     description: '',
     color: 'red',
     onlyStaff: true,
-    sources: ['Abrechnung angekommen', 'Nachprüfung', 'inhaltliche Prüfung']
+    sources: ['Abrechnung angekommen', 'Zweitprüfung', 'inhaltliche Prüfung']
   },
   {
     title: 'rechnerische Prüfung',
@@ -100,7 +100,7 @@ export const stateInfos: StateInfo[] = [
     sources: ['rechnerische Prüfung']
   },
   {
-    title: 'Nachprüfung',
+    title: 'Zweitprüfung',
     description: '',
     color: 'green',
     onlyStaff: true,
@@ -111,7 +111,7 @@ export const stateInfos: StateInfo[] = [
     description: '',
     color: 'green',
     onlyStaff: true,
-    sources: ['Nachprüfung']
+    sources: ['Zweitprüfung']
   },
   {
     title: 'überwiesen',

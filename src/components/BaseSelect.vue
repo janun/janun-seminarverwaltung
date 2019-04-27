@@ -3,7 +3,7 @@
     <select
       ref="input"
       v-bind="$attrs"
-      class="block appearance-none w-full border py-2 px-4 pr-8 rounded leading-tight bg-white shadow focus:outline-none focus:shadow-outline"
+      class="block appearance-none w-full border border-gray-400 py-2 px-4 pr-8 rounded bg-gray-20 focus:outline-none focus:shadow-outline"
       :class="innerClass"
       v-on="$listeners"
     >

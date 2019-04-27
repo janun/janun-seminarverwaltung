@@ -32,18 +32,6 @@ export default Vue.extend({
     toggle() {
       this.open = !this.open;
     },
-    isInside(el: Element): boolean {
-      if (this.$el === el) {
-        return true;
-      }
-      const children = this.$el.querySelectorAll('*');
-      for (const child of children) {
-        if (el === child) {
-          return true;
-        }
-      }
-      return false;
-    },
     onDown(event: Event) {
       event.preventDefault();
       if (!this.open) {
@@ -78,7 +66,7 @@ export default Vue.extend({
   created() {
     // close on click outside
     const clickOutsideHandler = (event: Event) => {
-      if (!this.isInside(event.target as Element)) {
+      if (!this.$el.contains(event.target as Node)) {
         this.open = false;
       }
     };

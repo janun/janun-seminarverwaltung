@@ -1,9 +1,15 @@
+button:disabled {
+  cursor: auto;
+}
+
 .btn {
+  @apply inline-block;
+
   transition: box-shadow 0.1s ease-in-out;
 }
 
 .btn:focus {
-  @apply outline-none shadow-outline;
+  @apply outline-none shadow-outline !important;
 }
 
 .btn:disabled {
@@ -12,7 +18,7 @@
 
 /* primary */
 .btn.primary {
-  @apply py-1 px-5 font-bold shadow text-white rounded-full bg-green-500;
+  @apply py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500;
 }
 
 .btn.primary:hover:not(:disabled),

@@ -19,7 +19,13 @@ function groupFunding(days: number, attendees: number) {
   return attendees * days * groupFundingRate(days);
 }
 
-export function getMaxFunding(days: number, group: boolean, attendees: number) {
+export function getMaxFunding(days: number | string, group: boolean, attendees: number | string) {
+  if (typeof days === 'string') {
+    days = parseInt(days, 10);
+  }
+  if (typeof attendees === 'string') {
+    attendees = parseInt(attendees, 10);
+  }
   if (group) {
     return groupFunding(days, attendees);
   }

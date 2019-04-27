@@ -1,9 +1,9 @@
 <template>
   <form @submit.prevent="save">
-    <div class="clearfix">
+    <div class="clearfix mt-5">
       <div class="float-right">
         <button
-          class="btn primary float-right mb-2"
+          class="btn primary mb-1 float-right"
           :class="{ loading: saving }"
           type="submit"
           :disabled="!hasChanges || $v.form.$invalid || saving"
@@ -19,7 +19,7 @@
     <hr class="bg-gray-300 h-px my-5" />
 
     <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold text-lg">Status</h2>
+      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Status</h2>
 
       <div class="w-full md:w-2/3">
         <SeminarStatus v-model="form.status" :seminar="object" />
@@ -29,7 +29,7 @@
     <hr class="bg-gray-300 h-px my-5" />
 
     <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold text-lg">Inhalt</h2>
+      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Inhalt</h2>
 
       <div class="w-full md:w-2/3">
         <BaseField label="Titel" :validator="$v.form.title">
@@ -45,7 +45,7 @@
     <hr class="bg-gray-300 h-px my-5" />
 
     <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold text-lg">Zeit &amp; Ort</h2>
+      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Zeit &amp; Ort</h2>
 
       <div class="w-full md:w-2/3">
         <div class="flex flex-wrap -mx-2">
@@ -67,7 +67,7 @@
         </div>
 
         <BaseField label="Ort" class="max-w-sm" :validator="$v.form.location">
-          <span slot="messages">Stadt, in der das Seminar stattfindet.</span>
+          <span slot="helptext">Stadt, in der das Seminar stattfindet.</span>
           <BaseInput v-model="form.location" class="w-full" />
         </BaseField>
       </div>
@@ -77,7 +77,7 @@
 
     <div class="flex flex-wrap">
       <div class="w-full md:w-1/3 mb-5">
-        <h2 class="text-green-500 font-bold text-lg">Förderung</h2>
+        <h2 class="text-green-500 font-bold">Förderung</h2>
         <div class="my-3">Mögliche Förderung: {{ maxFunding | euro }}</div>
       </div>
 
@@ -141,6 +141,7 @@
           label="beantragte Förderung in EUR"
           class="max-w-xs"
           :validator="$v.form.requested_funding"
+          :validator-params="{ maxFunding: formattedMaxFunding }"
         >
           <BaseInput
             v-model="form.requested_funding"
@@ -185,6 +186,7 @@ import BaseTextarea from '@/components/BaseTextarea.vue';
 import BaseField from '@/components/BaseField.vue';
 import SeminarStatus from '@/components/SeminarStatus.vue';
 import { RuleDecl } from 'vue/types/options';
+import { formatEuro } from '../utils/formatters';
 
 export default Vue.extend({
   components: {
@@ -213,19 +215,11 @@ export default Vue.extend({
       requested_funding: 0.0
     } as Seminar
   }),
-  provide: {
-    formMessages: {
-      minStart: 'Muss nach Start-Datum liegen.',
-      minPlannedAttendeesMin: 'Muss größer sein als der Mindestwert.',
-      maxDuration: 'Darf nicht größer sein als die Dauer des Seminars ({max} Tage).',
-      maxFunding: 'Maximal-Förderung: {max} EUR'
-    }
-  },
   validations(): RuleDecl {
     return {
       form: {
         title: { required },
-        description: { required },
+        description: {},
         start_date: { required },
         start_time: {},
         end_date: { required, minStart: minDate(this.form.start_date) },
@@ -248,6 +242,9 @@ export default Vue.extend({
         !!this.object.group,
         this.form.planned_attendees_max
       );
+    },
+    formattedMaxFunding(): string {
+      return formatEuro(this.maxFunding);
     },
     duration(): number {
       if (this.form.start_date && this.form.end_date) {

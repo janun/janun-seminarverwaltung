@@ -39,7 +39,7 @@
         </div>
 
         <div v-if="isAuthenticated" class="ml-auto flex">
-          <router-link class="mx-2 flex items-center" :to="{ name: 'Profile' }">
+          <router-link class="mx-2 flex items-center" :to="{ name: 'UserProfile' }">
             {{ user.username }}
           </router-link>
           <button class="mx-2 flex items-center" @click="logout">
@@ -49,10 +49,10 @@
 
         <div v-if="!isAuthenticated" class="ml-auto flex">
           <router-link class="mx-2 flex items-center" :to="{ name: 'Login' }">
-            Login
+            Anmelden
           </router-link>
           <router-link class="mx-2 flex items-center" :to="{ name: 'Signup' }">
-            Signup
+            Konto anlegen
           </router-link>
         </div>
       </div>
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import userMixin from '@/mixins/user.ts';
+import userMixin from '@/mixins/user';
 
 export default Vue.extend({
   mixins: [userMixin],

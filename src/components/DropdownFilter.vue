@@ -3,8 +3,8 @@
     <button
       type="button"
       slot="trigger"
-      class="flex items-center select-none px-3 py-2 shadow border rounded whitespace-no-wrap bg-white  focus:shadow-outline"
-      :class="{ 'text-green-500 font-bold': !allSelected }"
+      class="flex items-center select-none px-3 py-2 shadow border rounded whitespace-no-wrap bg-white focus:shadow-outline"
+      :class="{ 'text-green-700': !allSelected }"
     >
       <span class="mr-1">{{ label }}:</span>
       <span v-if="allSelected">Alle</span>

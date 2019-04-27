@@ -70,7 +70,7 @@ class Seminar(models.Model):
         'Abrechnung unmöglich',
         'rechnerische Prüfung',
         'inhaltliche Prüfung',
-        'Nachprüfung',
+        'Zweitprüfung',
         'fertig geprüft',
         'überwiesen',
     )

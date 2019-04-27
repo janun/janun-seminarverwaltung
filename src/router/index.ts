@@ -18,6 +18,17 @@ const router = new Router({
   }
 });
 
+// title tag
+router.afterEach((to, from) => {
+  Vue.nextTick(() => {
+    if (to.meta.title) {
+      document.title = to.meta.title;
+    } else {
+      document.title = 'JANUN Seminarverwaltung';
+    }
+  });
+});
+
 // access control
 router.beforeEach((to, from, next) => {
   const isPublic = to.matched.some((record) => record.meta.public);

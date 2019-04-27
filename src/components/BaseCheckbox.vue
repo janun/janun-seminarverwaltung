@@ -3,15 +3,16 @@
     ref="label"
     :for="`check_${uuid}`"
     class="relative flex justify-start items-start cursor-pointer select-none"
-    @keydown.prevent.enter.space="$refs.label.click()"
   >
     <span class="w-5 h-5 block mr-2 float-left relative flex-no-shrink">
       <input
         :id="`check_${uuid}`"
+        ref="input"
         type="checkbox"
         :checked="isChecked"
         class="absolute inset-0 border-2 appearance-none block w-5 h-5"
         @change="onChange"
+        @keydown.prevent.enter="$refs.input.click()"
       />
 
       <svg

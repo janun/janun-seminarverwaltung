@@ -1,11 +1,16 @@
 <template>
   <div id="app" class="antialiased font-sans text-gray-700 text-base leading-normal">
     <TheNavbar />
+
     <div class="mt-10 px-2">
       <router-view />
     </div>
-    <TheToaster />
+
     <TheFooter />
+
+    <TheToaster />
+
+    <PortalTarget name="modals" transition="ModalTransition" />
   </div>
 </template>
 

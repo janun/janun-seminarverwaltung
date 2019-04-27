@@ -1,9 +1,15 @@
-export function formatNumber(value: number): string {
+export function formatNumber(value: number | string): string {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   return value.toLocaleString('de', { maximumFractionDigits: 1 });
 }
 
-export function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString();
+export function formatDate(value: Date | string): string {
+  if (typeof value === 'string') {
+    value = new Date(value);
+  }
+  return value.toLocaleDateString();
 }
 
 export function formatDatetime(value: string): string {
@@ -12,7 +18,10 @@ export function formatDatetime(value: string): string {
   return `${date} ${time}`;
 }
 
-export function formatEuro(value: number): string {
+export function formatEuro(value: number | string): string {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   return value.toLocaleString('de-DE', {
     style: 'currency',
     currency: 'EUR'

@@ -1,12 +1,10 @@
 <template>
   <textarea
-    class="w-full shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none -mb-2"
-    :class="{ 'border-red-600': hasErrorsGetter() }"
+    :class="{ 'has-errors': hasErrorsGetter() }"
     :id="id"
     ref="textarea"
-    v-bind="$attrs"
+    v-bind="{ rows: 5, ...$attrs }"
     v-on="{ ...$listeners, input: onInput }"
-    rows="5"
   ></textarea>
 </template>
 
@@ -17,13 +15,17 @@ export default Vue.extend({
   inject: {
     id: { from: 'id', default: null },
     hasErrorsGetter: { from: 'hasErrorsGetter', default: () => () => false },
-    isValidGetter: { from: 'isValidGetter', default: () => () => false }
+    isValidGetter: { from: 'isValidGetter', default: () => () => false },
+    validator: { from: 'validator', default: null }
   },
   methods: {
     focus() {
       (this.$el as HTMLInputElement).focus();
     },
     onInput(event: Event) {
+      if ((this as any).validator && (this as any).validator.$touch) {
+        (this as any).validator.$touch();
+      }
       this.$emit('input', (event.target as HTMLInputElement).value);
       this.resizeTextarea();
     },
@@ -38,3 +40,17 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="postcss" scoped>
+textarea {
+  @apply w-full appearance-none rounded py-2 px-3 leading-tight resize-none -mb-2 bg-gray-20 border border-gray-400;
+}
+
+textarea:focus {
+  @apply outline-none shadow-outline;
+}
+
+.has-errors {
+  @apply border-red-600;
+}
+</style>

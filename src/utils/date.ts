@@ -15,12 +15,20 @@ export function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + daysToMs(days));
 }
 
-export function daysDiff(a: Date, b: Date): number {
+export function daysDiff(a: Date | string, b: Date | string): number {
+  if (typeof a === 'string') {
+    a = new Date(a);
+  }
+  if (typeof b === 'string') {
+    b = new Date(b);
+  }
   return msToDays(Math.abs(a.getTime() - b.getTime()));
 }
 
-export function getDeadline(endDate: Date): Date {
-  endDate = new Date(endDate);
+export function getDeadline(endDate: Date | string): Date {
+  if (typeof endDate === 'string') {
+    endDate = new Date(endDate);
+  }
   const year = endDate.getFullYear();
   const deadlines = [
     new Date(`${year}-04-15`),

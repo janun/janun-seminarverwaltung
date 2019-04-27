@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto sm:px-4" style="max-width:100rem">
+  <div class="mx-auto xl:px-4" style="max-width:100rem">
     <div class="fullspinner" v-if="loading" />
 
     <h1 class="text-green-500 text-2xl font-bold mb-5">Seminare</h1>
@@ -10,6 +10,7 @@
         v-model="titleFilter"
         placeholder="Filter nach Titel"
         class="m-2"
+        :class="{ 'border-green-500': titleFilter }"
       />
       <DropdownFilter v-model="quarterFilter" label="Quartal" :options="[1, 2, 3, 4]" class="m-2" />
       <DropdownFilter
@@ -36,7 +37,7 @@
       <button type="button" @click="resetFilters" class="m-2">Reset</button>
     </div>
 
-    <div class="flex items-stretch flex-wrap -mx-5 my-6">
+    <div class="inline-flex items-stretch flex-wrap my-2 bg-white shadow rounded py-3">
       <div class="flex flex-col items-center mx-5">
         <span class="text-sm">Seminare</span>
         <span class="text-xl font-bold">{{ total | number }}</span>
@@ -77,31 +78,23 @@
         <span class="text-xl font-bold">{{ daysAverage | number }}</span>
         <span class="text-sm">Median: {{ daysMedian | number }}</span>
       </div>
-
-      <BasePagination
-        class="ml-auto self-end mx-5"
-        :perPage="perPage"
-        :total="total"
-        v-model="currentPage"
-      />
     </div>
 
     <BaseDatatable
       class="my-4"
-      :perPage="perPage"
-      :currentPage="currentPage"
+      :perPage="100"
       :data="filteredSeminars"
       :columns="columns"
       :loading="loading"
       @sortChanged="currentPage = 1"
-      emptyMessage="Keine Seminare gefunden."
+      :emptyMessage="loading ? 'Laden…' : 'Keine Seminare gefunden.'"
       defaultSortField="start_date"
       :defaultSortDir="-1"
     >
       <router-link
         slot="title"
         slot-scope="{ value, row }"
-        class="font-bold"
+        class="font-bold text-gray-800"
         :to="{ name: 'SeminarDetail', params: { pk: row.pk } }"
       >
         {{ value }}
@@ -118,22 +111,10 @@
           {{ value.name }}
         </router-link>
       </template>
-      <template slot="status" slot-scope="{ value, formatter }">
-        <span
-          class="px-3 py-1 rounded-full text-gray-800 text-sm border border-white"
-          :class="{
-            'bg-green-200': formatter(value).color === 'green',
-            'bg-red-200': formatter(value).color === 'red',
-            'bg-yellow-200': formatter(value).color === 'yellow'
-          }"
-        >
-          {{ value }}
-        </span>
+      <template slot="status" slot-scope="{ value }">
+        <StatusBadge :value="value" />
       </template>
     </BaseDatatable>
-    <div class="clearfix">
-      <BasePagination class="float-right" :perPage="perPage" :total="total" v-model="currentPage" />
-    </div>
   </div>
 </template>
 
@@ -143,8 +124,9 @@ import { Seminar, User, Group } from '@/types';
 import BaseDatatable from '@/components/BaseDatatable.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import DropdownFilter from '@/components/DropdownFilter.vue';
-import BasePagination from '@/components/BasePagination.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
+import StatusBadge from '@/components/StatusBadge.vue';
+
 import { Column } from '@/components/BaseDatatable.vue';
 import { formatDate, formatEuro } from '@/utils/formatters.ts';
 import { sum, median } from '@/utils/math.ts';
@@ -152,9 +134,15 @@ import { getQuarter } from '@/utils/date.ts';
 import { states, getStateInfo } from '../utils/status';
 
 export default Vue.extend({
-  components: { BaseDatatable, DropdownFilter, BaseInput, BasePagination, BaseCheckbox },
+  components: {
+    BaseDatatable,
+    DropdownFilter,
+    BaseInput,
+    BaseCheckbox,
+    StatusBadge
+  },
   data: () => ({
-    perPage: 20,
+    perPage: 100,
     currentPage: 1,
     loading: true,
     yearFilter: [new Date().getFullYear()] as number[],
@@ -164,28 +152,55 @@ export default Vue.extend({
     stateFilter: [] as string[],
     deadlineFilter: false,
     columns: [
-      { field: 'title', label: 'Titel', sortable: true, width: '26rem' },
+      { field: 'title', label: 'Titel', sortable: true },
       { field: 'start_date', label: 'Datum', sortable: true, formatter: formatDate },
       {
         field: 'status',
         label: 'Status',
-        sortable: true,
-        width: '12rem',
-        formatter: (s) => getStateInfo(s)
+        sortable: true
       },
-      { field: 'owner', label: 'Besitzer', width: '10rem' },
-      { field: 'group', label: 'Gruppe', width: '10rem' },
-      { field: 'planned_training_days', label: 'Tage', sortable: true, width: '4rem' },
-      { field: 'planned_attendees_max', label: 'TN', sortable: true, width: '4rem' },
-      { field: 'tnt', label: 'TNT', sortable: true, width: '4rem' },
+      { field: 'owner', label: 'Besitzer' },
+      { field: 'group', label: 'Gruppe' },
+      {
+        field: 'planned_training_days',
+        label: 'B-Tage',
+        sortable: true,
+        tooltip: 'Bildungstage'
+      },
+      {
+        field: 'planned_attendees_max',
+        label: 'TN',
+        sortable: true,
+        tooltip: 'Anzahl Teilnehmende'
+      },
+      { field: 'tnt', label: 'TNT', sortable: true, tooltip: 'Teilnehmenden-Tage' },
       {
         field: 'requested_funding',
         label: 'Förderung',
         sortable: true,
         formatter: formatEuro
       },
-      { field: 'tnt_cost', label: '€/TNT', sortable: true, formatter: formatEuro },
-      { field: 'deadline', label: 'Deadline', sortable: true, formatter: formatDate }
+      {
+        field: 'tnt_cost',
+        label: '€/TNT',
+        sortable: true,
+        formatter: formatEuro,
+        tooltip: 'Kosten pro Teilnehmenden-Tag'
+      },
+      {
+        field: 'deadline',
+        label: 'Deadline',
+        sortable: true,
+        formatter: formatDate,
+        tooltip: 'Deadline zum Einreichen der Abrechnung'
+      },
+      {
+        field: 'created_at',
+        label: 'Erstellt',
+        sortable: true,
+        formatter: formatDate,
+        tooltip: 'Datum der Erstellung des DB-Eintrags'
+      }
     ] as Column[]
   }),
   async mounted() {

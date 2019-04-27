@@ -1,4 +1,5 @@
 module.exports = {
+  important: true,
   theme: {
     fontFamily: {
       sans: ['Cabin', 'sans-serif']
@@ -16,12 +17,17 @@ module.exports = {
           800: '#236707',
           900: '#1a4614'
         },
-        // gray-100: '#f7fafc',
+        'gray-20': '#fdfdfd',
         'gray-150': '#f4f8fa'
-        // gray-200: '#edf2f7'
       },
       maxWidth: {
         xxs: '10rem'
+      },
+      spacing: {
+        '1.5': '0.375rem'
+      },
+      screens: {
+        xxl: '1600px'
       }
     }
   },
