@@ -1,8 +1,8 @@
 import { Route } from 'vue-router';
 
 import Dashboard from '@/views/Dashboard.vue';
-import Login from '@/views/Login.vue';
-import Signup from '@/views/Signup.vue';
+import UserLogin from '@/views/UserLogin.vue';
+import UserSignup from '@/views/UserSignup.vue';
 import PasswordReset from '@/views/PasswordReset.vue';
 import UserProfile from '@/views/UserProfile.vue';
 import SeminarApply from '@/views/SeminarApply.vue';
@@ -27,7 +27,7 @@ export default [
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: UserLogin,
     meta: {
       public: true,
       onlyWhenLoggedOut: true
@@ -36,7 +36,7 @@ export default [
   {
     path: '/signup',
     name: 'Signup',
-    component: Signup,
+    component: UserSignup,
     meta: {
       public: true
     }
