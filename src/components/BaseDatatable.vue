@@ -22,7 +22,7 @@
               <button
                 v-if="col.sortable"
                 @click="updateSort(col.field)"
-                :class="col.sortBy ? 'text-gray-700' : ''"
+                class="hover:text-gray-800 focus:text-gray-800"
               >
                 {{ col.label }}
 

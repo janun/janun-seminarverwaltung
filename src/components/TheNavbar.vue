@@ -52,7 +52,7 @@
             Anmelden
           </router-link>
           <router-link class="mx-2 flex items-center" :to="{ name: 'Signup' }">
-            Konto anlegen
+            Konto Anlegen
           </router-link>
         </div>
       </div>

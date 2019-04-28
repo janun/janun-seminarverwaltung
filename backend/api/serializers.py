@@ -155,9 +155,9 @@ class RegisterSerializer(OldRegisterSerializer):
         return data
 
     def custom_signup(self, request, user):
-        user.name = self.validated_data.get('name', ''),
-        user.telephone = self.validated_data.get('telephone', ''),
-        user.address = self.validated_data.get('address', ''),
+        user.name = self.validated_data.get('name', '')
+        user.telephone = self.validated_data.get('telephone', '')
+        user.address = self.validated_data.get('address', '')
         user.save()
 
     def validate_password(self, password):

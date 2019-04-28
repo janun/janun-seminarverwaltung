@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-6">
+  <div class="mb-5">
     <label
       class="block mb-1 text-base text-gray-700"
       :class="{ 'text-red-600': hasErrors }"
@@ -7,6 +7,7 @@
       v-if="label || $slots.label"
     >
       <slot name="label">{{ label }}</slot>
+      <span v-if="optional" class="text-sm text-gray-500 ml-1">(optional)</span>
     </label>
 
     <div v-if="helptext || $slots.helptext" class="text-sm -mt-1 mb-1">
@@ -15,7 +16,7 @@
 
     <slot />
 
-    <div class="ml-1 mt-1 text-red-600 font-bold text-sm italic">{{ firstErrorMessage }}</div>
+    <div class="mt-1 text-red-600 font-bold text-sm italic">{{ firstErrorMessage }}</div>
   </div>
 </template>
 
@@ -27,7 +28,7 @@ import { singleErrorExtractorMixin } from 'vuelidate-error-extractor';
 export default Vue.extend({
   extends: singleErrorExtractorMixin,
   mixins: [uuidMixin],
-  provide() {
+  provide(): object {
     return {
       id: (this as any).childId,
       hasErrorsGetter: () => (this as any).hasErrors,
@@ -37,7 +38,8 @@ export default Vue.extend({
   },
   props: {
     label: { type: String, default: '' },
-    helptext: { type: String, default: '' }
+    helptext: { type: String, default: '' },
+    optional: { type: Boolean, default: false }
   },
   computed: {
     childId(): string {

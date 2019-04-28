@@ -1,6 +1,6 @@
 import App from '@/App.vue';
-import router from '@/router/index';
-import store from '@/store/index';
+import router from '@/router/index.ts';
+import store from '@/store/index.ts';
 import { formatDate, formatEuro, formatNumber, formatDatetime } from '@/utils/formatters.ts';
 import Vue from 'vue';
 import Vuelidate from 'vuelidate';
@@ -19,16 +19,15 @@ Vue.use(vuelidateErrorExtractor, {
     minPlannedAttendeesMin: 'Muss größer sein als der Mindestwert.',
     maxDuration: 'Darf nicht größer sein als die Dauer des Seminars ({max} Tage).',
     maxFunding: 'Maximal-Förderung: {maxFunding}',
-    minFuture: 'Muss in der Zukunft liegen.'
+    minFuture: 'Muss in der Zukunft liegen.',
+    minLength: 'Mindestens {min} Zeichen',
+    email: 'Keine gültige E-Mail-Adresse',
+    unique: 'Ist schon vergeben.'
   }
 });
 
-Vue.filter('date', (value: string) => {
-  return value ? formatDate(value) : '';
-});
-Vue.filter('datetime', (value: string) => {
-  return value ? formatDatetime(value) : '';
-});
+Vue.filter('date', (value: string) => (value ? formatDate(value) : ''));
+Vue.filter('datetime', (value: string) => (value ? formatDatetime(value) : ''));
 Vue.filter('euro', formatEuro);
 Vue.filter('number', formatNumber);
 
