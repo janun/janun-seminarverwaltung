@@ -33,14 +33,13 @@ class User(AbstractUser):
     last_name = None
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=255, choices=ROLES,
-                            default=ROLES['Teamer_in'])
+    role = models.CharField(max_length=255, choices=ROLES,default=ROLES['Teamer_in'])
     telephone = models.CharField(max_length=100, blank=True, null=True)
     is_reviewed = models.BooleanField(default=False)
-    janun_groups = models.ManyToManyField(
-        JANUNGroup, related_name='members', blank=True)
-    group_hats = models.ManyToManyField(
-        JANUNGroup, related_name='group_hats', blank=True)
+    janun_groups = models.ManyToManyField(JANUNGroup, related_name='members', blank=True)
+    group_hats = models.ManyToManyField(JANUNGroup, related_name='group_hats', blank=True)
+
+    is_reviewed = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

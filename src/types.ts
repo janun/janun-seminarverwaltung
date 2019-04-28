@@ -17,6 +17,7 @@ export interface User {
   telephone?: string;
   updated_at: string;
   username: string;
+  is_reviewed: boolean;
 }
 
 export interface LoginData {

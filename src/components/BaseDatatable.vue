@@ -105,7 +105,6 @@ export interface Column {
   tooltip?: string;
   sortable: boolean;
   formatter?: (value: any, row?: any) => string;
-  sorter?: Sorter;
 }
 
 type Sorter = (a: object, b: object, sortField: string, sortDir: 1 | -1) => number;

@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = models.User
         fields = (
             'pk', 'username', 'name', 'janun_groups', 'group_hats', 'role',
-            'telephone', 'address', 'created_at', 'updated_at', 'email', 'password',
+            'telephone', 'address', 'created_at', 'updated_at', 'email', 'password', 'is_reviewed'
         )
 
 
