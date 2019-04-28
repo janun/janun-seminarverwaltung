@@ -10,8 +10,8 @@ export interface User {
   address: string;
   created_at: string;
   email: string;
-  group_hats: string[];
-  janun_groups: string[];
+  group_hats: Group[];
+  janun_groups: Group[];
   name: string;
   role: UserRole;
   telephone?: string;

@@ -13,6 +13,14 @@
         :class="{ 'border-green-500': nameFilter }"
       />
       <DropdownFilter v-model="roleFilter" label="Rolle" :options="possibleRoles" class="m-2" />
+      <DropdownFilter v-model="groupFilter" label="Gruppe" :options="possibleGroups" class="m-2" />
+      <DropdownFilter
+        v-model="hatFilter"
+        label="Gruppenhut"
+        :options="possibleGroups"
+        class="m-2"
+      />
+
       <DropdownFilter
         v-model="reviewedFilter"
         label="überprüft"
@@ -53,6 +61,14 @@ function groupNames(groups: Group[]): string {
   return groups.map((g) => g.name).join(', ');
 }
 
+function intersections<T>(array1: T[], array2: T[]): T[] {
+  return array1.filter((value) => array2.includes(value));
+}
+
+function hasIntersections<T>(array1: T[], array2: T[]): boolean {
+  return intersections<T>(array1, array2).length > 0;
+}
+
 export default Vue.extend({
   components: {
     BaseDatatable,
@@ -63,6 +79,8 @@ export default Vue.extend({
     loading: true,
     nameFilter: '',
     roleFilter: [] as string[],
+    groupFilter: [] as string[],
+    hatFilter: [] as string[],
     reviewedFilter: [] as string[],
     columns: [
       { field: 'name', label: 'Name', sortable: true },
@@ -76,7 +94,7 @@ export default Vue.extend({
       },
       {
         field: 'group_hats',
-        label: 'Hüte',
+        label: 'Gruuppenhüte',
         formatter: groupNames,
         tooltip: 'Prüf-Hüte für JANUN-Gruppen'
       },
@@ -95,8 +113,9 @@ export default Vue.extend({
       }
     ] as Column[]
   }),
-  async mounted() {
+  async created() {
     this.loading = true;
+    this.$store.dispatch('groups/fetchAll');
     try {
       await this.$store.dispatch('users/fetchAll');
     } catch (e) {
@@ -114,6 +133,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    possibleGroups(): string[] {
+      return this.$store.getters['groups/all'].map((g: Group) => g.name);
+    },
     possibleRoles(): string[] {
       return Object.keys(UserRole);
     },
@@ -124,6 +146,16 @@ export default Vue.extend({
           (user) => user.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1
         );
       }
+      if (this.groupFilter.length > 0) {
+        filtered = filtered.filter((user) =>
+          hasIntersections(this.groupFilter, user.janun_groups.map((g) => g.name))
+        );
+      }
+      if (this.hatFilter.length > 0) {
+        filtered = filtered.filter((user) =>
+          hasIntersections(this.hatFilter, user.group_hats.map((g) => g.name))
+        );
+      }
       if (this.roleFilter.length > 0) {
         filtered = filtered.filter((user) => this.roleFilter.includes(user.role));
       }
@@ -131,7 +163,6 @@ export default Vue.extend({
         const reviewedFilter: boolean[] = this.reviewedFilter.map((f) =>
           f === 'überprüft' ? true : false
         );
-        console.log(reviewedFilter.includes(true));
         filtered = filtered.filter((user) => reviewedFilter.includes(user.is_reviewed));
       }
       return filtered;
