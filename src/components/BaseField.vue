@@ -16,7 +16,10 @@
 
     <slot />
 
-    <div class="mt-1 text-red-600 font-bold text-sm italic">{{ firstErrorMessage }}</div>
+    <div v-if="hasErrors" class="mt-1 text-red-600 font-bold text-sm italic">
+      {{ firstErrorMessage }}
+    </div>
+    <div v-if="pending" class="spinner h-3 w-3"></div>
   </div>
 </template>
 
@@ -40,6 +43,20 @@ export default Vue.extend({
     label: { type: String, default: '' },
     helptext: { type: String, default: '' },
     optional: { type: Boolean, default: false }
+  },
+  data: () => ({
+    pending: false,
+    pendingTimer: 0
+  }),
+  watch: {
+    'preferredValidator.$pending'(pending: boolean) {
+      if (this.pendingTimer) {
+        clearTimeout(this.pendingTimer);
+      }
+      this.pendingTimer = setTimeout(() => {
+        this.pending = pending;
+      }, 100);
+    }
   },
   computed: {
     childId(): string {
