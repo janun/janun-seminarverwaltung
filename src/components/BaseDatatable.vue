@@ -208,7 +208,7 @@ export default Vue.extend({
 
 .datatable th {
   @apply relative bg-gray-150 px-2 font-bold align-middle select-none text-gray-600 text-sm;
-  height: 3.5rem;
+  height: 3rem;
 }
 
 @screen lg {
@@ -248,12 +248,12 @@ export default Vue.extend({
 
 .datatable td {
   @apply px-2 align-middle border-b;
-  height: 5rem;
+  height: 3.5rem;
 }
 
 .datatable td a {
   @apply inline-flex w-full items-center;
-  height: 5rem;
+  height: 3.5rem;
 }
 
 .datatable td a:hover {
