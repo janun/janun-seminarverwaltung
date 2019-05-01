@@ -1,55 +1,63 @@
 <template>
-  <div class="card max-w-md mx-auto relative">
-    <h1 class="text-center mb-10 text-green-500 font-bold text-xl">Konto Anlegen</h1>
+  <div class="max-w-md mx-auto ">
+    <h1 class="text-center mb-6">
+      <div class="text-2xl text-green-500">Konto Anlegen</div>
+      <div class="text-base">zur JANUN-Seminarverwaltung</div>
+    </h1>
 
-    <div class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm" v-if="serverErrors.length">
-      <ul class="list-disc list-inside">
-        <li v-for="(message, index) in serverErrors" :key="index">
-          {{ message }}
-        </li>
-      </ul>
-    </div>
-
-    <form @submit.prevent="signup">
-      <h2 class="text-green-500 mb-2 font-bold">Kontakt-Daten</h2>
-
-      <BaseField label="Voller Name" name="name">
-        <BaseInput ref="name" name="name" v-model="form.name" class="w-full" />
-      </BaseField>
-
-      <BaseField label="E-Mail-Adresse" name="email">
-        <BaseInput type="email" name="email" v-model="form.email" class="w-full" />
-        <p class="text-sm">Für Nachrichten zu Deinen Seminaren</p>
-      </BaseField>
-
-      <BaseField label="Telefonnumer" optional name="telephone">
-        <BaseInput v-model="form.telephone" name="telephone" type="tel" class="w-full" />
-        <p class="text-sm">Für dringende Probleme mit Deinem Seminar</p>
-      </BaseField>
-
-      <h2 class="text-green-500 mt-10 mb-2 font-bold">Account-Daten</h2>
-
-      <BaseField label="Anmeldename" name="username">
-        <BaseInput v-model="form.username" name="username" class="w-full" />
-      </BaseField>
-
-      <BaseField label="Passwort" name="password1">
-        <BaseInput v-model="form.password1" name="password" type="password" class="w-full" />
-        <p class="text-sm">Min. 8 Zeichen</p>
-      </BaseField>
-
-      <div class="flex items-center mt-12">
-        <button
-          type="submit"
-          :title="$v.form.$invalid ? 'Fülle alle Felder richtig aus' : ''"
-          class="btn btn-primary ml-auto px-10"
-          :class="{ 'btn-loading': loading }"
-          :disabled="$v.form.$invalid || loading"
-        >
-          Konto Anlegen
-        </button>
+    <div class="card border">
+      <div
+        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
+        v-if="serverErrors.length"
+      >
+        <ul class="list-disc list-inside">
+          <li v-for="(message, index) in serverErrors" :key="index">
+            {{ message }}
+          </li>
+        </ul>
       </div>
-    </form>
+
+      <form @submit.prevent="signup">
+        <h2 class="text-green-500 mb-2 font-bold">Kontakt-Daten</h2>
+
+        <BaseField label="Voller Name" name="name">
+          <BaseInput ref="name" name="name" v-model="form.name" class="w-full" />
+        </BaseField>
+
+        <BaseField label="E-Mail-Adresse" name="email">
+          <BaseInput type="email" name="email" v-model="form.email" class="w-full" />
+          <p class="text-sm">Für Nachrichten zu Deinen Seminaren</p>
+        </BaseField>
+
+        <BaseField label="Telefonnumer" optional name="telephone">
+          <BaseInput v-model="form.telephone" name="telephone" type="tel" class="w-full" />
+          <p class="text-sm">Für dringende Probleme mit Deinem Seminar</p>
+        </BaseField>
+
+        <h2 class="text-green-500 mt-10 mb-2 font-bold">Account-Daten</h2>
+
+        <BaseField label="Anmeldename" name="username">
+          <BaseInput v-model="form.username" name="username" class="w-full" />
+        </BaseField>
+
+        <BaseField label="Passwort" name="password1">
+          <BaseInput v-model="form.password1" name="password" type="password" class="w-full" />
+          <p class="text-sm">Min. 8 Zeichen</p>
+        </BaseField>
+
+        <div class="flex items-center mt-12">
+          <button
+            type="submit"
+            :title="$v.form.$invalid ? 'Fülle alle Felder richtig aus' : ''"
+            class="btn btn-primary ml-auto px-10"
+            :class="{ 'btn-loading': loading }"
+            :disabled="$v.form.$invalid || loading"
+          >
+            Konto Anlegen
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

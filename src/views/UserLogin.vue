@@ -1,40 +1,47 @@
 <template>
-  <div class="card max-w-sm mx-auto relative">
-    <h1 class="text-center mb-6 text-green-500 font-bold text-xl">Anmelden</h1>
+  <div class="max-w-sm mx-auto">
+    <h1 class="text-center mb-6">
+      <div class="text-2xl text-green-500">Anmelden</div>
+      <div class="text-base">zur JANUN-Seminarverwaltung</div>
+    </h1>
 
-    <div
-      class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
-      v-if="nonFieldErrors && nonFieldErrors.length"
-    >
-      <span v-for="message in nonFieldErrors">
-        {{ message }}
-      </span>
-    </div>
-
-    <form @submit.prevent="login">
-      <BaseField label="Anmeldename">
-        <BaseInput ref="username" name="username" v-model="form.username" class="w-full" />
-      </BaseField>
-
-      <BaseField label="Passwort">
-        <BaseInput v-model="form.password" name="password" type="password" class="w-full" />
-        <router-link class="btn btn-tertiary" :to="{ name: 'PasswordReset' }">
-          Passwort vergessen?
-        </router-link>
-      </BaseField>
-
-      <div class="flex items-center mt-10">
-        <router-link class="btn btn-secondary" :to="{ name: 'Signup' }">Konto anlegen</router-link>
-        <button
-          type="submit"
-          class="btn btn-primary ml-auto px-10"
-          :class="{ 'btn-loading': loading }"
-          :disabled="!form.username || !form.password || loading"
-        >
-          Login
-        </button>
+    <div class="card border">
+      <div
+        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
+        v-if="nonFieldErrors && nonFieldErrors.length"
+      >
+        <span v-for="message in nonFieldErrors">
+          {{ message }}
+        </span>
       </div>
-    </form>
+
+      <form @submit.prevent="login">
+        <BaseField label="Anmeldename">
+          <BaseInput ref="username" name="username" v-model="form.username" class="w-full" />
+        </BaseField>
+
+        <BaseField label="Passwort">
+          <BaseInput v-model="form.password" name="password" type="password" class="w-full" />
+          <router-link class="btn btn-tertiary" :to="{ name: 'PasswordReset' }">
+            Passwort vergessen?
+          </router-link>
+        </BaseField>
+
+        <div class="flex items-center mt-10">
+          <router-link class="btn btn-secondary" :to="{ name: 'Signup' }"
+            >Konto anlegen</router-link
+          >
+          <button
+            type="submit"
+            class="btn btn-primary ml-auto px-10"
+            :class="{ 'btn-loading': loading }"
+            :disabled="!form.username || !form.password || loading"
+          >
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
