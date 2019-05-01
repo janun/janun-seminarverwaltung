@@ -2,6 +2,7 @@
   <div class="mx-auto xl:px-4" style="max-width:100rem">
     <div class="fullspinner" v-if="loading" />
 
+    <UserAddButton class="float-right" />
     <h1 class="text-green-500 text-2xl font-bold mb-5">Kontos</h1>
 
     <div class="flex flex-wrap items-center -mx-2 my-4">
@@ -51,6 +52,7 @@ import BaseInput from '@/components/BaseInput.vue';
 import DropdownFilter from '@/components/DropdownFilter.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import SeminarStats from '@/components/SeminarStats.vue';
+import UserAddButton from '@/components/UserAddButton.vue';
 
 import { Column } from '@/components/BaseDatatable.vue';
 import { formatDate, formatEuro } from '@/utils/formatters.ts';
@@ -73,7 +75,8 @@ export default Vue.extend({
   components: {
     BaseDatatable,
     DropdownFilter,
-    BaseInput
+    BaseInput,
+    UserAddButton
   },
   data: () => ({
     loading: true,
@@ -101,7 +104,7 @@ export default Vue.extend({
       {
         field: 'is_reviewed',
         label: 'überprüft',
-        formatter: (r) => (r ? 'Ja' : 'Nein'),
+        formatter: (r) => (r ? 'überprüft' : 'nicht geprüft'),
         sortable: true
       },
       {
