@@ -31,7 +31,7 @@
             Seminare
           </router-link>
           <router-link class="mx-2 flex items-center" :to="{ name: 'UserList' }">
-            Benutzer_innen
+            Kontos
           </router-link>
           <router-link class="mx-2 flex items-center" :to="{ name: 'GroupList' }">
             Gruppen

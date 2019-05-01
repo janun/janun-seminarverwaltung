@@ -2,7 +2,7 @@
   <div class="mx-auto xl:px-4" style="max-width:100rem">
     <div class="fullspinner" v-if="loading" />
 
-    <h1 class="text-green-500 text-2xl font-bold mb-5">Benutzer_innen</h1>
+    <h1 class="text-green-500 text-2xl font-bold mb-5">Kontos</h1>
 
     <div class="flex flex-wrap items-center -mx-2 my-4">
       <BaseInput
@@ -36,7 +36,7 @@
       :data="filteredUsers"
       :columns="columns"
       :loading="loading"
-      :emptyMessage="loading ? 'Laden…' : 'Keine Benutzer_innen gefunden.'"
+      :emptyMessage="loading ? 'Laden…' : 'Keine Konten gefunden.'"
       defaultSortField="name"
     >
     </BaseDatatable>
@@ -84,7 +84,7 @@ export default Vue.extend({
     reviewedFilter: [] as string[],
     columns: [
       { field: 'name', label: 'Name', sortable: true },
-      { field: 'username', label: 'Benutzername', sortable: true },
+      { field: 'username', label: 'Anmeldename', sortable: true },
       { field: 'role', label: 'Rolle', sortable: true },
       {
         field: 'janun_groups',
@@ -94,7 +94,7 @@ export default Vue.extend({
       },
       {
         field: 'group_hats',
-        label: 'Gruuppenhüte',
+        label: 'Gruppenhüte',
         formatter: groupNames,
         tooltip: 'Prüf-Hüte für JANUN-Gruppen'
       },
@@ -119,7 +119,7 @@ export default Vue.extend({
     try {
       await this.$store.dispatch('users/fetchAll');
     } catch (e) {
-      alert('Benutzer_innen konnten nicht geladen werden.');
+      alert('Konten konnten nicht geladen werden.');
     } finally {
       this.loading = false;
     }

@@ -29,7 +29,7 @@
 
       <h2 class="text-green-500 mt-10 mb-2 font-bold">Account-Daten</h2>
 
-      <BaseField label="Benutzername" name="username">
+      <BaseField label="Anmeldename" name="username">
         <BaseInput v-model="form.username" name="username" class="w-full" />
       </BaseField>
 

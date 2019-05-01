@@ -12,7 +12,7 @@
     </div>
 
     <form @submit.prevent="login">
-      <BaseField label="Benutzername">
+      <BaseField label="Anmeldename">
         <BaseInput ref="username" name="username" v-model="form.username" class="w-full" />
       </BaseField>
 
