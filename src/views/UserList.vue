@@ -8,7 +8,7 @@
       <BaseInput
         ref="nameFitler"
         v-model="nameFilter"
-        placeholder="Filter nach Name"
+        placeholder="Name oder Anmeldename"
         class="m-2"
         :class="{ 'border-green-500': nameFilter }"
       />
@@ -143,7 +143,9 @@ export default Vue.extend({
       let filtered: User[] = this.$store.getters['users/all'];
       if (this.nameFilter) {
         filtered = filtered.filter(
-          (user) => user.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1
+          (user) =>
+            user.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1 ||
+            user.username.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1
         );
       }
       if (this.groupFilter.length > 0) {
