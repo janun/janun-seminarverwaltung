@@ -3,11 +3,10 @@
     <div class="clearfix mt-5">
       <div class="float-right">
         <button
-          class="btn primary mb-1 float-right"
-          :class="{ loading: saving }"
+          class="btn btn-primary mb-1 float-right"
+          :class="{ 'btn-loading': saving }"
           type="submit"
           :disabled="!hasChanges || $v.form.$invalid || saving"
-          :loading="saving"
           :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
         >
           Speichern
@@ -159,11 +158,10 @@
     <div class="clearfix">
       <div class="float-right mb-16">
         <button
-          class="btn primary float-right mb-2"
-          :class="{ loading: saving }"
+          class="btn btn-primary float-right mb-2"
+          :class="{ 'btn-loading': saving }"
           type="submit"
           :disabled="!hasChanges || $v.form.$invalid || saving"
-          :loading="saving"
           :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
         >
           Speichern

@@ -3,8 +3,8 @@
     <form class="mb-10 clearfix" @submit.prevent="addComment">
       <BaseTextarea v-model="newCommentText" @keypress.enter="addComment" />
       <button
-        class="btn primary mt-2 float-right"
-        :class="{ loading: sending }"
+        class="btn btn-primary mt-2 float-right"
+        :class="{ 'btn-loading': sending }"
         :disabled="!newCommentText"
         type="submit"
       >

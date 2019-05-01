@@ -42,8 +42,8 @@
         <button
           type="submit"
           :title="$v.form.$invalid ? 'Fülle alle Felder richtig aus' : ''"
-          class="ml-auto btn primary px-10"
-          :class="{ loading: loading }"
+          class="btn btn-primary ml-auto px-10"
+          :class="{ 'btn-loading': loading }"
           :disabled="$v.form.$invalid || loading"
         >
           Konto Anlegen

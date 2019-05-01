@@ -8,66 +8,58 @@ button:disabled {
   transition: box-shadow 0.1s ease-in-out;
 }
 
-.btn:focus {
-  @apply outline-none shadow-outline !important;
-}
-
-.btn:disabled {
-  @apply cursor-not-allowed;
-}
-
 /* primary */
-.btn.primary {
+.btn-primary {
   @apply py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500;
 }
 
-.btn.primary:hover:not(:disabled),
-.btn.primary:focus:not(:disabled) {
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus:not(:disabled) {
   @apply shadow-lg;
 }
 
-.btn.primary:active:not(:disabled) {
+.btn-primary:active:not(:disabled) {
   @apply shadow-none;
 }
 
-.btn.primary.negative {
+.btn-primary.negative {
   @apply bg-red-500;
 }
 
-.btn.primary:disabled {
+.btn-primary:disabled {
   @apply bg-gray-400;
 }
 
 /* secondary */
-.btn.secondary {
-  @apply py-1 px-4  font-normal shadow text-white bg-gray-500 rounded;
+.btn-secondary {
+  @apply py-1.5 px-4 font-normal shadow text-gray-700 bg-gray-200 rounded-full;
 }
 
-.btn.secondary:hover:not(:disabled),
-.btn.secondary:focus:not(:disabled) {
+.btn-secondary:hover:not(:disabled),
+.btn-secondary:focus:not(:disabled) {
   @apply shadow-lg;
 }
 
-.btn.secondary:active:not(:disabled) {
+.btn-secondary:active:not(:disabled) {
   @apply shadow-none;
 }
 
-.btn.secondary:disabled {
+.btn-secondary:disabled {
   @apply bg-gray-400;
 }
 
 /* tertiary */
-.btn.tertiary {
+.btn-tertiary {
   @apply text-gray-600;
 }
 
 /* btn-loading */
-.btn.loading {
+.btn-loading {
   position: relative;
   color: transparent !important;
 }
 
-.btn.loading:after {
+.btn-loading:after {
   position: absolute;
   display: block;
   height: 1rem;
@@ -82,4 +74,12 @@ button:disabled {
   border-top-color: transparent;
   animation: spinAround 500ms infinite linear;
   content: "";
+}
+
+.btn.btn:focus {
+  @apply outline-none shadow-outline;
+}
+
+.btn:disabled {
+  @apply cursor-not-allowed;
 }

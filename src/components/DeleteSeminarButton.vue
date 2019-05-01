@@ -14,13 +14,13 @@
       <p>Möchtest Du das Seminar „{{ seminar.title }}“ wirklich löschen?</p>
 
       <div class="card-footer flex justify-between mt-6">
-        <button type="button" class="btn tertiary" @click="modalOpen = false">
+        <button type="button" class="btn btn-tertiary" @click="modalOpen = false">
           Abbrechen
         </button>
         <button
           type="button"
-          class="btn primary bg-red-500"
-          :class="{ loading: deleting }"
+          class="btn btn-primary bg-red-500"
+          :class="{ 'btn-loading': deleting }"
           @click="deleteSeminar"
         >
           Seminar löschen

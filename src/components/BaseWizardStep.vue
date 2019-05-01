@@ -7,7 +7,7 @@
         class="absolute inset-x-0 bottom-0 flex flex-row-reverse justify-between bg-gray-100 mt-5 p-5 rounded-b-lg"
       >
         <slot name="footer" v-bind="{ isLast, isFirst }">
-          <button class="btn primary flex items-center" type="submit" :disabled="invalid">
+          <button class="btn btn-primary flex items-center" type="submit" :disabled="invalid">
             {{ nextLabel }}
             <svg class="ml-2 fill-current h-3 w-3" viewBox="0 0 20 20">
               <path
@@ -15,7 +15,7 @@
               />
             </svg>
           </button>
-          <button type="button" class="btn tertiary flex items-center" @click="onPrev">
+          <button type="button" class="btn btn-tertiary flex items-center" @click="onPrev">
             <svg class="mr-2 fill-current h-3 w-3" viewBox="0 0 20 20">
               <path
                 d="M3.828 9l6.071-6.071-1.414-1.414L0 10l.707.707 7.778 7.778 1.414-1.414L3.828 11H20V9H3.828z"

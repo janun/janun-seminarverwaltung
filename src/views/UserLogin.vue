@@ -18,17 +18,17 @@
 
       <BaseField label="Passwort">
         <BaseInput v-model="form.password" name="password" type="password" class="w-full" />
-        <router-link class="btn tertiary" :to="{ name: 'PasswordReset' }">
+        <router-link class="btn btn-tertiary" :to="{ name: 'PasswordReset' }">
           Passwort vergessen?
         </router-link>
       </BaseField>
 
-      <div class="flex items-center">
-        <router-link class="btn tertiary" :to="{ name: 'Signup' }">Konto anlegen</router-link>
+      <div class="flex items-center mt-10">
+        <router-link class="btn btn-secondary" :to="{ name: 'Signup' }">Konto anlegen</router-link>
         <button
           type="submit"
-          class="ml-auto btn primary px-10"
-          :class="{ loading: loading }"
+          class="btn btn-primary ml-auto px-10"
+          :class="{ 'btn-loading': loading }"
           :disabled="!form.username || !form.password || loading"
         >
           Login

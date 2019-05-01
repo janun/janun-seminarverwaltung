@@ -80,7 +80,7 @@
       </ul>
 
       <div class="card-footer flex">
-        <button class="ml-auto btn primary bg-gray-700" @click="applySuccessModal = false">
+        <button class="ml-auto btn btn-primary bg-gray-700" @click="applySuccessModal = false">
           Schließen
         </button>
       </div>

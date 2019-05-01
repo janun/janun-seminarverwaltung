@@ -17,11 +17,11 @@
 
     <form v-if="editing" class="clearfix" @submit.prevent="onChange">
       <BaseTextarea v-model="form.text" @keypress.enter="onChange" />
-      <span class="float-right">
-        <button class="text-xs mx-1" type="button" @click="toggleEdit">
+      <span class="float-right mt-1">
+        <button class="btn btn-tertiary text-xs mx-1" type="button" @click="toggleEdit">
           Abbrechen
         </button>
-        <button class="btn secondary mx-1" type="submit">Speichern</button>
+        <button class="btn btn-secondary text-xs mx-1" type="submit">Speichern</button>
       </span>
     </form>
 
