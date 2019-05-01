@@ -6,9 +6,9 @@ import Vue from 'vue';
 import Vuelidate from 'vuelidate';
 import vuelidateErrorExtractor from 'vuelidate-error-extractor';
 import PortalVue from 'portal-vue';
-import ModalTransition from '@/components/ModalTransition.vue';
+import BaseModalTransition from '@/components/BaseModalTransition.vue';
 
-Vue.component('ModalTransition', ModalTransition);
+Vue.component('BaseModalTransition', BaseModalTransition);
 
 Vue.use(PortalVue);
 Vue.use(Vuelidate);
