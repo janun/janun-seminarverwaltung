@@ -27,7 +27,6 @@ import { getFocusableChildren } from '@/utils/utils.ts';
 
 export default Vue.extend({
   props: {
-    focusOnShow: { type: Object as () => HTMLElement, default: null },
     show: { type: Boolean, required: true },
     closeOnEsc: { type: Boolean, default: true }
   },
@@ -92,11 +91,7 @@ export default Vue.extend({
     },
     focus() {
       this.focusedBefore = document.activeElement as HTMLElement;
-      if (this.focusOnShow) {
-        this.focusOnShow.focus();
-      } else {
-        (this.$refs.closeButton as HTMLElement).focus();
-      }
+      (this.$refs.closeButton as HTMLElement).focus();
     },
     returnFocus() {
       if (this.focusedBefore) {
