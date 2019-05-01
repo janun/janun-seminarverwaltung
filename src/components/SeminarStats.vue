@@ -43,7 +43,6 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import Vue from 'vue';
 import { sum, median } from '@/utils/math.ts';

@@ -1,8 +1,8 @@
 <template>
   <BaseDropdown class="inline-block">
     <button
-      type="button"
       slot="trigger"
+      type="button"
       class="flex items-center select-none px-3 py-2 shadow border rounded whitespace-no-wrap bg-white focus:shadow-outline"
       :class="{ 'text-green-700': !allSelected }"
     >
@@ -19,13 +19,12 @@
       :key="option"
       :value="value.includes(option)"
       :label="String(option)"
-      @input="onInput(option, $event)"
       class="whitespace-no-wrap my-1"
       role="listitem"
+      @input="onInput(option, $event)"
     />
   </BaseDropdown>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';

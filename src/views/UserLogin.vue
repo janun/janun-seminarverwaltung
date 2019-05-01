@@ -7,17 +7,17 @@
 
     <div class="card border">
       <div
-        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
         v-if="nonFieldErrors && nonFieldErrors.length"
+        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
       >
-        <span v-for="message in nonFieldErrors">
+        <span v-for="message in nonFieldErrors" :key="message">
           {{ message }}
         </span>
       </div>
 
       <form @submit.prevent="login">
         <BaseField label="Anmeldename">
-          <BaseInput ref="username" name="username" v-model="form.username" class="w-full" />
+          <BaseInput ref="username" v-model="form.username" name="username" class="w-full" />
         </BaseField>
 
         <BaseField label="Passwort">
@@ -63,6 +63,9 @@ export default Vue.extend({
       password: ''
     }
   }),
+  mounted() {
+    (this.$refs.username as HTMLInputElement).focus();
+  },
   methods: {
     async login() {
       this.loading = true;
@@ -77,9 +80,6 @@ export default Vue.extend({
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    (this.$refs.username as HTMLInputElement).focus();
   }
 });
 </script>

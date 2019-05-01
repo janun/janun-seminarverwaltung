@@ -65,8 +65,8 @@ import Vue from 'vue';
 import userMixin from '@/mixins/user';
 
 export default Vue.extend({
-  mixins: [userMixin],
   name: 'NavBar',
+  mixins: [userMixin],
   data: () => ({ expanded: false }),
   methods: {
     logout() {

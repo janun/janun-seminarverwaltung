@@ -29,7 +29,7 @@ export default Vue.extend({
   inheritAttrs: false,
   props: {
     value: { type: String, default: '' },
-    innerClass: { tyspe: String, default: '' },
+    innerClass: { type: String, default: '' },
     options: {
       type: Array as () => string[],
       default: () => [],

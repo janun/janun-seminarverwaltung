@@ -7,8 +7,8 @@
 
     <div class="card border">
       <div
-        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
         v-if="serverErrors.length"
+        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
       >
         <ul class="list-disc list-inside">
           <li v-for="(message, index) in serverErrors" :key="index">
@@ -21,11 +21,11 @@
         <h2 class="text-green-500 mb-2 font-bold">Kontakt-Daten</h2>
 
         <BaseField label="Voller Name" name="name">
-          <BaseInput ref="name" name="name" v-model="form.name" class="w-full" />
+          <BaseInput ref="name" v-model="form.name" name="name" class="w-full" />
         </BaseField>
 
         <BaseField label="E-Mail-Adresse" name="email">
-          <BaseInput type="email" name="email" v-model="form.email" class="w-full" />
+          <BaseInput v-model="form.email" type="email" name="email" class="w-full" />
           <p class="text-sm">Für Nachrichten zu Deinen Seminaren</p>
         </BaseField>
 
@@ -115,6 +115,9 @@ export default Vue.extend({
       telephone: {}
     }
   },
+  mounted() {
+    (this.$refs.name as HTMLInputElement).focus();
+  },
   methods: {
     setServerErrors(data: any) {
       this.serverErrors = [].concat.apply([], Object.values(data));
@@ -132,9 +135,6 @@ export default Vue.extend({
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    (this.$refs.name as HTMLInputElement).focus();
   }
 });
 </script>

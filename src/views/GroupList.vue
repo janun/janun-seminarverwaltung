@@ -34,20 +34,6 @@ export default Vue.extend({
     loading: true,
     nameFilter: ''
   }),
-  async mounted() {
-    this.loading = true;
-    try {
-      await this.$store.dispatch('groups/fetchAll');
-    } catch (e) {
-      this.$store.commit('alerts/add', {
-        variant: 'danger',
-        text: 'Gruppen konnten nicht geladen werden.'
-      });
-    } finally {
-      this.loading = false;
-    }
-    (this.$refs.nameFilter as HTMLFormElement).focus();
-  },
   computed: {
     filteredGroups(): Group[] {
       let filtered: Group[] = this.$store.getters['groups/all'];
@@ -61,6 +47,20 @@ export default Vue.extend({
     rows(): number {
       return this.filteredGroups.length;
     }
+  },
+  async mounted() {
+    this.loading = true;
+    try {
+      await this.$store.dispatch('groups/fetchAll');
+    } catch (e) {
+      this.$store.commit('alerts/add', {
+        variant: 'danger',
+        text: 'Gruppen konnten nicht geladen werden.'
+      });
+    } finally {
+      this.loading = false;
+    }
+    (this.$refs.nameFilter as HTMLFormElement).focus();
   }
 });
 </script>

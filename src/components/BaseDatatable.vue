@@ -2,10 +2,10 @@
   <div>
     <div v-if="perPage" class="clearfix mb-2">
       <BasePagination
-        class="float-right"
-        :perPage="perPage"
-        :total="data.length"
         v-model="currentPage"
+        class="float-right"
+        :per-page="perPage"
+        :total="data.length"
       />
     </div>
     <div class="datatable-wrapper">
@@ -21,8 +21,8 @@
             >
               <button
                 v-if="col.sortable"
-                @click="updateSort(col.field)"
                 class="hover:text-gray-800 focus:text-gray-800"
+                @click="updateSort(col.field)"
               >
                 {{ col.label }}
 
@@ -84,10 +84,10 @@
     </div>
     <div v-if="perPage" class="clearfix mt-2">
       <BasePagination
-        class="float-right"
-        :perPage="perPage"
-        :total="data.length"
         v-model="currentPage"
+        class="float-right"
+        :per-page="perPage"
+        :total="data.length"
       />
     </div>
   </div>
@@ -181,7 +181,6 @@ export default Vue.extend({
   }
 });
 </script>
-
 
 <style lang="postcss">
 .datatable-wrapper {

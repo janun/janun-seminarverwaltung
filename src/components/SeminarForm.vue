@@ -261,6 +261,10 @@ export default Vue.extend({
       return false;
     }
   },
+  created() {
+    this.copyFields();
+    (this.$v.form as any).$touch();
+  },
   methods: {
     async save() {
       this.saving = true;
@@ -286,10 +290,6 @@ export default Vue.extend({
         }
       }
     }
-  },
-  created() {
-    this.copyFields();
-    (this.$v.form as any).$touch();
   }
 });
 </script>

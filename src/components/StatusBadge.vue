@@ -11,7 +11,6 @@
   </span>
 </template>
 
-
 <script lang="ts">
 import Vue from 'vue';
 import { getStateInfo, StateInfo } from '../utils/status';

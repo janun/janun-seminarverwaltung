@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto xl:px-4" style="max-width:100rem">
-    <div class="fullspinner" v-if="loading" />
+    <div v-if="loading" class="fullspinner" />
 
     <UserAddButton class="float-right" />
     <h1 class="text-green-500 text-2xl font-bold mb-5">Kontos</h1>
@@ -29,7 +29,7 @@
         class="m-2"
       />
 
-      <button type="button" @click="resetFilters" class="m-2">Reset</button>
+      <button type="button" class="m-2" @click="resetFilters">Reset</button>
     </div>
 
     <BaseDatatable
@@ -37,8 +37,8 @@
       :data="filteredUsers"
       :columns="columns"
       :loading="loading"
-      :emptyMessage="loading ? 'Laden…' : 'Keine Konten gefunden.'"
-      defaultSortField="name"
+      :empty-message="loading ? 'Laden…' : 'Keine Konten gefunden.'"
+      default-sort-field="name"
     >
     </BaseDatatable>
   </div>
@@ -116,25 +116,6 @@ export default Vue.extend({
       }
     ] as Column[]
   }),
-  async created() {
-    this.loading = true;
-    this.$store.dispatch('groups/fetchAll');
-    try {
-      await this.$store.dispatch('users/fetchAll');
-    } catch (e) {
-      alert('Konten konnten nicht geladen werden.');
-    } finally {
-      this.loading = false;
-    }
-    (this.$refs.nameFitler as HTMLInputElement).focus();
-  },
-  methods: {
-    resetFilters() {
-      this.nameFilter = '';
-      this.roleFilter = [];
-      this.reviewedFilter = [];
-    }
-  },
   computed: {
     possibleGroups(): string[] {
       return this.$store.getters['groups/all'].map((g: Group) => g.name);
@@ -171,6 +152,25 @@ export default Vue.extend({
         filtered = filtered.filter((user) => reviewedFilter.includes(user.is_reviewed));
       }
       return filtered;
+    }
+  },
+  async created() {
+    this.loading = true;
+    this.$store.dispatch('groups/fetchAll');
+    try {
+      await this.$store.dispatch('users/fetchAll');
+    } catch (e) {
+      alert('Konten konnten nicht geladen werden.');
+    } finally {
+      this.loading = false;
+    }
+    (this.$refs.nameFitler as HTMLInputElement).focus();
+  },
+  methods: {
+    resetFilters() {
+      this.nameFilter = '';
+      this.roleFilter = [];
+      this.reviewedFilter = [];
     }
   }
 });

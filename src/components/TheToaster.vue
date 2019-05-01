@@ -2,9 +2,9 @@
   <div class="toaster">
     <transition-group name="fade">
       <div
-        class="toast"
         v-for="toast in toasts"
         :key="toast.id"
+        class="toast"
         :class="{ 'bg-red-600': toast.type === 'error' }"
       >
         {{ toast.text }}
@@ -12,7 +12,6 @@
     </transition-group>
   </div>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';

@@ -1,8 +1,8 @@
 <template>
   <textarea
-    :class="{ 'has-errors': hasErrorsGetter() }"
     :id="id"
     ref="textarea"
+    :class="{ 'has-errors': hasErrorsGetter() }"
     v-bind="{ rows: 5, ...$attrs }"
     v-on="{ ...$listeners, input: onInput }"
   ></textarea>
@@ -17,6 +17,9 @@ export default Vue.extend({
     hasErrorsGetter: { from: 'hasErrorsGetter', default: () => () => false },
     isValidGetter: { from: 'isValidGetter', default: () => () => false },
     validator: { from: 'validator', default: null }
+  },
+  mounted() {
+    this.resizeTextarea();
   },
   methods: {
     focus() {
@@ -34,9 +37,6 @@ export default Vue.extend({
       el.style.setProperty('height', 'auto'); // needed to get correct values
       el.style.setProperty('height', `${el.scrollHeight + el.offsetHeight - el.clientHeight}px`);
     }
-  },
-  mounted() {
-    this.resizeTextarea();
   }
 });
 </script>

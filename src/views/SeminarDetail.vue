@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto px-4 max-w-5xl">
-    <div class="fullspinner" v-if="loading" />
+    <div v-if="loading" class="fullspinner" />
 
     <div v-if="object">
       <DeleteSeminarButton v-if="isStaff" :seminar="object" class="float-right" />
@@ -50,7 +50,7 @@
         </div>
 
         <div class="w-full md:w-2/3">
-          <CommentList class="w-full" :seminarId="pk" />
+          <CommentList class="w-full" :seminar-id="pk" />
         </div>
       </div>
     </div>
@@ -94,22 +94,18 @@ import { Seminar } from '@/types';
 import userMixin from '@/mixins/user.ts';
 
 import SeminarForm from '@/components/SeminarForm.vue';
-import SeminarStatus from '@/components/SeminarStatus.vue';
 import CommentList from '@/components/CommentList.vue';
-import StatusBadge from '@/components/StatusBadge.vue';
 import DeleteSeminarButton from '@/components/DeleteSeminarButton.vue';
 import BaseModal from '@/components/BaseModal.vue';
 
 export default Vue.extend({
-  mixins: [userMixin],
   components: {
     SeminarForm,
-    SeminarStatus,
     CommentList,
-    StatusBadge,
     DeleteSeminarButton,
     BaseModal
   },
+  mixins: [userMixin],
   props: {
     pk: { type: Number, required: true }
   },

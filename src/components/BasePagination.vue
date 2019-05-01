@@ -19,13 +19,13 @@
           1
         </button>
 
-        <span class="mx-1" v-if="value > 2">…</span>
+        <span v-if="value > 2" class="mx-1">…</span>
 
-        <button disabled class="page active" v-if="value !== 1 && value !== pageCount">
+        <button v-if="value !== 1 && value !== pageCount" disabled class="page active">
           {{ value }}
         </button>
 
-        <span class="mx-1" v-if="value < pageCount - 1">…</span>
+        <span v-if="value < pageCount - 1" class="mx-1">…</span>
 
         <button
           class="page"
@@ -40,6 +40,7 @@
       <template v-else>
         <button
           v-for="page in pageCount"
+          :key="page"
           class="page"
           :class="value === page ? 'active' : 'cursor-pointer'"
           :disabled="value === page"
@@ -59,7 +60,6 @@
     </nav>
   </div>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';

@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto xl:px-4" style="max-width:100rem">
-    <div class="fullspinner" v-if="loading" />
+    <div v-if="loading" class="fullspinner" />
 
     <h1 class="text-green-500 text-2xl font-bold mb-5">Seminare</h1>
 
@@ -27,28 +27,28 @@
         class="m-2"
       />
       <BaseCheckbox
-        title="Deadline abgelaufen"
         v-model="deadlineFilter"
+        title="Deadline abgelaufen"
         class="mx-2 px-4 bg-white py-2 shadow rounded border flex items-center"
       >
         Deadline
       </BaseCheckbox>
 
-      <button type="button" @click="resetFilters" class="m-2">Reset</button>
+      <button type="button" class="m-2" @click="resetFilters">Reset</button>
     </div>
 
     <SeminarStats :seminars="filteredSeminars" />
 
     <BaseDatatable
       class="my-4"
-      :perPage="100"
+      :per-page="100"
       :data="filteredSeminars"
       :columns="columns"
       :loading="loading"
+      :empty-message="loading ? 'Laden…' : 'Keine Seminare gefunden.'"
+      default-sort-field="start_date"
+      :default-sort-dir="-1"
       @sortChanged="currentPage = 1"
-      :emptyMessage="loading ? 'Laden…' : 'Keine Seminare gefunden.'"
-      defaultSortField="start_date"
-      :defaultSortDir="-1"
     >
       <router-link
         slot="title"
@@ -60,12 +60,12 @@
       </router-link>
       <router-link
         slot="owner"
-        slot-scope="{ value, row }"
+        slot-scope="{ value }"
         :to="{ name: 'UserDetail', params: { pk: value.pk } }"
       >
         {{ value.name }}
       </router-link>
-      <template slot="group" slot-scope="{ value, row }">
+      <template slot="group" slot-scope="{ value }">
         <router-link v-if="value" :to="{ name: 'GroupDetail', params: { pk: value.pk } }">
           {{ value.name }}
         </router-link>
@@ -163,32 +163,6 @@ export default Vue.extend({
       }
     ] as Column[]
   }),
-  async mounted() {
-    this.loading = true;
-    try {
-      await this.$store.dispatch('seminars/fetchAll');
-    } catch (e) {
-      alert('Seminare konnten nicht geladen werden.');
-    } finally {
-      this.loading = false;
-    }
-    (this.$refs.titleFitler as HTMLInputElement).focus();
-  },
-  methods: {
-    resetFilters() {
-      this.yearFilter = [new Date().getFullYear()];
-      this.quarterFilter = [];
-      this.titleFilter = '';
-      this.groupFilter = [];
-      this.stateFilter = [];
-      this.deadlineFilter = false;
-    }
-  },
-  watch: {
-    filteredSeminars() {
-      this.currentPage = 1;
-    }
-  },
   computed: {
     allStates(): string[] {
       return states;
@@ -222,6 +196,32 @@ export default Vue.extend({
         });
       }
       return filtered;
+    }
+  },
+  watch: {
+    filteredSeminars() {
+      this.currentPage = 1;
+    }
+  },
+  async mounted() {
+    this.loading = true;
+    try {
+      await this.$store.dispatch('seminars/fetchAll');
+    } catch (e) {
+      alert('Seminare konnten nicht geladen werden.');
+    } finally {
+      this.loading = false;
+    }
+    (this.$refs.titleFitler as HTMLInputElement).focus();
+  },
+  methods: {
+    resetFilters() {
+      this.yearFilter = [new Date().getFullYear()];
+      this.quarterFilter = [];
+      this.titleFilter = '';
+      this.groupFilter = [];
+      this.stateFilter = [];
+      this.deadlineFilter = false;
     }
   }
 });

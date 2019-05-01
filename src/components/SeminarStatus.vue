@@ -1,7 +1,6 @@
 <template>
-  <BaseSelect :value="value" @input="onInput" :options="options" />
+  <BaseSelect :value="value" :options="options" @input="onInput" />
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';
@@ -17,14 +16,14 @@ export default Vue.extend({
     value: { type: String, required: true },
     seminar: { type: Object as () => Seminar, required: true }
   },
-  methods: {
-    onInput(event: any) {
-      this.$emit('input', event.target.value);
-    }
-  },
   computed: {
     options(): string[] {
       return [this.seminar.status, ...getNextStates(this.seminar.status)];
+    }
+  },
+  methods: {
+    onInput(event: any) {
+      this.$emit('input', event.target.value);
     }
   }
 });

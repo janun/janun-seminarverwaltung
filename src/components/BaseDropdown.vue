@@ -1,6 +1,6 @@
 <template>
   <div class="relative" @keydown.down="onDown" @keydown.escape="onEscape" @keydown.up="onUp">
-    <div role="button" ref="trigger" @click="toggle" aria-haspopup="true">
+    <div ref="trigger" role="button" aria-haspopup="true" @click="toggle">
       <slot name="trigger" />
     </div>
 
@@ -28,6 +28,18 @@ export default Vue.extend({
   data: () => ({
     open: false
   }),
+  created() {
+    // close on click outside
+    const clickOutsideHandler = (event: Event) => {
+      if (!this.$el.contains(event.target as Node)) {
+        this.open = false;
+      }
+    };
+    document.addEventListener('click', clickOutsideHandler);
+    this.$once('hook:destroyed', () => {
+      document.removeEventListener('click', clickOutsideHandler);
+    });
+  },
   methods: {
     toggle() {
       this.open = !this.open;
@@ -62,18 +74,6 @@ export default Vue.extend({
         this.open = false;
       }
     }
-  },
-  created() {
-    // close on click outside
-    const clickOutsideHandler = (event: Event) => {
-      if (!this.$el.contains(event.target as Node)) {
-        this.open = false;
-      }
-    };
-    document.addEventListener('click', clickOutsideHandler);
-    this.$once('hook:destroyed', () => {
-      document.removeEventListener('click', clickOutsideHandler);
-    });
   }
 });
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div class="mb-5">
     <label
+      v-if="label || $slots.label"
       class="block mb-1 text-base text-gray-700"
       :class="{ 'text-red-600': hasErrors }"
       :for="childId"
-      v-if="label || $slots.label"
     >
       <slot name="label">{{ label }}</slot>
       <span v-if="optional" class="text-sm text-gray-500 ml-1">(optional)</span>
@@ -48,6 +48,11 @@ export default Vue.extend({
     pending: false,
     pendingTimer: 0
   }),
+  computed: {
+    childId(): string {
+      return `input_${(this as any).uuid}`;
+    }
+  },
   watch: {
     'preferredValidator.$pending'(pending: boolean) {
       if (this.pendingTimer) {
@@ -56,14 +61,6 @@ export default Vue.extend({
       this.pendingTimer = setTimeout(() => {
         this.pending = pending;
       }, 100);
-    }
-  },
-  computed: {
-    childId(): string {
-      return `input_${(this as any).uuid}`;
-    },
-    hasFocus() {
-      this.$el.contains(document.activeElement);
     }
   }
 });

@@ -1,9 +1,9 @@
 <template>
   <BaseWizard class="max-w-3xl mx-auto">
     <h1
-      class="text-xl font-bold text-green-500"
       slot="heading"
       slot-scope="{ currentIndex, totalSteps }"
+      class="text-xl font-bold text-green-500"
     >
       Seminar anmelden
       <span class="text-gray-700 text-sm">({{ currentIndex + 1 }}/{{ totalSteps }})</span>
@@ -12,7 +12,7 @@
     <BaseWizardStep
       title="Inhalt"
       :v="$v.form.content"
-      prevLabel="Abbrechen"
+      prev-label="Abbrechen"
       @prev="$router.push('/')"
     >
       <h2 class="text-green-500 text-xl mb-4">Seminarinhalte</h2>
@@ -61,11 +61,11 @@
 
     <BaseWizardStep title="Gruppe" :v="$v.form.group">
       <h2 class="text-green-500 text-xl mb-4">Meldest Du das Seminar für eine Gruppe an?</h2>
-      <BaseRadioSelect v-model="form.group.yesgroup" :valueIfChecked="false">
+      <BaseRadioSelect v-model="form.group.yesgroup" :value-if-checked="false">
         Nein, Anmeldung als Einzelperson.
       </BaseRadioSelect>
 
-      <BaseRadioSelect v-model="form.group.yesgroup" :valueIfChecked="true">
+      <BaseRadioSelect v-model="form.group.yesgroup" :value-if-checked="true">
         Ja, Anmeldung für folgende JANUN-Gruppe:
       </BaseRadioSelect>
 
@@ -188,7 +188,7 @@
       </div>
     </BaseWizardStep>
 
-    <BaseWizardStep title="Bestätigung" :v="$v.form" nextLabel="Anmelden" @submit="save">
+    <BaseWizardStep title="Bestätigung" :v="$v.form" next-label="Anmelden" @submit="save">
       <h2 class="text-green-500 text-xl mb-4">
         Bestätigung
       </h2>
@@ -214,7 +214,6 @@
   </BaseWizard>
 </template>
 
-
 <script lang="ts">
 import Vue from 'vue';
 import BaseWizard from '@/components/BaseWizard.vue';
@@ -224,7 +223,6 @@ import BaseTextarea from '@/components/BaseTextarea.vue';
 import BaseField from '@/components/BaseField.vue';
 import BaseRadioSelect from '@/components/BaseRadioSelect.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
-import BaseModal from '@/components/BaseModal.vue';
 import { daysDiff, getDeadline } from '@/utils/date.ts';
 import { getMaxFunding } from '@/utils/funding.ts';
 import {
@@ -248,8 +246,7 @@ export default Vue.extend({
     BaseTextarea,
     BaseField,
     BaseRadioSelect,
-    BaseCheckbox,
-    BaseModal
+    BaseCheckbox
   },
   data() {
     return {
@@ -331,34 +328,6 @@ export default Vue.extend({
       }
     };
   },
-  methods: {
-    async save() {
-      const payload = {
-        title: this.form.content.title,
-        description: this.form.content.description,
-        start_date: this.form.spacetime.start_date,
-        start_time: this.form.spacetime.start_time,
-        end_date: this.form.spacetime.end_date,
-        end_time: this.form.spacetime.end_time,
-        location: this.form.spacetime.location,
-        group: this.form.group.yesgroup ? this.form.group.group : null,
-        planned_training_days: this.form.days.planned_training_days,
-        planned_attendees_min: this.form.attendees.planned_attendees_min,
-        planned_attendees_max: this.form.attendees.planned_attendees_max,
-        requested_funding: this.form.funding.requested_funding
-      };
-      this.saving = true;
-      try {
-        const seminar = await this.$store.dispatch('seminars/create', payload);
-        this.modalOpen = true;
-        this.$router.push({ name: 'SeminarDetail', params: { pk: seminar.pk } });
-      } catch (error) {
-        alert(`Sorry, konnte das Seminar nicht erstellen:\n ${error}.`);
-      } finally {
-        this.saving = false;
-      }
-    }
-  },
   computed: {
     validExceptConfirmation(): boolean {
       if (this.$v.form) {
@@ -402,6 +371,34 @@ export default Vue.extend({
         return false;
       }
       return undefined;
+    }
+  },
+  methods: {
+    async save() {
+      const payload = {
+        title: this.form.content.title,
+        description: this.form.content.description,
+        start_date: this.form.spacetime.start_date,
+        start_time: this.form.spacetime.start_time,
+        end_date: this.form.spacetime.end_date,
+        end_time: this.form.spacetime.end_time,
+        location: this.form.spacetime.location,
+        group: this.form.group.yesgroup ? this.form.group.group : null,
+        planned_training_days: this.form.days.planned_training_days,
+        planned_attendees_min: this.form.attendees.planned_attendees_min,
+        planned_attendees_max: this.form.attendees.planned_attendees_max,
+        requested_funding: this.form.funding.requested_funding
+      };
+      this.saving = true;
+      try {
+        const seminar = await this.$store.dispatch('seminars/create', payload);
+        this.modalOpen = true;
+        this.$router.push({ name: 'SeminarDetail', params: { pk: seminar.pk } });
+      } catch (error) {
+        alert(`Sorry, konnte das Seminar nicht erstellen:\n ${error}.`);
+      } finally {
+        this.saving = false;
+      }
     }
   }
 });

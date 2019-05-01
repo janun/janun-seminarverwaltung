@@ -5,8 +5,8 @@
       <h2 class="text-green-500 font-bold text-xl mb-5">Neues Konto</h2>
 
       <div
-        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
         v-if="serverErrors.length"
+        class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm"
       >
         <ul class="list-disc list-inside">
           <li v-for="(message, index) in serverErrors" :key="index">
@@ -19,11 +19,11 @@
         <h2 class="text-green-500 mb-2 font-bold">Kontakt</h2>
 
         <BaseField label="Voller Name" name="name">
-          <BaseInput ref="name" name="name" v-model="form.name" class="w-full" />
+          <BaseInput ref="name" v-model="form.name" name="name" class="w-full" />
         </BaseField>
 
         <BaseField label="E-Mail-Adresse" name="email">
-          <BaseInput type="email" name="email" v-model="form.email" class="w-full" />
+          <BaseInput v-model="form.email" type="email" name="email" class="w-full" />
         </BaseField>
 
         <BaseField label="Telefonnumer" optional name="telephone">
@@ -60,7 +60,6 @@
     </BaseModal>
   </button>
 </template>
-
 
 <script lang="ts">
 import Vue from 'vue';

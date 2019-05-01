@@ -1,8 +1,8 @@
 <template>
   <input
+    :id="id"
     :class="{ 'has-error': hasErrorsGetter() }"
     :type="type"
-    :id="id"
     v-bind="$attrs"
     @input="onInput"
   />
