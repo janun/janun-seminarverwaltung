@@ -1,23 +1,25 @@
 <template>
   <Portal to="modals">
-    <div v-if="show" class="modal-backdrop md:p-8" @click="close">
-      <div
-        ref="modal"
-        class="modal mx-auto max-w-lg mt-8 card shadow-xl rounded-lg"
-        role="dialog"
-        @click.stop
-      >
-        <button
-          ref="closeButton"
-          type="button"
-          class="float-right h-12 w-12 -mt-4 -mr-4 text-4xl rounded-full focus:outline-none focus:text-gray-900 hover:text-gray-900"
-          @click="close"
+    <transition name="modal">
+      <div v-if="show" class="modal-backdrop md:p-5" @click="close">
+        <div
+          ref="modal"
+          class="modal mx-auto max-w-lg mt-8 card shadow-xl rounded-lg"
+          role="dialog"
+          @click.stop
         >
-          &times;
-        </button>
-        <slot />
+          <button
+            ref="closeButton"
+            type="button"
+            class="float-right h-12 w-12 -mt-4 -mr-4 text-4xl rounded-full focus:outline-none focus:text-gray-900 hover:text-gray-900"
+            @click="close"
+          >
+            &times;
+          </button>
+          <slot />
+        </div>
       </div>
-    </div>
+    </transition>
   </Portal>
 </template>
 
@@ -34,19 +36,18 @@ export default Vue.extend({
     focusedBefore: null as HTMLElement | null
   }),
   watch: {
-    show: {
-      immediate: true,
-      handler(show) {
-        if (show) {
-          document.body.classList.add('modal-open');
-          setTimeout(() => {
-            this.focus();
-          });
-          this.$emit('show');
-        } else {
-          document.body.classList.remove('modal-open');
-          this.returnFocus();
-        }
+    show(show) {
+      if (show) {
+        const bodyClass = document.body.getAttribute('class');
+        document.body.setAttribute('class', `${bodyClass} modal-open`);
+        setTimeout(() => {
+          this.focus();
+        });
+        this.$emit('show');
+      } else {
+        const bodyClass = document.body.getAttribute('class') || '';
+        document.body.setAttribute('class', bodyClass.replace('modal-open', ''));
+        this.returnFocus();
       }
     }
   },
@@ -111,5 +112,25 @@ export default Vue.extend({
 .modal-backdrop {
   @apply fixed overflow-auto p-2 inset-0 z-40;
   background: rgba(0, 0, 0, 0.7);
+}
+
+/* modal transition */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.2s;
+}
+
+.modal {
+  transition: all 0.2s;
+}
+
+.modal-enter .modal,
+.modal-leave-to .modal {
+  transform: scale(0.7);
+}
+
+.modal-enter,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>

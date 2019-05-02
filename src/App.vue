@@ -10,7 +10,7 @@
 
     <TheToaster />
 
-    <PortalTarget name="modals" transition="BaseModalTransition" />
+    <PortalTarget name="modals" multiple />
   </div>
 </template>
 
