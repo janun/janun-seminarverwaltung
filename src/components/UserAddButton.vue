@@ -50,6 +50,7 @@
           <button
             type="submit"
             class="btn btn-primary ml-auto"
+            :class="{ 'btn-loading': saving }"
             :disabled="$v.form.$invalid"
             :title="$v.form.$invalid ? 'Fehler im Formular' : ''"
           >
