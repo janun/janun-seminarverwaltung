@@ -112,7 +112,7 @@ export default Vue.extend({
     stateFilter: [] as string[],
     deadlineFilter: false,
     columns: [
-      { field: 'title', label: 'Titel', sortable: true },
+      { field: 'title', label: 'Titel', sortable: true, width: '30rem' },
       { field: 'start_date', label: 'Datum', sortable: true, formatter: formatDate },
       {
         field: 'status',

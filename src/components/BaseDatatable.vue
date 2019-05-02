@@ -67,6 +67,7 @@
               v-for="col in cols"
               :key="col.field"
               :class="col.right ? 'text-right' : 'text-left'"
+              :style="'width: ${col.width}'"
             >
               <slot
                 :name="col.field"
@@ -107,6 +108,7 @@ export interface Column {
   tooltip?: string;
   sortable: boolean;
   formatter?: (value: any, row?: any) => string;
+  width?: string;
 }
 
 type Sorter = (a: object, b: object, sortField: string, sortDir: 1 | -1) => number;
@@ -230,7 +232,6 @@ export default Vue.extend({
 }
 .datatable th:first-child {
   @apply rounded-tl-lg;
-  width: 30rem;
 }
 .datatable th:last-child {
   @apply rounded-tr-lg;
