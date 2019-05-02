@@ -59,7 +59,9 @@
             :key="row.pk"
             scope="row"
             :class="{ 'cursor-pointer': $listeners['rowClick'] }"
+            :tabindex="$listeners['rowClick'] ? 0 : null"
             @click="$emit('rowClick', row)"
+            @keypress.enter="$emit('rowClick', row)"
           >
             <td
               v-for="col in cols"
