@@ -38,15 +38,13 @@ export default Vue.extend({
   watch: {
     show(show) {
       if (show) {
-        const bodyClass = document.body.getAttribute('class');
-        document.body.setAttribute('class', `${bodyClass} modal-open`);
+        document.body.classList.add('modal-open');
         setTimeout(() => {
           this.focus();
         });
         this.$emit('show');
       } else {
-        const bodyClass = document.body.getAttribute('class') || '';
-        document.body.setAttribute('class', bodyClass.replace('modal-open', ''));
+        document.body.classList.remove('modal-open');
         this.returnFocus();
       }
     }
