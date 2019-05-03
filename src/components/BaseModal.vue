@@ -1,9 +1,11 @@
 <template>
   <Portal to="modals">
     <transition name="modal">
-      <div v-if="show" class="modal-backdrop md:p-5" @click="close">
+      <div v-if="show" class="modal-backdrop md:p-5" @click="close" @keydown.esc.stop="close">
         <div
           ref="modal"
+          aria-modal="true"
+          tabindex="-1"
           class="modal mx-auto max-w-lg mt-8 card shadow-xl rounded-lg"
           role="dialog"
           @click.stop
@@ -50,19 +52,6 @@ export default Vue.extend({
     }
   },
   created() {
-    // close on escape
-    const escapeHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && this.show && this.closeOnEsc) {
-        event.stopPropagation();
-        event.preventDefault();
-        this.close();
-      }
-    };
-    document.addEventListener('keydown', escapeHandler);
-    this.$once('hook:destroyed', () => {
-      document.removeEventListener('keydown', escapeHandler);
-    });
-
     // trap focus
     const tabHandler = (event: KeyboardEvent) => {
       if (event.key === 'Tab' && this.show) {
