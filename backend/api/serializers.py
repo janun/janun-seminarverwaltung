@@ -1,9 +1,9 @@
-from rest_framework import serializers
 from allauth.account.adapter import get_adapter
-from rest_auth.registration.serializers import RegisterSerializer as OldRegisterSerializer
-from rest_auth import serializers as rest_auth_serializers
+from allauth.account.utils import setup_user_email
+from allauth.utils import email_address_exists
 from django.contrib.auth.hashers import make_password
-
+from rest_auth import serializers as rest_auth_serializers
+from rest_framework import serializers
 
 from . import models
 
@@ -13,8 +13,8 @@ class ChoicesField(serializers.Field):
         self._choices = choices
         super().__init__(**kwargs)
 
-    def to_representation(self, obj):
-        return self._choices[obj]
+    def to_representation(self, value):
+        return self._choices[value]
 
     def to_internal_value(self, data):
         return getattr(self._choices, data)
@@ -113,12 +113,8 @@ class SeminarSerializer(serializers.ModelSerializer):
 
     owner = ShortUserSerializer(read_only=True)
     group = ShortJANUNGroupSerializer(read_only=True)
-    # group = serializers.SlugRelatedField(
-    #     slug_field="name", queryset=models.JANUNGroup.objects.all(),
-    #     allow_null=True
-    # )
 
-    status = ChoicesField(choices=models.Seminar.STATES, default="angemeldet")
+    status = ChoicesField(choices=models.Seminar.STATES, default='angemeldet')
 
     @staticmethod
     def setup_eager_loading(queryset):

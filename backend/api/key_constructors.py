@@ -1,16 +1,9 @@
 import datetime
+
 from django.core.cache import cache
 from django.utils.encoding import force_text
-
-from rest_framework_extensions.key_constructor.constructors import (
-    DefaultKeyConstructor
-)
-from rest_framework_extensions.key_constructor.bits import (
-    KeyBitBase,
-    RetrieveSqlQueryKeyBit,
-    ListSqlQueryKeyBit,
-    UserKeyBit
-)
+from rest_framework_extensions.key_constructor.bits import KeyBitBase, RetrieveSqlQueryKeyBit, UserKeyBit
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
 
 
 class UpdatedAtKeyBit(KeyBitBase):

@@ -1,5 +1,5 @@
-from django.apps import AppConfig
+from django.apps import AppConfig as OrigAppConfig
 
 
-class AppConfig(AppConfig):
+class AppConfig(OrigAppConfig):
     name = 'api'
