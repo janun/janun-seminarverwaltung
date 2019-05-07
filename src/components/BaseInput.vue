@@ -1,6 +1,7 @@
 <template>
   <input
     :id="id"
+    class="input"
     :class="{ 'has-error': hasErrorsGetter() }"
     :type="type"
     v-bind="$attrs"
@@ -34,17 +35,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style lang="postcss" scoped>
-input {
-  @apply appearance-none border border-gray-400 rounded py-2 px-3 bg-gray-20;
-}
-
-input:focus {
-  @apply outline-none shadow-outline;
-}
-
-input.has-error {
-  @apply border-red-600;
-}
-</style>

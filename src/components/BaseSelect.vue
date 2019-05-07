@@ -1,12 +1,6 @@
 <template>
   <div class="relative inline-block">
-    <select
-      ref="input"
-      v-bind="$attrs"
-      class="block appearance-none w-full border border-gray-400 py-2 px-4 pr-8 rounded bg-gray-20 focus:outline-none focus:shadow-outline"
-      :class="innerClass"
-      v-on="$listeners"
-    >
+    <select ref="input" v-bind="$attrs" class="input" :class="innerClass" v-on="$listeners">
       <slot>
         <option v-for="option in options" :key="option" :selected="option === value">
           {{ option }}

@@ -2,6 +2,7 @@
   <textarea
     :id="id"
     ref="textarea"
+    class="input resize-none"
     :class="{ 'has-errors': hasErrorsGetter() }"
     v-bind="{ rows: 5, ...$attrs }"
     v-on="{ ...$listeners, input: onInput }"
@@ -40,17 +41,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style lang="postcss" scoped>
-textarea {
-  @apply w-full appearance-none rounded py-2 px-3 leading-tight resize-none -mb-2 bg-gray-20 border border-gray-400;
-}
-
-textarea:focus {
-  @apply outline-none shadow-outline;
-}
-
-.has-errors {
-  @apply border-red-600;
-}
-</style>

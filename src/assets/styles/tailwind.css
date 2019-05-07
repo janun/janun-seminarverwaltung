@@ -8,5 +8,6 @@
 @import "./buttons.css";
 @import "./spinner.css";
 @import "./transitions.css";
+@import "./forms.css";
 
 @tailwind utilities;
