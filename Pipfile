@@ -20,9 +20,12 @@ django-cors-headers = "*"
 django-allauth = "*"
 drf-extensions = "*"
 django-model-utils = "*"
+pylint-quotes = "*"
 
 [dev-packages]
 autopep8 = "*"
 django-debug-toolbar = "*"
 pylint = "*"
 pylint-django = "*"
+flake8 = "*"
+flake8-django = "*"

@@ -1,1 +1,16 @@
-load-plugins=pylint_django
+[MASTER]
+load-plugins=pylint_django,pylint_quotes
+ignore=.git
+max-line-length=119
+string-quote=single-avoid-escape
+
+[MESSAGES CONTROL]
+disable=missing-docstring,
+        abstract-method,
+        arguments-differ,
+        attribute-defined-outside-init,
+        unused-argument,
+        invalid-name,
+        too-few-public-methods,
+        too-many-ancestors,
+        no-self-use
