@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from django.core.cache import cache
 from django.utils.encoding import force_text
@@ -11,7 +12,7 @@ from rest_framework_extensions.key_constructor.constructors import DefaultKeyCon
 
 
 class UpdatedAtKeyBit(KeyBitBase):
-    def get_data(self, **kwargs):
+    def get_data(self, **kwargs) -> Optional[str]:
         key = "api_updated_at_timestamp"
         value = cache.get(key, None)
         if not value:

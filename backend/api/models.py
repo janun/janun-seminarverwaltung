@@ -10,7 +10,7 @@ from model_utils import Choices
 from .utils import get_quarter
 
 
-def change_api_updated_at(*args, **kwargs):
+def change_api_updated_at(*args, **kwargs) -> None:
     cache.set("api_updated_at_timestamp", datetime.datetime.utcnow())
 
 
@@ -19,7 +19,7 @@ class JANUNGroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     class Meta:
@@ -28,8 +28,8 @@ class JANUNGroup(models.Model):
 
 class User(AbstractUser):
     ROLES = Choices("Teamer_in", "Prüfer_in", "Verwalter_in")
-    first_name = None
-    last_name = None
+    first_name = None  # type: ignore
+    last_name = None  # type: ignore
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True)
     role = models.CharField(max_length=255, choices=ROLES, default=ROLES["Teamer_in"])
@@ -53,7 +53,7 @@ class User(AbstractUser):
     class Meta:
         ordering = ("name",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
 
 
@@ -106,21 +106,21 @@ class Seminar(models.Model):
     class Meta:
         ordering = ("-start_date",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
     @property
-    def tnt(self):
+    def tnt(self) -> int:
         return self.planned_attendees_max * self.planned_training_days
 
     @property
-    def tnt_cost(self):
+    def tnt_cost(self) -> Decimal:
         if self.tnt == 0:
-            return 0
-        return round(Decimal(self.requested_funding / self.tnt), 2)
+            return Decimal("0")
+        return (self.requested_funding / self.tnt).quantize(Decimal("1.00"))
 
     @property
-    def deadline(self):
+    def deadline(self) -> datetime.date:
         quarter = get_quarter(self.end_date)
         year = self.end_date.year
         deadlines = [
@@ -152,5 +152,5 @@ class SeminarComment(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text

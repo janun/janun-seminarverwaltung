@@ -1,7 +1,10 @@
+from typing import Dict
+
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from allauth.utils import email_address_exists
 from django.contrib.auth.hashers import make_password
+from django.db.models import QuerySet, Model
 from rest_auth import serializers as rest_auth_serializers
 from rest_framework import serializers
 
@@ -9,14 +12,14 @@ from . import models
 
 
 class ChoicesField(serializers.Field):
-    def __init__(self, choices, **kwargs):
+    def __init__(self, choices: Dict[str, str], **kwargs) -> None:
         self._choices = choices
         super().__init__(**kwargs)
 
-    def to_representation(self, value):
+    def to_representation(self, value) -> str:
         return self._choices[value]
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data) -> str:
         return getattr(self._choices, data)
 
 
@@ -50,15 +53,15 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     @staticmethod
-    def setup_eager_loading(queryset):
+    def setup_eager_loading(queryset: QuerySet) -> QuerySet:
         queryset = queryset.prefetch_related("janun_groups", "group_hats")
         return queryset
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, str]) -> Dict[str, str]:
         validated_data["password"] = make_password(validated_data["password"])
         return super().create(validated_data)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Model, validated_data: Dict[str, str]) -> models.User:
         if "password" in validated_data:
             validated_data["password"] = make_password(validated_data["password"])
         return super().update(instance, validated_data)
@@ -89,7 +92,7 @@ class SeminarCommentSerializer(serializers.ModelSerializer):
     owner = ShortUserSerializer(read_only=True)
 
     @staticmethod
-    def setup_eager_loading(queryset):
+    def setup_eager_loading(queryset: QuerySet) -> QuerySet:
         queryset = queryset.select_related("owner")
         return queryset
 
@@ -106,7 +109,7 @@ class JANUNGroupSerializer(serializers.ModelSerializer):
     group_hats = ShortUserSerializer(read_only=True, many=True)
 
     @staticmethod
-    def setup_eager_loading(queryset):
+    def setup_eager_loading(queryset: QuerySet) -> QuerySet:
         queryset = queryset.prefetch_related("members", "group_hats")
         return queryset
 
@@ -131,7 +134,7 @@ class SeminarSerializer(serializers.ModelSerializer):
     status = ChoicesField(choices=models.Seminar.STATES, default="angemeldet")
 
     @staticmethod
-    def setup_eager_loading(queryset):
+    def setup_eager_loading(queryset: QuerySet) -> QuerySet:
         queryset = queryset.select_related("owner", "group")
         return queryset
 
@@ -183,11 +186,11 @@ class RegisterSerializer(serializers.Serializer):
         many=True, required=False, queryset=models.JANUNGroup.objects.all()
     )
 
-    def validate_username(self, username):
+    def validate_username(self, username: str) -> str:
         username = get_adapter().clean_username(username)
         return username
 
-    def validate_email(self, email):
+    def validate_email(self, email: str) -> str:
         email = get_adapter().clean_email(email)
         if email and email_address_exists(email):
             raise serializers.ValidationError(
@@ -195,17 +198,17 @@ class RegisterSerializer(serializers.Serializer):
             )
         return email
 
-    def validate_password(self, password):
+    def validate_password(self, password: str) -> str:
         return get_adapter().clean_password(password)
 
-    def custom_signup(self, request, user):
+    def custom_signup(self, request, user) -> None:
         user.name = self.validated_data.get("name", "")
         user.telephone = self.validated_data.get("telephone", "")
         user.address = self.validated_data.get("address", "")
         user.janun_groups.set(self.validated_data.get("janun_groups", []))
         user.save()
 
-    def get_cleaned_data(self):
+    def get_cleaned_data(self) -> Dict[str, str]:
         return {
             "username": self.validated_data.get("username", ""),
             "password": self.validated_data.get("password", ""),
