@@ -13,15 +13,17 @@ from . import permissions as permissions2
 from . import serializers
 
 # Serve Vue Application
-index_view = never_cache(TemplateView.as_view(template_name='index.html'))
+index_view = never_cache(TemplateView.as_view(template_name="index.html"))
 
 
-class SeminarViewSet(NestedViewSetMixin, ETAGMixin, CacheResponseMixin, viewsets.ModelViewSet):
+class SeminarViewSet(
+    NestedViewSetMixin, ETAGMixin, CacheResponseMixin, viewsets.ModelViewSet
+):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
 
     def get_queryset(self):
-        if self.request.user.role in ('Prüfer_in', 'Verwalter_in'):
+        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.Seminar.objects.all()
         else:
             qs = self.request.user.seminars
@@ -51,7 +53,7 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.JANUNGroupSerializer
 
     def get_queryset(self):
-        if self.request.user.role in ('Prüfer_in', 'Verwalter_in'):
+        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.JANUNGroup.objects.all()
         else:
             qs = self.request.user.janun_groups
@@ -61,6 +63,7 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
 
 class JANUNGroupNamesViewSet(viewsets.ModelViewSet):
     """Helper for signup views"""
+
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.ShortJANUNGroupSerializer
     queryset = models.JANUNGroup.objects.all()
@@ -69,10 +72,10 @@ class JANUNGroupNamesViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserSerializer
-    filter_fields = ('janun_groups', 'group_hats')
+    filter_fields = ("janun_groups", "group_hats")
 
     def get_queryset(self):
-        if self.request.user.role in ('Prüfer_in', 'Verwalter_in'):
+        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.User.objects.all()
         else:
             qs = self.request.user
@@ -82,22 +85,24 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UsernameExistsView(APIView):
     """Helper for signup views"""
+
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
-        username = request.GET.get('username', '').strip().lower()
+        username = request.GET.get("username", "").strip().lower()
         exists = models.User.objects.filter(username=username).exists()
-        return Response({'exists': exists}, content_type='application/json')
+        return Response({"exists": exists}, content_type="application/json")
 
 
 class EmailExistsView(APIView):
     """Helper for signup views"""
+
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
-        email = request.GET.get('email', '').strip().lower()
+        email = request.GET.get("email", "").strip().lower()
         exists = models.User.objects.filter(email=email).exists()
-        return Response({'exists': exists}, content_type='application/json')
+        return Response({"exists": exists}, content_type="application/json")
 
 
 class LoginView(rest_auth_views.LoginView):
@@ -108,9 +113,6 @@ class LoginView(rest_auth_views.LoginView):
 
     def get_response(self):
         serializer_class = self.get_response_serializer()
-        data = {
-            'user': self.user,
-            'token': {'key': self.token}
-        }
-        serializer = serializer_class(instance=data, context={'request': self.request})
+        data = {"user": self.user, "token": {"key": self.token}}
+        serializer = serializer_class(instance=data, context={"request": self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -11,7 +11,7 @@ from .utils import get_quarter
 
 
 def change_api_updated_at(*args, **kwargs):
-    cache.set('api_updated_at_timestamp', datetime.datetime.utcnow())
+    cache.set("api_updated_at_timestamp", datetime.datetime.utcnow())
 
 
 class JANUNGroup(models.Model):
@@ -23,20 +23,24 @@ class JANUNGroup(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
 
 class User(AbstractUser):
-    ROLES = Choices('Teamer_in', 'Prüfer_in', 'Verwalter_in')
+    ROLES = Choices("Teamer_in", "Prüfer_in", "Verwalter_in")
     first_name = None
     last_name = None
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True)
-    role = models.CharField(max_length=255, choices=ROLES, default=ROLES['Teamer_in'])
+    role = models.CharField(max_length=255, choices=ROLES, default=ROLES["Teamer_in"])
     telephone = models.CharField(max_length=100, blank=True)
     is_reviewed = models.BooleanField(default=False)
-    janun_groups = models.ManyToManyField(JANUNGroup, related_name='members', blank=True)
-    group_hats = models.ManyToManyField(JANUNGroup, related_name='group_hats', blank=True)
+    janun_groups = models.ManyToManyField(
+        JANUNGroup, related_name="members", blank=True
+    )
+    group_hats = models.ManyToManyField(
+        JANUNGroup, related_name="group_hats", blank=True
+    )
 
     is_reviewed = models.BooleanField(default=False)
 
@@ -44,10 +48,10 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
-    EMAIL_FIELD = 'email'
+    EMAIL_FIELD = "email"
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
     def __str__(self):
         return self.username
@@ -56,28 +60,30 @@ class User(AbstractUser):
 class Seminar(models.Model):
     # manual data migrations needed if STATES changed
     STATES = Choices(
-        'angemeldet',
-        'zurückgezogen',
-        'zugesagt',
-        'abgelehnt',
-        'abgesagt',
-        'stattgefunden',
-        'ohne Abrechnung',
-        'Abrechnung abgeschickt',
-        'Abrechnung angekommen',
-        'Abrechnung unmöglich',
-        'rechnerische Prüfung',
-        'inhaltliche Prüfung',
-        'Zweitprüfung',
-        'fertig geprüft',
-        'überwiesen',
+        "angemeldet",
+        "zurückgezogen",
+        "zugesagt",
+        "abgelehnt",
+        "abgesagt",
+        "stattgefunden",
+        "ohne Abrechnung",
+        "Abrechnung abgeschickt",
+        "Abrechnung angekommen",
+        "Abrechnung unmöglich",
+        "rechnerische Prüfung",
+        "inhaltliche Prüfung",
+        "Zweitprüfung",
+        "fertig geprüft",
+        "überwiesen",
     )
 
     title = models.CharField(max_length=255)
     status = models.CharField(max_length=255, choices=STATES, default=STATES.angemeldet)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='seminars')
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="seminars"
+    )
     group = models.ForeignKey(
-        JANUNGroup, on_delete=models.SET_NULL, null=True, related_name='seminars'
+        JANUNGroup, on_delete=models.SET_NULL, null=True, related_name="seminars"
     )
 
     description = models.TextField(blank=True)
@@ -98,7 +104,7 @@ class Seminar(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('-start_date',)
+        ordering = ("-start_date",)
 
     def __str__(self):
         return self.title
@@ -121,26 +127,30 @@ class Seminar(models.Model):
             datetime.date(year, 4, 15),
             datetime.date(year, 7, 15),
             datetime.date(year, 10, 15),
-            datetime.date(year + 1, 1, 15)
+            datetime.date(year + 1, 1, 15),
         ]
         return deadlines[quarter]
 
 
-for model in [Seminar, ]:
+for model in [Seminar]:
     post_save.connect(receiver=change_api_updated_at, sender=model)
     post_delete.connect(receiver=change_api_updated_at, sender=model)
 
 
 class SeminarComment(models.Model):
     text = models.TextField()
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='comments')
-    seminar = models.ForeignKey(Seminar, on_delete=models.CASCADE, related_name='comments')
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="comments"
+    )
+    seminar = models.ForeignKey(
+        Seminar, on_delete=models.CASCADE, related_name="comments"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ("-created_at",)
 
     def __str__(self):
         return self.text
