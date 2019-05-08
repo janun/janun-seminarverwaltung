@@ -251,6 +251,7 @@ import { RuleDecl } from 'vue/types/options';
 import { Validation } from 'vuelidate';
 import { formatEuro } from '../utils/formatters';
 import userMixin from '@/mixins/user.ts';
+import { User } from '../types';
 
 export default Vue.extend({
   components: {
@@ -281,8 +282,8 @@ export default Vue.extend({
           location: ''
         },
         group: {
-          group_pk: '',
-          yesgroup: null
+          group_pk: '' as number | string,
+          yesgroup: null as boolean | null
         },
         days: {
           planned_training_days: null
@@ -387,6 +388,12 @@ export default Vue.extend({
         return false;
       }
       return undefined;
+    }
+  },
+  created() {
+    if (((this as any).user as User).janun_groups.length) {
+      this.form.group.yesgroup = true;
+      this.form.group.group_pk = ((this as any).user as User).janun_groups[0].pk;
     }
   },
   methods: {
