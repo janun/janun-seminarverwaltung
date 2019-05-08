@@ -3,15 +3,17 @@ export interface StateInfo {
   description: string;
   sources: string[];
   color: string;
-  onlyStaff?: boolean;
+  staffOnly?: boolean;
 }
 
-export function getNextStateInfos(status: string): StateInfo[] {
-  return stateInfos.filter((s) => s.sources.includes(status));
+export function getNextStateInfos(status: string, isStaff: boolean): StateInfo[] {
+  return stateInfos
+    .filter((s) => s.sources.includes(status))
+    .filter((s) => isStaff || !s.staffOnly);
 }
 
-export function getNextStates(status: string): string[] {
-  return getNextStateInfos(status).map((si) => si.title);
+export function getNextStates(status: string, isStaff: boolean): string[] {
+  return getNextStateInfos(status, isStaff).map((si) => si.title);
 }
 
 export function getStateInfo(status: string): StateInfo | undefined {
@@ -36,7 +38,7 @@ export const stateInfos: StateInfo[] = [
     description: 'Die Förderung wurde von JANUN zugesagt.',
     color: 'green',
     sources: ['angemeldet', 'abgelehnt', 'abgesagt', 'zurückgezogen'],
-    onlyStaff: true
+    staffOnly: true
   },
   {
     title: 'abgesagt',
@@ -49,7 +51,7 @@ export const stateInfos: StateInfo[] = [
     description: 'Die Förderung wurde von JANUN abgelehnt.',
     color: 'red',
     sources: ['angemeldet', 'zugesagt'],
-    onlyStaff: true
+    staffOnly: true
   },
   {
     title: 'stattgefunden',
@@ -63,7 +65,7 @@ export const stateInfos: StateInfo[] = [
     description: '',
     color: 'red',
     sources: ['stattgefunden'],
-    onlyStaff: true
+    staffOnly: true
   },
   {
     title: 'Abrechnung abgeschickt',
@@ -75,49 +77,49 @@ export const stateInfos: StateInfo[] = [
     title: 'Abrechnung angekommen',
     description: 'Die Abrechnung ist bei JANUN angekommen.',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['Abrechnung abgeschickt', 'stattgefunden']
   },
   {
     title: 'Abrechnung unmöglich',
     description: '',
     color: 'red',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['Abrechnung angekommen', 'Zweitprüfung', 'inhaltliche Prüfung']
   },
   {
     title: 'rechnerische Prüfung',
     description: '',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['Abrechnung angekommen']
   },
   {
     title: 'inhaltliche Prüfung',
     description: '',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['rechnerische Prüfung']
   },
   {
     title: 'Zweitprüfung',
     description: '',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['inhaltliche Prüfung']
   },
   {
     title: 'fertig geprüft',
     description: '',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['Zweitprüfung']
   },
   {
     title: 'überwiesen',
     description: '',
     color: 'green',
-    onlyStaff: true,
+    staffOnly: true,
     sources: ['fertig geprüft']
   }
 ];
