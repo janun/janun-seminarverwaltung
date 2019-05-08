@@ -1,6 +1,6 @@
 <template>
   <span
-    class="text-xs px-2 pb-px font-bold shadow inline-block rounded-lg text-center whitespace-no-wrap text-gray-700 "
+    class="badge"
     :class="{
       'bg-green-200': stateInfo.color === 'green',
       'bg-red-200': stateInfo.color === 'red',

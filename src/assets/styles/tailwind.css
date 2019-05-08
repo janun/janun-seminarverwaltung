@@ -9,5 +9,6 @@
 @import "./spinner.css";
 @import "./transitions.css";
 @import "./forms.css";
+@import "./badge.css";
 
 @tailwind utilities;
