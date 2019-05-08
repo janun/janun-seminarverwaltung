@@ -171,6 +171,8 @@ class SeminarSerializer(serializers.ModelSerializer):
             "tnt",
             "tnt_cost",
             "deadline",
+            "deadline_expired",
+            "deadline_in_two_weeks",
         )
 
 

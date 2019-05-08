@@ -4,7 +4,6 @@
 
     <div v-if="object">
       <DeleteSeminarButton v-if="isStaff" :seminar="object" class="float-right" />
-      <!-- <button @click="applySuccessModal = true" class="float-right mx-2">Show Success Modal</button> -->
 
       <h1 class="text-3xl text-green-500 font-bold">
         {{ object.title }}
@@ -18,7 +17,15 @@
       <!-- <StatusBadge :value="object.status" class="mb-5" /> -->
 
       <div class="text-gray-700 text-sm">
-        <div class="">Deadline zur Abrechnung: {{ object.deadline | date }}</div>
+        <div>
+          Deadline zur Abrechnung: {{ object.deadline | date }}
+          <span v-if="object.deadline_expired" class="badge bg-red-300 ml-1">
+            abgelaufen!
+          </span>
+          <span v-if="object.deadline_in_two_weeks" class="badge bg-yellow-300 ml-1">
+            bald
+          </span>
+        </div>
         <div>
           angemeldet von
           <router-link
@@ -110,7 +117,7 @@ export default Vue.extend({
     pk: { type: Number, required: true }
   },
   data: () => ({
-    applySuccessModal: true,
+    applySuccessModal: false,
     loading: true,
     saving: false
   }),

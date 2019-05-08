@@ -71,6 +71,8 @@ export interface Seminar {
   tnt: number;
   tnt_cost: number;
   deadline: string;
+  deadline_expired: boolean;
+  deadline_in_two_weeks: boolean;
 }
 
 export interface Alert {

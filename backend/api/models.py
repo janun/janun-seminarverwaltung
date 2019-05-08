@@ -131,6 +131,20 @@ class Seminar(models.Model):
         ]
         return deadlines[quarter]
 
+    @property
+    def deadline_expired(self) -> bool:
+        not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
+        expired = self.deadline < datetime.date.today()
+        return expired and not_sent
+
+    @property
+    def deadline_in_two_weeks(self) -> bool:
+        not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
+        in_two_weeks: bool = self.deadline < datetime.date.today() + datetime.timedelta(
+            days=14
+        )
+        return in_two_weeks and not_sent and not self.deadline_expired
+
 
 for model in [Seminar]:
     post_save.connect(receiver=change_api_updated_at, sender=model)
