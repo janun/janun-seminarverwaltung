@@ -1,3 +1,5 @@
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from rest_auth import views as rest_auth_views
@@ -22,15 +24,15 @@ class SeminarViewSet(
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.Seminar.objects.all()
         else:
             qs = self.request.user.seminars
-        qs = self.get_serializer_class().setup_eager_loading(qs)
+        qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
         return qs
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         serializer.save(owner=self.request.user)
 
 
@@ -39,12 +41,12 @@ class SeminarCommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = models.SeminarComment.objects.all()
     serializer_class = serializers.SeminarCommentSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
-        qs = self.get_serializer_class().setup_eager_loading(qs)
+        qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
         return qs
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         serializer.save(owner=self.request.user)
 
 
@@ -52,12 +54,12 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.JANUNGroupSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.JANUNGroup.objects.all()
         else:
             qs = self.request.user.janun_groups
-        qs = self.get_serializer_class().setup_eager_loading(qs)
+        qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
         return qs
 
 
@@ -74,12 +76,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     filter_fields = ("janun_groups", "group_hats")
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
             qs = models.User.objects.all()
         else:
             qs = self.request.user
-        qs = self.get_serializer_class().setup_eager_loading(qs)
+        qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
         return qs
 
 
@@ -88,7 +90,7 @@ class UsernameExistsView(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         username = request.GET.get("username", "").strip().lower()
         exists = models.User.objects.filter(username=username).exists()
         return Response({"exists": exists}, content_type="application/json")
@@ -99,7 +101,7 @@ class EmailExistsView(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         email = request.GET.get("email", "").strip().lower()
         exists = models.User.objects.filter(email=email).exists()
         return Response({"exists": exists}, content_type="application/json")
@@ -111,7 +113,7 @@ class LoginView(rest_auth_views.LoginView):
     def get_response_serializer(self):
         return serializers.LoginResponseSerializer
 
-    def get_response(self):
+    def get_response(self) -> HttpResponse:
         serializer_class = self.get_response_serializer()
         data = {"user": self.user, "token": {"key": self.token}}
         serializer = serializer_class(instance=data, context={"request": self.request})
