@@ -41,9 +41,6 @@ class User(AbstractUser):
     group_hats = models.ManyToManyField(
         JANUNGroup, related_name="group_hats", blank=True
     )
-
-    is_reviewed = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
