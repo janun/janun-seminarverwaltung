@@ -53,6 +53,10 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return self.username
 
+    @property
+    def has_staff_role(self) -> bool:
+        return self.role in ("Prüfer_in", "Verwalter_in")
+
 
 class Seminar(models.Model):
     # manual data migrations needed if STATES changed

@@ -25,7 +25,7 @@ class SeminarViewSet(
     serializer_class = serializers.SeminarSerializer
 
     def get_queryset(self) -> QuerySet:
-        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
+        if self.request.user.has_staff_role:
             qs = models.Seminar.objects.all()
         else:
             qs = self.request.user.seminars
@@ -55,7 +55,7 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.JANUNGroupSerializer
 
     def get_queryset(self) -> QuerySet:
-        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
+        if self.request.user.has_staff_role:
             qs = models.JANUNGroup.objects.all()
         else:
             qs = self.request.user.janun_groups
@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_fields = ("janun_groups", "group_hats")
 
     def get_queryset(self) -> QuerySet:
-        if self.request.user.role in ("Prüfer_in", "Verwalter_in"):
+        if self.request.user.has_staff_role:
             qs = models.User.objects.all()
         else:
             qs = self.request.user
