@@ -69,8 +69,16 @@
         Ja, Anmeldung für folgende JANUN-Gruppe:
       </BaseRadioSelect>
 
-      <p v-if="form.group.yesgroup">TODO: Gruppen-Auswahl-Feld</p>
-      <!-- <SelectGroup v-if="form.group.yesgroup" v-model="form.group.group" class="my-4" /> -->
+      <div v-if="form.group.yesgroup" class="my-4">
+        <GroupSelect v-if="isStaff" v-model="form.group.group_pk" :empty-is-possible="false" />
+        <p v-else-if="!user.janun_groups.length">Sorry, Du bist in keinen Gruppen eingetragen.</p>
+        <GroupSelect
+          v-else
+          v-model="form.group.group_pk"
+          :empty-is-possible="false"
+          :possible-groups="user.janun_groups"
+        />
+      </div>
     </BaseWizardStep>
 
     <BaseWizardStep title="Bildungstage" :v="$v.form.days">
@@ -200,7 +208,11 @@
         </BaseCheckbox>
 
         <BaseCheckbox v-model="form.confirmation.readPolicy" class="my-4">
-          Ich habe die <strong>Seminarabrechnungsrichtlinie</strong> gelesen.
+          Ich habe die
+          <a href="https://www.janun.de/downloads" target="_blank" class="font-bold underline"
+            >Seminarabrechnungsrichtlinie</a
+          >
+          gelesen.
         </BaseCheckbox>
 
         <BaseCheckbox v-model="form.confirmation.acceptDeadline" class="my-4">
@@ -223,6 +235,7 @@ import BaseTextarea from '@/components/BaseTextarea.vue';
 import BaseField from '@/components/BaseField.vue';
 import BaseRadioSelect from '@/components/BaseRadioSelect.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
+import GroupSelect from '@/components/GroupSelect.vue';
 import { daysDiff, getDeadline } from '@/utils/date.ts';
 import { getMaxFunding } from '@/utils/funding.ts';
 import {
@@ -237,6 +250,7 @@ import { minDate, checked } from '@/utils/validators.ts';
 import { RuleDecl } from 'vue/types/options';
 import { Validation } from 'vuelidate';
 import { formatEuro } from '../utils/formatters';
+import userMixin from '@/mixins/user.ts';
 
 export default Vue.extend({
   components: {
@@ -246,8 +260,10 @@ export default Vue.extend({
     BaseTextarea,
     BaseField,
     BaseRadioSelect,
-    BaseCheckbox
+    BaseCheckbox,
+    GroupSelect
   },
+  mixins: [userMixin],
   data() {
     return {
       modalOpen: false,
@@ -265,7 +281,7 @@ export default Vue.extend({
           location: ''
         },
         group: {
-          group: '',
+          group_pk: '',
           yesgroup: null
         },
         days: {
@@ -302,7 +318,7 @@ export default Vue.extend({
         },
         group: {
           yesgroup: { required },
-          group: { require: requiredIf(() => this.form.group.yesgroup) }
+          group_pk: { require: requiredIf(() => this.form.group.yesgroup) }
         },
         days: {
           planned_training_days: {
@@ -383,7 +399,7 @@ export default Vue.extend({
         end_date: this.form.spacetime.end_date,
         end_time: this.form.spacetime.end_time,
         location: this.form.spacetime.location,
-        group: this.form.group.yesgroup ? this.form.group.group : null,
+        group_pk: this.form.group.yesgroup ? this.form.group.group_pk : null,
         planned_training_days: this.form.days.planned_training_days,
         planned_attendees_min: this.form.attendees.planned_attendees_min,
         planned_attendees_max: this.form.attendees.planned_attendees_max,

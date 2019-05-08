@@ -72,6 +72,10 @@ const actions: ActionTree<GroupState, {}> = {
     const response = await api.patch(`groups/${pk}/`, data);
     commit('update', response.data);
     return response.data;
+  },
+  async getGroupNames() {
+    const response = await api.get('group_names/');
+    return response.data;
   }
 };
 

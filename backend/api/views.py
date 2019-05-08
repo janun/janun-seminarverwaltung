@@ -59,13 +59,11 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
         return qs
 
 
-class JANUNGroupNamesViewSet(viewsets.ViewSet):
+class JANUNGroupNamesViewSet(viewsets.ModelViewSet):
     """Helper for signup views"""
     permission_classes = (permissions.AllowAny,)
-
-    def list(self, request):
-        groups = [group.name for group in models.JANUNGroup.objects.all()]
-        return Response(groups)
+    serializer_class = serializers.ShortJANUNGroupSerializer
+    queryset = models.JANUNGroup.objects.all()
 
 
 class UserViewSet(viewsets.ModelViewSet):

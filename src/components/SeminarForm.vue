@@ -21,7 +21,7 @@
       <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Status</h2>
 
       <div class="w-full md:w-2/3">
-        <SeminarStatus v-model="form.status" :seminar="object" />
+        <SeminarStatus v-model="form.status" :seminar="object" class="inline-block" />
       </div>
     </div>
 
@@ -82,7 +82,9 @@
 
       <div class="w-full md:w-2/3">
         <BaseField label="Gruppe" class="max-w-xs">
+          <GroupSelect v-if="isStaff" v-model="form.group_pk" />
           <BaseInput
+            v-else
             readonly
             :value="object.group ? object.group.name : '- keine -'"
             class="w-full"
@@ -183,16 +185,20 @@ import BaseInput from '@/components/BaseInput.vue';
 import BaseTextarea from '@/components/BaseTextarea.vue';
 import BaseField from '@/components/BaseField.vue';
 import SeminarStatus from '@/components/SeminarStatus.vue';
+import GroupSelect from '@/components/GroupSelect.vue';
 import { RuleDecl } from 'vue/types/options';
 import { formatEuro } from '../utils/formatters';
+import userMixin from '@/mixins/user.ts';
 
 export default Vue.extend({
   components: {
     BaseInput,
     BaseField,
     BaseTextarea,
-    SeminarStatus
+    SeminarStatus,
+    GroupSelect
   },
+  mixins: [userMixin],
   props: {
     object: { type: Object as () => Seminar, required: true }
   },
@@ -207,6 +213,7 @@ export default Vue.extend({
       end_date: '',
       end_time: '',
       location: '',
+      group_pk: '',
       planned_training_days: 0,
       planned_attendees_min: 0,
       planned_attendees_max: 0,
@@ -223,6 +230,7 @@ export default Vue.extend({
         end_date: { required, minStart: minDate(this.form.start_date) },
         end_time: {},
         location: { required },
+        group_pk: {},
         planned_training_days: { required, maxDuration: maxValue(this.duration) },
         planned_attendees_min: { required },
         planned_attendees_max: {

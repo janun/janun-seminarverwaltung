@@ -2,7 +2,7 @@
   <textarea
     :id="id"
     ref="textarea"
-    class="input resize-none"
+    class="w-full input resize-none"
     :class="{ 'has-errors': hasErrorsGetter() }"
     v-bind="{ rows: 5, ...$attrs }"
     v-on="{ ...$listeners, input: onInput }"

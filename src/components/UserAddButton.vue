@@ -41,6 +41,26 @@
           <p class="text-sm">Min. 8 Zeichen</p>
         </BaseField>
 
+        <h2 class="text-green-500 mt-10 mb-2 font-bold">Gruppen</h2>
+
+        <BaseField label="Mitgliedschaften" name="janun_groups_pks">
+          <GroupSelectMultiple v-model="form.janun_groups_pks" />
+        </BaseField>
+
+        <BaseField
+          v-if="['Verwalter_in', 'Prüfer_in'].includes(form.role)"
+          label="Hüte"
+          name="group_hats_pks"
+        >
+          <GroupSelectMultiple v-model="form.group_hats_pks" />
+        </BaseField>
+
+        <h2 class="text-green-500 mt-10 mb-2 font-bold">Spezielles</h2>
+
+        <BaseField label="Rolle" name="role">
+          <BaseSelect v-model="form.role" :options="possibleRoles" />
+        </BaseField>
+
         <BaseCheckbox v-model="form.is_reviewed">überprüft</BaseCheckbox>
 
         <div class="card-footer flex items-center">
@@ -69,10 +89,13 @@ import BaseField from '@/components/BaseField.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseForm from '@/components/BaseForm.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
+import BaseSelect from '@/components/BaseSelect.vue';
+import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue';
 import { RuleDecl } from 'vue/types/options';
 import { required, minLength, email } from 'vuelidate/lib/validators';
 
 import store from '@/store/index.ts';
+import { UserRole } from '../types';
 
 async function usernameUnique(value: string): Promise<boolean> {
   if (!value || !(minLength(3) as any)(value)) {
@@ -96,7 +119,9 @@ export default Vue.extend({
     BaseField,
     BaseInput,
     BaseCheckbox,
-    BaseForm
+    BaseForm,
+    BaseSelect,
+    GroupSelectMultiple
   },
   data: () => ({
     modalOpen: false,
@@ -108,7 +133,10 @@ export default Vue.extend({
       email: '',
       name: '',
       telephone: '',
-      is_reviewed: true
+      role: 'Teamer_in',
+      janun_groups_pks: [],
+      group_hats_pks: [],
+      is_reviewed: false
     }
   }),
   validations: {
@@ -118,9 +146,17 @@ export default Vue.extend({
       email: { required, email, unique: emailUnique },
       name: { required },
       telephone: {},
-      is_reviewed: {}
+      is_reviewed: {},
+      role: {},
+      janun_groups_pks: {},
+      group_hats_pks: {}
     }
   } as RuleDecl,
+  computed: {
+    possibleRoles(): string[] {
+      return Object.keys(UserRole);
+    }
+  },
   methods: {
     focus() {
       setTimeout(() => {

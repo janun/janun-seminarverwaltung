@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show="show" @close="$emit('close', false)">
+  <BaseModal :show="show" @close="close">
     <h2 class="text-green-500 font-bold text-xl mb-5">{{ object.name }} editieren</h2>
 
     <div v-if="serverErrors.length" class="my-4 px-3 py-2 bg-red-500 rounded-lg text-white text-sm">
@@ -36,14 +36,32 @@
         <p class="text-sm">Min. 8 Zeichen. Leer lassen, um es nicht zu ändern.</p>
       </BaseField>
 
+      <h2 class="text-green-500 mt-10 mb-2 font-bold">Gruppen</h2>
+
+      <BaseField label="Mitgliedschaften" name="janun_groups_pks">
+        <GroupSelectMultiple v-model="form.janun_groups_pks" />
+      </BaseField>
+
+      <BaseField
+        v-if="['Verwalter_in', 'Prüfer_in'].includes(form.role)"
+        label="Hüte"
+        name="group_hats_pks"
+      >
+        <GroupSelectMultiple v-model="form.group_hats_pks" />
+      </BaseField>
+
       <h2 class="text-green-500 mt-10 mb-2 font-bold">Spezielles</h2>
 
-      <BaseCheckbox v-model="form.is_reviewed">überprüft</BaseCheckbox>
+      <BaseField label="Rolle" name="role">
+        <BaseSelect v-model="form.role" :options="possibleRoles" />
+      </BaseField>
 
-      <UserDeleteButton :user="object" class="my-5" @deleted="$emit('close', false)" />
+      <BaseCheckbox v-model="form.is_reviewed" class="my-4">überprüft</BaseCheckbox>
+
+      <UserDeleteButton :user="object" class="my-5 btn-secondary" @deleted="close" />
 
       <div class="card-footer flex items-center">
-        <button type="button" class="btn btn-tertiary" @click="$emit('close', false)">
+        <button type="button" class="btn btn-tertiary" @click="close">
           Abbrechen
         </button>
         <button
@@ -62,13 +80,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { User } from '@/types.ts';
+import { User, UserRole } from '@/types.ts';
 import BaseModal from '@/components/BaseModal.vue';
 import BaseField from '@/components/BaseField.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseForm from '@/components/BaseForm.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
+import BaseSelect from '@/components/BaseSelect.vue';
 import UserDeleteButton from '@/components/UserDeleteButton.vue';
+import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue';
 
 import { RuleDecl } from 'vue/types/options';
 import { required, minLength, email } from 'vuelidate/lib/validators';
@@ -108,7 +128,9 @@ export default Vue.extend({
     BaseInput,
     BaseCheckbox,
     BaseForm,
-    UserDeleteButton
+    BaseSelect,
+    UserDeleteButton,
+    GroupSelectMultiple
   },
   model: {
     prop: 'show',
@@ -127,6 +149,9 @@ export default Vue.extend({
       email: '',
       name: '',
       telephone: '',
+      role: '',
+      janun_groups_pks: [],
+      group_hats_pks: [],
       is_reviewed: true
     }
   }),
@@ -142,9 +167,17 @@ export default Vue.extend({
         email: { required, email, unique: emailUniqueOrOld(this.object.email) },
         name: { required },
         telephone: {},
+        role: {},
+        janun_groups_pks: {},
+        group_hats_pks: {},
         is_reviewed: {}
       }
     };
+  },
+  computed: {
+    possibleRoles(): string[] {
+      return Object.keys(UserRole);
+    }
   },
   watch: {
     show(show) {
@@ -164,12 +197,16 @@ export default Vue.extend({
     setServerErrors(data: any) {
       this.serverErrors = [].concat.apply([], Object.values(data));
     },
+    close() {
+      this.serverErrors = [];
+      this.$emit('close', false);
+    },
     async save() {
       this.saving = true;
       try {
         await this.$store.dispatch('users/update', { pk: this.object.pk, data: this.form });
         this.$toast(`Konto ${this.object.name} geändert`);
-        this.$emit('close', false);
+        this.close();
       } catch (error) {
         this.$toast('Bearbeiten fehlgeschlagen');
         if (error.response.status === 400) {

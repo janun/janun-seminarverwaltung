@@ -40,16 +40,21 @@
           <BaseInput v-model="form.username" name="username" class="w-full" />
         </BaseField>
 
-        <BaseField label="Passwort" name="password1">
-          <BaseInput v-model="form.password1" name="password" type="password" class="w-full" />
+        <BaseField label="Passwort" name="password">
+          <BaseInput v-model="form.password" name="password" type="password" class="w-full" />
           <p class="text-sm">Min. 8 Zeichen</p>
         </BaseField>
+
+        <h2 class="text-green-500 mt-10 mb-2 font-bold">Gruppe</h2>
+        <p>Bist Du Mitglied in einer oder mehreren JANUN-Gruppen?</p>
+
+        <GroupSelectMultiple v-model="form.janun_groups" />
 
         <div class="flex items-center mt-12">
           <button
             type="submit"
             :title="$v.form.$invalid ? 'Fülle alle Felder richtig aus' : ''"
-            class="btn btn-primary ml-auto px-10"
+            class="btn btn-primary ml-auto"
             :class="{ 'btn-loading': loading }"
             :disabled="$v.form.$invalid || loading"
           >
@@ -65,6 +70,7 @@
 import Vue from 'vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseField from '@/components/BaseField.vue';
+import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue';
 
 import { required, minLength, email } from 'vuelidate/lib/validators';
 import store from '@/store/index.ts';
@@ -88,7 +94,8 @@ async function emailUnique(value: string): Promise<boolean> {
 export default Vue.extend({
   components: {
     BaseInput,
-    BaseField
+    BaseField,
+    GroupSelectMultiple
   },
   provide(): object {
     return {
@@ -102,8 +109,9 @@ export default Vue.extend({
       name: '',
       email: '',
       username: '',
-      password1: '',
-      telephone: ''
+      password: '',
+      telephone: '',
+      janun_groups: []
     }
   }),
   validations: {
@@ -111,8 +119,9 @@ export default Vue.extend({
       name: { required },
       email: { required, email, unique: emailUnique },
       username: { required, minLength: minLength(4), unique: usernameUnique },
-      password1: { required, minLength: minLength(8) },
-      telephone: {}
+      password: { required, minLength: minLength(8) },
+      telephone: {},
+      janun_groups: {}
     }
   },
   mounted() {

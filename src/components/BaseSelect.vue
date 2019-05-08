@@ -1,6 +1,13 @@
 <template>
-  <div class="relative inline-block">
-    <select ref="input" v-bind="$attrs" class="input" :class="innerClass" v-on="$listeners">
+  <div class="relative">
+    <select
+      :id="id"
+      ref="input"
+      v-bind="$attrs"
+      class="w-full input"
+      :class="{ 'has-error': hasErrorsGetter() }"
+      @input="onInput"
+    >
       <slot>
         <option v-for="option in options" :key="option" :selected="option === value">
           {{ option }}
@@ -21,13 +28,20 @@ import Vue from 'vue';
 
 export default Vue.extend({
   inheritAttrs: false,
+  inject: {
+    id: { from: 'id', default: null },
+    hasErrorsGetter: { from: 'hasErrorsGetter', default: () => () => false },
+    isValidGetter: { from: 'isValidGetter', default: () => () => false },
+    validator: { from: 'validator', default: null }
+  },
   props: {
     value: { type: String, default: '' },
-    innerClass: { type: String, default: '' },
-    options: {
-      type: Array as () => string[],
-      default: () => [],
-      validator: (options: any[]) => options.every((opt) => typeof opt === 'string')
+    options: { type: Array as () => string[], default: () => [] }
+  },
+  methods: {
+    onInput(event: Event) {
+      const selected = (event.target as HTMLSelectElement).value;
+      this.$emit('input', selected);
     }
   }
 });

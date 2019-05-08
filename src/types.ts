@@ -61,7 +61,9 @@ export interface Seminar {
   created_at: string;
   updated_at: string;
   group?: Group;
+  group_pk?: string;
   owner: User;
+  owner_pk?: string;
   planned_training_days: number;
   planned_attendees_min: number;
   planned_attendees_max: number;
