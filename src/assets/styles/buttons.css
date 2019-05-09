@@ -48,6 +48,12 @@ button:disabled {
   @apply bg-gray-400;
 }
 
+.btn-outline {
+  @apply py-1.5 px-4 text-gray-700 rounded-full border;
+
+  border-color: currentColor;
+}
+
 /* tertiary */
 .btn-tertiary {
   @apply text-gray-600;
