@@ -39,10 +39,16 @@
       :loading="loading"
       :empty-message="loading ? 'Laden…' : 'Keine Konten gefunden.'"
       default-sort-field="name"
-      @rowClick="editUser"
-    />
-
-    <UserEditModal v-model="showUserEditModal" :object="userToEdit" />
+    >
+      <router-link
+        slot="name"
+        slot-scope="{ value, row }"
+        class="font-bold text-gray-800"
+        :to="{ name: 'UserDetail', params: { pk: row.pk } }"
+      >
+        {{ value }}
+      </router-link>
+    </BaseDatatable>
   </div>
 </template>
 
@@ -55,7 +61,6 @@ import DropdownFilter from '@/components/DropdownFilter.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import SeminarStats from '@/components/SeminarStats.vue';
 import UserAddButton from '@/components/UserAddButton.vue';
-import UserEditModal from '@/components/UserEditModal.vue';
 
 import { Column } from '@/components/BaseDatatable.vue';
 import { formatDate, formatEuro } from '@/utils/formatters.ts';
@@ -79,13 +84,10 @@ export default Vue.extend({
     BaseDatatable,
     DropdownFilter,
     BaseInput,
-    UserAddButton,
-    UserEditModal
+    UserAddButton
   },
   data: () => ({
     loading: true,
-    showUserEditModal: false,
-    userToEdit: {} as User,
     nameFilter: '',
     roleFilter: [] as string[],
     groupFilter: [] as string[],
@@ -177,10 +179,6 @@ export default Vue.extend({
       this.nameFilter = '';
       this.roleFilter = [];
       this.reviewedFilter = [];
-    },
-    editUser(user: User) {
-      this.showUserEditModal = true;
-      this.userToEdit = user;
     }
   }
 });
