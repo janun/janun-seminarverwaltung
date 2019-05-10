@@ -3,7 +3,7 @@
     <div v-if="loading" class="fullspinner" />
 
     <div v-if="object">
-      <DeleteSeminarButton v-if="isStaff" :seminar="object" class="float-right" />
+      <SeminarDeleteButton v-if="isStaff" :seminar="object" class="float-right" />
 
       <h1 class="text-3xl text-green-500 font-bold">
         {{ object.title }}
@@ -102,15 +102,14 @@ import userMixin from '@/mixins/user.ts';
 
 import SeminarForm from '@/components/SeminarForm.vue';
 import CommentList from '@/components/CommentList.vue';
-import DeleteSeminarButton from '@/components/DeleteSeminarButton.vue';
+import SeminarDeleteButton from '@/components/SeminarDeleteButton.vue';
 import BaseModal from '@/components/BaseModal.vue';
 
 export default Vue.extend({
   components: {
     SeminarForm,
     CommentList,
-    DeleteSeminarButton,
-    BaseModal
+    SeminarDeleteButton,
   },
   mixins: [userMixin],
   props: {

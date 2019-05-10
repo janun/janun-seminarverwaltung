@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="text-red-500 hover:text-red-700 focus:text-red-700 flex items-center"
+    class="btn-outline text-red-500 hover:text-red-700 focus:text-red-700 flex items-center"
     @click.prevent="modalOpen = true"
   >
     <slot>Seminar löschen</slot>
