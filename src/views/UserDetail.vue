@@ -5,7 +5,9 @@
     <div v-if="object">
       <h1 class="text-3xl text-green-500 font-bold">{{ object.name }}</h1>
 
-      <UserForm :object="object" />
+      <p>Erstellt: {{ object.created_at | date }}</p>
+      <p>Letzte Änderung: {{ object.updated_at | date }}</p>
+      <p>Letzter Besuch: {{ object.last_visit | date }}</p>
     </div>
   </div>
 </template>

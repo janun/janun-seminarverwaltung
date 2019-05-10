@@ -43,6 +43,7 @@ class User(AbstractUser):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_visit = models.DateTimeField(null=True)
 
     objects = UserManager()
     EMAIL_FIELD = "email"

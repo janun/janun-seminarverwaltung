@@ -81,6 +81,7 @@ class UserSerializer(serializers.ModelSerializer):
             "address",
             "created_at",
             "updated_at",
+            "last_visit",
             "email",
             "password",
             "is_reviewed",

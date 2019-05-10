@@ -16,6 +16,7 @@ export interface User {
   role: UserRole;
   telephone?: string;
   updated_at: string;
+  last_visit: string;
   username: string;
   is_reviewed: boolean;
 }

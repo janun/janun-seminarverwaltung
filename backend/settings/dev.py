@@ -51,6 +51,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "backend.api.middleware.SetLastVisitMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -117,10 +119,6 @@ USE_TZ = True
 # In Production, it's recommended use an alternative approach such as:
 # http://whitenoise.evans.io/en/stable/django.html?highlight=django
 
-MIDDLEWARE_CLASSES = (
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-)
 
 STATIC_URL = "/static/"
 # Place static in the same location as webpack build files
