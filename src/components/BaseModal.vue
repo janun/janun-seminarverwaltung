@@ -41,6 +41,9 @@ export default Vue.extend({
     show(show) {
       if (show) {
         document.body.classList.add('modal-open');
+        this.$once('hook:destroyed', () => {
+          document.body.classList.remove('modal-open');
+        });
         setTimeout(() => {
           this.focus();
         });
