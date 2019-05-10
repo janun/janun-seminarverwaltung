@@ -1,17 +1,21 @@
 import { Route } from 'vue-router';
 
 import Dashboard from '@/views/Dashboard.vue';
-import UserLogin from '@/views/UserLogin.vue';
-import UserSignup from '@/views/UserSignup.vue';
-import PasswordReset from '@/views/PasswordReset.vue';
-import UserProfile from '@/views/UserProfile.vue';
-import SeminarApply from '@/views/SeminarApply.vue';
+
 import GroupList from '@/views/GroupList.vue';
 import GroupDetail from '@/views/GroupDetail.vue';
 import SeminarList from '@/views/SeminarList.vue';
 import SeminarDetail from '@/views/SeminarDetail.vue';
+import SeminarApply from '@/views/SeminarApply.vue';
+
 import UserList from '@/views/UserList.vue';
 import UserDetail from '@/views/UserDetail.vue';
+import UserAdd from '@/views/UserAdd.vue';
+import UserProfile from '@/views/UserProfile.vue';
+import UserLogin from '@/views/UserLogin.vue';
+import UserSignup from '@/views/UserSignup.vue';
+import PasswordReset from '@/views/PasswordReset.vue';
+
 import NotFound from '@/views/NotFound.vue';
 
 const parsePk = (route: Route) => {
@@ -74,6 +78,7 @@ export default [
 
   { path: '/profile', name: 'UserProfile', component: UserProfile },
   { path: '/users', name: 'UserList', component: UserList },
+  { path: '/users/add', name: 'UserAdd', component: UserAdd },
   { path: '/users/:pk', name: 'UserDetail', component: UserDetail, props: parsePk },
 
   {

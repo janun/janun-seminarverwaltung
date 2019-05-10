@@ -53,6 +53,7 @@ export default Vue.extend({
         await this.$store.dispatch('users/delete', this.user.pk);
         this.$toast(`Konto „${name}“ gelöscht.`);
         this.modalOpen = false;
+        this.$router.push({ name: 'UserList' });
         this.$emit('deleted');
       } catch (error) {
         this.$toast('Fehler beim Löschen des Kontos', { type: 'error' });

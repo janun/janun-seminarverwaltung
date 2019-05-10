@@ -59,6 +59,7 @@
         {{ value }}
       </router-link>
       <router-link
+        v-if="value"
         slot="owner"
         slot-scope="{ value }"
         :to="{ name: 'UserDetail', params: { pk: value.pk } }"

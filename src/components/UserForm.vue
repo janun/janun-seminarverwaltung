@@ -136,7 +136,7 @@ export default Vue.extend({
   },
   mixins: [formMixin, userMixin],
   props: {
-    object: { type: Object as () => User, required: true },
+    object: { type: Object as () => User | null, default: null },
     saving: { type: Boolean, default: false }
   },
   data: () => ({
@@ -147,7 +147,7 @@ export default Vue.extend({
       email: '',
       name: '',
       telephone: '',
-      role: '',
+      role: 'Teamer_in',
       janun_groups_pks: [],
       group_hats_pks: [],
       is_reviewed: true
@@ -159,10 +159,10 @@ export default Vue.extend({
         username: {
           required,
           minLength: minLength(3),
-          unique: usernameUniqueOrOld(this.object.username)
+          unique: usernameUniqueOrOld(this.object ? this.object.username : '')
         },
         password: { minLength: minLength(8) },
-        email: { required, email, unique: emailUniqueOrOld(this.object.email) },
+        email: { required, email, unique: emailUniqueOrOld(this.object ? this.object.email : '') },
         name: { required },
         telephone: {},
         role: {},
@@ -178,8 +178,10 @@ export default Vue.extend({
     }
   },
   created() {
-    (this as any).copyFields();
-    (this.$v.form as any).$touch();
+    if (this.object) {
+      (this as any).copyFields();
+      (this.$v.form as any).$touch();
+    }
     this.focus();
   },
   methods: {
