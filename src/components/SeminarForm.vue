@@ -6,8 +6,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="!hasChanges || $v.form.$invalid || saving"
-          :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
+          :disabled="$v.form.$invalid || saving"
         >
           Speichern
         </button>
@@ -163,8 +162,7 @@
           class="btn btn-primary float-right mb-2"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="!hasChanges || $v.form.$invalid || saving"
-          :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
+          :disabled="$v.form.$invalid || saving"
         >
           Speichern
         </button>
@@ -257,16 +255,6 @@ export default Vue.extend({
         return daysDiff(new Date(this.form.start_date), new Date(this.form.end_date)) + 1;
       }
       return 0;
-    },
-    hasChanges(): boolean {
-      if (this.object) {
-        for (const key in this.form) {
-          if (this.object[key as keyof Seminar] !== this.form[key as keyof Seminar]) {
-            return true;
-          }
-        }
-      }
-      return false;
     }
   },
   created() {
@@ -287,16 +275,6 @@ export default Vue.extend({
         this.$toast(`Fehler beim Speichern des Seminars.`, { type: 'error' }); // TODO: Infobox Erklärung des Fehlers
       }
       this.saving = false;
-    },
-    copyFields(): void {
-      this.$v.$reset();
-      if (this.object) {
-        for (const key in this.form) {
-          if (this.form.hasOwnProperty(key)) {
-            Vue.set(this.form, key, this.object[key as keyof Seminar]);
-          }
-        }
-      }
     }
   }
 });

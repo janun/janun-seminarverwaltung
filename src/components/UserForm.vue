@@ -6,8 +6,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="!hasChanges || $v.form.$invalid || saving"
-          :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
+          :disabled="$v.form.$invalid || saving"
         >
           Speichern
         </button>
@@ -73,8 +72,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="!hasChanges || $v.form.$invalid || saving"
-          :title="$v.form.$error ? 'Fehler im Formular' : !hasChanges ? 'Keine Änderungen' : ''"
+          :disabled="$v.form.$invalid || saving"
         >
           Speichern
         </button>
