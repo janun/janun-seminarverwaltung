@@ -8,6 +8,8 @@
       <p>Erstellt: {{ object.created_at | date }}</p>
       <p>Letzte Änderung: {{ object.updated_at | date }}</p>
       <p>Letzter Besuch: {{ object.last_visit | date }}</p>
+
+      <UserForm :saving="saving" :object="object" @save="save" />
     </div>
   </div>
 </template>
@@ -25,10 +27,11 @@ export default Vue.extend({
     pk: { type: Number, required: true }
   },
   data: () => ({
-    loading: true
+    loading: true,
+    saving: false
   }),
   computed: {
-    object(): User | undefined {
+    object(): User {
       return this.$store.getters['users/byPk'](this.pk);
     }
   },
@@ -36,13 +39,27 @@ export default Vue.extend({
     this.loading = true;
     try {
       await this.$store.dispatch('users/fetchSingle', this.pk);
-      if (this.object) {
         document.title = this.object.name;
-      }
     } catch (error) {
       alert('Fehler beim Laden des Kontos');
     } finally {
       this.loading = false;
+    }
+  },
+  methods: {
+    async save(form: User) {
+      this.saving = true;
+      try {
+        await this.$store.dispatch('users/update', { pk: this.object.pk, data: form });
+        this.$toast(`Konto ${this.object.name} geändert`);
+      } catch (error) {
+        this.$toast('Bearbeiten fehlgeschlagen');
+        // if (error.response.status === 400) {
+        //   (this as any).setServerErrors(error.response.data);
+        // }
+      } finally {
+        this.saving = false;
+      }
     }
   }
 });

@@ -142,10 +142,10 @@ export default Vue.extend({
   },
   mixins: [formMixin, userMixin],
   props: {
-    object: { type: Object as () => User, required: true }
+    object: { type: Object as () => User, required: true },
+    saving: { type: Boolean, default: false }
   },
   data: () => ({
-    saving: false,
     serverErrors: [] as string[],
     form: {
       username: '',
@@ -194,19 +194,8 @@ export default Vue.extend({
         (this.$refs.name as HTMLInputElement).focus();
       }, 100);
     },
-    async save() {
-      this.saving = true;
-      try {
-        await this.$store.dispatch('users/update', { pk: this.object.pk, data: this.form });
-        this.$toast(`Konto ${this.object.name} geändert`);
-      } catch (error) {
-        this.$toast('Bearbeiten fehlgeschlagen');
-        if (error.response.status === 400) {
-          (this as any).setServerErrors(error.response.data);
-        }
-      } finally {
-        this.saving = false;
-      }
+    save() {
+      this.$emit('save', this.form);
     }
   }
 });
