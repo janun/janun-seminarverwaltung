@@ -1,6 +1,6 @@
 <template>
   <BaseForm :validator="$v.form" @submit.prevent="save">
-    <div class="flex flex-wrap mt-5">
+    <div v-if="object" class="flex flex-wrap mt-5">
       <div class="ml-auto">
         <button
           class="btn btn-primary mb-1 float-right"
@@ -8,7 +8,7 @@
           type="submit"
           :disabled="$v.form.$invalid || saving"
         >
-          Speichern
+          {{ saveLabel }}
         </button>
         <p v-if="$v.form.$error" class="text-red-600">Fehler im Formular</p>
       </div>
@@ -41,7 +41,7 @@
 
     <BaseFormSection label="Gruppen">
       <BaseField label="Mitgliedschaften" name="janun_groups_pks">
-        <GroupSelectMultiple v-model="form.janun_groups_pks" :readonly="!isStaff" />
+        <GroupSelectMultiple v-model="form.janun_groups_pks" :disabled="object && !isStaff" />
       </BaseField>
 
       <BaseField
@@ -72,7 +72,7 @@
           type="submit"
           :disabled="$v.form.$invalid || saving"
         >
-          Speichern
+          {{ saveLabel }}
         </button>
         <p v-if="$v.form.$error" class="text-red-600">Fehler im Formular</p>
       </div>
@@ -137,7 +137,8 @@ export default Vue.extend({
   mixins: [formMixin, userMixin],
   props: {
     object: { type: Object as () => User | null, default: null },
-    saving: { type: Boolean, default: false }
+    saving: { type: Boolean, default: false },
+    saveLabel: { type: String, default: 'Speichern' }
   },
   data: () => ({
     serverErrors: [] as string[],

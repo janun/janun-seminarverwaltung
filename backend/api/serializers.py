@@ -181,11 +181,10 @@ class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(min_length=3, required=True)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
-
     name = serializers.CharField(write_only=True)
     telephone = serializers.CharField(required=False, allow_blank=True)
     address = serializers.CharField(required=False, allow_blank=True)
-    janun_groups = serializers.PrimaryKeyRelatedField(
+    janun_groups_pks = serializers.PrimaryKeyRelatedField(
         many=True, required=False, queryset=models.JANUNGroup.objects.all()
     )
 
@@ -208,7 +207,7 @@ class RegisterSerializer(serializers.Serializer):
         user.name = self.validated_data.get("name", "")
         user.telephone = self.validated_data.get("telephone", "")
         user.address = self.validated_data.get("address", "")
-        user.janun_groups.set(self.validated_data.get("janun_groups", []))
+        user.janun_groups.set(self.validated_data.get("janun_groups_pks", []))
         user.save()
 
     def get_cleaned_data(self) -> Dict[str, str]:

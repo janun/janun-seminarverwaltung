@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { objectCompare } from '@/utils/utils';
 
 export default Vue.extend({
   props: {
