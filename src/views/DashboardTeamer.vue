@@ -6,7 +6,7 @@
     <h1 class="text-green-500 text-2xl font-bold">Willkommen, {{ user.name }}!</h1>
 
     <h2 class="text-gray-800 font-bold text-xl mb-3 mt-10">Deine Gruppen</h2>
-    <div v-if="user.janun_groups" class="flex flex-wrap -m-4">
+    <div v-if="user.janun_groups.length" class="flex flex-wrap -m-4">
       <div v-for="group in user.janun_groups" :key="group.pk" class="lg:w-1/3 sm:w-1/2 w-full p-4">
         <router-link
           class="seminar block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col"
