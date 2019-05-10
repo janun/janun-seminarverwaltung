@@ -16,143 +16,116 @@
 
     <hr class="bg-gray-300 h-px my-5" />
 
-    <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Status</h2>
+    <BaseFormSection label="Status">
+      <SeminarStatus v-model="form.status" :seminar="object" class="inline-block" />
+    </BaseFormSection>
 
-      <div class="w-full md:w-2/3">
-        <SeminarStatus v-model="form.status" :seminar="object" class="inline-block" />
-      </div>
-    </div>
+    <BaseFormSection label="Inhalt">
+      <BaseField label="Titel" :validator="$v.form.title">
+        <BaseInput v-model="form.title" class="w-full" />
+      </BaseField>
 
-    <hr class="bg-gray-300 h-px my-5" />
+      <BaseField label="Beschreibung" :validator="$v.form.description">
+        <BaseTextarea v-model="form.description" class="w-full" />
+      </BaseField>
+    </BaseFormSection>
 
-    <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Inhalt</h2>
-
-      <div class="w-full md:w-2/3">
-        <BaseField label="Titel" :validator="$v.form.title">
-          <BaseInput v-model="form.title" class="w-full" />
+    <BaseFormSection label="Zeit &amp; Ort">
+      <div class="flex flex-wrap -mx-2">
+        <BaseField label="Start-Datum" class="mx-2" :validator="$v.form.start_date">
+          <BaseInput v-model="form.start_date" type="date" class="max-w-xs" />
         </BaseField>
-
-        <BaseField label="Beschreibung" :validator="$v.form.description">
-          <BaseTextarea v-model="form.description" class="w-full" />
-        </BaseField>
-      </div>
-    </div>
-
-    <hr class="bg-gray-300 h-px my-5" />
-
-    <div class="flex flex-wrap">
-      <h2 class="w-full md:w-1/3 text-green-500 mb-5 font-bold">Zeit &amp; Ort</h2>
-
-      <div class="w-full md:w-2/3">
-        <div class="flex flex-wrap -mx-2">
-          <BaseField label="Start-Datum" class="mx-2" :validator="$v.form.start_date">
-            <BaseInput v-model="form.start_date" type="date" class="max-w-xs" />
-          </BaseField>
-          <BaseField label="Start-Zeit" class="mx-2" :validator="$v.form.start_time">
-            <BaseInput v-model="form.start_time" type="time" />
-          </BaseField>
-        </div>
-
-        <div class="flex flex-wrap -mx-2">
-          <BaseField label="End-Datum" class="mx-2" :validator="$v.form.end_date">
-            <BaseInput v-model="form.end_date" type="date" class="max-w-xs" />
-          </BaseField>
-          <BaseField label="End-Zeit" class="mx-2" :validator="$v.form.end_time">
-            <BaseInput v-model="form.end_time" type="time" />
-          </BaseField>
-        </div>
-
-        <BaseField label="Ort" class="max-w-sm" :validator="$v.form.location">
-          <span slot="helptext">Stadt, in der das Seminar stattfindet.</span>
-          <BaseInput v-model="form.location" class="w-full" />
+        <BaseField label="Start-Zeit" class="mx-2" :validator="$v.form.start_time">
+          <BaseInput v-model="form.start_time" type="time" />
         </BaseField>
       </div>
-    </div>
 
-    <hr class="bg-gray-300 h-px my-5" />
-
-    <div class="flex flex-wrap">
-      <div class="w-full md:w-1/3 mb-5">
-        <h2 class="text-green-500 font-bold">Förderung</h2>
-        <div class="my-3">Mögliche Förderung: {{ maxFunding | euro }}</div>
+      <div class="flex flex-wrap -mx-2">
+        <BaseField label="End-Datum" class="mx-2" :validator="$v.form.end_date">
+          <BaseInput v-model="form.end_date" type="date" class="max-w-xs" />
+        </BaseField>
+        <BaseField label="End-Zeit" class="mx-2" :validator="$v.form.end_time">
+          <BaseInput v-model="form.end_time" type="time" />
+        </BaseField>
       </div>
 
-      <div class="w-full md:w-2/3">
-        <BaseField label="Gruppe" class="max-w-xs">
-          <GroupSelect v-if="isStaff" v-model="form.group_pk" />
+      <BaseField label="Ort" class="max-w-sm" :validator="$v.form.location">
+        <span slot="helptext">Stadt, in der das Seminar stattfindet.</span>
+        <BaseInput v-model="form.location" class="w-full" />
+      </BaseField>
+    </BaseFormSection>
+
+    <BaseFormSection label="Förderung">
+      <div slot="description" class="mt-3">Mögliche Förderung: {{ maxFunding | euro }}</div>
+
+      <BaseField label="Gruppe" class="max-w-xs">
+        <GroupSelect v-if="isStaff" v-model="form.group_pk" />
+        <BaseInput
+          v-else
+          readonly
+          :value="object.group ? object.group.name : '- keine -'"
+          class="w-full"
+          title="nicht editierbar"
+        />
+      </BaseField>
+
+      <BaseField label="geplante Bildungstage" :validator="$v.form.planned_training_days">
+        <BaseInput
+          v-model="form.planned_training_days"
+          type="number"
+          min="0"
+          :max="duration"
+          step="1"
+          class="w-full max-w-xxs"
+        />
+      </BaseField>
+
+      <div
+        class="text-gray-700"
+        :class="{
+          'text-red-600':
+            $v.form.planned_attendees_min.$error || $v.form.planned_attendees_max.$error
+        }"
+      >
+        geplante Anzahl Teilnehmende
+      </div>
+      <div class="flex items-start max-w-xs">
+        <BaseField label="" class="mr-1 flex-1" :validator="$v.form.planned_attendees_min">
           <BaseInput
-            v-else
-            readonly
-            :value="object.group ? object.group.name : '- keine -'"
-            class="w-full"
-            title="nicht editierbar"
-          />
-        </BaseField>
-
-        <BaseField label="geplante Bildungstage" :validator="$v.form.planned_training_days">
-          <BaseInput
-            v-model="form.planned_training_days"
+            v-model="form.planned_attendees_min"
             type="number"
             min="0"
-            :max="duration"
             step="1"
-            class="w-full max-w-xxs"
+            class="w-full"
           />
         </BaseField>
-
-        <div
-          class="text-gray-700"
-          :class="{
-            'text-red-600':
-              $v.form.planned_attendees_min.$error || $v.form.planned_attendees_max.$error
-          }"
-        >
-          geplante Anzahl Teilnehmende
-        </div>
-        <div class="flex items-start max-w-xs">
-          <BaseField label="" class="mr-1 flex-1" :validator="$v.form.planned_attendees_min">
-            <BaseInput
-              v-model="form.planned_attendees_min"
-              type="number"
-              min="0"
-              step="1"
-              class="w-full"
-            />
-          </BaseField>
-          <span class="mt-3 mx-2">bis</span>
-          <BaseField
-            label=""
-            class="ml-1 max-w-xs flex-1"
-            :validator="$v.form.planned_attendees_max"
-          >
-            <BaseInput
-              v-model="form.planned_attendees_max"
-              type="number"
-              :min="form.planned_attendees_min || 0"
-              step="1"
-              class="w-full"
-            />
-          </BaseField>
-        </div>
-
-        <BaseField
-          label="beantragte Förderung in EUR"
-          class="max-w-xs"
-          :validator="$v.form.requested_funding"
-          :validator-params="{ maxFunding: formattedMaxFunding }"
-        >
+        <span class="mt-3 mx-2">bis</span>
+        <BaseField label="" class="ml-1 max-w-xs flex-1" :validator="$v.form.planned_attendees_max">
           <BaseInput
-            v-model="form.requested_funding"
+            v-model="form.planned_attendees_max"
             type="number"
-            min="0"
-            step="0.01"
+            :min="form.planned_attendees_min || 0"
+            step="1"
             class="w-full"
           />
         </BaseField>
       </div>
-    </div>
+
+      <BaseField
+        label="beantragte Förderung in EUR"
+        class="max-w-xs"
+        :validator="$v.form.requested_funding"
+        :validator-params="{ maxFunding: formattedMaxFunding }"
+      >
+        <BaseInput
+          v-model="form.requested_funding"
+          type="number"
+          min="0"
+          step="0.01"
+          class="w-full"
+        />
+      </BaseField>
+    </BaseFormSection>
 
     <hr class="bg-gray-300 h-px my-5 mt-20" />
 
@@ -182,28 +155,31 @@ import { getMaxFunding } from '@/utils/funding.ts';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseTextarea from '@/components/BaseTextarea.vue';
 import BaseField from '@/components/BaseField.vue';
+import BaseFormSection from '@/components/BaseFormSection.vue';
 import SeminarStatus from '@/components/SeminarStatus.vue';
 import GroupSelect from '@/components/GroupSelect.vue';
 import { RuleDecl } from 'vue/types/options';
 import { formatEuro } from '../utils/formatters';
 import userMixin from '@/mixins/user.ts';
+import formMixin from '@/mixins/form.ts';
 
 export default Vue.extend({
   components: {
     BaseInput,
     BaseField,
     BaseTextarea,
+    BaseFormSection,
     SeminarStatus,
     GroupSelect
   },
-  mixins: [userMixin],
+  mixins: [userMixin, formMixin],
   props: {
     object: { type: Object as () => Seminar, required: true }
   },
   data: () => ({
     saving: false,
     form: {
-      status: '' as any,
+      status: '',
       title: '',
       description: '',
       start_date: '',
@@ -258,7 +234,7 @@ export default Vue.extend({
     }
   },
   created() {
-    this.copyFields();
+    (this as any).copyFields();
     (this.$v.form as any).$touch();
   },
   methods: {
@@ -269,10 +245,10 @@ export default Vue.extend({
           pk: this.object.pk,
           data: this.form
         });
-        this.copyFields();
+        (this as any).copyFields();
         this.$toast(`Seminar gespeichert.`);
       } catch (error) {
-        this.$toast(`Fehler beim Speichern des Seminars.`, { type: 'error' }); // TODO: Infobox Erklärung des Fehlers
+        this.$toast(`Fehler beim Speichern des Seminars.`, { type: 'error' });
       }
       this.saving = false;
     }

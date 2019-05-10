@@ -51,15 +51,9 @@
 
       <SeminarForm ref="seminarForm" :object="object" />
 
-      <div class="flex flex-wrap mt-20">
-        <div class="w-full md:w-1/3 mb-5">
-          <h2 class="text-green-500 font-bold">Kommentare</h2>
-        </div>
-
-        <div class="w-full md:w-2/3">
-          <CommentList class="w-full" :seminar-id="pk" />
-        </div>
-      </div>
+      <BaseFormSection label="Kontakt">
+        <CommentList class="w-full" :seminar-id="pk" />
+      </BaseFormSection>
     </div>
 
     <BaseModal :show="applySuccessModal" @close="applySuccessModal = false">
@@ -104,12 +98,15 @@ import SeminarForm from '@/components/SeminarForm.vue';
 import CommentList from '@/components/CommentList.vue';
 import SeminarDeleteButton from '@/components/SeminarDeleteButton.vue';
 import BaseModal from '@/components/BaseModal.vue';
+import BaseFormSection from '@/components/BaseFormSection.vue';
 
 export default Vue.extend({
   components: {
     SeminarForm,
     CommentList,
     SeminarDeleteButton,
+    BaseModal,
+    BaseFormSection
   },
   mixins: [userMixin],
   props: {
