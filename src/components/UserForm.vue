@@ -28,7 +28,7 @@
       </BaseField>
     </BaseFormSection>
 
-    <BaseFormSection label="Konto">
+    <BaseFormSection label="Anmeldung">
       <BaseField label="Anmeldename" name="username">
         <BaseInput v-model="form.username" name="username" class="w-full" />
       </BaseField>
@@ -65,8 +65,6 @@
     </BaseFormSection>
 
     <div class="flex flex-wrap mt-5">
-      <UserDeleteButton :user="object" class="btn-outline" />
-
       <div class="ml-auto">
         <button
           class="btn btn-primary mb-1 float-right"
@@ -90,7 +88,6 @@ import BaseForm from '@/components/BaseForm.vue';
 import BaseCheckbox from '@/components/BaseCheckbox.vue';
 import BaseFormSection from '@/components/BaseFormSection.vue';
 import BaseSelect from '@/components/BaseSelect.vue';
-import UserDeleteButton from '@/components/UserDeleteButton.vue';
 import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue';
 import { User, UserRole } from '../types';
 import formMixin from '@/mixins/form.ts';
@@ -134,7 +131,6 @@ export default Vue.extend({
     BaseCheckbox,
     BaseForm,
     BaseSelect,
-    UserDeleteButton,
     GroupSelectMultiple,
     BaseFormSection
   },

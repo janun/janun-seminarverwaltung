@@ -3,6 +3,7 @@
     <div v-if="loading" class="fullspinner" />
 
     <div v-if="object">
+      <UserDeleteButton :user="object" class="btn-outline float-right" />
       <h1 class="text-3xl text-green-500 font-bold">{{ object.name }}</h1>
 
       <p>Erstellt: {{ object.created_at | date }}</p>
@@ -17,11 +18,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import UserForm from '@/components/UserForm.vue';
+import UserDeleteButton from '@/components/UserDeleteButton.vue';
 import { User } from '../types';
 
 export default Vue.extend({
   components: {
-    UserForm
+    UserForm,
+    UserDeleteButton
   },
   props: {
     pk: { type: Number, required: true }
@@ -39,7 +42,7 @@ export default Vue.extend({
     this.loading = true;
     try {
       await this.$store.dispatch('users/fetchSingle', this.pk);
-        document.title = this.object.name;
+      document.title = this.object.name;
     } catch (error) {
       alert('Fehler beim Laden des Kontos');
     } finally {
