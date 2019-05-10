@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.urls import include, path, re_path
-from django.views.generic import TemplateView
 from rest_framework_extensions.routers import ExtendedDefaultRouter as DefaultRouter
 
 from .api import views
@@ -21,7 +20,7 @@ router.register("group_names", views.JANUNGroupNamesViewSet, base_name="janungro
 
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="index.html"), name="index"),
+    path("", views.index_view, name="index"),
     path("api/", include(router.urls)),
     path("api/auth/login/", views.LoginView.as_view(), name="rest_login"),
     path("api/auth/", include("rest_auth.urls")),
