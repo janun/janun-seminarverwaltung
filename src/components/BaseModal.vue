@@ -98,22 +98,22 @@ export default Vue.extend({
 
 .modal-backdrop {
   @apply fixed overflow-auto p-2 inset-0 z-40;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 /* modal transition */
 .modal-enter-active,
 .modal-leave-active {
-  transition: all 0.2s;
+  transition: opacity 0.25s linear;
 }
 
 .modal {
-  transition: all 0.2s;
+  transition: transform 0.3s;
 }
 
 .modal-enter .modal,
 .modal-leave-to .modal {
-  transform: scale(0.7);
+  transform: translateY(-300px);
 }
 
 .modal-enter,
