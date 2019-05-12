@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="antialiased font-sans text-gray-700 text-base leading-normal">
+  <div id="app">
     <TheNavbar />
 
     <div class="mt-10 px-2">

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="text-center pb-10 pt-5 mt-20 absolute bottom-0 h-48 w-full"
+    class="absolute bottom-0 h-48 w-full text-center pb-10 pt-5 mt-16"
     style="background:#f2f5f0"
   >
     <h3 class="text-green-500 font-normal text-2xl">
@@ -30,13 +30,7 @@ export default Vue.extend({
 </script>
 
 <style lang="postcss">
-html {
-  height: 100%;
-}
-
 body {
-  position: relative;
-  min-height: 100%;
-  padding-bottom: 16.25rem;
+  @apply relative pb-64;
 }
 </style>
