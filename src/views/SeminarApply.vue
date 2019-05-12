@@ -1,14 +1,5 @@
 <template>
-  <BaseWizard class="max-w-3xl mx-auto">
-    <h1
-      slot="heading"
-      slot-scope="{ currentIndex, totalSteps }"
-      class="text-xl font-bold text-green-500"
-    >
-      Seminar anmelden
-      <span class="text-gray-700 text-sm">({{ currentIndex + 1 }}/{{ totalSteps }})</span>
-    </h1>
-
+  <BaseWizard class="max-w-3xl mx-auto" title="Seminar anmelden">
     <BaseWizardStep
       title="Inhalt"
       :v="$v.form.content"

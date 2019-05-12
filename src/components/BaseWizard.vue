@@ -1,48 +1,33 @@
 <template>
-  <div class="relative rounded-lg bg-white shadow-md p-5">
-    <div v-if="$scopedSlots.heading" class="border-b -mx-5 px-5 pb-5 mb-8">
-      <slot name="heading" v-bind="{ currentIndex, totalSteps }" />
-    </div>
-
-    <div class="flex pb-20">
-      <BaseWizardNav />
-      <div class="flex-auto">
-        <slot />
-      </div>
-    </div>
+  <div>
+    <slot />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import BaseWizardNav from '@/components/BaseWizardNav.vue';
 
-interface Step {
-  active: boolean;
-}
+type Step = Vue & { active: boolean };
 
 export default Vue.extend({
-  components: {
-    BaseWizardNav
+  props: {
+    title: { type: String, default: '' }
   },
   data: () => ({
     currentIndex: 0,
     maxVisited: 0,
     steps: [] as Step[]
   }),
-  computed: {
-    isLast(): boolean {
-      return this.currentIndex === this.totalSteps - 1;
-    },
-    isFirst(): boolean {
-      return this.currentIndex === 0;
-    },
-    currentStep(): Step {
-      return this.steps[this.currentIndex];
-    },
-    totalSteps(): number {
-      return this.steps.length;
-    }
+  provide(): object {
+    return {
+      stepsGetter: () => this.steps,
+      goto: this.goto,
+      currentIndexGetter: () => this.currentIndex,
+      maxVisitedGetter: () => this.maxVisited,
+      next: this.next,
+      prev: this.prev,
+      wizardTitle: this.title
+    };
   },
   watch: {
     currentIndex: {
@@ -61,18 +46,18 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.steps = ((this.$slots.default || []).map(
-      (vnode) => vnode.componentInstance
-    ) as any) as Step[];
+    if (this.$slots.default) {
+      this.steps = this.$slots.default.map((vnode) => vnode.componentInstance as Step);
+    }
   },
   methods: {
     next() {
-      if (!this.isLast) {
+      if (this.currentIndex !== this.steps.length - 1) {
         this.currentIndex += 1;
       }
     },
     prev() {
-      if (!this.isFirst) {
+      if (this.currentIndex !== 0) {
         this.currentIndex -= 1;
       }
     },

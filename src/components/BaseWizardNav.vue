@@ -1,11 +1,11 @@
 <template>
-  <ul class="hidden md:block w-32 mr-12 -my-5 py-5 list-reset">
-    <li v-for="(step, index) in $parent.steps" :key="index" class="flex items-center justify-start">
+  <ul class="list-reset">
+    <li v-for="(step, index) in steps" :key="index" class="flex items-center justify-start">
       <button
         :disabled="step.active"
         type="button"
         class="text-grey-darkest my-2"
-        @click="$parent.goto(index)"
+        @click="goto(index)"
       >
         <span :class="{ 'font-bold': step.active }">
           {{ step.title }}
@@ -13,7 +13,7 @@
       </button>
 
       <svg
-        v-if="$parent.maxVisited > index && step.invalid"
+        v-if="maxVisited > index && step.invalid"
         class="ml-2 h-4 w-4 fill-current text-white rounded-full bg-red-500"
         viewBox="0 0 24 24"
       >
@@ -36,5 +36,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-export default Vue.extend({});
+export default Vue.extend({
+  inject: ['stepsGetter', 'goto', 'maxVisitedGetter'],
+  computed: {
+    steps(): object[] {
+      return (this as any).stepsGetter();
+    },
+    maxVisited(): number {
+      return (this as any).maxVisitedGetter();
+    }
+  }
+});
 </script>
