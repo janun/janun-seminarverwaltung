@@ -3,7 +3,9 @@
     <TheNavbar />
 
     <div class="mt-10 px-2">
-      <router-view />
+      <transition name="fade" mode="out-in">
+        <router-view :key="$route.fullPath" />
+      </transition>
     </div>
 
     <TheFooter />
