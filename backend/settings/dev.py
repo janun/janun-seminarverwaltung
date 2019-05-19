@@ -139,9 +139,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 INTERNAL_IPS = ["127.0.0.1"]
 
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ("localhost:8080", "localhost:8000", "localhost:3000")
+# CORS_ORIGIN_WHITELIST = ("localhost:8080",) # TODO add production server
+CORS_ORIGIN_REGEX_WHITELIST = [r"^http://localhost:.*$"]
 CORS_URLS_REGEX = r"^/api/.*$"
 
 CSRF_TRUSTED_ORIGINS = ("localhost",)

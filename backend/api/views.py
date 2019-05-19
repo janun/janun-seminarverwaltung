@@ -2,8 +2,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
-from rest_auth import views as rest_auth_views
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
@@ -29,7 +28,12 @@ class SeminarViewSet(
             qs = models.Seminar.objects.all()
         else:
             qs = self.request.user.seminars
+
         qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
+
+        year = self.request.query_params.get("year", None)
+        if year:
+            qs = qs.filter(start_date__year=year)  # TODO: This is brittle
         return qs
 
     def perform_create(self, serializer) -> None:
@@ -105,16 +109,3 @@ class EmailExistsView(APIView):
         email = request.GET.get("email", "").strip().lower()
         exists = models.User.objects.filter(email=email).exists()
         return Response({"exists": exists}, content_type="application/json")
-
-
-class LoginView(rest_auth_views.LoginView):
-    """customized LoginView to also return user object on login"""
-
-    def get_response_serializer(self):
-        return serializers.LoginResponseSerializer
-
-    def get_response(self) -> HttpResponse:
-        serializer_class = self.get_response_serializer()
-        data = {"user": self.user, "token": {"key": self.token}}
-        serializer = serializer_class(instance=data, context={"request": self.request})
-        return Response(serializer.data, status=status.HTTP_200_OK)

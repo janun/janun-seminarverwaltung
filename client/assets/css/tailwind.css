@@ -1,0 +1,17 @@
+@tailwind base;
+
+html {
+  @apply font-sans antialiased font-normal text-gray-700 text-base leading-normal bg-green-50;
+}
+
+@tailwind components;
+
+@import "./card.css";
+@import "./buttons.css";
+@import "./spinner.css";
+@import "./transitions.css";
+@import "./forms.css";
+@import "./badge.css";
+@import "./link.css";
+
+@tailwind utilities;

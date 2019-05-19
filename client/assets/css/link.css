@@ -1,0 +1,3 @@
+.link:hover {
+  @apply text-gray-900;
+}

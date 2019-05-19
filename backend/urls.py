@@ -22,7 +22,6 @@ router.register("group_names", views.JANUNGroupNamesViewSet, base_name="janungro
 urlpatterns = [
     path("", views.index_view, name="index"),
     path("api/", include(router.urls)),
-    path("api/auth/login/", views.LoginView.as_view(), name="rest_login"),
     path("api/auth/", include("rest_auth.urls")),
     path("api/auth/registration/", include("rest_auth.registration.urls")),
     path("api/auth/username-exists/", views.UsernameExistsView.as_view()),

@@ -1,14 +1,21 @@
 module.exports = {
   root: true,
   env: {
+    browser: true,
     node: true
   },
-  extends: ['plugin:vue/recommended', '@vue/prettier', '@vue/typescript'],
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
-  },
   parserOptions: {
-    parser: '@typescript-eslint/parser'
+    parser: 'babel-eslint'
+  },
+  extends: [
+    '@nuxtjs',
+    'plugin:nuxt/recommended',
+    'plugin:prettier/recommended',
+    'prettier',
+    'prettier/vue'
+  ],
+  plugins: ['prettier'],
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }
-};
+}

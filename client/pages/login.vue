@@ -1,0 +1,87 @@
+<template>
+  <div class="mx-auto max-w-sm">
+    <div class="card border">
+      <h1 class="text-center mb-6">
+        <div class="text-2xl text-green-500">Anmeldung</div>
+        <div class="text-base">zur JANUN-Seminarverwaltung</div>
+      </h1>
+      <p v-if="nonFieldErrors" class="text-red-500 font-bold italic my-3">
+        {{ nonFieldErrors.join(', ') }}
+      </p>
+
+      <form @submit.prevent="login">
+        <BaseField label="Benutzername" name="username">
+          <BaseInput
+            id="username"
+            ref="username"
+            v-model="form.username"
+            name="username"
+            class="w-full"
+          />
+        </BaseField>
+
+        <BaseField label="Passwort" name="password">
+          <BaseInput
+            id="password"
+            v-model="form.password"
+            name="password"
+            type="password"
+            class="w-full"
+          />
+        </BaseField>
+
+        <div class="card-footer flex flex-wrap items-center mt-10">
+          <nuxt-link class="btn btn-secondary" to="/signup">
+            Konto anlegen
+          </nuxt-link>
+          <button
+            type="submit"
+            class="btn btn-primary ml-auto px-10"
+            :class="{ 'btn-loading': loading }"
+            :disabled="!form.username || !form.password || loading"
+          >
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      form: {
+        username: '',
+        password: ''
+      },
+      loading: false,
+      errors: undefined,
+      nonFieldErrors: undefined
+    }
+  },
+  provide() {
+    return {
+      serverErrorsGetter: () => this.errors
+    }
+  },
+  layout: 'empty',
+  mounted() {
+    this.$refs.username.focus()
+  },
+  methods: {
+    async login() {
+      this.loading = true
+      try {
+        await this.$auth.loginWith('local', { data: this.form })
+      } catch (e) {
+        this.errors = e.response.data
+        this.nonFieldErrors = e.response.data.non_field_errors
+      } finally {
+        this.loading = false
+      }
+    }
+  }
+}
+</script>

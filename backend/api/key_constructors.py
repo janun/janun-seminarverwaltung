@@ -7,6 +7,7 @@ from rest_framework_extensions.key_constructor.bits import (
     KeyBitBase,
     RetrieveSqlQueryKeyBit,
     UserKeyBit,
+    QueryParamsKeyBit,
 )
 from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
 
@@ -33,6 +34,7 @@ CustomObjectKeyFunction = CustomObjectKeyConstructor()
 class CustomListKeyConstructor(DefaultKeyConstructor):
     updated_at = UpdatedAtKeyBit()
     user = UserKeyBit()
+    all_query_params = QueryParamsKeyBit()
 
 
 CustomListKeyFunction = CustomListKeyConstructor()

@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         green: {
+          50: '#fcfefb',
           100: '#f6fff1',
           200: '#d8f2d8',
           300: '#aee1a5',
@@ -33,4 +34,4 @@ module.exports = {
   },
   variants: {},
   plugins: []
-};
+}

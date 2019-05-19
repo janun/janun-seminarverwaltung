@@ -1,11 +1,11 @@
 from typing import Dict
 
-from allauth.account.adapter import get_adapter
-from allauth.account.utils import setup_user_email
-from allauth.utils import email_address_exists
 from django.contrib.auth.hashers import make_password
-from django.db.models import QuerySet, Model
-from rest_auth import serializers as rest_auth_serializers
+from django.db.models import Model, QuerySet
+from django.http import HttpRequest
+from rest_auth.registration.serializers import (
+    RegisterSerializer as OldRegisterSerializer,
+)
 from rest_framework import serializers
 
 from . import models
@@ -85,6 +85,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "is_reviewed",
+            "has_staff_role",
         )
 
 
@@ -125,11 +126,14 @@ class SeminarSerializer(serializers.ModelSerializer):
 
     owner = ShortUserSerializer(read_only=True)
     owner_pk = serializers.PrimaryKeyRelatedField(
-        queryset=models.User.objects.all(), source="owner", required=False
+        queryset=models.User.objects.all(),
+        source="owner",
+        required=False,
+        write_only=True,
     )
     group = ShortJANUNGroupSerializer(read_only=True)
     group_pk = serializers.PrimaryKeyRelatedField(
-        queryset=models.JANUNGroup.objects.all(), source="group"
+        queryset=models.JANUNGroup.objects.all(), source="group", write_only=True
     )
 
     status = ChoicesField(choices=models.Seminar.STATES, default="angemeldet")
@@ -177,10 +181,9 @@ class SeminarSerializer(serializers.ModelSerializer):
         )
 
 
-class RegisterSerializer(serializers.Serializer):
+class RegisterSerializer(OldRegisterSerializer):
     username = serializers.CharField(min_length=3, required=True)
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(write_only=True)
     name = serializers.CharField(write_only=True)
     telephone = serializers.CharField(required=False, allow_blank=True)
     address = serializers.CharField(required=False, allow_blank=True)
@@ -188,45 +191,9 @@ class RegisterSerializer(serializers.Serializer):
         many=True, required=False, queryset=models.JANUNGroup.objects.all()
     )
 
-    def validate_username(self, username: str) -> str:
-        username = get_adapter().clean_username(username)
-        return username
-
-    def validate_email(self, email: str) -> str:
-        email = get_adapter().clean_email(email)
-        if email and email_address_exists(email):
-            raise serializers.ValidationError(
-                "Diese E-Mail-Adresse ist schon vergeben."
-            )
-        return email
-
-    def validate_password(self, password: str) -> str:
-        return get_adapter().clean_password(password)
-
-    def custom_signup(self, request, user) -> None:
+    def custom_signup(self, request: HttpRequest, user: models.User) -> None:
         user.name = self.validated_data.get("name", "")
         user.telephone = self.validated_data.get("telephone", "")
         user.address = self.validated_data.get("address", "")
         user.janun_groups.set(self.validated_data.get("janun_groups_pks", []))
         user.save()
-
-    def get_cleaned_data(self) -> Dict[str, str]:
-        return {
-            "username": self.validated_data.get("username", ""),
-            "password": self.validated_data.get("password", ""),
-            "email": self.validated_data.get("email", ""),
-        }
-
-    def save(self, request):  # why request and not **kwargs?
-        adapter = get_adapter()
-        user = adapter.new_user(request)
-        self.cleaned_data = self.get_cleaned_data()  # why?
-        adapter.save_user(request, user, self)
-        self.custom_signup(request, user)
-        setup_user_email(request, user, [])
-        return user
-
-
-class LoginResponseSerializer(serializers.Serializer):
-    token = rest_auth_serializers.TokenSerializer()
-    user = UserSerializer()
