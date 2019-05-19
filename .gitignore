@@ -104,3 +104,6 @@ dist
 
 # Service worker
 sw.*
+
+# dev database
+db.sqlite3
