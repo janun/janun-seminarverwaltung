@@ -171,7 +171,7 @@ export default {
 }
 
 .datatable {
-  @apply bg-white rounded-lg text-sm;
+  @apply bg-white rounded text-sm;
   border-spacing: 0;
   border-collapse: separate;
   width: 100%;
@@ -203,10 +203,10 @@ export default {
   content: '';
 }
 .datatable th:first-child {
-  @apply rounded-tl-lg;
+  @apply rounded-tl;
 }
 .datatable th:last-child {
-  @apply rounded-tr-lg;
+  @apply rounded-tr;
 }
 
 @screen xl {
