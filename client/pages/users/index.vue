@@ -1,13 +1,11 @@
 <template>
   <div>
-    <nuxt-link
-      to="/users/new"
-      class="btn btn-outline text-green-500 float-right"
-    >
-      Neues Konto
-    </nuxt-link>
-
-    <h1 class="text-green-500 text-xl font-bold">Kontos</h1>
+    <div class="flex flex-wrap items-center">
+      <h1 class="text-green-500 text-xl font-bold">Kontos</h1>
+      <nuxt-link to="/users/new" class="btn btn-outline text-green-500 ml-auto">
+        Neues Konto
+      </nuxt-link>
+    </div>
 
     <div
       class="inline-flex flex-wrap items-center my-4 bg-white shadow rounded p-2"
