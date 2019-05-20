@@ -13,6 +13,9 @@ __pycache__
 # lock files
 *.lock
 
+# but include yarn lock
+!yarn.lock
+
 # coverage
 /coverage
 
