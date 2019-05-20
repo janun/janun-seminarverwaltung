@@ -222,7 +222,7 @@ export default {
 
 .datatable td {
   @apply px-2 align-middle border-b;
-  height: 3.5rem;
+  height: 3rem;
   max-width: 25rem;
   white-space: nowrap;
   overflow: hidden;
@@ -232,7 +232,7 @@ export default {
 .datatable td a {
   @apply flex items-center;
   min-width: 0;
-  height: 3.5rem;
+  height: 3rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
