@@ -3,7 +3,7 @@
     <button
       slot="trigger"
       type="button"
-      class="flex items-center select-none px-3 py-2 input whitespace-no-wrap"
+      class="flex items-center select-none input whitespace-no-wrap"
       :class="{ 'text-green-700': !allSelected }"
     >
       <span class="mr-1">{{ label }}:</span>
