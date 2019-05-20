@@ -21,6 +21,7 @@ django-allauth = "*"
 drf-extensions = "*"
 django-model-utils = "*"
 argon2-cffi = "*"
+django-environ = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

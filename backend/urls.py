@@ -7,16 +7,16 @@ from .api import views
 
 router = DefaultRouter()
 
-seminars = router.register("seminars", views.SeminarViewSet, base_name="seminar")
+seminars = router.register("seminars", views.SeminarViewSet, basename="seminar")
 seminars.register(
     "comments",
     views.SeminarCommentViewSet,
-    base_name="seminars-comment",
+    basename="seminars-comment",
     parents_query_lookups=["seminar"],
 )
-router.register("users", views.UserViewSet, base_name="user")
-router.register("groups", views.JANUNGroupViewSet, base_name="janungroup")
-router.register("group_names", views.JANUNGroupNamesViewSet, base_name="janungroup")
+router.register("users", views.UserViewSet, basename="user")
+router.register("groups", views.JANUNGroupViewSet, basename="janungroup")
+router.register("group_names", views.JANUNGroupNamesViewSet, basename="janungroup")
 
 
 urlpatterns = [

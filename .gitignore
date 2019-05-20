@@ -110,3 +110,8 @@ sw.*
 
 # dev database
 db.sqlite3
+
+# saved environment variables
+.env
+.envs/*
+!.envs/.local/
