@@ -13,7 +13,7 @@
       class="inline-flex flex-wrap items-center my-4 bg-white shadow rounded p-2"
     >
       <BaseInput
-        ref="nameFitler"
+        ref="nameFilter"
         v-model="nameFilter"
         placeholder="Name oder Anmeldename"
         class="m-2"
@@ -168,7 +168,7 @@ export default {
     return { users, groups }
   },
   mounted() {
-    this.$refs.nameFitler.focus()
+    this.$refs.nameFilter.focus()
   },
   methods: {
     resetFilters() {
