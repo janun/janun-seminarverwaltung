@@ -74,7 +74,7 @@
     </BaseFormSection>
 
     <BaseFormSection
-      v-if="$auth.loggedIn && $auth.user.has_staff_roles"
+      v-if="$auth.loggedIn && $auth.user.has_staff_role"
       label="Spezielles"
     >
       <BaseField label="Rolle" name="role">
