@@ -48,6 +48,7 @@
     "nodemon": "^1.18.9",
     "prettier": "^1.16.4",
     "tailwindcss": "^1.0.1",
-    "vue-jest": "^3.0.3"
+    "vue-jest": "^3.0.3",
+    "nuxt-compress": "^1.0.2"
   }
 }

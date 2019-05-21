@@ -50,7 +50,13 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['@nuxtjs/axios', '@nuxtjs/auth', '@nuxtjs/pwa', 'nuxt-purgecss'],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+    '@nuxtjs/pwa',
+    'nuxt-purgecss',
+    'nuxt-compress'
+  ],
 
   /*
    ** Axios module configuration
