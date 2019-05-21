@@ -92,6 +92,11 @@ EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[JANUN Seminarverwaltung]"
 )
 
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="localhost")
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
+EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="1025")
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
