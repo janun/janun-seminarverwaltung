@@ -459,7 +459,9 @@ export default {
         end_date: this.form.spacetime.end_date,
         end_time: this.form.spacetime.end_time,
         location: this.form.spacetime.location,
-        group_pk: this.form.group.yesgroup ? this.form.group.group_pk : null,
+        group_pk: this.form.group.yesgroup
+          ? this.form.group.group_pk
+          : undefined,
         planned_training_days: this.form.days.planned_training_days,
         planned_attendees_min: this.form.attendees.planned_attendees_min,
         planned_attendees_max: this.form.attendees.planned_attendees_max,

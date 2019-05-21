@@ -133,7 +133,10 @@ class SeminarSerializer(serializers.ModelSerializer):
     )
     group = ShortJANUNGroupSerializer(read_only=True)
     group_pk = serializers.PrimaryKeyRelatedField(
-        queryset=models.JANUNGroup.objects.all(), source="group", write_only=True
+        queryset=models.JANUNGroup.objects.all(),
+        source="group",
+        write_only=True,
+        required=False,
     )
 
     status = ChoicesField(choices=models.Seminar.STATES, default="angemeldet")
