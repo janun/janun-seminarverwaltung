@@ -56,7 +56,10 @@ export default {
    ** Axios module configuration
    */
   axios: {
-    baseURL: process.env.API_URL || '/api',
+    baseURL:
+      process.env.NODE_ENV !== 'production'
+        ? 'http://localhost:8000/api'
+        : '/api',
     retry: true
   },
 
