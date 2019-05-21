@@ -1,10 +1,15 @@
 <template>
-  <div class="mx-auto max-w-sm">
-    <div class="card border">
-      <h1 class="text-center mb-6">
-        <div class="text-2xl text-green-500">Anmeldung</div>
-        <div class="text-base">zur JANUN-Seminarverwaltung</div>
+  <div class="mx-auto max-w-sm mt-4 px-4">
+    <div class="md:card">
+      <h1
+        class="sm:text-center font-bold mb-6 sm:mb-12 text-2xl text-green-500"
+      >
+        Anmeldung
+        <div class="font-normal text-gray-600 text-sm">
+          zur JANUN-Seminarverwaltung
+        </div>
       </h1>
+
       <p v-if="nonFieldErrors" class="text-red-500 font-bold italic my-3">
         {{ nonFieldErrors.join(', ') }}
       </p>
@@ -30,7 +35,7 @@
           />
         </BaseField>
 
-        <div class="card-footer flex flex-wrap items-center mt-10">
+        <div class="dm:card-footer flex flex-wrap items-center mt-10">
           <nuxt-link class="btn btn-secondary" to="/signup">
             Konto anlegen
           </nuxt-link>
@@ -76,7 +81,7 @@ export default {
       try {
         await this.$auth.loginWith('local', { data: this.form })
       } catch (error) {
-        if (error.response.status === 400) {
+        if (error.response && error.response.status === 400) {
           this.errors = error.response.data
           this.nonFieldErrors = error.response.data.non_field_errors
         } else {

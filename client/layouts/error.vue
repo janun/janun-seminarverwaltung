@@ -9,12 +9,12 @@
     <p class="mt-4 mb-2">Du kannst z.B. Folgendes versuchen:</p>
     <ul>
       <li class="mb-2">
-        <a class="underline cursor-pointer" @click="reload">
+        <button class="btn btn-outline" @click="reload">
           Seite neu laden
-        </a>
+        </button>
       </li>
       <li>
-        <a class="underline cursor-pointer" href="/">Zur Startseite</a>
+        <a class="btn btn-outline" href="/">Zur Startseite</a>
       </li>
     </ul>
   </div>

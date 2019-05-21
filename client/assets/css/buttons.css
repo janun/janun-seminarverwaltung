@@ -3,7 +3,7 @@ button:disabled {
 }
 
 .btn {
-  @apply inline-block;
+  @apply inline-block select-none;
 
   transition: box-shadow 0.1s ease-in-out;
 }

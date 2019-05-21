@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container mx-auto px-4 mt-10">
+    <div class="mx-auto sm:mt-10">
       <nuxt />
     </div>
   </div>

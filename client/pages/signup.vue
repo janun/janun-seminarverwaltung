@@ -1,14 +1,19 @@
 <template>
-  <div class="mx-auto max-w-lg">
-    <h1 class="text-center mb-6">
-      <div class="text-2xl text-green-500">Konto Anlegen</div>
-      <div class="text-base">zur JANUN-Seminarverwaltung</div>
-    </h1>
+  <div class="mx-auto max-w-xl mt-4 px-4">
+    <div class="mb-10">
+      <h1
+        class="sm:text-center font-bold mb-6 sm:mb-12 text-2xl text-green-500"
+      >
+        Konto Anlegen
+        <div class="font-normal text-gray-600 text-sm">
+          zur JANUN-Seminarverwaltung
+        </div>
+      </h1>
 
-    <div class="card border pt-10 mb-10">
       <p v-if="nonFieldErrors" class="text-red-500 font-bold italic my-3">
         {{ nonFieldErrors.join(', ') }}
       </p>
+
       <UserForm
         :saving="saving"
         save-label="Anlegen &amp; Login"
@@ -56,7 +61,7 @@ export default {
         })
         this.$router.push('/')
       } catch (error) {
-        if (error.response.status === 400) {
+        if (error.response && error.response.status === 400) {
           this.errors = error.response.data
           this.nonFieldErrors = error.response.data.non_field_errors
         } else {

@@ -1,6 +1,6 @@
 <template>
-  <nav class="bg-white shadow-md">
-    <div class="container mx-auto px-4 flex justify-start items-stretch h-16">
+  <nav class="bg-white shadow-md px-4">
+    <div class="mx-auto max-w-5xl flex justify-start items-stretch h-16">
       <nuxt-link to="/" class="flex items-center">
         <svg width="38" height="38" class="fill-current text-green-500">
           <path
@@ -10,39 +10,37 @@
         <span class="ml-2 text-green-500 font-bold">Seminare</span>
       </nuxt-link>
 
-      <div class="w-full block flex-grow sm:flex">
-        <div
-          v-if="$auth.loggedIn && $auth.user.has_staff_role"
-          class="ml-10 flex"
-        >
-          <nuxt-link class="mx-2 flex items-center" to="/seminars/">
-            Seminare
-          </nuxt-link>
-          <nuxt-link class="mx-2 flex items-center" to="/users/">
-            Kontos
-          </nuxt-link>
-          <nuxt-link class="mx-2 flex items-center" to="/groups/">
-            Gruppen
-          </nuxt-link>
-        </div>
+      <div
+        v-if="$auth.loggedIn && $auth.user.has_staff_role"
+        class="sm:ml-10 flex"
+      >
+        <nuxt-link class="mx-2 flex items-center" to="/seminars/">
+          Seminare
+        </nuxt-link>
+        <nuxt-link class="mx-2 flex items-center" to="/users/">
+          Kontos
+        </nuxt-link>
+        <nuxt-link class="mx-2 flex items-center" to="/groups/">
+          Gruppen
+        </nuxt-link>
+      </div>
 
-        <div v-if="$auth.loggedIn" class="ml-auto flex">
-          <nuxt-link class="mx-2 flex items-center" to="/profile">
-            {{ $auth.user.username }}
-          </nuxt-link>
-          <button class="mx-2 flex items-center" @click="logout">
-            Logout
-          </button>
-        </div>
+      <div v-if="$auth.loggedIn" class="ml-auto flex">
+        <nuxt-link class="mx-2 flex items-center" to="/profile">
+          {{ $auth.user.username }}
+        </nuxt-link>
+        <button class="mx-2 flex items-center" @click="logout">
+          Logout
+        </button>
+      </div>
 
-        <div v-if="!$auth.loggedIn" class="ml-auto flex">
-          <nuxt-link class="mx-2 flex items-center" to="/login">
-            Anmelden
-          </nuxt-link>
-          <nuxt-link class="mx-2 flex items-center" to="/signup">
-            Konto Anlegen
-          </nuxt-link>
-        </div>
+      <div v-if="!$auth.loggedIn" class="ml-auto flex">
+        <nuxt-link class="mx-2 flex items-center" to="/login">
+          Anmelden
+        </nuxt-link>
+        <nuxt-link class="mx-2 flex items-center" to="/signup">
+          Konto Anlegen
+        </nuxt-link>
       </div>
     </div>
   </nav>
