@@ -1,7 +1,5 @@
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.views.decorators.cache import never_cache
-from django.views.generic import TemplateView
 from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,9 +10,6 @@ from rest_framework_extensions.mixins import NestedViewSetMixin
 from . import models
 from . import permissions as permissions2
 from . import serializers
-
-# Serve Vue Application
-index_view = never_cache(TemplateView.as_view(template_name="index.html"))
 
 
 class SeminarViewSet(

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import include, path, re_path
+from django.urls import include, path
 from rest_framework_extensions.routers import ExtendedDefaultRouter as DefaultRouter
 
 from .api import views
@@ -20,13 +20,11 @@ router.register("group_names", views.JANUNGroupNamesViewSet, basename="janungrou
 
 
 urlpatterns = [
-    path("", views.index_view, name="index"),
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_auth.urls")),
     path("api/auth/registration/", include("rest_auth.registration.urls")),
     path("api/auth/username-exists/", views.UsernameExistsView.as_view()),
     path("api/auth/email-exists/", views.EmailExistsView.as_view()),
-    re_path(r"^.*", views.index_view, name="index"),
 ]
 
 if settings.DEBUG:
