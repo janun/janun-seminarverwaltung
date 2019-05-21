@@ -81,7 +81,9 @@ PASSWORD_HASHERS = [
 ]
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        ),
         "OPTIONS": {"user_attributes": ("username", "name", "email")},
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -191,7 +193,6 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
 # ------------------------------------------------------------------------------
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ORIGIN_WHITELIST = ("localhost:8080",) # TODO add production server
 CORS_ORIGIN_REGEX_WHITELIST = [r"^http://localhost:.*$"]
 CORS_URLS_REGEX = r"^/api/.*$"
 
@@ -209,7 +210,9 @@ REST_FRAMEWORK = {
 }
 
 REST_FRAMEWORK_EXTENSIONS = {
-    "DEFAULT_OBJECT_CACHE_KEY_FUNC": "backend.api.key_constructors.CustomObjectKeyFunction",
+    "DEFAULT_OBJECT_CACHE_KEY_FUNC": (
+        "backend.api.key_constructors.CustomObjectKeyFunction"
+    ),
     "DEFAULT_LIST_CACHE_KEY_FUNC": "backend.api.key_constructors.CustomListKeyFunction",
     "DEFAULT_OBJECT_ETAG_FUNC": "backend.api.key_constructors.CustomObjectKeyFunction",
     "DEFAULT_LIST_ETAG_FUNC": "backend.api.key_constructors.CustomListKeyFunction",

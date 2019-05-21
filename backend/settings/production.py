@@ -1,5 +1,3 @@
-import logging
-
 from .base import *  # noqa pylint: disable=wildcard-import, unused-wildcard-import
 from .base import env
 

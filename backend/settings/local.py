@@ -1,4 +1,4 @@
-from .base import *  # noqa
+from .base import *  # noqa pylint: disable=wildcard-import, unused-wildcard-import
 from .base import env
 
 # GENERAL
@@ -30,15 +30,7 @@ TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG  # noqa F405
 EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
 )
-# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.filebased.EmailBackend')
-# EMAIL_BACKEND = env(
-#     "DJANGO_EMAIL_BACKEND", default="naomi.mail.backends.naomi.NaomiBackend"
-# )
-EMAIL_FILE_PATH = MEDIA_ROOT + MEDIA_URL
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = "localhost"
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = 1025
+
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
