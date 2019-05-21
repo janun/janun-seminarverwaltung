@@ -4,7 +4,7 @@ Base settings to build other settings files upon.
 
 import environ
 
-ROOT_DIR = environ.Path(__file__) - 2  # = janun-seminarverwaltung/)
+ROOT_DIR = environ.Path(__file__) - 3  # = janun-seminarverwaltung/)
 APPS_DIR = ROOT_DIR.path("backend")
 
 env = environ.Env()
@@ -43,11 +43,11 @@ DJANGO_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
 ]
 THIRD_PARTY_APPS = [
-    "whitenoise.runserver_nostatic",
     "django_filters",
     "allauth",
     "allauth.account",
@@ -57,7 +57,6 @@ THIRD_PARTY_APPS = [
     "rest_auth",
     "rest_auth.registration",
     "corsheaders",
-    "import_export",
 ]
 LOCAL_APPS = ["backend.api"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -96,8 +95,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # MIDDLEWARE
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -109,13 +109,19 @@ MIDDLEWARE = [
 
 # STATIC
 # ------------------------------------------------------------------------------
+# Not really using staticfiles, since only serving an api
 STATIC_ROOT = str(ROOT_DIR("dist"))
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
+STATICFILES_DIRS = []
+STATICFILES_FINDERS = []
+
+
+# WhiteNoise
+# ------------------------------------------------------------------------------
+# Serve frontend files with whitenoise
+WHITENOISE_INDEX_FILE = True
+WHITENOISE_ROOT = ROOT_DIR("dist")
+
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -199,6 +205,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
     ),
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
 }
 
 REST_FRAMEWORK_EXTENSIONS = {

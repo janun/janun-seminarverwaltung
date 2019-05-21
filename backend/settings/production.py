@@ -1,6 +1,6 @@
 import logging
 
-from .base import *  # noqa
+from .base import *  # noqa pylint: disable=wildcard-import, unused-wildcard-import
 from .base import env
 
 # GENERAL
@@ -22,8 +22,6 @@ DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # no
 #         'LOCATION': env('REDIS_URL'),
 #         'OPTIONS': {
 #             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#             # Mimicing memcache behavior.
-#             # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
 #             'IGNORE_EXCEPTIONS': True,
 #         }
 #     }
@@ -64,8 +62,7 @@ X_FRAME_OPTIONS = "DENY"
 
 # STATIC
 # ------------------------
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # MEDIA
@@ -105,10 +102,6 @@ EMAIL_SUBJECT_PREFIX = env(
 # Gunicorn
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ["gunicorn"]  # noqa F405
-
-# WhiteNoise
-# ------------------------------------------------------------------------------
-MIDDLEWARE = ["whitenoise.middleware.WhiteNoiseMiddleware"] + MIDDLEWARE  # noqa F405
 
 
 # LOGGING
