@@ -75,9 +75,13 @@ export default {
       this.loading = true
       try {
         await this.$auth.loginWith('local', { data: this.form })
-      } catch (e) {
-        this.errors = e.response.data
-        this.nonFieldErrors = e.response.data.non_field_errors
+      } catch (error) {
+        if (error.response.status === 400) {
+          this.errors = error.response.data
+          this.nonFieldErrors = error.response.data.non_field_errors
+        } else {
+          this.$nuxt.error({ statusCode: 500, message: 'Server Fehler' })
+        }
       } finally {
         this.loading = false
       }

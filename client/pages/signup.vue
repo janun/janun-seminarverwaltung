@@ -6,6 +6,9 @@
     </h1>
 
     <div class="card border pt-10 mb-10">
+      <p v-if="nonFieldErrors" class="text-red-500 font-bold italic my-3">
+        {{ nonFieldErrors.join(', ') }}
+      </p>
       <UserForm
         :saving="saving"
         save-label="Anlegen &amp; Login"
@@ -24,7 +27,14 @@ export default {
   },
   data() {
     return {
+      errors: undefined,
+      nonFieldErrors: undefined,
       saving: false
+    }
+  },
+  provide() {
+    return {
+      serverErrorsGetter: () => this.errors
     }
   },
   auth: false,
@@ -39,12 +49,22 @@ export default {
       payload.password2 = payload.password
       delete payload.password
 
-      await this.$axios.$post('/auth/registration/', payload)
-      await this.$auth.loginWith('local', {
-        data: { username: payload.username, password: payload.password1 }
-      })
-      this.$router.push('/')
-      this.saving = false
+      try {
+        await this.$axios.$post('/auth/registration/', payload)
+        await this.$auth.loginWith('local', {
+          data: { username: payload.username, password: payload.password1 }
+        })
+        this.$router.push('/')
+      } catch (error) {
+        if (error.response.status === 400) {
+          this.errors = error.response.data
+          this.nonFieldErrors = error.response.data.non_field_errors
+        } else {
+          this.error({ statusCode: 500, message: 'Server Fehler' })
+        }
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

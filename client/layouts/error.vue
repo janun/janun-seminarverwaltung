@@ -1,19 +1,20 @@
 <template>
   <div class="mx-auto max-w-sm card border">
-    <h1 class="text-red-500 font-bold text-xl mb-5">
-      <span v-if="statusCode === 404">
-        Hmm, Seite nicht gefunden
-      </span>
-      <span v-else>
-        Upps, Ein Fehler ist aufgetreten
-      </span>
+    <h1 class="text-red-500 font-bold text-xl mb-2">
+      {{ title }}
     </h1>
+
+    <p v-if="error.message">{{ error.message }}</p>
+
+    <p class="mt-4 mb-2">Du kannst z.B. Folgendes versuchen:</p>
     <ul>
-      <li class="my-3">
-        <a class="link cursor-pointer" @click="$router.go(-1)">Zurück</a>
+      <li class="mb-2">
+        <a class="underline cursor-pointer" @click="reload">
+          Seite neu laden
+        </a>
       </li>
-      <li class="my-3">
-        <nuxt-link class="link" to="/">Zur Startseite</nuxt-link>
+      <li>
+        <a class="underline cursor-pointer" href="/">Zur Startseite</a>
       </li>
     </ul>
   </div>
@@ -28,22 +29,24 @@ export default {
   layout: 'empty',
   head() {
     return {
-      title: this.message,
-      meta: [
-        {
-          name: 'viewport',
-          content:
-            'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
-        }
-      ]
+      title: this.title
     }
   },
   computed: {
-    statusCode() {
-      return (this.error && this.error.statusCode) || 500
-    },
-    message() {
-      return this.error.message || 'Fehler'
+    title() {
+      switch (this.error.statusCode) {
+        case 404:
+          return 'Seite nicht gefunden.'
+        case 500:
+          return 'Server Fehler'
+        default:
+          return 'Fehler'
+      }
+    }
+  },
+  methods: {
+    reload() {
+      location.reload(true)
     }
   }
 }
