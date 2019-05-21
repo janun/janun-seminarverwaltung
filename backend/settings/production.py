@@ -118,8 +118,10 @@ LOGGING = {
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "formatters": {
         "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+            "format": "%(asctime)s [%(process)d] [%(levelname)s] "
+            "pathname=%(pathname)s lineno=%(lineno)s "
+            "funcname=%(funcName)s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         }
     },
     "handlers": {
@@ -136,7 +138,7 @@ LOGGING = {
     },
     "loggers": {
         "django.request": {
-            "handlers": ["mail_admins"],
+            "handlers": ["console", "mail_admins"],
             "level": "ERROR",
             "propagate": True,
         },
