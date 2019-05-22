@@ -44,7 +44,8 @@ export default {
     '@/plugins/portalVue',
     '@/plugins/forms',
     '@/plugins/formatters',
-    '@/plugins/toast'
+    '@/plugins/toast',
+    '@/plugins/axios'
   ],
 
   /*
