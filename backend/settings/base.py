@@ -20,8 +20,8 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 TIME_ZONE = "Europe/Berlin"
 LANGUAGE_CODE = "de-de"
 SITE_ID = 1
-USE_I18N = False
-USE_L10N = False
+USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
 # DATABASES
