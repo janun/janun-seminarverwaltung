@@ -1,38 +1,23 @@
 <template>
-  <div>
-    <h2 class="text-gray-800 font-bold text-xl mb-3 mt-10">Deine Gruppen</h2>
-    <div v-if="$auth.user.janun_groups.length" class="flex flex-wrap -m-4">
-      <div
-        v-for="group in $auth.user.janun_groups"
-        :key="group.pk"
-        class="lg:w-1/3 sm:w-1/2 w-full p-4"
-      >
-        <nuxt-link
-          class="seminar block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col"
-          style="min-height: 75px;"
-          :to="`/groups/${group.pk}`"
-        >
-          <h3 class="mt-1 mb-2 leading-tight text-gray-800">
-            {{ group.name }}
-          </h3>
-        </nuxt-link>
-      </div>
-    </div>
-    <div v-else>
-      <p>Du bist nicht Mitglied in irgendwelchen JANUN-Gruppen.</p>
-    </div>
+  <div class="mx-auto max-w-5xl">
+    <h1 class="font-bold text-2xl text-green-500">
+      Willkommen, {{ $auth.user.name }}!
+    </h1>
 
-    <h2 class="text-gray-800 font-bold text-xl mb-3 mt-10">Deine Seminare</h2>
+    <GroupCardList />
+
     <SeminarCardList />
   </div>
 </template>
 
 <script>
 import SeminarCardList from '@/components/SeminarCardList.vue'
+import GroupCardList from '@/components/GroupCardList.vue'
 
 export default {
   components: {
-    SeminarCardList
+    SeminarCardList,
+    GroupCardList
   }
 }
 </script>

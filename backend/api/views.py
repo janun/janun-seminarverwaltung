@@ -5,16 +5,26 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
 from rest_framework_extensions.mixins import NestedViewSetMixin
+from django_filters import rest_framework as filters
 
 from . import models
 from . import permissions as permissions2
 from . import serializers
 
 
+class SeminarFilter(filters.FilterSet):
+    year = filters.NumberFilter(field_name="start_date__year")
+
+    class Meta:
+        model = models.Seminar
+        fields = ["year", "owner", "group"]
+
+
 class SeminarViewSet(NestedViewSetMixin, CacheResponseMixin, viewsets.ModelViewSet):
     "Seminars"
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
+    filterset_class = SeminarFilter
 
     def get_queryset(self) -> QuerySet:
         if self.request.user.has_staff_role:
@@ -23,12 +33,7 @@ class SeminarViewSet(NestedViewSetMixin, CacheResponseMixin, viewsets.ModelViewS
         else:
             # teamers can only access their own seminars
             qs = self.request.user.seminars
-
         qs = self.get_serializer_class().setup_eager_loading(qs)  # type: ignore
-
-        year = self.request.query_params.get("year", None)
-        if year:
-            qs = qs.filter(start_date__year=year)  # TODO: This is brittle
         return qs
 
     def perform_create(self, serializer) -> None:

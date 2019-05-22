@@ -55,6 +55,14 @@ button:disabled {
   border-color: currentColor;
 }
 
+.btn-outline.btn-loading:after {
+  @apply border-gray-700;
+
+  border-right-color: transparent;
+  border-top-color: transparent;
+  background: white;
+}
+
 /* tertiary */
 .btn-tertiary {
   @apply text-gray-600;
