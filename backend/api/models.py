@@ -58,6 +58,10 @@ class User(AbstractUser):
     def has_staff_role(self) -> bool:
         return self.role in ("Prüfer_in", "Verwalter_in")
 
+    @property
+    def has_verwalter_role(self) -> bool:
+        return self.role == "Verwalter_in"
+
 
 class Seminar(models.Model):
     # manual data migrations needed if STATES changed

@@ -218,7 +218,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 }
 
 REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "backend.api.serializers.UserSerializer"
+    "USER_DETAILS_SERIALIZER": "backend.api.serializers.UserProfileSerializer"
 }
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "backend.api.serializers.RegisterSerializer"

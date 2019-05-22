@@ -23,6 +23,10 @@ class ChoicesField(serializers.Field):
         return getattr(self._choices, data)
 
 
+# Short Serializers
+# ------------------------------------------------------------------------------
+
+
 class ShortUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
@@ -35,7 +39,17 @@ class ShortJANUNGroupSerializer(serializers.ModelSerializer):
         fields = ("pk", "name")
 
 
+# Full Serializers
+# ------------------------------------------------------------------------------
+
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer used by user administration
+
+    UserProfileSerializer inherits from this one
+    """
+
     updated_at = serializers.DateTimeField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
 
@@ -54,6 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def setup_eager_loading(queryset: QuerySet) -> QuerySet:
+        "add prefetch related to the queryset for performance"
         queryset = queryset.prefetch_related("janun_groups", "group_hats")
         return queryset
 
@@ -86,6 +101,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "is_reviewed",
             "has_staff_role",
+            "has_verwalter_role",
         )
 
 
@@ -95,6 +111,7 @@ class SeminarCommentSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def setup_eager_loading(queryset: QuerySet) -> QuerySet:
+        "add prefetch related to the queryset for performance"
         queryset = queryset.select_related("owner")
         return queryset
 
@@ -112,6 +129,7 @@ class JANUNGroupSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def setup_eager_loading(queryset: QuerySet) -> QuerySet:
+        "add prefetch related to the queryset for performance"
         queryset = queryset.prefetch_related("members", "group_hats")
         return queryset
 
@@ -143,11 +161,12 @@ class SeminarSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def setup_eager_loading(queryset: QuerySet) -> QuerySet:
+        "add prefetch related to the queryset for performance"
         queryset = queryset.select_related("owner", "group")
         return queryset
 
     def to_internal_value(self, data):
-        # allow for optional start_time and end_time
+        "allow for optional start_time and end_time (workaround for time validation)"
         if data.get("start_time", None) == "":
             data.pop("start_time")
         if data.get("end_time", None) == "":
@@ -184,7 +203,32 @@ class SeminarSerializer(serializers.ModelSerializer):
         )
 
 
+# User Authentication and Signup Serializers
+# ------------------------------------------------------------------------------
+
+
+class UserProfileSerializer(UserSerializer):
+    """
+    Serializer used for self viewing and editing each user profile
+    So permission fields need to be read_only here
+    """
+
+    janun_groups_pks = serializers.PrimaryKeyRelatedField(
+        many=True, source="janun_groups", read_only=True
+    )
+    group_hats_pks = serializers.PrimaryKeyRelatedField(
+        many=True, source="group_hats", read_only=True
+    )
+
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ("is_reviewed", "role")
+
+
 class RegisterSerializer(OldRegisterSerializer):
+    """
+    Serializer used for new user signup
+    """
+
     username = serializers.CharField(min_length=3, required=True)
     email = serializers.EmailField(required=True)
     name = serializers.CharField(write_only=True)
