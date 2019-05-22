@@ -1,35 +1,31 @@
 <template>
-  <transition name="slide-next" mode="out-in">
-    <div
-      v-if="active"
-      :key="title"
-      class="absolute z-10 w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
-    >
-      <h1
-        class="text-xl font-bold text-green-500 border-b -mx-5 px-5 pb-5 mb-8"
+  <div
+    v-if="active"
+    :key="title"
+    class="w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
+  >
+    <h1 class="text-xl font-bold text-green-500 border-b -mx-5 px-5 pb-5 mb-8">
+      {{ wizardTitle }}
+      <span class="text-gray-700 text-sm"
+        >({{ currentIndex + 1 }}/{{ steps.length }})</span
       >
-        {{ wizardTitle }}
-        <span class="text-gray-700 text-sm"
-          >({{ currentIndex + 1 }}/{{ steps.length }})</span
-        >
-      </h1>
+    </h1>
 
-      <form @submit.prevent="submit">
-        <div class="flex">
-          <BaseWizardNav class="hidden md:block w-32 mr-12" />
-          <div ref="content"><slot /></div>
-        </div>
+    <form @submit.prevent="submit">
+      <div class="flex">
+        <BaseWizardNav class="hidden md:block w-32 mr-12" />
+        <div ref="content"><slot /></div>
+      </div>
 
-        <BaseWizardFooter
-          class="-mx-5 -mb-5"
-          :prev-label="prevLabel"
-          :next-label="nextLabel"
-          :invalid="invalid"
-          @prev="onPrev"
-        />
-      </form>
-    </div>
-  </transition>
+      <BaseWizardFooter
+        class="-mx-5 -mb-5"
+        :prev-label="prevLabel"
+        :next-label="nextLabel"
+        :invalid="invalid"
+        @prev="onPrev"
+      />
+    </form>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-xl mt-4 px-4">
+  <div class="mx-auto max-w-xl mt-10 px-4">
     <div class="mb-10">
       <h1
         class="sm:text-center font-bold mb-6 sm:mb-12 text-2xl text-green-500"
@@ -43,7 +43,7 @@ export default {
     }
   },
   auth: false,
-  layout: 'empty',
+  layout: 'default',
   middleware: 'guest',
   methods: {
     async signup(payload) {

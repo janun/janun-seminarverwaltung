@@ -305,7 +305,7 @@ import { minDate, checked } from '@/utils/validators.js'
 import { formatEuro } from '@/utils/formatters'
 
 export default {
-  layout: 'empty',
+  layout: 'default',
   components: {
     BaseWizard,
     BaseWizardStep,

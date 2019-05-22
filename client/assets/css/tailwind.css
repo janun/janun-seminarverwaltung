@@ -1,7 +1,13 @@
 @tailwind base;
 
 html {
-  @apply font-sans antialiased font-normal text-gray-700 text-base leading-normal bg-green-50;
+  @apply font-sans antialiased font-normal text-gray-700 text-sm leading-normal bg-green-50;
+}
+
+@screen sm {
+  html {
+    @apply text-base;
+  }
 }
 
 @tailwind components;

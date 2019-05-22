@@ -48,6 +48,7 @@ button:disabled {
   @apply bg-gray-400;
 }
 
+/* outline */
 .btn-outline {
   @apply py-1.5 px-4 text-gray-700 rounded-full border;
 
