@@ -1,19 +1,5 @@
 <template>
   <BaseForm :validator="$v.form" @submit.prevent="save">
-    <div v-if="object" class="flex flex-wrap mt-5">
-      <div class="ml-auto">
-        <button
-          class="btn btn-primary mb-1 float-right"
-          :class="{ 'btn-loading': saving }"
-          type="submit"
-          :disabled="$v.form.$invalid || saving"
-        >
-          {{ saveLabel }}
-        </button>
-        <p v-if="$v.form.$error" class="text-red-600">Fehler im Formular</p>
-      </div>
-    </div>
-
     <BaseFormSection label="Name">
       <BaseField label="Name" name="name">
         <BaseInput ref="name" v-model="form.name" name="name" class="w-full" />

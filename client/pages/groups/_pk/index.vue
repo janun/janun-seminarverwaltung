@@ -1,11 +1,19 @@
 <template>
   <div class="mx-auto max-w-4xl">
-    <div class="flex flex-wrap items-center">
+    <div class="flex flex-wrap items-start">
       <h1 class="text-xl text-green-500 font-bold mb-5">{{ group.name }}</h1>
-      <GroupDeleteButton
-        :group="group"
-        class="ml-auto btn btn-outline text-red-500"
-      />
+      <div class="ml-auto">
+        <GroupDeleteButton
+          :group="group"
+          class="btn btn-outline text-red-500"
+        />
+        <nuxt-link
+          class="mt-2 btn btn-outline"
+          :to="`/groups/${group.pk}/edit`"
+        >
+          Bearbeiten
+        </nuxt-link>
+      </div>
     </div>
   </div>
 </template>
