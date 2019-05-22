@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-wrap items-center mt-10">
-      <h2 class="text-gray-800 font-bold text-xl">
+      <h2 class="text-gray-800 font-bold text-xl mb-4">
         Deine Seminare
         <span
           v-if="seminars.length"
@@ -24,14 +24,15 @@
     <div
       v-for="[year, seminarsInYear] in seminarsGroupedByYear"
       :key="year"
-      class="mb-10"
+      class="mb-16"
     >
-      <h4 class="text-green-500">
+      <h4 class="text-green-500 text-xl">
         {{ year }}
         <span class="text-gray-600 text-xs ml-2">
           {{ seminarsInYear.length }} Seminare
         </span>
       </h4>
+
       <hr class="bg-gray-300 h-px mb-5" />
 
       <div class="flex flex-wrap -m-4">
@@ -44,9 +45,10 @@
         </div>
       </div>
     </div>
+
     <button
       v-if="next"
-      class="btn btn-outline text-gray-700 mx-auto my-2"
+      class="btn btn-outline text-gray-700 block mx-auto"
       :class="{ 'btn-loading': loadingMore }"
       @click="loadMore"
     >
