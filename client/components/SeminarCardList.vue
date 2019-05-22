@@ -90,8 +90,10 @@ export default {
       )
     }
   },
-  async mounted() {
-    console.log('DEBUG')
+  async created() {
+    if (!this.$auth.user) {
+      return
+    }
     this.loading = true
     try {
       const data = await this.$axios.$get('seminars/', {
