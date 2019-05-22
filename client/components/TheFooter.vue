@@ -25,7 +25,7 @@
 export default {
   data() {
     return {
-      helpPhone: '12312312312',
+      helpPhone: '+49 511 3940515',
       helpMail: 'seminar@janun.de',
       seminarPolicyURL: 'https://www.janun.de/downloads'
     }
