@@ -83,6 +83,7 @@ export default {
         `/seminars/${this.seminar.pk}/`,
         payload
       )
+      this.$toast('Änderungen am Seminar gespeichert.')
       this.seminar = data
       this.saving = false
     }
