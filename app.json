@@ -1,7 +1,4 @@
 {
-  "scripts": {
-    "postdeploy": "python manage.py migrate"
-  },
   "env": {
     "DATABASE_URL": {
       "description": "Database to be used"
