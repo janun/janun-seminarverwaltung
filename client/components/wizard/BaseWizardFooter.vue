@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row-reverse justify-between bg-gray-100 mt-5 p-5 rounded-b-lg"
+    class="flex flex-row-reverse justify-between bg-gray-100 p-5 rounded-b-lg"
   >
     <slot name="footer">
       <button
@@ -18,6 +18,7 @@
       <button
         type="button"
         class="btn btn-tertiary flex items-center"
+        disabled="prevDisabled"
         @click="$emit('prev')"
       >
         <svg class="mr-2 fill-current h-3 w-3" viewBox="0 0 20 20">
@@ -36,7 +37,8 @@ export default {
   props: {
     invalid: { type: Boolean, default: false },
     nextLabel: { type: String, default: 'Weiter' },
-    prevLabel: { type: String, default: 'Zurück' }
+    prevLabel: { type: String, default: 'Zurück' },
+    prevDisabled: { type: Boolean, default: false }
   }
 }
 </script>

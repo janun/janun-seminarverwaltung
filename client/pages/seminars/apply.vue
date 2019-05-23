@@ -1,11 +1,6 @@
 <template>
-  <BaseWizard class="max-w-3xl mx-auto" title="Seminar anmelden">
-    <BaseWizardStep
-      title="Inhalt"
-      :v="$v.form.content"
-      prev-label="Abbrechen"
-      @prev="$router.push('/')"
-    >
+  <BaseWizard class="max-w-3xl mx-auto" :title="wizardTitle" @cancel="cancel">
+    <BaseWizardStep title="Inhalt" :v="$v.form.content" :prev-disabled="true">
       <h2 class="text-green-500 text-xl mb-4">Seminarinhalte</h2>
       <p class="mb-5">
         Beschreibe uns Dein Seminar, damit wir entscheiden können, ob wir es
@@ -39,7 +34,7 @@
             class="max-w-xs"
           />
         </BaseField>
-        <BaseField label="Start-Zeit" class="mx-2" name="start_time">
+        <BaseField label="Start-Zeit" optional class="mx-2" name="start_time">
           <BaseInput v-model="form.spacetime.start_time" type="time" />
         </BaseField>
       </div>
@@ -52,7 +47,7 @@
             class="max-w-xs"
           />
         </BaseField>
-        <BaseField label="End-Zeit" class="mx-2" name="end_time">
+        <BaseField label="End-Zeit" optional class="mx-2" name="end_time">
           <BaseInput v-model="form.spacetime.end_time" type="time" />
         </BaseField>
       </div>
@@ -305,7 +300,7 @@ import { minDate, checked } from '@/utils/validators.js'
 import { formatEuro } from '@/utils/formatters'
 
 export default {
-  layout: 'default',
+  layout: 'empty',
   components: {
     BaseWizard,
     BaseWizardStep,
@@ -398,6 +393,14 @@ export default {
     }
   },
   computed: {
+    wizardTitle() {
+      const name = this.form.content.title
+      if (name) {
+        return `${name} anmelden`
+      } else {
+        return 'Seminar anmelden'
+      }
+    },
     validExceptConfirmation() {
       if (this.$v.form) {
         const formsExceptConfirmation = Object.keys(this.$v.form)
@@ -450,6 +453,9 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      this.$router.push('/')
+    },
     async save() {
       const payload = {
         title: this.form.content.title,

@@ -1,12 +1,12 @@
 <template>
-  <div class="relative min-h-screen">
+  <div>
     <TheNavbar />
 
-    <div class="mx-auto px-4 mt-5 pb-64">
+    <div class="mx-auto px-4 mt-5">
       <nuxt />
     </div>
 
-    <TheFooter class="absolute bottom-0 h-48 mt-16" />
+    <TheFooter />
 
     <TheToaster />
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full text-center pb-10 pt-8"
+    class="absolute bottom-0 h-48 mt-16 w-full text-center pb-10 pt-8"
     style="background: rgba(0,0,0,0.03)"
   >
     <h3 class="text-green-500 font-normal text-2xl">

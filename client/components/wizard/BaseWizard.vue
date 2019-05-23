@@ -22,7 +22,8 @@ export default {
       maxVisitedGetter: () => this.maxVisited,
       next: this.next,
       prev: this.prev,
-      wizardTitle: this.title
+      wizardTitleGetter: () => this.title,
+      cancel: () => this.$emit('cancel')
     }
   },
   watch: {

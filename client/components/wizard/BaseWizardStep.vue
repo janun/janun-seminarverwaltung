@@ -4,17 +4,36 @@
     :key="title"
     class="w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
   >
-    <h1 class="text-xl font-bold text-green-500 border-b -mx-5 px-5 pb-5 mb-8">
-      {{ wizardTitle }}
-      <span class="text-gray-700 text-sm"
-        >({{ currentIndex + 1 }}/{{ steps.length }})</span
+    <div class="flex items-center border-b -mx-5 px-5 pb-5 mb-4">
+      <h1 class="text-lg font-bold text-green-500">
+        {{ wizardTitleGetter() }}
+        <span class="ml-2 text-gray-600 text-sm font-normal">
+          {{ currentIndex + 1 }} / {{ steps.length }}
+        </span>
+      </h1>
+      <button
+        class="-mr-1 ml-auto hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline rounded-full p-3 outline-none"
+        title="Abbrechen"
+        @click="cancel"
       >
-    </h1>
+        <svg class="fill-current text-gray-700 w-3 h-3" viewBox="0 0 20 20">
+          <path
+            d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"
+          />
+        </svg>
+      </button>
+    </div>
 
     <form @submit.prevent="submit">
       <div class="flex">
-        <BaseWizardNav class="hidden md:block w-32 mr-12" />
-        <div ref="content"><slot /></div>
+        <div>
+          <BaseWizardNav
+            class="hidden md:block mr-12 px-3 mb-4 bg-gray-100 rounded shadow"
+          />
+        </div>
+        <div ref="content">
+          <slot />
+        </div>
       </div>
 
       <BaseWizardFooter
@@ -22,6 +41,7 @@
         :prev-label="prevLabel"
         :next-label="nextLabel"
         :invalid="invalid"
+        :prev-disabled="prevDisabled"
         @prev="onPrev"
       />
     </form>
@@ -34,7 +54,14 @@ import BaseWizardNav from '@/components/wizard/BaseWizardNav.vue'
 import BaseWizardFooter from '@/components/wizard/BaseWizardFooter.vue'
 
 export default {
-  inject: ['next', 'prev', 'currentIndexGetter', 'stepsGetter', 'wizardTitle'],
+  inject: [
+    'next',
+    'prev',
+    'currentIndexGetter',
+    'stepsGetter',
+    'wizardTitleGetter',
+    'cancel'
+  ],
   components: {
     BaseWizardNav,
     BaseWizardFooter
@@ -43,7 +70,8 @@ export default {
     title: { type: String, required: true }, // used by BaseWizardNav
     v: { type: Object, default: null },
     nextLabel: { type: String, default: 'Weiter' },
-    prevLabel: { type: String, default: 'Zurück' }
+    prevLabel: { type: String, default: 'Zurück' },
+    prevDisabled: { type: Boolean, default: false }
   },
   provide() {
     return {

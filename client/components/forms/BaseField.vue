@@ -2,12 +2,14 @@
   <div class="mb-5">
     <label
       v-if="label || $slots.label"
-      class="block mb-1 text-base text-gray-700"
+      class="block mb-1 text-base text-gray-700 font-bold"
       :class="{ 'text-red-600': hasErrors }"
       :for="childId"
     >
       <slot name="label">{{ label }}</slot>
-      <span v-if="optional" class="text-sm text-gray-500 ml-1">(optional)</span>
+      <span v-if="optional" class="text-sm text-gray-500 ml-1 font-normal">
+        optional
+      </span>
     </label>
 
     <div v-if="helptext || $slots.helptext" class="text-sm -mt-1 mb-1">

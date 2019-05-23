@@ -1,5 +1,5 @@
 <template>
-  <ul class="list-reset">
+  <ul>
     <li
       v-for="(step, index) in steps"
       :key="index"
