@@ -135,7 +135,7 @@ MEDIA_URL = "/media/"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [str(APPS_DIR.path("templates"))],
+        "DIRS": [ROOT_DIR("dist")],
         "OPTIONS": {
             "debug": DEBUG,
             "loaders": [
@@ -151,7 +151,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "context_processors.janun_context",
             ],
         },
     }
