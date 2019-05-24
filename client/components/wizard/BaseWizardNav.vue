@@ -18,7 +18,7 @@
 
       <svg
         v-if="maxVisited > index && step.invalid"
-        class="ml-2 h-4 w-4 fill-current text-white rounded-full bg-red-500"
+        class="ml-2 h-4 w-4 fill-current text-white rounded-full bg-red-600"
         viewBox="0 0 24 24"
       >
         <path

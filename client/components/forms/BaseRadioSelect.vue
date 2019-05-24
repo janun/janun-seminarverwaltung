@@ -1,16 +1,16 @@
 <template>
   <div>
     <label
-      class="relative select-none px-4 py-2 inline-block border-2 border-transparent rounded-lg my-1 bg-white pl-10"
+      class="relative select-none px-4 py-2 inline-block border-2 border-transparent rounded-lg my-2 bg-white pl-10"
       :class="[
-        checked ? 'shadow-none border-green-500' : 'shadow hover:shadow-md',
+        checked ? 'shadow-none border-green-500' : 'hover:shadow-md',
         disabled
-          ? 'cursor-not-allowed text-gray-500'
+          ? 'cursor-not-allowed text-gray-600'
           : 'cursor-pointer focus-within:shadow-outline'
       ]"
     >
       <span
-        class="absolute flex justify-center items-center h-4 w-4 rounded-full border-2 ml-3 mt-3 top-0 left-0"
+        class="absolute flex justify-center items-center h-4 w-4 rounded-full border border-gray-600 ml-3 mt-3 top-0 left-0"
         :class="[checked ? 'border-green-500' : '']"
       >
         <span v-if="checked" class="h-2 w-2 rounded-full bg-green-500" />

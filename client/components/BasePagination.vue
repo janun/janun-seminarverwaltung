@@ -114,7 +114,7 @@ export default {
 }
 
 .page:disabled {
-  @apply text-gray-500;
+  @apply text-gray-600;
 }
 
 .active {
