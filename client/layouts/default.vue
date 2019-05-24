@@ -2,7 +2,7 @@
   <div>
     <TheNavbar />
 
-    <div class="mx-auto px-4 mt-5">
+    <div class="mx-auto px-4 mt-10">
       <nuxt />
     </div>
 

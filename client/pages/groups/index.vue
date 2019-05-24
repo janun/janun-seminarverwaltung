@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="max-w-6xl mx-auto">
     <div class="flex flex-wrap items-center">
       <h1 class="text-green-500 text-xl font-bold">Gruppen</h1>
       <nuxt-link

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row-reverse justify-between bg-gray-100 p-5 rounded-b-lg"
+    class="flex flex-row-reverse justify-between bg-gray-100 p-5 rounded-b-lg mt-6"
   >
     <slot name="footer">
       <button
