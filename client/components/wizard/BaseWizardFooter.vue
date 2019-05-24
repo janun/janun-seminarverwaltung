@@ -18,7 +18,7 @@
       <button
         type="button"
         class="btn btn-tertiary flex items-center"
-        disabled="prevDisabled"
+        :disabled="prevDisabled"
         @click="$emit('prev')"
       >
         <svg class="mr-2 fill-current h-3 w-3" viewBox="0 0 20 20">
