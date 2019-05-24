@@ -3,7 +3,6 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_extensions.cache.mixins import CacheResponseMixin
 from rest_framework_extensions.mixins import NestedViewSetMixin
 from django_filters import rest_framework as filters
 
@@ -20,7 +19,7 @@ class SeminarFilter(filters.FilterSet):
         fields = ["year", "owner", "group"]
 
 
-class SeminarViewSet(NestedViewSetMixin, CacheResponseMixin, viewsets.ModelViewSet):
+class SeminarViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     "Seminars"
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
