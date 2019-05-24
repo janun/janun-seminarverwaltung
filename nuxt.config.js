@@ -42,7 +42,7 @@ export default {
     '@/plugins/vuelidate',
     '@/plugins/vuelidateErrorExtractor',
     '@/plugins/portalVue',
-    '@/plugins/forms',
+    '@/plugins/globalComponents',
     '@/plugins/formatters',
     '@/plugins/toast',
     '@/plugins/axios'
