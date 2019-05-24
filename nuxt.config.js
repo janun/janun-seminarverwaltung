@@ -53,6 +53,7 @@ export default {
    */
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/proxy',
     '@nuxtjs/auth',
     '@nuxtjs/pwa',
     'nuxt-purgecss',
@@ -60,13 +61,19 @@ export default {
   ],
 
   /*
+   ** Proxy config for development
+   */
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8000'
+    }
+  },
+
+  /*
    ** Axios module configuration
    */
   axios: {
-    baseURL:
-      process.env.NODE_ENV !== 'production'
-        ? 'http://localhost:8000/api'
-        : '/api',
+    baseURL: '/api',
     retry: true
   },
 
