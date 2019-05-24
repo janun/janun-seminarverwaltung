@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-sm mt-10 px-4">
+  <div class="mx-auto sm:max-w-sm mt-5 sm:mt-10 px-4">
     <div class="md:card">
       <h1
         class="sm:text-center font-bold mb-6 sm:mb-12 text-2xl text-green-500"
@@ -35,10 +35,11 @@
           />
         </BaseField>
 
-        <div class="dm:card-footer flex flex-wrap items-center mt-10">
+        <div class="flex flex-wrap items-center mt-10">
           <nuxt-link class="btn btn-secondary" to="/signup">
             Konto anlegen
           </nuxt-link>
+
           <button
             type="submit"
             class="btn btn-primary ml-auto px-10"
@@ -71,7 +72,7 @@ export default {
       serverErrorsGetter: () => this.errors
     }
   },
-  layout: 'default',
+  layout: 'empty',
   mounted() {
     this.$refs.username.focus()
   },

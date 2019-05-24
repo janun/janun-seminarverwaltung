@@ -1,6 +1,6 @@
 <template>
-  <div v-if="$auth.user" class="mx-auto max-w-5xl">
-    <h1 class="text-2xl text-green-500 font-bold">Dein Profil</h1>
+  <div v-if="$auth.user" class="mx-auto max-w-2xl">
+    <h1 class="text-2xl text-green-500">Dein Profil</h1>
     <UserForm :object="$auth.user" :saving="saving" @save="save" />
   </div>
 </template>

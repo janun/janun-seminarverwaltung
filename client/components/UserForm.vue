@@ -92,6 +92,7 @@
     </BaseFormSection>
 
     <div class="flex flex-wrap mt-5">
+      <slot name="buttons" />
       <div class="ml-auto">
         <button
           class="btn btn-primary mb-1 float-right"
