@@ -15,14 +15,12 @@
           role="dialog"
           @click.stop
         >
-          <button
+          <CloseButton
             ref="closeButton"
-            type="button"
-            class="float-right h-12 w-12 -mt-4 -mr-4 text-4xl rounded-full focus:outline-none focus:text-gray-900 hover:text-gray-900"
+            class="float-right -mt-2 -mr-2"
+            title="Schließen"
             @click="close"
-          >
-            &times;
-          </button>
+          />
           <slot />
         </div>
       </div>
@@ -32,8 +30,12 @@
 
 <script>
 import { getFocusableChildren } from '@/utils/dom.js'
+import CloseButton from '@/components/CloseButton.vue'
 
 export default {
+  components: {
+    CloseButton
+  },
   props: {
     show: { type: Boolean, required: true },
     closeOnEsc: { type: Boolean, default: true }

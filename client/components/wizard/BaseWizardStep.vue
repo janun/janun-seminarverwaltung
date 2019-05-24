@@ -4,24 +4,15 @@
     :key="title"
     class="w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
   >
-    <div class="flex items-center border-b -mx-5 px-5 pb-5 mb-4">
+      <div class="flex items-center border-b -mx-5 px-5 -mt-5 py-2 mb-5">
       <h1 class="text-lg font-bold text-green-500">
         {{ wizardTitleGetter() }}
         <span class="ml-2 text-gray-600 text-sm font-normal">
           {{ currentIndex + 1 }} / {{ steps.length }}
         </span>
       </h1>
-      <button
-        class="-mr-1 ml-auto hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline rounded-full p-3 outline-none"
-        title="Abbrechen"
-        @click="cancel"
-      >
-        <svg class="fill-current text-gray-700 w-3 h-3" viewBox="0 0 20 20">
-          <path
-            d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"
-          />
-        </svg>
-      </button>
+
+        <CloseButton class="ml-auto -mr-4" title="Abbrechen" @click="cancel" />
     </div>
 
     <form @submit.prevent="submit">
@@ -52,6 +43,7 @@
 import { getFocusableChildren } from '@/utils/dom.js'
 import BaseWizardNav from '@/components/wizard/BaseWizardNav.vue'
 import BaseWizardFooter from '@/components/wizard/BaseWizardFooter.vue'
+import CloseButton from '@/components/CloseButton.vue'
 
 export default {
   inject: [
@@ -64,7 +56,8 @@ export default {
   ],
   components: {
     BaseWizardNav,
-    BaseWizardFooter
+    BaseWizardFooter,
+    CloseButton
   },
   props: {
     title: { type: String, required: true }, // used by BaseWizardNav
