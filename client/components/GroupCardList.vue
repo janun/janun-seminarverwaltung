@@ -1,7 +1,7 @@
 <template>
   <div v-if="$auth.user">
     <h2 class="text-gray-800 font-bold text-xl mb-3 mt-10">Deine Gruppen</h2>
-    <div v-if="noGroupAccess" class="mb-4 max-w-sm text-red-500">
+    <div v-if="noGroupAccess" class="mb-4 max-w-sm text-red-600">
       Dein Konto wurde noch nicht überprüft, deswegen
       <strong>kannst Du noch keine Gruppenseiten besuchen.</strong>
     </div>

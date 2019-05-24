@@ -10,7 +10,7 @@
         </div>
       </h1>
 
-      <p v-if="nonFieldErrors" class="text-red-500 font-bold italic my-3">
+    <p v-if="nonFieldErrors" class="text-red-600 font-bold italic my-3">
         {{ nonFieldErrors.join(', ') }}
       </p>
 

@@ -1,13 +1,13 @@
 <template>
   <button
     type="button"
-    class="text-red-500 hover:text-red-700 focus:text-red-700 flex items-center"
+    class="btn btn-outline text-red-600 hover:text-red-700 hover:bg-red-100 flex items-center"
     @click.prevent="modalOpen = true"
   >
     <slot>Konto Löschen</slot>
 
     <BaseModal :show="modalOpen" @close="modalOpen = false">
-      <h1 class="text-red-500 font-bold text-2xl mb-6 flex items-center">
+      <h1 class="text-red-600 font-bold text-2xl mb-6 flex items-center">
         {{ user.name }} wirklich löschen?
       </h1>
 
@@ -23,7 +23,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-primary bg-red-500"
+          class="btn btn-primary bg-red-600"
           :class="{ 'btn-loading': deleting }"
           @click="deleteUser"
         >

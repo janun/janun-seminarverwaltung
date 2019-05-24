@@ -2,7 +2,7 @@
   <div class="mx-auto max-w-5xl">
     <div class="flex flex-wrap items-center">
       <h1 class="text-2xl text-green-500 font-bold">{{ user.name }}</h1>
-      <UserDeleteButton :user="user" class="ml-auto btn btn-outline" />
+      <UserDeleteButton :user="user" class="ml-auto" />
     </div>
 
     <p>Erstellt: {{ user.created_at | date }}</p>

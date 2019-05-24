@@ -22,7 +22,7 @@
       <span
         class="text-xs ml-auto"
         :class="{
-          'badge bg-red-500 text-white py-1 px-3': seminar.deadline_expired,
+          'badge bg-red-600 text-white py-1 px-3': seminar.deadline_expired,
           'badge bg-yellow-500 text-white py-1 px-3':
             seminar.deadline_in_two_weeks
         }"

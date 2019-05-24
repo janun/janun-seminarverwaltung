@@ -2,10 +2,7 @@
   <div class="mx-auto max-w-4xl">
     <div class="flex flex-wrap items-center">
       <h1 class="text-xl text-green-500 font-bold mb-5">{{ group.name }}</h1>
-      <GroupDeleteButton
-        :group="group"
-        class="ml-auto btn btn-outline text-red-500"
-      />
+      <GroupDeleteButton :group="group" class="ml-auto" />
     </div>
     <GroupForm :object="group" :saving="saving" @save="save" />
   </div>
