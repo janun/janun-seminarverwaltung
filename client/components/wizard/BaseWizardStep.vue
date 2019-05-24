@@ -1,42 +1,44 @@
 <template>
-  <div
-    v-if="active"
-    :key="title"
-    class="w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
-  >
+  <transition name="slide-next">
+    <div
+      v-if="active"
+      :key="title"
+      class="w-full max-w-3xl rounded-lg bg-white shadow-md p-5"
+    >
       <div class="flex items-center border-b -mx-5 px-5 -mt-5 py-2 mb-5">
-      <h1 class="text-lg font-bold text-green-500">
-        {{ wizardTitleGetter() }}
-        <span class="ml-2 text-gray-600 text-sm font-normal">
-          {{ currentIndex + 1 }} / {{ steps.length }}
-        </span>
-      </h1>
+        <h1 class="text-lg font-bold text-green-500">
+          {{ wizardTitleGetter() }}
+          <span class="ml-2 text-gray-600 text-sm font-normal">
+            {{ currentIndex + 1 }} / {{ steps.length }}
+          </span>
+        </h1>
 
         <CloseButton class="ml-auto -mr-4" title="Abbrechen" @click="cancel" />
-    </div>
-
-    <form @submit.prevent="submit">
-      <div class="flex">
-        <div>
-          <BaseWizardNav
-            class="hidden md:block mr-12 px-3 mb-4 bg-gray-100 rounded shadow"
-          />
-        </div>
-        <div ref="content">
-          <slot />
-        </div>
       </div>
 
-      <BaseWizardFooter
-        class="-mx-5 -mb-5"
-        :prev-label="prevLabel"
-        :next-label="nextLabel"
-        :invalid="invalid"
-        :prev-disabled="prevDisabled"
-        @prev="onPrev"
-      />
-    </form>
-  </div>
+      <form @submit.prevent="submit">
+        <div class="flex">
+          <div>
+            <BaseWizardNav
+              class="hidden md:block mr-12 px-3 mb-4 bg-gray-100 rounded shadow"
+            />
+          </div>
+          <div ref="content">
+            <slot />
+          </div>
+        </div>
+
+        <BaseWizardFooter
+          class="-mx-5 -mb-5"
+          :prev-label="prevLabel"
+          :next-label="nextLabel"
+          :invalid="invalid"
+          :prev-disabled="prevDisabled"
+          @prev="onPrev"
+        />
+      </form>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -123,17 +125,16 @@ export default {
 
 <style lang="postcss">
 .slide-next-enter-active,
-.slide-next-leave-active,
-.slide-prev-enter-active,
-.slide-prev-leave-active {
+.slide-next-leave-active {
   transition: all 250ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  position: absolute;
 }
-.slide-prev-leave-to,
+
 .slide-next-enter {
   transform: translate3d(-50%, 0, 0);
   opacity: 0;
 }
-.slide-prev-enter,
+
 .slide-next-leave-to {
   transform: translate3d(50%, 0, 0);
   opacity: 0;
