@@ -10,7 +10,7 @@ button:disabled {
 
 /* primary */
 .btn-primary {
-  @apply py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500;
+  @apply inline-flex items-center py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500;
 }
 
 .btn-primary:hover:not(:disabled),
@@ -28,7 +28,7 @@ button:disabled {
 
 /* secondary */
 .btn-secondary {
-  @apply py-1.5 px-4 font-normal shadow text-gray-700 bg-gray-200 rounded-full;
+  @apply inline-flex items-center py-1.5 px-4 font-normal shadow text-gray-700 bg-gray-200 rounded-full;
 }
 
 .btn-secondary:hover:not(:disabled),
@@ -46,7 +46,7 @@ button:disabled {
 
 /* outline */
 .btn-outline {
-  @apply py-1.5 px-4 text-gray-700 rounded-full border;
+  @apply inline-flex items-center py-1.5 px-4 text-gray-700 rounded-full border;
 
   border-color: currentColor;
 }
