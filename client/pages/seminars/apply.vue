@@ -74,7 +74,6 @@
         <GroupSelect
           v-if="$auth.user.has_staff_role"
           v-model="form.group.group_pk"
-          :empty-is-possible="false"
         />
         <p v-else-if="!$auth.user.janun_groups.length">
           Sorry, Du bist in keinen Gruppen eingetragen.
@@ -82,7 +81,6 @@
         <GroupSelect
           v-else
           v-model="form.group.group_pk"
-          :empty-is-possible="false"
           :possible-groups="$auth.user.janun_groups"
         />
       </div>
