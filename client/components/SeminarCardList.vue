@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="flex flex-wrap items-center mt-10">
-      <h2 class="text-gray-800 font-bold text-xl mb-4">
+    <div class="flex flex-wrap items-center mb-6">
+      <h2 class="text-green-500 font-bold text-xl">
         Deine Seminare
         <span
           v-if="seminars.length"
@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="seminars.length === 0 && !loading">
-      Sorry, keine Seminare gefunden.
+      Keine Seminare gefunden.
     </div>
 
     <div v-if="loading">Lade Seminare…</div>
@@ -26,7 +26,7 @@
       :key="year"
       class="mb-16"
     >
-      <h4 class="text-green-500 text-xl">
+      <h4>
         {{ year }}
         <span class="text-gray-600 text-xs ml-2">
           {{ seminarsInYear.length }} Seminare
@@ -35,13 +35,13 @@
 
       <hr class="bg-gray-300 h-px mb-5" />
 
-      <div class="flex flex-wrap -m-4">
+      <div class="flex flex-wrap items-stretch -m-4">
         <div
           v-for="seminar in seminarsInYear"
           :key="seminar.pk"
           class="lg:w-1/3 sm:w-1/2 w-full p-4"
         >
-          <SeminarCard :seminar="seminar" />
+          <SeminarCard :seminar="seminar" class="h-full" />
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@
       :class="{ 'btn-loading': loadingMore }"
       @click="loadMore"
     >
-      Mehr laden
+      Mehr Seminare laden
     </button>
   </div>
 </template>

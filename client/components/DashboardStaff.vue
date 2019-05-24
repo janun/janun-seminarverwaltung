@@ -4,9 +4,9 @@
       Willkommen, {{ $auth.user.name }}!
     </h1>
 
-    <GroupCardList />
+    <GroupCardList class="my-12" />
 
-    <SeminarCardList />
+    <SeminarCardList class="my-12" />
   </div>
 </template>
 

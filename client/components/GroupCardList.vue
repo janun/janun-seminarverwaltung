@@ -1,10 +1,12 @@
 <template>
   <div v-if="$auth.user">
-    <h2 class="text-gray-800 font-bold text-xl mb-3 mt-10">Deine Gruppen</h2>
+    <h2 class="text-green-500 font-bold text-xl mb-2">Deine Gruppen</h2>
+
     <div v-if="noGroupAccess" class="mb-4 max-w-sm text-red-600">
       Dein Konto wurde noch nicht überprüft, deswegen
       <strong>kannst Du noch keine Gruppenseiten besuchen.</strong>
     </div>
+
     <div v-if="$auth.user.janun_groups.length" class="flex flex-wrap -m-4">
       <div
         v-for="group in $auth.user.janun_groups"
@@ -24,6 +26,10 @@
     </div>
     <div v-else>
       <p>Du bist nicht Mitglied in irgendwelchen JANUN-Gruppen.</p>
+      <p class="text-gray-600 text-sm">
+        <a class="underline" href="mailto:seminare@janun.de">Kontaktiere uns</a
+        >, falls du das ändern möchtest.
+      </p>
     </div>
   </div>
 </template>
