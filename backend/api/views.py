@@ -41,7 +41,7 @@ class SeminarViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 class SeminarCommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     "Comments on Seminars"
-    permission_classes = (permissions2.IsOwnerOrReadOnly,)
+    permission_classes = (permissions2.IsOwnerOrVerwalterOrReadOnly,)
     queryset = models.SeminarComment.objects.all()
     serializer_class = serializers.SeminarCommentSerializer
 

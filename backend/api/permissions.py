@@ -15,6 +15,15 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.owner == request.user
 
 
+class IsOwnerOrVerwalterOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj) -> bool:
+        if request.user.has_verwalter_role:
+            return True
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.owner == request.user
+
+
 class HasStaffRole(permissions.BasePermission):
     "Checks user.has_staff_role"
 

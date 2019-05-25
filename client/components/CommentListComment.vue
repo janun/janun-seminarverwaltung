@@ -6,7 +6,9 @@
         {{ comment.created_at | datetime }}
       </span>
       <div
-        v-if="$auth.user.pk === comment.owner.pk || isStaff"
+        v-if="
+          $auth.user.pk === comment.owner.pk || $auth.user.has_verwalter_role
+        "
         class="float-right"
       >
         <button
