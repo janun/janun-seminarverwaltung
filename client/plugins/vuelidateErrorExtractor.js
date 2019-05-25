@@ -9,7 +9,6 @@ Vue.use(vuelidateErrorExtractor, {
     maxDuration:
       'Darf nicht größer sein als die Dauer des Seminars ({max} Tage).',
     maxFunding: 'Maximal-Förderung: {maxFunding}',
-    minFuture: 'Muss in der Zukunft liegen.',
     minLength: 'Mindestens {min} Zeichen',
     email: 'Keine gültige E-Mail-Adresse',
     unique: 'Ist schon vergeben.'

@@ -356,7 +356,7 @@ export default {
           description: { required }
         },
         spacetime: {
-          start_date: { required, minFuture: minDate(new Date()) },
+          start_date: { required },
           start_time: {},
           end_date: {
             required,
