@@ -147,7 +147,6 @@ class SeminarSerializer(serializers.ModelSerializer):
     owner_pk = serializers.PrimaryKeyRelatedField(
         queryset=models.User.objects.all(),
         source="owner",
-        write_only=True,
         required=False,
         allow_null=True,
     )
@@ -155,7 +154,6 @@ class SeminarSerializer(serializers.ModelSerializer):
     group_pk = serializers.PrimaryKeyRelatedField(
         queryset=models.JANUNGroup.objects.all(),
         source="group",
-        write_only=True,
         required=False,
         allow_null=True,
     )
