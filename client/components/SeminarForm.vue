@@ -97,45 +97,37 @@
         />
       </BaseField>
 
-      <div
-        class="text-gray-700"
-        :class="{
-          'text-red-600':
-            $v.form.planned_attendees_min.$error ||
-            $v.form.planned_attendees_max.$error
-        }"
-      >
-        geplante Anzahl Teilnehmende
-      </div>
-      <div class="flex items-start max-w-xs">
-        <BaseField
-          label=""
-          class="mr-1 flex-1"
-          :validator="$v.form.planned_attendees_min"
-        >
-          <BaseInput
-            v-model="form.planned_attendees_min"
-            type="number"
-            min="0"
-            step="1"
-            class="w-full"
-          />
-        </BaseField>
-        <span class="mt-3 mx-2">bis</span>
-        <BaseField
-          label=""
-          class="ml-1 max-w-xs flex-1"
-          :validator="$v.form.planned_attendees_max"
-        >
-          <BaseInput
-            v-model="form.planned_attendees_max"
-            type="number"
-            :min="form.planned_attendees_min || 0"
-            step="1"
-            class="w-full"
-          />
-        </BaseField>
-      </div>
+      <BaseField label="geplante Anzahl Teilnehmende">
+        <div class="flex items-start max-w-xs">
+          <BaseField
+            label=""
+            class="mr-1 flex-1"
+            :validator="$v.form.planned_attendees_min"
+          >
+            <BaseInput
+              v-model="form.planned_attendees_min"
+              type="number"
+              min="0"
+              step="1"
+              class="w-full"
+            />
+          </BaseField>
+          <span class="mt-3 mx-2">bis</span>
+          <BaseField
+            label=""
+            class="ml-1 max-w-xs flex-1"
+            :validator="$v.form.planned_attendees_max"
+          >
+            <BaseInput
+              v-model="form.planned_attendees_max"
+              type="number"
+              :min="form.planned_attendees_min || 0"
+              step="1"
+              class="w-full"
+            />
+          </BaseField>
+        </div>
+      </BaseField>
 
       <BaseField
         label="beantragte Förderung in EUR"
