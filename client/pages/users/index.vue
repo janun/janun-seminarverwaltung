@@ -78,6 +78,11 @@ function hasIntersections(array1, array2) {
 }
 
 export default {
+  head() {
+    return {
+      title: 'Alle Kontos'
+    }
+  },
   components: {
     BaseDatatable,
     DropdownFilter

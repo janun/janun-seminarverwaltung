@@ -42,6 +42,11 @@ export default {
       serverErrorsGetter: () => this.errors
     }
   },
+  head() {
+    return {
+      title: 'Konto anlegen'
+    }
+  },
   auth: false,
   layout: 'empty',
   middleware: 'guest',

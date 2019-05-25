@@ -45,6 +45,11 @@
 import BaseDatatable from '@/components/BaseDatatable.vue'
 
 export default {
+  head() {
+    return {
+      title: 'Alle Gruppen'
+    }
+  },
   components: {
     BaseDatatable
   },

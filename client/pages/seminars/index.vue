@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-green-500 font-bold text-xl mb-2">Seminare</h1>
+    <h1 class="text-green-500 font-bold text-xl mb-2">Alle Seminare</h1>
 
     <SeminarStats :seminars="filteredSeminars" class="my-2" />
 
@@ -123,6 +123,11 @@ function range(start, stop, step = 1) {
 }
 
 export default {
+  head() {
+    return {
+      title: 'Alle Seminare'
+    }
+  },
   components: {
     BaseDatatable,
     BasePagination,

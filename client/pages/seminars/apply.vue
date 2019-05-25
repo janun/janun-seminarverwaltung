@@ -298,6 +298,11 @@ import { minDate, checked } from '@/utils/validators.js'
 import { formatEuro } from '@/utils/formatters'
 
 export default {
+  head() {
+    return {
+      title: 'Seminar anmelden'
+    }
+  },
   layout: 'empty',
   components: {
     BaseWizard,

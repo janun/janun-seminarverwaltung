@@ -67,6 +67,11 @@ export default {
       nonFieldErrors: undefined
     }
   },
+  head() {
+    return {
+      title: 'Anmeldung'
+    }
+  },
   provide() {
     return {
       serverErrorsGetter: () => this.errors

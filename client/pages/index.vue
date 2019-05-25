@@ -13,6 +13,11 @@ export default {
   components: {
     DashboardTeamer,
     DashboardStaff
+  },
+  head() {
+    return {
+      title: 'Übersicht'
+    }
   }
 }
 </script>

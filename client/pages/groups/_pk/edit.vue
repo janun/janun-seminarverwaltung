@@ -25,7 +25,7 @@ export default {
   },
   head() {
     return {
-      title: this.group.name
+      title: `${this.group.name} bearbeiten`
     }
   },
   middleware: 'staffOnly',

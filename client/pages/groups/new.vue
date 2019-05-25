@@ -17,7 +17,7 @@ export default {
       saving: false
     }
   },
-  meta() {
+  head() {
     return {
       title: 'Neue Gruppe'
     }

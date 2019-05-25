@@ -11,7 +11,7 @@ export default {
   head: {
     title: '',
     titleTemplate: titleChunk =>
-      titleChunk ? `${titleChunk} (JANUN Seminare)` : 'JANUN Seminare',
+      titleChunk ? `JANUN Seminare - ${titleChunk}` : 'JANUN Seminare',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
