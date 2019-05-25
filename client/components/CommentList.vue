@@ -53,7 +53,7 @@ export default {
       this.$toast('Kommentar gelöscht.')
     },
     async onUpdate(pk, payload) {
-      const data = await this.$axios.$patch(`${this.baseURL}${pk}/`, payload)
+      const data = await this.$axios.$put(`${this.baseURL}${pk}/`, payload)
       this.comments = this.comments.map(obj => (obj.pk === pk ? data : obj))
       this.$emit('commentUpdated', pk)
       this.$toast('Kommentar bearbeitet.')

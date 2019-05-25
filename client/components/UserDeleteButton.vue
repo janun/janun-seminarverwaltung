@@ -54,14 +54,19 @@ export default {
   // },
   methods: {
     async deleteUser() {
-      this.deleting = true
-      const name = this.user.name
-      await this.$axios.$delete(`users/${this.user.pk}/`)
-      this.$toast(`Konto „${name}“ gelöscht.`)
-      this.modalOpen = false
-      this.$router.push('/users')
-      this.$emit('deleted')
-      this.deleting = false
+      try {
+        this.deleting = true
+        const name = this.user.name
+        await this.$axios.$delete(`users/${this.user.pk}/`)
+        this.$toast(`Konto „${name}“ gelöscht.`)
+        this.modalOpen = false
+        this.$router.push('/users')
+        this.$emit('deleted')
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.deleting = false
+      }
     }
   }
 }

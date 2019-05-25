@@ -36,13 +36,17 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      const data = await this.$axios.$patch(
-        `/groups/${this.group.pk}/`,
-        payload
-      )
-      this.group = data
-      this.saving = false
-      this.$toast(`Änderungen an ${this.group.name} gespeichert.`)
+      try {
+        this.group = await this.$axios.$put(
+          `/groups/${this.group.pk}/`,
+          payload
+        )
+        this.$toast(`Änderungen an ${this.group.name} gespeichert.`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

@@ -25,10 +25,15 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      const data = await this.$axios.$post(`/users/`, payload)
-      this.$toast(`Konto ${data.name} erstellt`)
-      this.$router.push(`/users/${data.pk}`)
-      this.saving = false
+      try {
+        const data = await this.$axios.$post(`/users/`, payload)
+        this.$toast(`Konto ${data.name} erstellt`)
+        this.$router.push(`/users/${data.pk}`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

@@ -25,10 +25,15 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      await this.$axios.$patch(`/auth/user/`, payload)
-      await this.$auth.fetchUser()
-      this.saving = false
-      this.$toast(`Profil gespeichert.`)
+      try {
+        await this.$axios.$put(`/auth/user/`, payload)
+        await this.$auth.fetchUser()
+        this.$toast(`Profil gespeichert.`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

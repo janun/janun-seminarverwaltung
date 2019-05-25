@@ -65,7 +65,7 @@ export default {
           this.errors = error.response.data
           this.nonFieldErrors = error.response.data.non_field_errors
         } else {
-          this.$nuxt.error({ statusCode: 500, message: 'Server Fehler' })
+          this.$nuxt.error(error)
         }
       } finally {
         this.saving = false

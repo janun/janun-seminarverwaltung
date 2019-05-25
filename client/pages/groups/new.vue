@@ -25,10 +25,15 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      const data = await this.$axios.$post(`/groups/`, payload)
-      this.$toast(`Gruppe ${data.name} erstellt`)
-      this.$router.push(`/groups/${data.pk}`)
-      this.saving = false
+      try {
+        const data = await this.$axios.$post(`/groups/`, payload)
+        this.$toast(`Gruppe ${data.name} erstellt`)
+        this.$router.push(`/groups/${data.pk}`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

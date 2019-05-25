@@ -104,6 +104,8 @@ export default {
       this.seminars = data.results
       this.count = data.count
       this.next = data.next
+    } catch (error) {
+      this.$nuxt.error(error)
     } finally {
       this.loading = false
     }
@@ -116,6 +118,8 @@ export default {
         this.seminars.push(...data.results)
         this.count = data.count
         this.next = data.next
+      } catch (error) {
+        this.$nuxt.error(error)
       } finally {
         this.loadingMore = false
       }

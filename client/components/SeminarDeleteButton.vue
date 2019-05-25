@@ -50,12 +50,17 @@ export default {
   }),
   methods: {
     async deleteSeminar() {
-      this.deleting = true
-      const title = this.seminar.title
-      await this.$axios.$delete(`seminars/${this.seminar.pk}/`)
-      this.deleting = false
-      this.$router.push('/seminars')
-      this.$toast(`Seminar „${title}“ gelöscht.`)
+      try {
+        this.deleting = true
+        const title = this.seminar.title
+        await this.$axios.$delete(`seminars/${this.seminar.pk}/`)
+        this.$router.push('/seminars')
+        this.$toast(`Seminar „${title}“ gelöscht.`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.deleting = false
+      }
     }
   }
 }

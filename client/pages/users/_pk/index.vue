@@ -40,10 +40,14 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      const data = await this.$axios.$patch(`/users/${this.user.pk}/`, payload)
-      this.user = data
-      this.saving = false
-      this.$toast(`Änderungen an ${this.user.name} gespeichert.`)
+      try {
+        this.user = await this.$axios.$put(`/users/${this.user.pk}/`, payload)
+        this.$toast(`Änderungen an ${this.user.name} gespeichert.`)
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

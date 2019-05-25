@@ -79,13 +79,17 @@ export default {
   methods: {
     async save(payload) {
       this.saving = true
-      const data = await this.$axios.$patch(
-        `/seminars/${this.seminar.pk}/`,
-        payload
-      )
-      this.$toast('Änderungen am Seminar gespeichert.')
-      this.seminar = data
-      this.saving = false
+      try {
+        this.seminar = await this.$axios.$put(
+          `/seminars/${this.seminar.pk}/`,
+          payload
+        )
+        this.$toast('Änderungen am Seminar gespeichert.')
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.saving = false
+      }
     }
   }
 }

@@ -258,9 +258,13 @@ export default {
   },
   watch: {
     async yearFilter(newYear, oldYear) {
-      this.seminars = await this.$axios.$get('/seminars/', {
-        params: { year: newYear }
-      })
+      try {
+        this.seminars = await this.$axios.$get('/seminars/', {
+          params: { year: newYear }
+        })
+      } catch (error) {
+        this.$nuxt.error(error)
+      }
     },
     filteredSeminars() {
       this.currentPage = 1

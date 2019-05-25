@@ -477,7 +477,7 @@ export default {
         this.modalOpen = true
         this.$router.push(`/seminars/${seminar.pk}`)
       } catch (error) {
-        alert(`Sorry, konnte das Seminar nicht erstellen:\n ${error}.`)
+        this.$nuxt.error(error)
       } finally {
         this.saving = false
       }

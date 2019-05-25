@@ -55,13 +55,18 @@ export default {
   methods: {
     async deleteGroup() {
       this.deleting = true
-      const name = this.group.name
-      await this.$axios.$delete(`groups/${this.group.pk}/`)
-      this.$toast(`Gruppe „${name}“ gelöscht.`)
-      this.modalOpen = false
-      this.$router.push('/groups')
-      this.$emit('deleted')
-      this.deleting = false
+      try {
+        const name = this.group.name
+        await this.$axios.$delete(`groups/${this.group.pk}/`)
+        this.$toast(`Gruppe „${name}“ gelöscht.`)
+        this.modalOpen = false
+        this.$router.push('/groups')
+        this.$emit('deleted')
+      } catch (error) {
+        this.$nuxt.error(error)
+      } finally {
+        this.deleting = false
+      }
     }
   }
 }
