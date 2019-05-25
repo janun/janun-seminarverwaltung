@@ -6,7 +6,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving"
+          :disabled="$v.form.$invalid || saving || !hasChanges"
         >
           {{ saveLabel }}
         </button>
@@ -98,7 +98,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving"
+          :disabled="$v.form.$invalid || saving || !hasChanges"
         >
           {{ saveLabel }}
         </button>
@@ -121,6 +121,8 @@ import {
   minLength,
   email
 } from 'vuelidate/lib/validators'
+
+import { objectCompare } from '@/utils/object.js'
 
 export default {
   components: {
@@ -176,6 +178,14 @@ export default {
   computed: {
     possibleRoles() {
       return ['Teamer_in', 'Prüfer_in', 'Verwalter_in']
+    },
+    hasChanges() {
+      if (!this.object) {
+        return true
+      }
+      return Object.keys(this.form).some(
+        key => !objectCompare(this.form[key], this.object[key])
+      )
     }
   },
   created() {

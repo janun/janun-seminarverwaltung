@@ -12,7 +12,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving"
+          :disabled="$v.form.$invalid || saving || !hasChanges"
         >
           {{ saveLabel }}
         </button>
@@ -28,6 +28,7 @@ import BaseForm from '@/components/forms/BaseForm.vue'
 import BaseFormSection from '@/components/forms/BaseFormSection.vue'
 
 import { required } from 'vuelidate/lib/validators'
+import { objectCompare } from '@/utils/object.js'
 
 export default {
   components: {
@@ -51,6 +52,16 @@ export default {
       form: {
         name: { required, unique: this.nameUniqueOrOld }
       }
+    }
+  },
+  computed: {
+    hasChanges() {
+      if (!this.object) {
+        return true
+      }
+      return Object.keys(this.form).some(
+        key => !objectCompare(this.form[key], this.object[key])
+      )
     }
   },
   created() {

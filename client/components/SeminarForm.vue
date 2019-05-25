@@ -6,7 +6,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving"
+          :disabled="$v.form.$invalid || saving || !hasChanges"
         >
           Speichern
         </button>
@@ -153,7 +153,7 @@
           class="btn btn-primary float-right mb-2"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving"
+          :disabled="$v.form.$invalid || saving || !hasChanges"
         >
           Speichern
         </button>
@@ -173,6 +173,7 @@ import { getMaxFunding } from '@/utils/funding.js'
 import SeminarStatus from '@/components/SeminarStatus.vue'
 import GroupSelect from '@/components/GroupSelect.vue'
 import { formatEuro } from '../utils/formatters'
+import { objectCompare } from '@/utils/object.js'
 
 export default {
   components: {
@@ -225,6 +226,11 @@ export default {
     }
   },
   computed: {
+    hasChanges() {
+      return Object.keys(this.form).some(
+        key => !objectCompare(this.form[key], this.seminar[key])
+      )
+    },
     maxFunding() {
       return getMaxFunding(
         this.form.planned_training_days,

@@ -39,7 +39,9 @@ export default {
   methods: {
     onInput(event) {
       const selectedOption = event.target.selectedOptions
-      const selected = Array.from(selectedOption).map(option => option.value)
+      const selected = Array.from(selectedOption).map(option =>
+        Number(option.value)
+      )
       this.$emit('input', selected)
     }
   }
