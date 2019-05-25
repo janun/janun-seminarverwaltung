@@ -115,7 +115,12 @@ import BaseFormSection from '@/components/forms/BaseFormSection.vue'
 import BaseSelect from '@/components/forms/BaseSelect.vue'
 import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue'
 
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import {
+  required,
+  requiredIf,
+  minLength,
+  email
+} from 'vuelidate/lib/validators'
 
 export default {
   components: {
@@ -150,7 +155,10 @@ export default {
           minLength: minLength(3),
           unique: this.usernameUniqueOrOld
         },
-        password: { minLength: minLength(8) },
+        password: {
+          minLength: minLength(8),
+          required: requiredIf(() => !this.object)
+        },
         email: {
           required,
           email,
