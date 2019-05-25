@@ -376,7 +376,7 @@ export default {
           }
         },
         attendees: {
-          planned_attendees_min: { required },
+          planned_attendees_min: { required, minValue: minValue(10) },
           planned_attendees_max: {
             required,
             minPlannedAttendeesMin: minValue(
