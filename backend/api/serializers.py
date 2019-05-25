@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     password = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
+        write_only=True, required=False, style={"input_type": "password"}
     )
 
     @staticmethod
@@ -73,7 +73,8 @@ class UserSerializer(serializers.ModelSerializer):
         return queryset
 
     def create(self, validated_data: Dict[str, str]) -> Dict[str, str]:
-        validated_data["password"] = make_password(validated_data["password"])
+        if "password" in validated_data:
+            validated_data["password"] = make_password(validated_data["password"])
         return super().create(validated_data)
 
     def update(self, instance: Model, validated_data: Dict[str, str]) -> models.User:
@@ -146,8 +147,9 @@ class SeminarSerializer(serializers.ModelSerializer):
     owner_pk = serializers.PrimaryKeyRelatedField(
         queryset=models.User.objects.all(),
         source="owner",
-        required=False,
         write_only=True,
+        required=False,
+        allow_null=True,
     )
     group = ShortJANUNGroupSerializer(read_only=True)
     group_pk = serializers.PrimaryKeyRelatedField(
@@ -155,6 +157,7 @@ class SeminarSerializer(serializers.ModelSerializer):
         source="group",
         write_only=True,
         required=False,
+        allow_null=True,
     )
 
     status = ChoicesField(choices=models.Seminar.STATES, default="angemeldet")
