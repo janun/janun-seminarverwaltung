@@ -3,8 +3,12 @@
     <div class="flex flex-wrap items-start">
       <h1 class="text-xl text-green-500 font-bold mb-5">{{ group.name }}</h1>
       <div class="ml-auto">
-        <GroupDeleteButton :group="group" />
+        <GroupDeleteButton
+          v-if="$auth.user.has_verwalter_role"
+          :group="group"
+        />
         <nuxt-link
+          v-if="$auth.user.has_verwalter_role"
           class="mt-2 btn btn-outline"
           :to="`/groups/${group.pk}/edit`"
         >
