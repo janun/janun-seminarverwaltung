@@ -4,7 +4,7 @@
     :for="`check_${uuid}`"
     class="relative flex justify-start items-start cursor-pointer select-none"
   >
-    <span class="w-5 h-5 block mr-2 float-left relative flex-no-shrink">
+    <span class="w-5 h-5 block mr-4 relative flex-shrink-0">
       <input
         :id="`check_${uuid}`"
         ref="input"
@@ -18,7 +18,7 @@
       <svg
         v-if="isChecked"
         class="text-green-500 absolute h-6 w-6 fill-current"
-        style="right:-6px; top:-6px"
+        style="right:-6px; top:-6px; left:0"
         viewBox="0 0 20 20"
       >
         <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
