@@ -91,6 +91,20 @@
       </BaseField>
     </BaseFormSection>
 
+    <BaseFormSection v-if="isSignup" label="">
+      <BaseCheckbox v-model="readDataProtection">
+        Ich habe die
+        <a
+          class="underline"
+          target="_blank"
+          href="https://www.janun.de/documents/111/Datenverarbeitung_Seminarabrechnung.pdf"
+        >
+          Datenschutzbedingungen
+        </a>
+        gelesen und verstanden.
+      </BaseCheckbox>
+    </BaseFormSection>
+
     <div class="flex flex-wrap mt-5">
       <slot name="buttons" />
       <div class="ml-auto">
@@ -98,7 +112,7 @@
           class="btn btn-primary mb-1 float-right"
           :class="{ 'btn-loading': saving }"
           type="submit"
-          :disabled="$v.form.$invalid || saving || !hasChanges"
+          :disabled="$v.$invalid || saving || !hasChanges"
         >
           {{ saveLabel }}
         </button>
@@ -122,6 +136,8 @@ import {
   email
 } from 'vuelidate/lib/validators'
 
+import { checked } from '@/utils/validators.js'
+
 import { objectCompare } from '@/utils/object.js'
 
 export default {
@@ -134,9 +150,11 @@ export default {
   props: {
     object: { type: Object, default: null },
     saving: { type: Boolean, default: false },
-    saveLabel: { type: String, default: 'Speichern' }
+    saveLabel: { type: String, default: 'Speichern' },
+    isSignup: { type: Boolean, default: false }
   },
   data: () => ({
+    readDataProtection: false,
     form: {
       username: '',
       password: '',
@@ -150,7 +168,7 @@ export default {
     }
   }),
   validations() {
-    return {
+    const validations = {
       form: {
         username: {
           required,
@@ -174,6 +192,10 @@ export default {
         is_reviewed: {}
       }
     }
+    if (this.isSignup) {
+      validations.readDataProtection = { checked: checked }
+    }
+    return validations
   },
   computed: {
     possibleRoles() {

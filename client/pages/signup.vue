@@ -14,6 +14,7 @@
     <UserForm
       :saving="saving"
       save-label="Anlegen &amp; Anmelden"
+      is-signup="true"
       @save="signup"
     >
       <nuxt-link slot="buttons" class="btn btn-secondary" to="/login">
