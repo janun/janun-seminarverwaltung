@@ -26,6 +26,14 @@ class JANUNGroup(models.Model):
         ordering = ("name",)
 
 
+class CaseInsensitiveUserManager(UserManager):
+    "User Manager that when getting users by their username ignores case"
+
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = "{}__iexact".format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
+
+
 class User(AbstractUser):
     ROLES = Choices("Teamer_in", "Prüfer_in", "Verwalter_in")
     first_name = None  # type: ignore
@@ -45,7 +53,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     last_visit = models.DateTimeField(null=True)
 
-    objects = UserManager()
+    objects = CaseInsensitiveUserManager()
     EMAIL_FIELD = "email"
 
     class Meta:
