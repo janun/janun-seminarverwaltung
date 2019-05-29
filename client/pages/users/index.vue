@@ -120,6 +120,12 @@ export default {
         label: 'Erstellt',
         formatter: formatDate,
         sortable: true
+      },
+      {
+        field: 'last_visit',
+        label: 'Letzter Besuch',
+        formatter: formatDate,
+        sortable: true
       }
     ]
   }),
