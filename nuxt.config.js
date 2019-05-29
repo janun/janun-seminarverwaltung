@@ -55,7 +55,6 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
     '@nuxtjs/auth',
-    '@nuxtjs/pwa',
     'nuxt-purgecss',
     'nuxt-compress'
   ],
