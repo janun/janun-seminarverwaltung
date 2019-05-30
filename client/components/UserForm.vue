@@ -51,7 +51,8 @@
           class="w-full"
         />
         <p class="text-sm">
-          Min. 8 Zeichen. Leer lassen, um es nicht zu ändern.
+          Min. 8 Zeichen.
+          <span v-if="object">Leer lassen, um es nicht zu ändern.</span>
         </p>
       </BaseField>
     </BaseFormSection>
