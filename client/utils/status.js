@@ -58,7 +58,12 @@ export const stateInfos = [
     description: 'Das Seminar hat tatsächlich stattgefunden.',
     color: 'green',
     // disabled: new Date(this.seminar.start_date) > new Date(),
-    sources: ['zugesagt']
+    sources: [
+      'zugesagt',
+      'ohne Abrechnung',
+      'Abrechnung abgeschickt',
+      'Abrechnung angekommen'
+    ]
   },
   {
     title: 'ohne Abrechnung',
@@ -71,14 +76,19 @@ export const stateInfos = [
     title: 'Abrechnung abgeschickt',
     description: 'Die Abrechnung wurde per Post abgeschickt.',
     color: 'green',
-    sources: ['stattgefunden']
+    sources: ['stattgefunden', 'Abrechnung angekommen']
   },
   {
     title: 'Abrechnung angekommen',
     description: 'Die Abrechnung ist bei JANUN angekommen.',
     color: 'green',
     staffOnly: true,
-    sources: ['Abrechnung abgeschickt', 'stattgefunden']
+    sources: [
+      'Abrechnung abgeschickt',
+      'stattgefunden',
+      'Abrechnung unmöglich',
+      'rechnerische Prüfung'
+    ]
   },
   {
     title: 'Abrechnung unmöglich',
@@ -92,28 +102,28 @@ export const stateInfos = [
     description: '',
     color: 'green',
     staffOnly: true,
-    sources: ['Abrechnung angekommen']
+    sources: ['Abrechnung angekommen', 'inhaltliche Prüfung']
   },
   {
     title: 'inhaltliche Prüfung',
     description: '',
     color: 'green',
     staffOnly: true,
-    sources: ['rechnerische Prüfung']
+    sources: ['rechnerische Prüfung', 'Abrechnung unmöglich', 'Zweitprüfung']
   },
   {
     title: 'Zweitprüfung',
     description: '',
     color: 'green',
     staffOnly: true,
-    sources: ['inhaltliche Prüfung']
+    sources: ['inhaltliche Prüfung', 'Abrechnung unmöglich', 'fertig geprüft']
   },
   {
     title: 'fertig geprüft',
     description: '',
     color: 'green',
     staffOnly: true,
-    sources: ['Zweitprüfung']
+    sources: ['Zweitprüfung', 'überwiesen']
   },
   {
     title: 'überwiesen',
