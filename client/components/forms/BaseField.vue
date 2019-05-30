@@ -7,7 +7,7 @@
       :for="childId"
     >
       <slot name="label">{{ label }}</slot>
-      <span v-if="optional" class="text-sm text-gray-600 ml-1 font-normal">
+      <span v-if="optional" class="text-xs text-gray-600 ml-1 font-normal">
         optional
       </span>
     </label>
