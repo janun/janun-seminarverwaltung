@@ -4,6 +4,7 @@
     <button
       type="button"
       class="absolute right-0 p-2 mr-1 rounded-full focus:outline-none focus:shadow-outline"
+      :title="show ? 'Passwort verstecken' : 'Password anzeigen'"
       @click="show = !show"
     >
       <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
