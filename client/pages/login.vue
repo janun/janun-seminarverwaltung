@@ -26,11 +26,10 @@
         </BaseField>
 
         <BaseField label="Passwort" name="password">
-          <BaseInput
+          <BasePasswordInput
             id="password"
             v-model="form.password"
             name="password"
-            type="password"
             class="w-full"
           />
         </BaseField>
@@ -55,7 +54,12 @@
 </template>
 
 <script>
+import BasePasswordInput from '@/components/forms/BasePasswordInput.vue'
+
 export default {
+  components: {
+    BasePasswordInput
+  },
   data() {
     return {
       form: {

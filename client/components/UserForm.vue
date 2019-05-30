@@ -44,7 +44,7 @@
       </BaseField>
 
       <BaseField label="Passwort" name="password">
-        <BaseInput
+        <BasePasswordInput
           v-model="form.password"
           name="password"
           type="password"
@@ -129,6 +129,7 @@ import BaseForm from '@/components/forms/BaseForm.vue'
 import BaseFormSection from '@/components/forms/BaseFormSection.vue'
 import BaseSelect from '@/components/forms/BaseSelect.vue'
 import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue'
+import BasePasswordInput from '@/components/forms/BasePasswordInput.vue'
 
 import {
   required,
@@ -146,7 +147,8 @@ export default {
     BaseForm,
     BaseSelect,
     GroupSelectMultiple,
-    BaseFormSection
+    BaseFormSection,
+    BasePasswordInput
   },
   props: {
     object: { type: Object, default: null },
