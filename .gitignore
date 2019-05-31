@@ -109,7 +109,7 @@ dist
 .idea
 
 # Service worker
-sw.*
+# sw.*
 
 # dev database
 db.sqlite3
