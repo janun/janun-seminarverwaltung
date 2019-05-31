@@ -45,7 +45,8 @@ export default {
     '@/plugins/globalComponents',
     '@/plugins/formatters',
     '@/plugins/toast',
-    '@/plugins/axios'
+    '@/plugins/axios',
+    '@/plugins/unregisterServiceWorker'
   ],
 
   /*
