@@ -4,8 +4,8 @@
       <div
         v-if="show"
         class="modal-backdrop md:p-5"
-        @click="close"
-        @keydown.esc.stop="close"
+        @click="closeOnBackdrop && close()"
+        @keydown.esc.stop="closeOnEsc && close()"
       >
         <div
           ref="modal"
@@ -38,7 +38,8 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    closeOnEsc: { type: Boolean, default: true }
+    closeOnEsc: { type: Boolean, default: true },
+    closeOnBackdrop: { type: Boolean, default: true }
   },
   data: () => ({
     focusedBefore: null
