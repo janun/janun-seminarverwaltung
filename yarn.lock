@@ -7768,10 +7768,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-portal-vue@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-2.1.4.tgz#1fc679d77e294dc8d026f1eb84aa467de11b392e"
-  integrity sha512-Mr2h+RvoOOGHS7N0E3QPP+UQMt1OhSjQ7eMSGTXqkLiO0AjGEDw2x4kzmHATsZfDqQumiaYSDRzlUP2By3lvsA==
+portal-vue@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-2.1.5.tgz#ecd0997cb32958205151cb72f40fd4f38d175e5c"
+  integrity sha512-vZmdMn0mOo7puvxoMQ5zju6S29aFD+9yygJxyWQtPaMXS9xunAeoYdnx6yzfL9J8HD8pMZYgSieEIbioAKhrSQ==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -9936,10 +9936,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tailwindcss@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.0.2.tgz#1df9caf88e0b194a5debf3c3b3aa6b64ea92c9a8"
-  integrity sha512-zqrWxJo3UlXDSa6KA3v0D9FIMCR8ZtVRxTu68+mwqVwazzxVlXM5Y0j1TM3hjGeScfPpOeV06k7Vs9eY7+eoPA==
+tailwindcss@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.0.3.tgz#12845ec6c9542e97f07ea2bd8af4ba47e8a888d1"
+  integrity sha512-myjuB0hqqLiXQCea0hEeZfrQVxzmkhtgi7HsuwJgXaVPgBp+7r/wywOvkDTUS8sQ1LraF43OLatip0yhfo/FtA==
   dependencies:
     autoprefixer "^9.4.5"
     bytes "^3.0.0"
