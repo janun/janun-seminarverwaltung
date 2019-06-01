@@ -10,6 +10,8 @@
 
     <TheToaster />
 
+    <TheMessenger />
+
     <PortalTarget name="modals" multiple />
   </div>
 </template>
@@ -18,12 +20,14 @@
 import TheNavbar from '@/components/TheNavbar.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheToaster from '@/components/TheToaster.vue'
+import TheMessenger from '@/components/TheMessenger'
 
 export default {
   components: {
     TheNavbar,
     TheFooter,
-    TheToaster
+    TheToaster,
+    TheMessenger
   }
 }
 </script>
