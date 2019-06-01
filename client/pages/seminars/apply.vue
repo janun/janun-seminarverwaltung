@@ -312,7 +312,6 @@ export default {
   },
   data() {
     return {
-      modalOpen: false,
       saving: false,
       form: {
         content: {
@@ -479,8 +478,17 @@ export default {
       this.saving = true
       try {
         const seminar = await this.$axios.$post('seminars/', payload)
-        this.modalOpen = true
         this.$router.push(`/seminars/${seminar.pk}`)
+        this.$store.dispatch('messages/message', {
+          title: 'Seminar angemeldet',
+          text: `<p class="mb-2">Dein Seminar wurde erfolgreich angemeldet.</p>
+             <p class="mb-2">Wir werden jetzt <b>prüfen,
+                ob JANUN das Seminar fördern kann</b>.
+                Das dauert vorraussichtlich 7 Tage.</p>
+             <p>Auf dieser Seite kannst Du noch <b>Details am Seminar ändern</b>,
+                solange die Förderung noch nicht zugesagt ist.
+                Du siehst hier außerdem den <b>aktuellen Status</b>.</p>`
+        })
       } catch (error) {
         this.$nuxt.error(error)
       } finally {
