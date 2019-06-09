@@ -58,6 +58,9 @@
     </BaseFormSection>
 
     <BaseFormSection label="Gruppen">
+      <p v-if="isSignup" class="mb-4">
+        Bist Du Mitglied in einer oder mehreren JANUN-Gruppen?
+      </p>
       <BaseField label="Mitgliedschaften" name="janun_groups_pks">
         <GroupSelectMultiple
           v-model="form.janun_groups_pks"
