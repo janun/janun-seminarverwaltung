@@ -12,6 +12,8 @@ Vue.use(vuelidateErrorExtractor, {
     minLength: 'Mindestens {min} Zeichen',
     minValue: 'Mindestens {min}',
     email: 'Keine gültige E-Mail-Adresse',
-    unique: 'Ist schon vergeben.'
+    unique: 'Ist schon vergeben.',
+    passwordNotOwned:
+      'Das Passwort ist in einer Datenbank von bereits gehackten Passwörtern gefunden worden (haveibeenpwned.com).'
   }
 })
