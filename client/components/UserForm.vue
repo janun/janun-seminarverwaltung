@@ -39,7 +39,7 @@
     </BaseFormSection>
 
     <BaseFormSection label="Anmeldung">
-      <BaseField label="Anmeldename" name="username">
+      <BaseField label="Benutzername" name="username">
         <BaseInput v-model="form.username" name="username" class="w-full" />
       </BaseField>
 

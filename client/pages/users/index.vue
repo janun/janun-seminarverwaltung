@@ -13,7 +13,7 @@
       <BaseInput
         ref="nameFilter"
         v-model="nameFilter"
-        placeholder="Name oder Anmeldename"
+        placeholder="Name oder Benutzername"
         class="m-2"
         :class="{ 'border-green-500': nameFilter }"
       />
@@ -97,7 +97,7 @@ export default {
     groups: [],
     columns: [
       { field: 'name', label: 'Name', sortable: true },
-      { field: 'username', label: 'Anmeldename', sortable: true },
+      { field: 'username', label: 'Benutzername', sortable: true },
       { field: 'role', label: 'Rolle', sortable: true },
       {
         field: 'janun_groups',
