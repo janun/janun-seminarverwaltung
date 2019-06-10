@@ -1,12 +1,29 @@
 import { helpers, minLength } from 'vuelidate/lib/validators'
 import { sha1 } from '@/utils/hash.js'
 import axios from 'axios'
+import { compareTwoStrings } from 'string-similarity'
 
 export function minDate(min) {
   return helpers.withParams(
     { type: 'minDate', min: new Date(min).toLocaleDateString() },
     value => !helpers.req(value) || new Date(value) >= new Date(min)
   )
+}
+
+export function notSimiliarTo(similiarTo, degree = 0.6) {
+  return helpers.withParams({ type: 'notSimiliarTo', similiarTo }, value => {
+    if (
+      !helpers.req(value) ||
+      !minLength(8)(value) ||
+      !helpers.req(similiarTo)
+    ) {
+      return true
+    }
+    return [...similiarTo.split(/\W+/), similiarTo].every(
+      cmpStr =>
+        compareTwoStrings(cmpStr.toLowerCase(), value.toLowerCase()) < degree
+    )
+  })
 }
 
 export function checked(value) {

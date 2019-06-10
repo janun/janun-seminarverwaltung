@@ -141,7 +141,7 @@ import {
   email
 } from 'vuelidate/lib/validators'
 
-import { checked, passwordNotOwned } from '@/utils/validators.js'
+import { checked, passwordNotOwned, notSimiliarTo } from '@/utils/validators.js'
 
 import { objectCompare } from '@/utils/object.js'
 
@@ -184,7 +184,11 @@ export default {
         password: {
           minLength: minLength(8),
           required: requiredIf(() => !this.object),
-          passwordNotOwned: passwordNotOwned
+          passwordNotOwned,
+          notSimiliarToUsername: notSimiliarTo(this.form.username),
+          notSimiliarToName: notSimiliarTo(this.form.name),
+          notSimiliarToEmail: notSimiliarTo(this.form.email.split('@')[0]),
+          notSimiliarToTelephone: notSimiliarTo(this.form.telephone)
         },
         email: {
           required,

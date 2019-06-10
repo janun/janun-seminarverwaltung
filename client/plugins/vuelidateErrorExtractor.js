@@ -14,6 +14,10 @@ Vue.use(vuelidateErrorExtractor, {
     email: 'Keine gültige E-Mail-Adresse',
     unique: 'Ist schon vergeben.',
     passwordNotOwned:
-      'Das Passwort ist in einer Datenbank von bereits gehackten Passwörtern gefunden worden (haveibeenpwned.com).'
+      'Das Passwort ist in einer Datenbank von bereits gehackten Passwörtern gefunden worden (haveibeenpwned.com).',
+    notSimiliarToUsername: 'Zu ähnlich zum Benutzernamen',
+    notSimiliarToName: 'Zu ähnlich zum vollen Namen',
+    notSimiliarToEmail: 'Zu ähnlich zur E-Mail-Adresse',
+    notSimiliarToTelephone: 'Zu ähnlich zur Telefonnummer'
   }
 })
