@@ -1,9 +1,9 @@
 function nonGroupLimit(days) {
-  return Math.min(1000, 300 + 200 * Math.max(0, days - 3))
+  return Math.min(1000, 450 + 200 * Math.max(0, days - 3))
 }
 
 function nonGroupFundingRate(days) {
-  return days === 1 ? 7.5 : 9
+  return days === 1 ? 8 : 10
 }
 
 function nonGroupFunding(days, attendees) {
@@ -12,7 +12,7 @@ function nonGroupFunding(days, attendees) {
 }
 
 function groupFundingRate(days) {
-  return days === 1 ? 7.5 : 12.5
+  return days === 1 ? 8 : 13.5
 }
 
 function groupFunding(days, attendees) {
