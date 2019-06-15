@@ -50,7 +50,7 @@
       </span>
     </form>
 
-    <p v-if="!editing" class="whitespace-pre" v-text="comment.text" />
+    <p v-if="!editing" class="whitespace-pre-wrap" v-text="comment.text" />
   </div>
 </template>
 
