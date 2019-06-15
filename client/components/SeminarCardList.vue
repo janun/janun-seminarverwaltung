@@ -38,7 +38,7 @@
       <div class="flex flex-wrap items-stretch -m-4">
         <div
           v-for="seminar in seminarsInYear"
-          :key="seminar.pk"
+          :key="seminar.uuid"
           class="lg:w-1/3 sm:w-1/2 w-full p-4"
         >
           <SeminarCard :seminar="seminar" class="h-full" />
@@ -99,7 +99,7 @@ export default {
     this.loading = true
     try {
       const data = await this.$axios.$get('seminars/', {
-        params: { owner: this.$auth.user.pk, limit: 50 }
+        params: { owner: this.$auth.user.username, limit: 50 }
       })
       this.seminars = data.results
       this.count = data.count

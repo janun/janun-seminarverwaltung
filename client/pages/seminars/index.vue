@@ -59,6 +59,7 @@
     </div>
 
     <BaseDatatable
+      key-field="uuid"
       :per-page="50"
       :current-page="currentPage"
       :data="filteredSeminars"
@@ -70,7 +71,7 @@
         slot="title"
         slot-scope="{ value, row }"
         class="font-bold text-gray-800"
-        :to="`/seminars/${row.pk}`"
+        :to="`/seminars/${row.uuid}`"
       >
         {{ value }}
       </nuxt-link>
@@ -78,12 +79,12 @@
         v-if="value"
         slot="owner"
         slot-scope="{ value }"
-        :to="`/users/${value.pk}`"
+        :to="`/users/${value.username}`"
       >
         {{ value.name }}
       </nuxt-link>
       <template slot="group" slot-scope="{ value }">
-        <nuxt-link v-if="value" :to="`/groups/${value.pk}`">
+        <nuxt-link v-if="value" :to="`/groups/${value.slug}`">
           {{ value.name }}
         </nuxt-link>
       </template>

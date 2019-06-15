@@ -34,14 +34,17 @@ export default {
     }
   },
   async asyncData({ $axios, params }) {
-    const data = await $axios.$get(`/users/${params.pk}/`)
+    const data = await $axios.$get(`/users/${params.username}/`)
     return { user: data }
   },
   methods: {
     async save(payload) {
       this.saving = true
       try {
-        this.user = await this.$axios.$put(`/users/${this.user.pk}/`, payload)
+        this.user = await this.$axios.$put(
+          `/users/${this.user.username}/`,
+          payload
+        )
         this.$toast(`Änderungen an ${this.user.name} gespeichert.`)
       } catch (error) {
         this.$nuxt.error(error)

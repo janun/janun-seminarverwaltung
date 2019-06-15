@@ -28,7 +28,7 @@ export default {
       try {
         const data = await this.$axios.$post(`/users/`, payload)
         this.$toast(`Konto ${data.name} erstellt`)
-        this.$router.push(`/users/${data.pk}`)
+        this.$router.push(`/users/${data.username}`)
       } catch (error) {
         this.$nuxt.error(error)
       } finally {

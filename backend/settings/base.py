@@ -38,11 +38,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    "django.contrib.admin",
+    # "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.messages",
+    # "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
@@ -169,7 +169,7 @@ EMAIL_BACKEND = env(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
-ADMIN_URL = r"^admin/"
+# ADMIN_URL = r"^admin/"
 ADMINS = [("Henrik Kroeger", "hedwig@janun.de")]
 MANAGERS = ADMINS
 

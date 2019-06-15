@@ -61,9 +61,9 @@
       <p v-if="isSignup" class="mb-4">
         Bist Du Mitglied in einer oder mehreren JANUN-Gruppen?
       </p>
-      <BaseField label="Mitgliedschaften" name="janun_groups_pks">
+      <BaseField label="Mitgliedschaften" name="janun_groups_slugs">
         <GroupSelectMultiple
-          v-model="form.janun_groups_pks"
+          v-model="form.janun_groups_slugs"
           :disabled="object && !$auth.user.has_staff_role"
         />
       </BaseField>
@@ -71,9 +71,9 @@
       <BaseField
         v-if="['Verwalter_in', 'Prüfer_in'].includes(form.role)"
         label="Hüte"
-        name="group_hats_pks"
+        name="group_hats_slugs"
       >
-        <GroupSelectMultiple v-model="form.group_hats_pks" />
+        <GroupSelectMultiple v-model="form.group_hats_slugs" />
       </BaseField>
     </BaseFormSection>
 
@@ -168,8 +168,8 @@ export default {
       name: '',
       telephone: '',
       role: 'Teamer_in',
-      janun_groups_pks: [],
-      group_hats_pks: [],
+      janun_groups_slugs: [],
+      group_hats_slugs: [],
       is_reviewed: false
     }
   }),
@@ -198,8 +198,8 @@ export default {
         name: { required },
         telephone: {},
         role: {},
-        janun_groups_pks: {},
-        group_hats_pks: {},
+        janun_groups_slugs: {},
+        group_hats_slugs: {},
         is_reviewed: {}
       }
     }

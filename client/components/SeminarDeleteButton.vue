@@ -53,7 +53,7 @@ export default {
       try {
         this.deleting = true
         const title = this.seminar.title
-        await this.$axios.$delete(`seminars/${this.seminar.pk}/`)
+        await this.$axios.$delete(`seminars/${this.seminar.uuid}/`)
         this.$router.push('/seminars')
         this.$toast(`Seminar „${title}“ gelöscht.`)
       } catch (error) {

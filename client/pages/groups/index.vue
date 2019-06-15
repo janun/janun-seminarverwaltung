@@ -24,6 +24,7 @@
     </div>
 
     <BaseDatatable
+      key-field="slug"
       :data="filteredGroups"
       :columns="columns"
       empty-message="Keine Gruppen gefunden."
@@ -33,7 +34,7 @@
         slot="name"
         slot-scope="{ value, row }"
         class="font-bold text-gray-800"
-        :to="`/groups/${row.pk}`"
+        :to="`/groups/${row.slug}`"
       >
         {{ value }}
       </nuxt-link>

@@ -10,7 +10,7 @@
         <nuxt-link
           v-if="$auth.user.has_verwalter_role"
           class="mt-2 btn btn-outline"
-          :to="`/groups/${group.pk}/edit`"
+          :to="`/groups/${group.slug}/edit`"
         >
           Bearbeiten
         </nuxt-link>
@@ -38,7 +38,7 @@ export default {
     }
   },
   async asyncData({ $axios, params }) {
-    const data = await $axios.$get(`/groups/${params.pk}/`)
+    const data = await $axios.$get(`/groups/${params.slug}/`)
     return { group: data }
   }
 }

@@ -5,9 +5,9 @@
     </option>
     <option
       v-for="group in groups"
-      :key="group.pk"
-      :value="group.pk"
-      :selected="group.pk === value"
+      :key="group.slug"
+      :value="group.slug"
+      :selected="group.slug === value"
     >
       {{ group.name }}
     </option>

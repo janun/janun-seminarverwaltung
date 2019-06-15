@@ -47,7 +47,7 @@
         </tr>
         <tr
           v-for="row in paginatedRows"
-          :key="row.pk"
+          :key="row[keyField]"
           scope="row"
           :class="{ 'cursor-pointer': $listeners['rowClick'] }"
           :tabindex="$listeners['rowClick'] ? 0 : null"
@@ -110,7 +110,8 @@ export default {
     defaultSortDir: { type: Number, default: 1 },
     perPage: { type: Number, default: 0 },
     currentPage: { type: Number, default: 1 },
-    emptyMessage: { type: String, default: 'Keine Daten' }
+    emptyMessage: { type: String, default: 'Keine Daten' },
+    keyField: { type: String, required: true }
   },
   data() {
     return {

@@ -47,6 +47,7 @@
     </div>
 
     <BaseDatatable
+      key-field="username"
       :data="filteredUsers"
       :columns="columns"
       empty-message="Keine Konten gefunden."
@@ -56,7 +57,7 @@
         slot="name"
         slot-scope="{ value, row }"
         class="font-bold text-gray-800"
-        :to="`/users/${row.pk}`"
+        :to="`/users/${row.username}`"
       >
         {{ value }}
       </nuxt-link>

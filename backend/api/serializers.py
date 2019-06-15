@@ -30,13 +30,17 @@ class ChoicesField(serializers.Field):
 class ShortUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ("pk", "username", "name")
+        lookup_field = "username"
+        fields = ("username", "name")
 
 
 class ShortJANUNGroupSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(read_only=True)
+
     class Meta:
         model = models.JANUNGroup
-        fields = ("pk", "name")
+        lookup_field = "slug"
+        fields = ("slug", "name")
 
 
 # Full Serializers
@@ -54,12 +58,18 @@ class UserSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
 
     janun_groups = ShortJANUNGroupSerializer(read_only=True, many=True)
-    janun_groups_pks = serializers.PrimaryKeyRelatedField(
-        queryset=models.JANUNGroup.objects.all(), many=True, source="janun_groups"
+    janun_groups_slugs = serializers.SlugRelatedField(
+        slug_field="slug",
+        queryset=models.JANUNGroup.objects.all(),
+        many=True,
+        source="janun_groups",
     )
     group_hats = ShortJANUNGroupSerializer(read_only=True, many=True)
-    group_hats_pks = serializers.PrimaryKeyRelatedField(
-        queryset=models.JANUNGroup.objects.all(), many=True, source="group_hats"
+    group_hats_slugs = serializers.SlugRelatedField(
+        slug_field="slug",
+        queryset=models.JANUNGroup.objects.all(),
+        many=True,
+        source="group_hats",
     )
 
     password = serializers.CharField(
@@ -84,14 +94,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
+        lookup_field = "username"
         fields = (
-            "pk",
             "username",
             "name",
             "janun_groups",
-            "janun_groups_pks",
+            "janun_groups_slugs",
             "group_hats",
-            "group_hats_pks",
+            "group_hats_slugs",
             "role",
             "telephone",
             "address",
@@ -118,10 +128,13 @@ class SeminarCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.SeminarComment
-        fields = ("pk", "text", "seminar", "owner", "created_at")
+        lookup_field = "uuid"
+        fields = ("uuid", "text", "owner", "created_at")
 
 
 class JANUNGroupSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(read_only=True)
+
     updated_at = serializers.DateTimeField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
 
@@ -136,7 +149,8 @@ class JANUNGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.JANUNGroup
-        fields = ("pk", "name", "created_at", "updated_at", "members", "group_hats")
+        lookup_field = "slug"
+        fields = ("slug", "name", "created_at", "updated_at", "members", "group_hats")
 
 
 class SeminarSerializer(serializers.ModelSerializer):
@@ -144,14 +158,16 @@ class SeminarSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
 
     owner = ShortUserSerializer(read_only=True)
-    owner_pk = serializers.PrimaryKeyRelatedField(
+    owner_username = serializers.SlugRelatedField(
+        slug_field="username",
         queryset=models.User.objects.all(),
         source="owner",
         required=False,
         allow_null=True,
     )
     group = ShortJANUNGroupSerializer(read_only=True)
-    group_pk = serializers.PrimaryKeyRelatedField(
+    group_slug = serializers.SlugRelatedField(
+        slug_field="slug",
         queryset=models.JANUNGroup.objects.all(),
         source="group",
         required=False,
@@ -176,14 +192,15 @@ class SeminarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Seminar
+        lookup_field = "uuid"
         fields = (
-            "pk",
+            "uuid",
             "title",
             "status",
             "owner",
-            "owner_pk",
+            "owner_username",
             "group",
-            "group_pk",
+            "group_slug",
             "start_date",
             "start_time",
             "end_date",
@@ -214,11 +231,11 @@ class UserProfileSerializer(UserSerializer):
     So permission fields need to be read_only here
     """
 
-    janun_groups_pks = serializers.PrimaryKeyRelatedField(
-        many=True, source="janun_groups", read_only=True
+    janun_groups_slugs = serializers.SlugRelatedField(
+        slug_field="slug", many=True, source="janun_groups", read_only=True
     )
-    group_hats_pks = serializers.PrimaryKeyRelatedField(
-        many=True, source="group_hats", read_only=True
+    group_hats_slugs = serializers.SlugRelatedField(
+        slug_field="slug", many=True, source="group_hats", read_only=True
     )
 
     class Meta(UserSerializer.Meta):
@@ -235,13 +252,16 @@ class RegisterSerializer(OldRegisterSerializer):
     name = serializers.CharField(write_only=True)
     telephone = serializers.CharField(required=False, allow_blank=True)
     address = serializers.CharField(required=False, allow_blank=True)
-    janun_groups_pks = serializers.PrimaryKeyRelatedField(
-        many=True, required=False, queryset=models.JANUNGroup.objects.all()
+    janun_groups_slugs = serializers.SlugRelatedField(
+        slug_field="slug",
+        many=True,
+        required=False,
+        queryset=models.JANUNGroup.objects.all(),
     )
 
     def custom_signup(self, request: HttpRequest, user: models.User) -> None:
         user.name = self.validated_data.get("name", "")
         user.telephone = self.validated_data.get("telephone", "")
         user.address = self.validated_data.get("address", "")
-        user.janun_groups.set(self.validated_data.get("janun_groups_pks", []))
+        user.janun_groups.set(self.validated_data.get("janun_groups_slugs", []))
         user.save()

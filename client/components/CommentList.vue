@@ -14,10 +14,10 @@
 
     <CommentListComment
       v-for="comment in comments"
-      :key="comment.pk"
+      :key="comment.uuid"
       :comment="comment"
-      @delete="onDelete(comment.pk)"
-      @update="onUpdate(comment.pk, $event)"
+      @delete="onDelete(comment.uuid)"
+      @update="onUpdate(comment.uuid, $event)"
     />
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
     CommentListComment
   },
   props: {
-    seminarPk: { type: Number, required: true }
+    seminarUuid: { type: String, required: true }
   },
   data: () => ({
     comments: [],
@@ -39,23 +39,23 @@ export default {
   }),
   computed: {
     baseURL() {
-      return `seminars/${this.seminarPk}/comments/`
+      return `seminars/${this.seminarUuid}/comments/`
     }
   },
   async created() {
     this.comments = await this.$axios.$get(this.baseURL)
   },
   methods: {
-    async onDelete(pk) {
-      await this.$axios.$delete(`${this.baseURL}${pk}/`)
-      this.comments = this.comments.filter(obj => obj.pk !== pk)
-      this.$emit('commentDeleted', pk)
+    async onDelete(uuid) {
+      await this.$axios.$delete(`${this.baseURL}${uuid}/`)
+      this.comments = this.comments.filter(obj => obj.uuid !== uuid)
+      this.$emit('commentDeleted', uuid)
       this.$toast('Kommentar gelöscht.')
     },
-    async onUpdate(pk, payload) {
-      const data = await this.$axios.$put(`${this.baseURL}${pk}/`, payload)
-      this.comments = this.comments.map(obj => (obj.pk === pk ? data : obj))
-      this.$emit('commentUpdated', pk)
+    async onUpdate(uuid, payload) {
+      const data = await this.$axios.$put(`${this.baseURL}${uuid}/`, payload)
+      this.comments = this.comments.map(obj => (obj.uuid === uuid ? data : obj))
+      this.$emit('commentUpdated', uuid)
       this.$toast('Kommentar bearbeitet.')
     },
     async addComment(event) {
@@ -66,7 +66,6 @@ export default {
 
       this.sending = true
       const newComment = {
-        seminar: this.seminarPk,
         text: this.newCommentText
       }
       const data = await this.$axios.$post(this.baseURL, newComment)

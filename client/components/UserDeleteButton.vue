@@ -50,14 +50,14 @@ export default {
     seminars: []
   }),
   // created() {
-  //   this.seminars = this.$axios.$get(`/seminars/?user_pk=${this.user.pk}`)
+  //   this.seminars = this.$axios.$get(`/seminars/?owner_username=${this.user.username}`)
   // },
   methods: {
     async deleteUser() {
       try {
         this.deleting = true
         const name = this.user.name
-        await this.$axios.$delete(`users/${this.user.pk}/`)
+        await this.$axios.$delete(`users/${this.user.username}/`)
         this.$toast(`Konto „${name}“ gelöscht.`)
         this.modalOpen = false
         this.$router.push('/users')

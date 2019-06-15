@@ -73,7 +73,10 @@
       </div>
 
       <BaseField label="Gruppe" class="max-w-xs">
-        <GroupSelect v-if="$auth.user.has_staff_role" v-model="form.group_pk" />
+        <GroupSelect
+          v-if="$auth.user.has_staff_role"
+          v-model="form.group_slug"
+        />
         <BaseInput
           v-else
           readonly
@@ -194,7 +197,7 @@ export default {
       end_date: '',
       end_time: '',
       location: '',
-      group_pk: '',
+      group_slug: '',
       planned_training_days: 0,
       planned_attendees_min: 0,
       planned_attendees_max: 0,
@@ -211,7 +214,7 @@ export default {
         end_date: { required, minStart: minDate(this.form.start_date) },
         end_time: {},
         location: { required },
-        group_pk: {},
+        group_slug: {},
         planned_training_days: {
           required,
           maxDuration: maxValue(this.duration)

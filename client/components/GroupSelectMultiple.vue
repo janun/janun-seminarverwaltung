@@ -8,9 +8,9 @@
   >
     <option
       v-for="group in groups"
-      :key="group.pk"
-      :value="group.pk"
-      :selected="value.includes(group.pk)"
+      :key="group.slug"
+      :value="group.slug"
+      :selected="value.includes(group.slug)"
     >
       {{ group.name }}
     </option>
@@ -39,9 +39,7 @@ export default {
   methods: {
     onInput(event) {
       const selectedOption = event.target.selectedOptions
-      const selected = Array.from(selectedOption).map(option =>
-        Number(option.value)
-      )
+      const selected = Array.from(selectedOption).map(option => option.value)
       this.$emit('input', selected)
     }
   }

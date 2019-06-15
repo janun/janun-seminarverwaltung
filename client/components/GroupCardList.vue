@@ -10,13 +10,13 @@
     <div v-if="$auth.user.janun_groups.length" class="flex flex-wrap -m-4">
       <div
         v-for="group in $auth.user.janun_groups"
-        :key="group.pk"
+        :key="group.slug"
         class="lg:w-1/3 sm:w-1/2 w-full p-4"
       >
         <nuxt-link
           class="seminar block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col"
           style="min-height: 75px;"
-          :to="`/groups/${group.pk}`"
+          :to="`/groups/${group.slug}`"
         >
           <h3 class="mt-1 mb-2 leading-tight text-gray-800">
             {{ group.name }}

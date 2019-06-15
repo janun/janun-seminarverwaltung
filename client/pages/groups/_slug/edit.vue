@@ -30,7 +30,7 @@ export default {
   },
   middleware: 'staffOnly',
   async asyncData({ $axios, params }) {
-    const data = await $axios.$get(`/groups/${params.pk}/`)
+    const data = await $axios.$get(`/groups/${params.slug}/`)
     return { group: data }
   },
   methods: {
@@ -38,7 +38,7 @@ export default {
       this.saving = true
       try {
         this.group = await this.$axios.$put(
-          `/groups/${this.group.pk}/`,
+          `/groups/${this.group.slug}/`,
           payload
         )
         this.$toast(`Änderungen an ${this.group.name} gespeichert.`)

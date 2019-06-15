@@ -13,6 +13,12 @@ from . import serializers
 
 class SeminarFilter(filters.FilterSet):
     year = filters.NumberFilter(field_name="start_date__year")
+    owner = filters.ModelChoiceFilter(
+        queryset=models.User.objects.all(), to_field_name="username"
+    )
+    group = filters.ModelChoiceFilter(
+        queryset=models.JANUNGroup.objects.all(), to_field_name="slug"
+    )
 
     class Meta:
         model = models.Seminar
@@ -23,6 +29,7 @@ class SeminarViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     "Seminars"
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
+    lookup_field = "uuid"
     filterset_class = SeminarFilter
 
     def get_queryset(self) -> QuerySet:
@@ -44,6 +51,7 @@ class SeminarCommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (permissions2.IsOwnerOrVerwalterOrReadOnly,)
     queryset = models.SeminarComment.objects.all()
     serializer_class = serializers.SeminarCommentSerializer
+    lookup_field = "uuid"
 
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
@@ -51,7 +59,10 @@ class SeminarCommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer) -> None:
-        serializer.save(owner=self.request.user)
+        seminar = models.Seminar.objects.get(
+            uuid=self.kwargs["parent_lookup_seminar__uuid"]
+        )
+        serializer.save(owner=self.request.user, seminar=seminar)
 
 
 class JANUNGroupViewSet(viewsets.ModelViewSet):
@@ -62,6 +73,7 @@ class JANUNGroupViewSet(viewsets.ModelViewSet):
         permissions2.IsReviewed,
     )
     serializer_class = serializers.JANUNGroupSerializer
+    lookup_field = "slug"
 
     def get_queryset(self) -> QuerySet:
         if self.request.user.has_staff_role:
@@ -81,6 +93,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permissions2.HasVerwalterRoleOrReadOnly,
     )
     serializer_class = serializers.UserSerializer
+    lookup_field = "username"
     filter_fields = ("janun_groups", "group_hats")
 
     def get_queryset(self) -> QuerySet:
@@ -95,7 +108,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class JANUNGroupNamesViewSet(viewsets.ModelViewSet):
     """
-    Return a list all existing JANUNGroups (name and pk only)
+    Return a list all existing JANUNGroups (name and slug only)
     (Used as a data source for select form elements)
     """
 

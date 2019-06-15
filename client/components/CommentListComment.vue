@@ -7,7 +7,8 @@
       </span>
       <div
         v-if="
-          $auth.user.pk === comment.owner.pk || $auth.user.has_verwalter_role
+          $auth.user.username === comment.owner.username ||
+            $auth.user.has_verwalter_role
         "
         class="float-right"
       >

@@ -1,10 +1,13 @@
 import datetime
 from decimal import Decimal
+import uuid
 
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_delete, post_save
+from django.utils.text import slugify
+
 from model_utils import Choices
 
 from .utils import get_quarter
@@ -15,9 +18,14 @@ def change_api_updated_at(*args, **kwargs) -> None:
 
 
 class JANUNGroup(models.Model):
+    slug = models.SlugField(unique=True)
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name
@@ -91,6 +99,7 @@ class Seminar(models.Model):
         "überwiesen",
     )
 
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     status = models.CharField(max_length=255, choices=STATES, default=STATES.angemeldet)
     owner = models.ForeignKey(
@@ -166,6 +175,7 @@ for model in [Seminar]:
 
 
 class SeminarComment(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     text = models.TextField()
     owner = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="comments"

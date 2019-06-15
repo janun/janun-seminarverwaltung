@@ -73,14 +73,14 @@
       <div v-if="form.group.yesgroup" class="my-4">
         <GroupSelect
           v-if="$auth.user.has_staff_role"
-          v-model="form.group.group_pk"
+          v-model="form.group.group_slug"
         />
         <p v-else-if="!$auth.user.janun_groups.length">
           Sorry, Du bist in keinen Gruppen eingetragen.
         </p>
         <GroupSelect
           v-else
-          v-model="form.group.group_pk"
+          v-model="form.group.group_slug"
           :possible-groups="$auth.user.janun_groups"
         />
       </div>
@@ -326,7 +326,7 @@ export default {
           location: ''
         },
         group: {
-          group_pk: '',
+          group_slug: '',
           yesgroup: null
         },
         days: {
@@ -366,7 +366,7 @@ export default {
         },
         group: {
           yesgroup: { required },
-          group_pk: { require: requiredIf(() => this.form.group.yesgroup) }
+          group_slug: { require: requiredIf(() => this.form.group.yesgroup) }
         },
         days: {
           planned_training_days: {
@@ -451,7 +451,7 @@ export default {
     const janunGroups = this.$auth.user.janun_groups
     if (janunGroups.length) {
       this.form.group.yesgroup = true
-      this.form.group.group_pk = janunGroups[0].pk
+      this.form.group.group_slug = janunGroups[0].slug
     }
   },
   methods: {
@@ -467,8 +467,8 @@ export default {
         end_date: this.form.spacetime.end_date,
         end_time: this.form.spacetime.end_time,
         location: this.form.spacetime.location,
-        group_pk: this.form.group.yesgroup
-          ? this.form.group.group_pk
+        group_slug: this.form.group.yesgroup
+          ? this.form.group.group_slug
           : undefined,
         planned_training_days: this.form.days.planned_training_days,
         planned_attendees_min: this.form.attendees.planned_attendees_min,
@@ -478,7 +478,7 @@ export default {
       this.saving = true
       try {
         const seminar = await this.$axios.$post('seminars/', payload)
-        this.$router.push(`/seminars/${seminar.pk}`)
+        this.$router.push(`/seminars/${seminar.uuid}`)
         this.$store.dispatch('messages/message', {
           title: 'Seminar angemeldet',
           text: `<p class="mb-2">Dein Seminar wurde erfolgreich angemeldet.</p>

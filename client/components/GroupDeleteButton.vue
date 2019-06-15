@@ -49,15 +49,12 @@ export default {
     modalOpen: false,
     seminars: []
   }),
-  // created() {
-  //   this.seminars = this.$axios.$get(`/seminars/?group_pk=${this.group.pk}`)
-  // },
   methods: {
     async deleteGroup() {
       this.deleting = true
       try {
         const name = this.group.name
-        await this.$axios.$delete(`groups/${this.group.pk}/`)
+        await this.$axios.$delete(`groups/${this.group.slug}/`)
         this.$toast(`Gruppe „${name}“ gelöscht.`)
         this.modalOpen = false
         this.$router.push('/groups')

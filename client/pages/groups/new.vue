@@ -28,7 +28,7 @@ export default {
       try {
         const data = await this.$axios.$post(`/groups/`, payload)
         this.$toast(`Gruppe ${data.name} erstellt`)
-        this.$router.push(`/groups/${data.pk}`)
+        this.$router.push(`/groups/${data.slug}`)
       } catch (error) {
         this.$nuxt.error(error)
       } finally {

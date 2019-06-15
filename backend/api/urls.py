@@ -11,7 +11,7 @@ seminars.register(
     "comments",
     views.SeminarCommentViewSet,
     basename="seminars-comment",
-    parents_query_lookups=["seminar"],
+    parents_query_lookups=["seminar__uuid"],
 )
 router.register("users", views.UserViewSet, basename="user")
 router.register("groups", views.JANUNGroupViewSet, basename="janungroup")

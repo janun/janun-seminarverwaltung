@@ -15,7 +15,10 @@
     <div class="text-sm">
       <span v-if="seminar.owner">
         von
-        <nuxt-link class="text-green-500" :to="`/users/${seminar.owner.pk}`">
+        <nuxt-link
+          class="text-green-500"
+          :to="`/users/${seminar.owner.username}`"
+        >
           {{ seminar.owner.name }}.
         </nuxt-link>
       </span>
@@ -25,7 +28,7 @@
 
     <div v-if="seminar.group" class="text-sm">
       Gruppe:
-      <nuxt-link class="text-green-500" :to="`/groups/${seminar.group.pk}`">
+      <nuxt-link class="text-green-500" :to="`/groups/${seminar.group.slug}`">
         {{ seminar.group.name }}
       </nuxt-link>
     </div>
@@ -46,7 +49,7 @@
     <SeminarForm :seminar="seminar" :saving="saving" @save="save" />
 
     <h2 class="text-green-500 font-bold mb-3 text-xl">Kommentare</h2>
-    <CommentList :seminar-pk="seminar.pk" />
+    <CommentList :seminar-uuid="seminar.uuid" />
   </div>
 </template>
 
@@ -73,7 +76,7 @@ export default {
     }
   },
   async asyncData({ $axios, params }) {
-    const data = await $axios.$get(`/seminars/${params.pk}/`)
+    const data = await $axios.$get(`/seminars/${params.uuid}/`)
     return { seminar: data }
   },
   methods: {
@@ -81,7 +84,7 @@ export default {
       this.saving = true
       try {
         this.seminar = await this.$axios.$put(
-          `/seminars/${this.seminar.pk}/`,
+          `/seminars/${this.seminar.uuid}/`,
           payload
         )
         this.$toast('Änderungen am Seminar gespeichert.')

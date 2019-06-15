@@ -2,7 +2,7 @@
   <nuxt-link
     class="seminar block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
     style="min-height: 130px;"
-    :to="`/seminars/${seminar.pk}`"
+    :to="`/seminars/${seminar.uuid}`"
   >
     <div class="flex items-baseline justify-between mb-1">
       <span class="text-xs text-grey-600">
