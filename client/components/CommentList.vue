@@ -62,6 +62,9 @@ export default {
       if (event.shiftKey) {
         return
       }
+      if (!/\S/.test(this.newCommentText)) {
+        return
+      }
       event.preventDefault()
 
       this.sending = true
