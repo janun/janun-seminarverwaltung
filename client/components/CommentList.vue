@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="mb-10 clearfix" @submit.prevent="addComment">
+    <form method="post" class="mb-10 clearfix" @submit.prevent="addComment">
       <BaseTextarea v-model="newCommentText" @keypress.enter="addComment" />
       <button
         class="btn btn-primary mt-2 float-right"

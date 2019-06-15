@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="save">
+  <form method="post" @submit.prevent="save">
     <div class="clearfix mt-5">
       <div class="float-right">
         <button

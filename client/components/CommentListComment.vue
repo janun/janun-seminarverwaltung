@@ -29,7 +29,12 @@
       </div>
     </div>
 
-    <form v-if="editing" class="clearfix" @submit.prevent="onChange">
+    <form
+      v-if="editing"
+      method="post"
+      class="clearfix"
+      @submit.prevent="onChange"
+    >
       <BaseTextarea v-model="form.text" @keypress.enter="onChange" />
       <span class="float-right mt-1">
         <button

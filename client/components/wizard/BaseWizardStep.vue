@@ -16,7 +16,7 @@
         <CloseButton class="ml-auto -mr-4" title="Abbrechen" @click="cancel" />
       </div>
 
-      <form @submit.prevent="submit">
+      <form method="post" @submit.prevent="submit">
         <div class="flex">
           <div>
             <BaseWizardNav

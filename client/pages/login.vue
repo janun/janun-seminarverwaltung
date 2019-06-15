@@ -14,7 +14,7 @@
         {{ nonFieldErrors.join(', ') }}
       </p>
 
-      <form @submit.prevent="login">
+      <form method="post" @submit.prevent="login">
         <BaseField label="Benutzername" name="username">
           <BaseInput
             id="username"

@@ -1,5 +1,4 @@
 from django.utils.timezone import now
-from .models import User
 
 
 class SetLastVisitMiddleware:
