@@ -38,24 +38,22 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
-    "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.messages",
+    # "whitenoise.runserver_nostatic",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "django.forms",
 ]
 THIRD_PARTY_APPS = [
     "django_filters",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "rest_auth",
-    "rest_auth.registration",
 ]
 LOCAL_APPS = ["backend.api"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -97,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -109,18 +107,20 @@ MIDDLEWARE = [
 
 # STATIC
 # ------------------------------------------------------------------------------
-# Not really using staticfiles, since only serving an api
-STATIC_ROOT = str(ROOT_DIR("dist"))
+STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 STATIC_URL = "/static/"
-STATICFILES_DIRS = []
-STATICFILES_FINDERS = []
+STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 
 # WhiteNoise
 # ------------------------------------------------------------------------------
 # Serve frontend files with whitenoise
-WHITENOISE_INDEX_FILE = True
-WHITENOISE_ROOT = ROOT_DIR("dist")
+# WHITENOISE_INDEX_FILE = True
+# WHITENOISE_ROOT = ROOT_DIR("dist")
 
 
 # MEDIA
@@ -133,7 +133,7 @@ MEDIA_URL = "/media/"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [ROOT_DIR("dist")],
+        "DIRS": [APPS_DIR.path("templates")],
         "OPTIONS": {
             "debug": DEBUG,
             "loaders": [
@@ -183,37 +183,6 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
-
-
-# django-restframework
-# ------------------------------------------------------------------------------
-REST_FRAMEWORK = {
-    "COERCE_DECIMAL_TO_STRING": False,
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAdminUser",),
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-}
-
-REST_FRAMEWORK_EXTENSIONS = {
-    "DEFAULT_OBJECT_CACHE_KEY_FUNC": (
-        "backend.api.key_constructors.CustomObjectKeyFunction"
-    ),
-    "DEFAULT_LIST_CACHE_KEY_FUNC": "backend.api.key_constructors.CustomListKeyFunction",
-    "DEFAULT_OBJECT_ETAG_FUNC": "backend.api.key_constructors.CustomObjectKeyFunction",
-    "DEFAULT_LIST_ETAG_FUNC": "backend.api.key_constructors.CustomListKeyFunction",
-}
-
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "backend.api.serializers.UserProfileSerializer"
-}
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "backend.api.serializers.RegisterSerializer"
-}
-REST_SESSION_LOGIN = False
 
 
 # Your stuff...
