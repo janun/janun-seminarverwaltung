@@ -114,7 +114,8 @@ export default {
     async loadMore() {
       this.loadingMore = true
       try {
-        const data = await this.$axios.$get(this.next)
+        const relativeNext = this.next.replace(/^(?:\/\/|[^/]+)*\/api/, '')
+        const data = await this.$axios.$get(relativeNext)
         this.seminars.push(...data.results)
         this.count = data.count
         this.next = data.next
