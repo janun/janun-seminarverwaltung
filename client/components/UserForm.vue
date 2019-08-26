@@ -128,18 +128,17 @@
 
 <script>
 import Vue from 'vue'
-import BaseForm from '@/components/forms/BaseForm.vue'
-import BaseFormSection from '@/components/forms/BaseFormSection.vue'
-import BaseSelect from '@/components/forms/BaseSelect.vue'
-import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue'
-import BasePasswordInput from '@/components/forms/BasePasswordInput.vue'
-
 import {
   required,
   requiredIf,
   minLength,
   email
 } from 'vuelidate/lib/validators'
+import BaseForm from '@/components/forms/BaseForm.vue'
+import BaseFormSection from '@/components/forms/BaseFormSection.vue'
+import BaseSelect from '@/components/forms/BaseSelect.vue'
+import GroupSelectMultiple from '@/components/GroupSelectMultiple.vue'
+import BasePasswordInput from '@/components/forms/BasePasswordInput.vue'
 
 import { checked, passwordNotOwned } from '@/utils/validators.js'
 
@@ -200,7 +199,7 @@ export default {
       }
     }
     if (this.isSignup) {
-      validations.readDataProtection = { checked: checked }
+      validations.readDataProtection = { checked }
     }
     return validations
   },

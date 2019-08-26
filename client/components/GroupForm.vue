@@ -23,11 +23,10 @@
 </template>
 
 <script>
+import { required } from 'vuelidate/lib/validators'
 import Vue from 'vue'
 import BaseForm from '@/components/forms/BaseForm.vue'
 import BaseFormSection from '@/components/forms/BaseFormSection.vue'
-
-import { required } from 'vuelidate/lib/validators'
 import { objectCompare } from '@/utils/object.js'
 
 export default {

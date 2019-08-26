@@ -170,12 +170,12 @@
 import Vue from 'vue'
 
 import { required, minValue, maxValue } from 'vuelidate/lib/validators'
+import { formatEuro } from '../utils/formatters'
 import { minDate } from '@/utils/validators.js'
 import { daysDiff } from '@/utils/date.js'
 import { getMaxFunding } from '@/utils/funding.js'
 import SeminarStatus from '@/components/SeminarStatus.vue'
 import GroupSelect from '@/components/GroupSelect.vue'
-import { formatEuro } from '../utils/formatters'
 import { objectCompare } from '@/utils/object.js'
 
 export default {

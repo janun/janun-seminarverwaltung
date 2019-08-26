@@ -223,11 +223,8 @@ export default {
     filteredSeminars() {
       let filtered = this.seminars
       if (this.titleFilter) {
-        filtered = filtered.filter(
-          seminar =>
-            seminar.title
-              .toLowerCase()
-              .indexOf(this.titleFilter.toLowerCase()) > -1
+        filtered = filtered.filter(seminar =>
+          seminar.title.toLowerCase().includes(this.titleFilter.toLowerCase())
         )
       }
       if (this.yearFilter.length > 0) {

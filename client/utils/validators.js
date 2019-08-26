@@ -1,6 +1,6 @@
+import axios from 'axios'
 import { helpers, minLength } from 'vuelidate/lib/validators'
 import { sha1 } from '@/utils/hash.js'
-import axios from 'axios'
 
 export function minDate(min) {
   return helpers.withParams(

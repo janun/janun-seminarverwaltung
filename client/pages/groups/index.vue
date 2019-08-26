@@ -65,8 +65,8 @@ export default {
     filteredGroups() {
       let filtered = this.groups
       if (this.nameFilter) {
-        filtered = filtered.filter(
-          g => g.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) > -1
+        filtered = filtered.filter(g =>
+          g.name.toLowerCase().includes(this.nameFilter.toLowerCase())
         )
       }
       return filtered

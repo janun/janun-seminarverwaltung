@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import uuidMixin from '@/mixins/uuid.js'
 import { singleErrorExtractorMixin } from 'vuelidate-error-extractor'
+import uuidMixin from '@/mixins/uuid.js'
 
 export default {
   extends: singleErrorExtractorMixin,

@@ -282,18 +282,18 @@
 </template>
 
 <script>
-import BaseWizard from '@/components/wizard/BaseWizard.vue'
-import BaseWizardStep from '@/components/wizard/BaseWizardStep.vue'
-import BaseRadioSelect from '@/components/forms/BaseRadioSelect.vue'
-import GroupSelect from '@/components/GroupSelect.vue'
-import { daysDiff, getDeadline } from '@/utils/date.js'
-import { getMaxFunding } from '@/utils/funding.js'
 import {
   required,
   minValue,
   maxValue,
   requiredIf
 } from 'vuelidate/lib/validators'
+import BaseWizard from '@/components/wizard/BaseWizard.vue'
+import BaseWizardStep from '@/components/wizard/BaseWizardStep.vue'
+import BaseRadioSelect from '@/components/forms/BaseRadioSelect.vue'
+import GroupSelect from '@/components/GroupSelect.vue'
+import { daysDiff, getDeadline } from '@/utils/date.js'
+import { getMaxFunding } from '@/utils/funding.js'
 import { minDate, checked } from '@/utils/validators.js'
 import { formatEuro } from '@/utils/formatters'
 

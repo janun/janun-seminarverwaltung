@@ -142,10 +142,8 @@ export default {
       if (this.nameFilter) {
         filtered = filtered.filter(
           user =>
-            user.name.toLowerCase().indexOf(this.nameFilter.toLowerCase()) >
-              -1 ||
-            user.username.toLowerCase().indexOf(this.nameFilter.toLowerCase()) >
-              -1
+            user.name.toLowerCase().includes(this.nameFilter.toLowerCase()) ||
+            user.username.toLowerCase().includes(this.nameFilter.toLowerCase())
         )
       }
       if (this.groupFilter.length > 0) {
