@@ -4,25 +4,11 @@ from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_extensions.mixins import NestedViewSetMixin
-from django_filters import rest_framework as filters
 
 from . import models
 from . import permissions as permissions2
 from . import serializers
-
-
-class SeminarFilter(filters.FilterSet):
-    year = filters.NumberFilter(field_name="start_date__year")
-    owner = filters.ModelChoiceFilter(
-        queryset=models.User.objects.all(), to_field_name="username"
-    )
-    group = filters.ModelChoiceFilter(
-        queryset=models.JANUNGroup.objects.all(), to_field_name="slug"
-    )
-
-    class Meta:
-        model = models.Seminar
-        fields = ["year", "owner", "group"]
+from . import filters
 
 
 class SeminarViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -30,7 +16,7 @@ class SeminarViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SeminarSerializer
     lookup_field = "uuid"
-    filterset_class = SeminarFilter
+    filterset_class = filters.SeminarFilter
 
     def get_queryset(self) -> QuerySet:
         if self.request.user.has_staff_role:
@@ -94,7 +80,7 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     serializer_class = serializers.UserSerializer
     lookup_field = "username"
-    filter_fields = ("janun_groups", "group_hats")
+    filterset_class = filters.UserFilter
 
     def get_queryset(self) -> QuerySet:
         qs = models.User.objects.all()
