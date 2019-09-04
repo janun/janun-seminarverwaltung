@@ -16,9 +16,25 @@
       >
         <nuxt-link class="mx-2 flex items-center" to="/seminars/">
           Seminare
+          <span
+            v-if="$auth.user.has_verwalter_role && pendingSeminars > 0"
+            class="relative flex items-center justify-center font-bold w-4 h-4 leading-none text-xs p-1 rounded-full bg-yellow-300 text-gray-700 shadow"
+            style="top: -10px"
+            :title="`${pendingSeminars} (neu) angemeldete Seminare`"
+          >
+            {{ pendingSeminars }}
+          </span>
         </nuxt-link>
         <nuxt-link class="mx-2 flex items-center" to="/users/">
           Kontos
+          <span
+            v-if="$auth.user.has_verwalter_role && pendingAccounts > 0"
+            class="relative flex items-center justify-center font-bold w-4 h-4 leading-none text-xs p-1 rounded-full bg-red-300 text-gray-700 shadow"
+            style="top: -10px"
+            :title="`${pendingAccounts} ungeprüfte Konten`"
+          >
+            {{ pendingAccounts }}
+          </span>
         </nuxt-link>
         <nuxt-link class="mx-2 flex items-center" to="/groups/">
           Gruppen
@@ -48,6 +64,33 @@
 
 <script>
 export default {
+  // data() {
+  //   return {
+  //     pendingSeminars: 0,
+  //     pendingAccounts: 0
+  //   }
+  // },
+  computed: {
+    pendingSeminars() {
+      return this.$store.state.seminars.seminars.filter(
+        seminar => seminar.status === 'angemeldet'
+      ).length
+    },
+    pendingAccounts() {
+      return this.$store.state.users.users.filter(
+        user => user.is_reviewed === false
+      ).length
+    }
+  },
+  // async created() {
+  //   if (this.$auth.user.has_verwalter_role) {
+  //     const data = await this.$axios.$get('/seminars/?status=angemeldet')
+  //     this.pendingSeminars = data.length
+
+  //     const data2 = await this.$axios.$get('/users/?is_reviewed=False')
+  //     this.pendingAccounts = data2.length
+  //   }
+  // },
   methods: {
     async logout() {
       await this.$auth.logout()

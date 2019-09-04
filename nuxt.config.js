@@ -104,7 +104,7 @@ export default {
    ** router config
    */
   router: {
-    middleware: ['auth'] // require authentication everywhere
+    middleware: ['auth', 'fetch']
   },
 
   purgeCSS: {
