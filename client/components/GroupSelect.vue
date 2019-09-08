@@ -33,7 +33,9 @@ export default {
     if (this.possibleGroups) {
       this.groups = this.possibleGroups
     } else {
-      await this.$store.dispatch('groups/fetch')
+      if (this.$store.state.groups.groups.length === 0) {
+        await this.$store.dispatch('groups/fetch')
+      }
       this.groups = this.$store.state.groups.groups
     }
   },

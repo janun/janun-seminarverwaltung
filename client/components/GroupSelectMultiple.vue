@@ -34,7 +34,9 @@ export default {
     }
   },
   async created() {
-    await this.$store.dispatch('groups/fetch')
+    if (this.$store.state.groups.groups.length === 0) {
+      await this.$store.dispatch('groups/fetch')
+    }
   },
   methods: {
     onInput(event) {
