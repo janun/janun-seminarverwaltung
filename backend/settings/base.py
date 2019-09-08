@@ -42,12 +42,9 @@ DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.sites",
     "django.contrib.messages",
-    # "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
-    "django.contrib.humanize",
-    "django.forms",
+    "django.contrib.sites",
 ]
 THIRD_PARTY_APPS = [
     "django_filters",
@@ -55,7 +52,11 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
 ]
-LOCAL_APPS = ["backend.api"]
+LOCAL_APPS = [
+    "backend.seminars.apps.SeminarsConfig",
+    "backend.users.apps.UsersConfig",
+    "backend.groups.apps.GroupsConfig",
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -65,7 +66,17 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
-AUTH_USER_MODEL = "api.User"
+# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
+AUTH_USER_MODEL = "users.User"
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
+LOGIN_REDIRECT_URL = "dashboard:dashboard"
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-url
+LOGIN_URL = "account_login"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -84,43 +95,36 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"user_attributes": ("username", "name", "email")},
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-    # {"NAME": "janun_seminarverwaltung.validators.PwnedPasswordValidator"},
 ]
 
 # MIDDLEWARE
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "backend.api.middleware.SetLastVisitMiddleware",
+    # "backend.api.middleware.SetLastVisitMiddleware",
 ]
 
 # STATIC
 # ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-
-
-# WhiteNoise
-# ------------------------------------------------------------------------------
-# Serve frontend files with whitenoise
-# WHITENOISE_INDEX_FILE = True
-# WHITENOISE_ROOT = ROOT_DIR("dist")
 
 
 # MEDIA
@@ -154,7 +158,7 @@ TEMPLATES = [
     }
 ]
 
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+# FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # FIXTURES
 # ------------------------------------------------------------------------------

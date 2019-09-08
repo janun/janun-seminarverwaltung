@@ -29,8 +29,11 @@ pylint-django = "*"
 pylint-quotes = "*"
 flake8 = "*"
 flake8-django = "*"
-black = "==19.3b0" # "*" fails to install
+black = "==19.3b0"
 mypy = "*"
 django-stubs = "*"
 dataclasses = "*" # needed by django-stubs
 djangorestframework-stubs = "*"
+
+[pipenv]
+allow_prereleases = true

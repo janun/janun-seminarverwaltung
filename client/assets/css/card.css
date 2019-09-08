@@ -1,9 +1,0 @@
-@responsive {
-  .card {
-    @apply bg-white rounded-lg shadow-md p-5;
-  }
-
-  .card-footer {
-    @apply bg-gray-150 -mx-5 -mb-5 mt-5 py-5 px-5 rounded-b-lg;
-  }
-}

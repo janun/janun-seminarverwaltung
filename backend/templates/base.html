@@ -1,5 +1,5 @@
 {% load static i18n %}<!DOCTYPE html>
-<html lang="de" class="no-js">
+<html lang="de">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -7,11 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+
+    {% block css %}
+      <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    {% endblock %}
   </head>
 
   <body>
     {% include "_navbar.html" %}
-    {% block content %}{% endblock content %}
+
+    <div class="mx-auto max-w-5xl">
+      {% for message in messages %}
+        <div class="{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+
+      {% block content %}{% endblock content %}
+    </div>
+
+    {% include "_footer.html" %}
+
+    {% block javascript %}
+      <script src="{% static 'js/base.js' %}"></script>
+    {% endblock javascript %}
   </body>
 
 </html>

@@ -1,1 +1,0 @@
-# Janun Seminarverwaltung
