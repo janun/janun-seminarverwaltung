@@ -27,7 +27,7 @@ admin.site.index_title = "JANUN Seminare Verwaltung"
 
 
 class UserAdmin(BaseUserAdmin):
-    search_fields = ["username", "name"]
+    search_fields = ["name", "username"]
     list_display = (
         "username",
         "name",

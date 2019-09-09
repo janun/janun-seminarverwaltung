@@ -8,12 +8,6 @@ all_states = {
         "color": "yellow",
         "staff_only": False,
     },
-    "zurückgezogen": {
-        "description": "Der Antrag auf Förderung wurde zurückgezogen.",
-        "color": "red",
-        "sources": ["angemeldet", "zugesagt"],
-        "staff_only": False,
-    },
     "zugesagt": {
         "description": "Die Förderung wurde von JANUN zugesagt.",
         "color": "green",
@@ -21,7 +15,7 @@ all_states = {
         "staff_only": True,
     },
     "abgesagt": {
-        "description": "Das Seminar findet nicht statt.",
+        "description": "Das Seminar findet nicht statt oder der Antrag wurde zurückgezogen",
         "color": "red",
         "sources": ["zugesagt", "angemeldet"],
         "staff_only": False,

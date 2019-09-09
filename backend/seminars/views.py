@@ -1,9 +1,7 @@
-from django_filters.views import FilterView
+from django.views.generic.list import ListView
 from .models import Seminar
-from .filters import SeminarFilter
 
 
-class SeminarListView(FilterView):
+class SeminarListView(ListView):
     model = Seminar
-    filterset_class = SeminarFilter
     template_name = "seminars/seminar_list.html"

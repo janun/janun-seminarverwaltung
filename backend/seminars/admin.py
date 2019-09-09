@@ -1,12 +1,18 @@
 import csv
-import datetime
 
 from django.contrib import admin
 from django import forms
 from django.db import models
 from django.http import HttpResponse
 
+from django_admin_listfilter_dropdown.filters import (
+    ChoiceDropdownFilter,
+    RelatedDropdownFilter,
+)
+
+from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment
+from .filters import QuarterListFilter, YearListFilter, OwnerFilter
 
 
 class CommentInlineFormset(forms.BaseInlineFormSet):
@@ -30,42 +36,15 @@ class CommentsInline(admin.StackedInline):
         return formset
 
 
-class QuarterListFilter(admin.SimpleListFilter):
-    title = "Quartal"
-    parameter_name = "quarter"
-
-    def lookups(self, request, model_admin):
-        return (("1", "1"), ("2", "2"), ("3", "3"), ("4", "4"))
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(start_date__quarter=self.value())
-
-
-class YearListFilter(admin.SimpleListFilter):
-    title = "Jahr"
-    parameter_name = "year"
-
-    def lookups(self, request, model_admin):
-        qs = model_admin.get_queryset(request)
-        year_dates = qs.dates("start_date", "year", order="DESC")
-        return [(date.year, date.year) for date in year_dates]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(start_date__year=int(self.value()))
-        return queryset
-
-    def value(self):
-        value = super().value()
-        if value is None:
-            value = str(datetime.date.today().year)
-        return value
-
-
 @admin.register(Seminar)
 class SeminarAdmin(admin.ModelAdmin):
-    search_fields = ["title", "description", "owner__name", "group__name"]
+    search_fields = [
+        "title",
+        "description",
+        "owner__name",
+        "owner__username",
+        "group__name",
+    ]
     save_on_top = True
     inlines = [CommentsInline]
     list_display = (
@@ -74,22 +53,29 @@ class SeminarAdmin(admin.ModelAdmin):
         "status",
         "owner",
         "group",
-        "requested_funding",
-        "planned_training_days",
-        "planned_attendees_max",
+        "funding",
+        "training_days",
+        "attendees",
         "tnt",
     )
     autocomplete_fields = ["owner", "group"]
     list_editable = ("status",)
     readonly_fields = ("created_at", "updated_at")
     list_select_related = ("owner", "group")
-    list_filter = ("status", YearListFilter, QuarterListFilter, "owner", "group")
+    list_filter = (
+        ("status", ChoiceDropdownFilter),
+        YearListFilter,
+        QuarterListFilter,
+        OwnerFilter,
+        ("group", RelatedDropdownFilter),
+    )
     formfield_overrides = {
         models.CharField: {"widget": forms.widgets.TextInput(attrs={"size": "100"})}
     }
     fieldsets = (
-        ("Allgemeines", {"fields": ("status", "owner", "created_at", "updated_at")}),
+        (None, {"fields": ("status",)}),
         ("Inhalt", {"fields": ("title", "description")}),
+        ("Meta", {"fields": ("owner", "created_at", "updated_at")}),
         (
             "Zeit & Ort",
             {
@@ -114,9 +100,12 @@ class SeminarAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        ("Einnahmen", {"fields": ("income_fees", "income_public", "income_other")}),
         (
-            "Ausgaben",
+            "Abrechnung - Einnahmen",
+            {"fields": ("income_fees", "income_public", "income_other")},
+        ),
+        (
+            "Abrechnung - Ausgaben",
             {
                 "fields": (
                     "expense_catering",
@@ -131,19 +120,22 @@ class SeminarAdmin(admin.ModelAdmin):
             "Abrechnung",
             {
                 "fields": (
-                    "attendees_total",
-                    "attendees_jfg",
-                    "attendence_days_total",
-                    "attendence_days_jfg",
+                    "actual_attendees_total",
+                    "actual_attendees_jfg",
+                    "actual_attendence_days_total",
+                    "actual_attendence_days_jfg",
                     "advance",
-                    "training_days",
-                    "funding",
+                    "actual_training_days",
+                    "actual_funding",
                 )
             },
         ),
     )
 
-    actions = ["export_as_csv"]
+    actions = ["export_as_csv", "create_proof_of_use"]
+
+    class Media:
+        pass
 
     def export_as_csv(self, request, queryset):
         meta = self.model._meta
@@ -157,6 +149,16 @@ class SeminarAdmin(admin.ModelAdmin):
         return response
 
     export_as_csv.short_description = "Ausgewählte als CSV exportieren"
+
+    def create_proof_of_use(self, request, queryset):
+        context = {"seminars": queryset}
+        odt_filepath = fill_template("seminars/verwendungsnachweis.odt", context)
+        visible_filename = "Verwendungsnachweis.odt"
+        return FileResponse(odt_filepath, visible_filename)
+
+    create_proof_of_use.short_description = (
+        "Ausgewählte als Verwendungsnachweis exportieren"
+    )
 
 
 admin.site.register(SeminarComment)

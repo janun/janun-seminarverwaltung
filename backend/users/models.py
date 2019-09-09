@@ -42,7 +42,10 @@ class User(AbstractUser):
         verbose_name_plural = "Konten"
 
     def __str__(self) -> str:
-        return self.username
+        return self.name
+
+    def get_full_name(self) -> str:
+        return self.name
 
     @property
     def has_staff_role(self) -> bool:

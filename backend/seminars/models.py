@@ -4,7 +4,6 @@ from decimal import Decimal
 
 from django.db import models
 from model_utils import Choices
-from django.core.validators import MinValueValidator
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -14,11 +13,16 @@ def get_quarter(date: datetime.date) -> int:
     return (date.month - 1) // 3
 
 
+def add_none(*p) -> Decimal:
+    """treat None values as 0, return None if all args are None"""
+    if all(v is None for v in p):
+        return None
+    return sum(filter(None, p))
+
+
 class Seminar(models.Model):
-    # manual data migrations needed if STATES changed
     STATES = Choices(
         "angemeldet",
-        "zurückgezogen",
         "zugesagt",
         "abgelehnt",
         "abgesagt",
@@ -68,25 +72,25 @@ class Seminar(models.Model):
     )
 
     # Abrechnungsfelder:
-    attendees_total = models.PositiveSmallIntegerField(
+    actual_attendees_total = models.PositiveSmallIntegerField(
         "TN insgesamt", blank=True, null=True
     )
-    attendees_jfg = models.PositiveSmallIntegerField(
+    actual_attendees_jfg = models.PositiveSmallIntegerField(
         "TN nach JFG", blank=True, null=True
     )
-    attendence_days_total = models.PositiveSmallIntegerField(
+    actual_attendence_days_total = models.PositiveSmallIntegerField(
         "TNT insgesamt", blank=True, null=True
     )
-    attendence_days_jfg = models.PositiveSmallIntegerField(
+    actual_attendence_days_jfg = models.PositiveSmallIntegerField(
         "TNT nach JFG", blank=True, null=True
     )
     advance = models.DecimalField(
-        "Vorschuss", max_digits=10, decimal_places=2, default=0
+        "Vorschuss", max_digits=10, decimal_places=2, blank=True, null=True
     )
-    training_days = models.PositiveSmallIntegerField(
+    actual_training_days = models.PositiveSmallIntegerField(
         "Bildungstage", blank=True, null=True
     )
-    funding = models.DecimalField(
+    actual_funding = models.DecimalField(
         "Förderbedarf", max_digits=10, decimal_places=2, blank=True, null=True
     )
     expense_catering = models.DecimalField(
@@ -103,6 +107,15 @@ class Seminar(models.Model):
         blank=True,
         null=True,
     )
+
+    def get_expense_accomodation_and_catering(self) -> Decimal:
+        return add_none(self.expense_catering, self.expense_accomodation)
+
+    get_expense_accomodation_and_catering.short_description = (
+        "Ausgaben für Unterkunft und Verpflegung"
+    )
+    expense_accomodation_and_catering = property(get_expense_accomodation_and_catering)
+
     expense_referent = models.DecimalField(
         "Ausgaben für Referent_innen",
         max_digits=10,
@@ -142,8 +155,44 @@ class Seminar(models.Model):
         return self.title
 
     @property
-    def tnt(self) -> int:
+    def planned_tnt(self) -> int:
         return self.planned_attendees_max * self.planned_training_days
+
+    def get_tnt(self) -> int:
+        return (
+            self.actual_attendence_days_total
+            if self.actual_attendence_days_total
+            else self.planned_tnt
+        )
+
+    get_tnt.short_description = "TNT"
+    tnt = property(get_tnt)
+
+    def get_attendees(self) -> int:
+        return (
+            self.actual_attendees_total
+            if self.actual_attendees_total
+            else self.planned_attendees_max
+        )
+
+    get_attendees.short_description = "TN"
+    attendees = property(get_attendees)
+
+    def get_funding(self) -> Decimal:
+        return self.actual_funding if self.actual_funding else self.requested_funding
+
+    get_funding.short_description = "Förderung"
+    funding = property(get_funding)
+
+    def get_training_days(self) -> int:
+        return (
+            self.actual_training_days
+            if self.actual_training_days
+            else self.planned_training_days
+        )
+
+    get_training_days.short_description = "Bildungstage"
+    training_days = property(get_training_days)
 
     @property
     def tnt_cost(self) -> Decimal:
@@ -178,16 +227,18 @@ class Seminar(models.Model):
         return in_two_weeks and not_sent and not self.deadline_expired
 
     @property
-    def incomes_total(self) -> Decimal:
-        return sum(income.amount for income in self.incomes)
+    def income_total(self) -> Decimal:
+        return add_none(self.income_fees, self.income_public, self.income_other)
 
     @property
-    def expenses_total(self) -> Decimal:
-        return sum(expense.amount for expense in self.expenses)
-
-    @property
-    def balance(self) -> Decimal:
-        return self.incomes_total - self.expenses_total
+    def expense_total(self) -> Decimal:
+        return add_none(
+            self.expense_accomodation,
+            self.expense_catering,
+            self.expense_other,
+            self.expense_referent,
+            self.expense_travel,
+        )
 
 
 class SeminarComment(models.Model):
