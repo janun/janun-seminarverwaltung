@@ -1,11 +1,12 @@
 import csv
+import datetime
 
 from django.contrib import admin
 from django import forms
 from django.db import models
 from django.http import HttpResponse
 
-from .models import Seminar, SeminarComment, SeminarIncomeRecord, SeminarExpenseRecord
+from .models import Seminar, SeminarComment
 
 
 class CommentInlineFormset(forms.BaseInlineFormSet):
@@ -27,43 +28,6 @@ class CommentsInline(admin.StackedInline):
         formset = super().get_formset(request, obj, **kwargs)
         formset.current_user = request.user
         return formset
-
-
-class IncomeFormSet(forms.BaseInlineFormSet):
-    def __init__(self, *args, **kwargs):
-        kwargs["initial"] = [
-            {"amount": "0.0", "name": "TN-Beiträge"},
-            {"amount": "0.0", "name": "Öffentliche Zuwendungen"},
-            {"amount": "0.0", "name": "Sonstiges"},
-        ]
-        super().__init__(*args, **kwargs)
-
-
-class ExpenseFormSet(forms.BaseInlineFormSet):
-    def __init__(self, *args, **kwargs):
-        kwargs["initial"] = [
-            {"amount": "0.0", "name": "Verpflegung"},
-            {"amount": "0.0", "name": "Unterkunft"},
-            {"amount": "0.0", "name": "Referent_innen"},
-            {"amount": "0.0", "name": "Fahrtkosten"},
-            {"amount": "0.0", "name": "Sonstiges"},
-        ]
-
-        super().__init__(*args, **kwargs)
-
-
-class IncomeInline(admin.TabularInline):
-    model = SeminarIncomeRecord
-    extra = 3
-    max_num = 3
-    formset = IncomeFormSet
-
-
-class ExpenseInline(admin.TabularInline):
-    model = SeminarExpenseRecord
-    extra = 5
-    max_num = 5
-    formset = ExpenseFormSet
 
 
 class QuarterListFilter(admin.SimpleListFilter):
@@ -89,15 +53,21 @@ class YearListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.by_year(int(self.value()))
+            return queryset.filter(start_date__year=int(self.value()))
         return queryset
+
+    def value(self):
+        value = super().value()
+        if value is None:
+            value = str(datetime.date.today().year)
+        return value
 
 
 @admin.register(Seminar)
 class SeminarAdmin(admin.ModelAdmin):
     search_fields = ["title", "description", "owner__name", "group__name"]
     save_on_top = True
-    inlines = [ExpenseInline, IncomeInline, CommentsInline]
+    inlines = [CommentsInline]
     list_display = (
         "title",
         "start_date",
@@ -109,13 +79,16 @@ class SeminarAdmin(admin.ModelAdmin):
         "planned_attendees_max",
         "tnt",
     )
+    autocomplete_fields = ["owner", "group"]
+    list_editable = ("status",)
+    readonly_fields = ("created_at", "updated_at")
     list_select_related = ("owner", "group")
     list_filter = ("status", YearListFilter, QuarterListFilter, "owner", "group")
     formfield_overrides = {
         models.CharField: {"widget": forms.widgets.TextInput(attrs={"size": "100"})}
     }
     fieldsets = (
-        ("Status", {"fields": ("status",)}),
+        ("Allgemeines", {"fields": ("status", "owner", "created_at", "updated_at")}),
         ("Inhalt", {"fields": ("title", "description")}),
         (
             "Zeit & Ort",
@@ -138,6 +111,19 @@ class SeminarAdmin(admin.ModelAdmin):
                     "planned_attendees_min",
                     "planned_attendees_max",
                     "requested_funding",
+                )
+            },
+        ),
+        ("Einnahmen", {"fields": ("income_fees", "income_public", "income_other")}),
+        (
+            "Ausgaben",
+            {
+                "fields": (
+                    "expense_catering",
+                    "expense_accomodation",
+                    "expense_referent",
+                    "expense_travel",
+                    "expense_other",
                 )
             },
         ),

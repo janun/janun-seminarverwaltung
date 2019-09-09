@@ -16,6 +16,7 @@ class MembershipInline(admin.StackedInline):
 class JANUNGroupAdmin(admin.ModelAdmin):
     list_display = ("name", "members_display", "hats_display")
     inlines = [MembershipInline]
+    search_fields = ["name"]
 
     fieldsets = ((None, {"fields": ("name",)}),)
 

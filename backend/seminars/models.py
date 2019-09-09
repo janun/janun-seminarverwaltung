@@ -14,53 +14,6 @@ def get_quarter(date: datetime.date) -> int:
     return (date.month - 1) // 3
 
 
-class SeminarIncomeRecord(models.Model):
-    seminar = models.ForeignKey(
-        "seminars.Seminar", on_delete=models.SET_NULL, null=True, related_name="incomes"
-    )
-    amount = models.DecimalField(
-        "Betrag",
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        validators=[MinValueValidator(Decimal("0.00"))],
-    )
-    name = models.CharField("Bezeichnung", max_length=255)
-
-    class Meta:
-        ordering = ("name",)
-        verbose_name = "Einnahme"
-        verbose_name_plural = "Einnahmen"
-
-    def __str__(self) -> str:
-        return f"{self.name} ({self.amount})"
-
-
-class SeminarExpenseRecord(models.Model):
-    seminar = models.ForeignKey(
-        "seminars.Seminar",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="expenses",
-    )
-    amount = models.DecimalField(
-        "Betrag",
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        validators=[MinValueValidator(Decimal("0.00"))],
-    )
-    name = models.CharField("Bezeichnung", max_length=255)
-
-    class Meta:
-        ordering = ("name",)
-        verbose_name = "Ausgabe"
-        verbose_name_plural = "Ausgaben"
-
-    def __str__(self) -> str:
-        return f"{self.name} ({self.amount})"
-
-
 class Seminar(models.Model):
     # manual data migrations needed if STATES changed
     STATES = Choices(
@@ -91,7 +44,7 @@ class Seminar(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name="seminars",
-        verbose_name="Eigentümer",
+        verbose_name="Eigentümer_in",
     )
     group = models.ForeignKey(
         JANUNGroup,
@@ -135,6 +88,46 @@ class Seminar(models.Model):
     )
     funding = models.DecimalField(
         "Förderbedarf", max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    expense_catering = models.DecimalField(
+        "Ausgaben für Verpflegung",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    expense_accomodation = models.DecimalField(
+        "Ausgaben für Unterkunft",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    expense_referent = models.DecimalField(
+        "Ausgaben für Referent_innen",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    expense_travel = models.DecimalField(
+        "Fahrtkosten", max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    expense_other = models.DecimalField(
+        "Sonstige Ausgaben", max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    income_fees = models.DecimalField(
+        "Teilnahmebeiträge", max_digits=10, decimal_places=2, blank=True, null=True
+    )
+    income_public = models.DecimalField(
+        "Öffentliche Zuwendungen",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    income_other = models.DecimalField(
+        "Sonstige Einnahmen", max_digits=10, decimal_places=2, blank=True, null=True
     )
 
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
