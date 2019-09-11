@@ -23,12 +23,12 @@ class CommentInlineFormset(forms.BaseInlineFormSet):
 
 class CommentsInline(admin.StackedInline):
     model = SeminarComment
-    extra = 0
+    extra = 1
     formset = CommentInlineFormset
     readonly_fields = ("owner", "created_at")
 
     def has_delete_permission(self, request, obj=None):
-        return request.user.has_verwalter_role
+        return request.user.has_verwalter_role or request.user == obj.owner
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
@@ -60,7 +60,13 @@ class SeminarAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ["owner", "group"]
     list_editable = ("status",)
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "formatted_deadline",
+        "income_total",
+        "expense_total",
+    )
     list_select_related = ("owner", "group")
     list_filter = (
         ("status", ChoiceDropdownFilter),
@@ -75,7 +81,6 @@ class SeminarAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("status",)}),
         ("Inhalt", {"fields": ("title", "description")}),
-        ("Meta", {"fields": ("owner", "created_at", "updated_at")}),
         (
             "Zeit & Ort",
             {
@@ -84,6 +89,7 @@ class SeminarAdmin(admin.ModelAdmin):
                     "start_time",
                     "end_date",
                     "end_time",
+                    "formatted_deadline",
                     "location",
                 )
             },
@@ -101,8 +107,29 @@ class SeminarAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Abrechnung",
+            {
+                "fields": (
+                    "actual_attendees_total",
+                    "actual_attendees_jfg",
+                    "actual_attendence_days_total",
+                    "actual_attendence_days_jfg",
+                    "actual_training_days",
+                    "advance",
+                    "actual_funding",
+                )
+            },
+        ),
+        (
             "Abrechnung - Einnahmen",
-            {"fields": ("income_fees", "income_public", "income_other")},
+            {
+                "fields": (
+                    "income_fees",
+                    "income_public",
+                    "income_other",
+                    "income_total",
+                )
+            },
         ),
         (
             "Abrechnung - Ausgaben",
@@ -113,29 +140,29 @@ class SeminarAdmin(admin.ModelAdmin):
                     "expense_referent",
                     "expense_travel",
                     "expense_other",
+                    "expense_total",
                 )
             },
         ),
-        (
-            "Abrechnung",
-            {
-                "fields": (
-                    "actual_attendees_total",
-                    "actual_attendees_jfg",
-                    "actual_attendence_days_total",
-                    "actual_attendence_days_jfg",
-                    "advance",
-                    "actual_training_days",
-                    "actual_funding",
-                )
-            },
-        ),
+        ("Meta", {"fields": ("owner", "created_at", "updated_at")}),
     )
 
     actions = ["export_as_csv", "create_proof_of_use"]
 
     class Media:
         pass
+
+    # # restrict status choices
+    # def formfield_for_choice_field(self, db_field, request, **kwargs):
+    #     if db_field.name == "status":
+    #         # kwargs['choices'] = get_next_states()
+    #         print(db_field.value)
+    #     return super().formfield_for_choice_field(db_field, request, **kwargs)
+
+    def formatted_deadline(self, obj):
+        return obj.deadline.strftime("%d.%m.%Y")
+
+    formatted_deadline.short_description = "Abrechnungsdeadline"
 
     def export_as_csv(self, request, queryset):
         meta = self.model._meta

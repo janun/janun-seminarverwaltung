@@ -1,8 +1,10 @@
 import uuid
 import datetime
 from decimal import Decimal
+from typing import Optional
 
 from django.db import models
+from django.core.validators import ValidationError
 from model_utils import Choices
 
 from backend.users.models import User
@@ -13,7 +15,7 @@ def get_quarter(date: datetime.date) -> int:
     return (date.month - 1) // 3
 
 
-def add_none(*p) -> Decimal:
+def add_none(*p) -> Optional[Decimal]:
     """treat None values as 0, return None if all args are None"""
     if all(v is None for v in p):
         return None
@@ -108,7 +110,7 @@ class Seminar(models.Model):
         null=True,
     )
 
-    def get_expense_accomodation_and_catering(self) -> Decimal:
+    def get_expense_accomodation_and_catering(self) -> Optional[Decimal]:
         return add_none(self.expense_catering, self.expense_accomodation)
 
     get_expense_accomodation_and_catering.short_description = (
@@ -154,54 +156,62 @@ class Seminar(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def clean(self):
+        if self.end_date < self.start_date:
+            raise ValidationError(
+                {"end_date": "End-Datum muss nach Start-Datum liegen."}
+            )
+        if self.planned_attendees_max < self.planned_attendees_min:
+            raise ValidationError(
+                {
+                    "planned_attendees_max": "Muss größer/gleich "
+                    "sein als der Minimal-Wert"
+                }
+            )
+        if self.actual_attendees_jfg > self.actual_attendees_total:
+            raise ValidationError(
+                {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
+            )
+        if self.actual_attendence_days_jfg > self.actual_attendence_days_total:
+            raise ValidationError(
+                {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
+            )
+
     @property
     def planned_tnt(self) -> int:
         return self.planned_attendees_max * self.planned_training_days
 
     def get_tnt(self) -> int:
-        return (
-            self.actual_attendence_days_total
-            if self.actual_attendence_days_total
-            else self.planned_tnt
-        )
+        return self.actual_attendence_days_total or self.planned_tnt
 
     get_tnt.short_description = "TNT"
     tnt = property(get_tnt)
 
     def get_attendees(self) -> int:
-        return (
-            self.actual_attendees_total
-            if self.actual_attendees_total
-            else self.planned_attendees_max
-        )
+        return self.actual_attendees_total or self.planned_attendees_max
 
     get_attendees.short_description = "TN"
     attendees = property(get_attendees)
 
     def get_funding(self) -> Decimal:
-        return self.actual_funding if self.actual_funding else self.requested_funding
+        return self.actual_funding or self.requested_funding
 
     get_funding.short_description = "Förderung"
     funding = property(get_funding)
 
     def get_training_days(self) -> int:
-        return (
-            self.actual_training_days
-            if self.actual_training_days
-            else self.planned_training_days
-        )
+        return self.actual_training_days or self.planned_training_days
 
     get_training_days.short_description = "Bildungstage"
     training_days = property(get_training_days)
 
     @property
-    def tnt_cost(self) -> Decimal:
+    def tnt_cost(self) -> Optional[Decimal]:
         if self.tnt == 0:
-            return Decimal("0")
-        return (self.requested_funding / self.tnt).quantize(Decimal("1.00"))
+            return None
+        return (self.funding / self.tnt).quantize(Decimal("1.00"))
 
-    @property
-    def deadline(self) -> datetime.date:
+    def get_deadline(self) -> datetime.date:
         quarter = get_quarter(self.end_date)
         year = self.end_date.year
         deadlines = [
@@ -212,26 +222,34 @@ class Seminar(models.Model):
         ]
         return deadlines[quarter]
 
-    @property
-    def deadline_expired(self) -> bool:
+    get_deadline.short_description = "Abrechnungsdeadline"
+    deadline = property(get_deadline)
+
+    def get_deadline_expired(self) -> bool:
         not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
         expired = self.deadline < datetime.date.today()
         return expired and not_sent
 
-    @property
-    def deadline_in_two_weeks(self) -> bool:
+    get_deadline_expired.short_description = "Deadline abgelaufen"
+    deadline_expired = property(get_deadline_expired)
+
+    def get_deadline_in_two_weeks(self) -> bool:
         not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
         in_two_weeks: bool = self.deadline < datetime.date.today() + datetime.timedelta(
             days=14
         )
         return in_two_weeks and not_sent and not self.deadline_expired
 
-    @property
-    def income_total(self) -> Decimal:
+    get_deadline_in_two_weeks.short_description = "Deadline in den nächsten 2 Wochen"
+    deadline_in_two_weeks = property(get_deadline_in_two_weeks)
+
+    def get_income_total(self) -> Optional[Decimal]:
         return add_none(self.income_fees, self.income_public, self.income_other)
 
-    @property
-    def expense_total(self) -> Decimal:
+    get_income_total.short_description = "Gesamt-Einnahmen"
+    income_total = property(get_income_total)
+
+    def get_expense_total(self) -> Optional[Decimal]:
         return add_none(
             self.expense_accomodation,
             self.expense_catering,
@@ -239,6 +257,9 @@ class Seminar(models.Model):
             self.expense_referent,
             self.expense_travel,
         )
+
+    get_expense_total.short_description = "Gesamt-Ausgaben"
+    expense_total = property(get_expense_total)
 
 
 class SeminarComment(models.Model):
