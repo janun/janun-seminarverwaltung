@@ -21,9 +21,9 @@ class User(AbstractUser):
     address = models.TextField("Post-Adresse", blank=True)
     telephone = models.CharField("Telefon-Nummer", max_length=100, blank=True)
     role = models.CharField(
-        "Rolle", max_length=255, choices=ROLES, default=ROLES["Teamer_in"]
+        "Rolle", max_length=255, choices=ROLES, default=ROLES.Teamer_in
     )
-    is_reviewed = models.BooleanField("überprüft?", default=False)
+    is_reviewed = models.BooleanField("überprüft", default=False)
     janun_groups = models.ManyToManyField(
         JANUNGroup, related_name="members", blank=True, verbose_name="JANUN-Gruppen"
     )
@@ -32,6 +32,7 @@ class User(AbstractUser):
     )
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
+    last_visit = models.DateTimeField("Letzter Besuch", null=True)
 
     objects = CaseInsensitiveUserManager()
     EMAIL_FIELD = "email"
@@ -44,13 +45,12 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return self.name
 
+    def save(self, *args, **kwargs):
+        # auto set is_staff and is_superuser
+        if self.is_reviewed:
+            self.is_staff = self.role in (self.ROLES.Verwalter_in, self.ROLES.Prüfer_in)
+            self.is_superuser = self.role == self.ROLES.Verwalter_in
+        super().save(*args, **kwargs)
+
     def get_full_name(self) -> str:
         return self.name
-
-    @property
-    def has_staff_role(self) -> bool:
-        return self.role in ("Prüfer_in", "Verwalter_in")
-
-    @property
-    def has_verwalter_role(self) -> bool:
-        return self.role == "Verwalter_in"

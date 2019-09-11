@@ -9,7 +9,7 @@ class MembershipInline(admin.StackedInline):
     extra = 0
     verbose_name = "Mitglieder"
     verbose_name_plural = "Mitglieder"
-    raw_id_fields = ("user",)
+    autocomplete_fields = ("user",)
 
 
 @admin.register(JANUNGroup)

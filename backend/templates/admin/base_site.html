@@ -1,0 +1,20 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "styles/admin.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "typeface-cabin/index.css" %}">
+{% endblock %}
+
+{% block branding %}
+<div style="display:flex">
+    <a href="/admin" class="janunbrand">Seminarverwaltung</a>
+    <div class="custom-menu">
+        <a class="{% if opts.app_label == "seminars" %}active{% endif %}" href="/admin/seminars/seminar">Seminare</a>
+        <a class="{% if opts.app_label == "users" %}active{% endif %}" href="/admin/users/user">Konten</a>
+        <a class="{% if opts.app_label == "groups" %}active{% endif %}" href="/admin/groups/janungroup">Gruppen</a>
+    </div>
+</div>
+{% endblock %}

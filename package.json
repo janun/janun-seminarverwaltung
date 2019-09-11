@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "tailwindcss": "^1.1.2"
+    "tailwindcss": "^1.1.2",
+    "typeface-cabin": "^0.0.72"
   }
 }

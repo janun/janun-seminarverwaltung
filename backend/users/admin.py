@@ -7,6 +7,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from allauth.account.models import EmailAddress
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from .models import User
 
@@ -21,32 +22,39 @@ admin.site.unregister(EmailAddress)
 
 # enforce normal login for admin login
 # admin.site.login = login_required(admin.site.login)
-admin.site.site_header = "JANUN Seminare Verwaltung"
-admin.site.site_title = "JANUN Seminare Verwaltung"
-admin.site.index_title = "JANUN Seminare Verwaltung"
+admin.site.site_header = "JANUN Seminarverwaltung"
+admin.site.site_title = "JANUN Seminarverwaltung"
+admin.site.index_title = "JANUN Seminarverwaltung"
 
 
 class UserAdmin(BaseUserAdmin):
     search_fields = ["name", "username"]
+    save_on_top = True
     list_display = (
-        "username",
         "name",
         "role",
         "janun_groups_display",
         "group_hats_display",
+        "is_reviewed",
+        "is_active",
+        "last_visit",
     )
-    readonly_fields = ("last_login", "date_joined", "updated_at")
+    list_filter = (
+        "role",
+        "is_reviewed",
+        ("janun_groups", RelatedDropdownFilter),
+        ("group_hats", RelatedDropdownFilter),
+    )
+    readonly_fields = ("date_joined", "updated_at", "last_visit")
     filter_horizontal = ("janun_groups", "group_hats")
+    radio_fields = {"role": admin.VERTICAL}
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         ("Kontakt", {"fields": ("name", "email", "address", "telephone")}),
-        (
-            "Berechtigungen",
-            {"fields": ("is_active", "is_superuser", "role", "is_reviewed")},
-        ),
+        ("Berechtigungen", {"fields": ("is_active", "is_reviewed", "role")}),
         ("Gruppen", {"fields": ("janun_groups", "group_hats")}),
-        ("Datum", {"fields": ("last_login", "date_joined", "updated_at")}),
+        ("Datum", {"fields": ("last_visit", "date_joined", "updated_at")}),
     )
 
     def janun_groups_display(self, obj):

@@ -1,9 +1,9 @@
-import uuid
 import datetime
 from decimal import Decimal
 from typing import Optional
 
 from django.db import models
+from django.db.models import Case, When, F, ExpressionWrapper
 from django.core.validators import ValidationError
 from model_utils import Choices
 
@@ -20,6 +20,39 @@ def add_none(*p) -> Optional[Decimal]:
     if all(v is None for v in p):
         return None
     return sum(filter(None, p))
+
+
+class SeminarQuerySet(models.QuerySet):
+    def add_annotations(self):
+        return self.annotate(
+            funding=Case(
+                When(actual_funding=None, then="requested_funding"),
+                default="actual_funding",
+            ),
+            tnt=Case(
+                When(
+                    actual_attendence_days_total=None,
+                    then=F("planned_attendees_max") * F("planned_training_days"),
+                ),
+                default="actual_attendence_days_total",
+            ),
+            tnt_cost=ExpressionWrapper(
+                F("funding") / F("tnt"), output_field=models.DecimalField()
+            ),
+            attendees=Case(
+                When(actual_attendees_total=None, then="planned_attendees_max"),
+                default="actual_attendees_total",
+            ),
+            training_days=Case(
+                When(actual_training_days=None, then="planned_training_days"),
+                default="actual_training_days",
+            ),
+        )
+
+
+class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
+    def get_queryset(self):
+        return super().get_queryset().add_annotations()
 
 
 class Seminar(models.Model):
@@ -40,7 +73,6 @@ class Seminar(models.Model):
         "überwiesen",
     )
 
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     title = models.CharField("Titel", max_length=255)
     status = models.CharField(
         "Status", max_length=255, choices=STATES, default=STATES.angemeldet
@@ -145,6 +177,10 @@ class Seminar(models.Model):
         "Sonstige Einnahmen", max_digits=10, decimal_places=2, blank=True, null=True
     )
 
+    deadline = models.DateField(
+        "Abrechnungsdeadline", help_text="Aus End-Datum errechnet"
+    )
+
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
 
@@ -152,6 +188,8 @@ class Seminar(models.Model):
         ordering = ("-start_date",)
         verbose_name = "Seminar"
         verbose_name_plural = "Seminare"
+
+    objects = SeminarManager()
 
     def __str__(self) -> str:
         return self.title
@@ -168,50 +206,50 @@ class Seminar(models.Model):
                     "sein als der Minimal-Wert"
                 }
             )
-        if self.actual_attendees_jfg > self.actual_attendees_total:
+        if (
+            self.actual_attendees_jfg
+            and self.actual_attendees_total
+            and self.actual_attendees_jfg > self.actual_attendees_total
+        ):
             raise ValidationError(
                 {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
             )
-        if self.actual_attendence_days_jfg > self.actual_attendence_days_total:
+        if (
+            self.actual_attendence_days_jfg
+            and self.actual_attendence_days_total
+            and self.actual_attendence_days_jfg > self.actual_attendence_days_total
+        ):
             raise ValidationError(
                 {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
             )
+
+    def save(self, *args, **kwargs):
+        self.deadline = self.calc_deadline()
+        super().save(*args, **kwargs)
 
     @property
     def planned_tnt(self) -> int:
         return self.planned_attendees_max * self.planned_training_days
 
-    def get_tnt(self) -> int:
-        return self.actual_attendence_days_total or self.planned_tnt
+    # def get_tnt(self) -> int:
+    #     return self.actual_attendence_days_total or self.planned_tnt
 
-    get_tnt.short_description = "TNT"
-    tnt = property(get_tnt)
+    # get_tnt.short_description = "TNT"
+    # tnt = property(get_tnt)
 
-    def get_attendees(self) -> int:
-        return self.actual_attendees_total or self.planned_attendees_max
+    # def get_attendees(self) -> int:
+    #     return self.actual_attendees_total or self.planned_attendees_max
 
-    get_attendees.short_description = "TN"
-    attendees = property(get_attendees)
+    # get_attendees.short_description = "TN"
+    # attendees = property(get_attendees)
 
-    def get_funding(self) -> Decimal:
-        return self.actual_funding or self.requested_funding
+    # def get_training_days(self) -> int:
+    #     return self.actual_training_days or self.planned_training_days
 
-    get_funding.short_description = "Förderung"
-    funding = property(get_funding)
+    # get_training_days.short_description = "Bildungstage"
+    # training_days = property(get_training_days)
 
-    def get_training_days(self) -> int:
-        return self.actual_training_days or self.planned_training_days
-
-    get_training_days.short_description = "Bildungstage"
-    training_days = property(get_training_days)
-
-    @property
-    def tnt_cost(self) -> Optional[Decimal]:
-        if self.tnt == 0:
-            return None
-        return (self.funding / self.tnt).quantize(Decimal("1.00"))
-
-    def get_deadline(self) -> datetime.date:
+    def calc_deadline(self) -> datetime.date:
         quarter = get_quarter(self.end_date)
         year = self.end_date.year
         deadlines = [
@@ -221,27 +259,6 @@ class Seminar(models.Model):
             datetime.date(year + 1, 1, 15),
         ]
         return deadlines[quarter]
-
-    get_deadline.short_description = "Abrechnungsdeadline"
-    deadline = property(get_deadline)
-
-    def get_deadline_expired(self) -> bool:
-        not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
-        expired = self.deadline < datetime.date.today()
-        return expired and not_sent
-
-    get_deadline_expired.short_description = "Deadline abgelaufen"
-    deadline_expired = property(get_deadline_expired)
-
-    def get_deadline_in_two_weeks(self) -> bool:
-        not_sent = self.status in ("angemeldet", "zugesagt", "stattgefunden")
-        in_two_weeks: bool = self.deadline < datetime.date.today() + datetime.timedelta(
-            days=14
-        )
-        return in_two_weeks and not_sent and not self.deadline_expired
-
-    get_deadline_in_two_weeks.short_description = "Deadline in den nächsten 2 Wochen"
-    deadline_in_two_weeks = property(get_deadline_in_two_weeks)
 
     def get_income_total(self) -> Optional[Decimal]:
         return add_none(self.income_fees, self.income_public, self.income_other)
@@ -261,9 +278,20 @@ class Seminar(models.Model):
     get_expense_total.short_description = "Gesamt-Ausgaben"
     expense_total = property(get_expense_total)
 
+    def get_expense_minus_income(self) -> Optional[Decimal]:
+        if not self.expense_total and not self.income_total:
+            return None
+        if not self.income_total:
+            return self.expense_total
+        if not self.expense_total:
+            return -self.income_total
+        return self.expense_total - self.income_total
+
+    get_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
+    expense_minus_income = property(get_expense_minus_income)
+
 
 class SeminarComment(models.Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     text = models.TextField()
     owner = models.ForeignKey(
         User,
@@ -275,6 +303,7 @@ class SeminarComment(models.Model):
     seminar = models.ForeignKey(
         Seminar, on_delete=models.CASCADE, related_name="comments"
     )
+    is_internal = models.BooleanField("intern?", default=False)
 
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
