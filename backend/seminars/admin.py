@@ -125,18 +125,6 @@ class SeminarAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Abrechnung - Einnahmen",
-            {
-                "classes": ("js-sum",),
-                "fields": (
-                    "income_fees",
-                    "income_public",
-                    "income_other",
-                    "income_total",
-                ),
-            },
-        ),
-        (
             "Abrechnung - Ausgaben",
             {
                 "classes": ("js-sum",),
@@ -147,6 +135,18 @@ class SeminarAdmin(admin.ModelAdmin):
                     "expense_travel",
                     "expense_other",
                     "expense_total",
+                ),
+            },
+        ),
+        (
+            "Abrechnung - Einnahmen",
+            {
+                "classes": ("js-sum",),
+                "fields": (
+                    "income_fees",
+                    "income_public",
+                    "income_other",
+                    "income_total",
                 ),
             },
         ),
