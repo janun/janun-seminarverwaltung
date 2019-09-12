@@ -3,7 +3,7 @@ import csv
 from django.contrib import admin
 from django import forms
 from django.db import models
-from django.db.models import Max, Sum, When, Case, Avg, F, ExpressionWrapper
+from django.db.models import Max, Sum, Avg
 from django.http import HttpResponse
 
 from django_admin_listfilter_dropdown.filters import (
@@ -164,24 +164,25 @@ class SeminarAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context)
-        queryset = response.context_data["cl"].queryset
-        extra_context = queryset.aggregate(
-            funding_sum=Sum("funding"),
-            funding_avg=Avg("funding"),
-            funding_max=Max("funding"),
-            tnt_sum=Sum("tnt"),
-            tnt_avg=Avg("tnt"),
-            tnt_max=Max("tnt"),
-            tnt_cost_avg=Avg("tnt_cost"),
-            tnt_cost_max=Max("tnt_cost"),
-            attendees_sum=Sum("attendees"),
-            attendees_avg=Avg("attendees"),
-            attendees_max=Max("attendees"),
-            training_days_sum=Sum("training_days"),
-            training_days_avg=Avg("training_days"),
-            training_days_max=Max("training_days"),
-        )
-        response.context_data.update(extra_context)
+        if hasattr(response, "context_data"):
+            queryset = response.context_data["cl"].queryset
+            extra_context = queryset.aggregate(
+                funding_sum=Sum("funding"),
+                funding_avg=Avg("funding"),
+                funding_max=Max("funding"),
+                tnt_sum=Sum("tnt"),
+                tnt_avg=Avg("tnt"),
+                tnt_max=Max("tnt"),
+                tnt_cost_avg=Avg("tnt_cost"),
+                tnt_cost_max=Max("tnt_cost"),
+                attendees_sum=Sum("attendees"),
+                attendees_avg=Avg("attendees"),
+                attendees_max=Max("attendees"),
+                training_days_sum=Sum("training_days"),
+                training_days_avg=Avg("training_days"),
+                training_days_max=Max("training_days"),
+            )
+            response.context_data.update(extra_context)
         return response
 
     def formatted_deadline(self, obj):

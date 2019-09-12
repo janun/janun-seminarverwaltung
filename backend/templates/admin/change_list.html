@@ -4,20 +4,20 @@
 {% block breadcrumbs %}{% endblock %}
 
 
-{% block content %}
+{% comment %} {% block content %}
 <table class="stats">
     <thead>
         <tr>
             <th></th>
-            <th>Förderung</th>
-            <th>TNT</th>
-            <th>€/TNT</th>
-            <th># TN</th>
-            <th>Tage</th>
+            <th><div class="text"><a>Förderung</a></div></th>
+            <th><div class="text"><a>TNT</a></div></th>
+            <th><div class="text"><a>€/TNT</a></div></th>
+            <th><div class="text"><a># TN</a></div></th>
+            <th><div class="text"><a>Tage</a></div></th>
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="row1">
             <td>Summe</td>
             <td>{{ funding_sum|floatformat:2|intcomma }}</td>
             <td>{{ tnt_sum }}</td>
@@ -25,7 +25,7 @@
             <td>{{ attendees_sum }}</td>
             <td>{{ training_days_sum }}</td>
         </tr>
-        <tr>
+        <tr class="row2">
             <td>Mittel</td>
             <td>{{ funding_avg|floatformat:2|intcomma }}</td>
             <td>{{ tnt_avg|floatformat:2 }}</td>
@@ -33,7 +33,7 @@
             <td>{{ attendees_avg|floatformat:2 }}</td>
             <td>{{ training_days_avg|floatformat:2 }}</td>
         </tr>
-        <tr>
+        <tr class="row1">
             <td>Max</td>
             <td>{{ funding_max|floatformat:2|intcomma }}</td>
             <td>{{ tnt_max }}</td>
@@ -45,4 +45,4 @@
 </table>
 
 {{ block.super }}
-{% endblock %}
+{% endblock %} {% endcomment %}

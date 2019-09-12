@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from model_utils import Choices
+from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
 
 from backend.groups.models import JANUNGroup
 
@@ -54,3 +56,10 @@ class User(AbstractUser):
 
     def get_full_name(self) -> str:
         return self.name
+
+    def get_admin_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return reverse(
+            "admin:%s_%s_change" % (content_type.app_label, content_type.model),
+            args=(self.id,),
+        )
