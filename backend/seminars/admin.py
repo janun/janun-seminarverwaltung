@@ -5,6 +5,7 @@ from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
 from django.http import HttpResponse
+from reversion.admin import VersionAdmin
 
 from django_admin_listfilter_dropdown.filters import (
     ChoiceDropdownFilter,
@@ -40,7 +41,7 @@ class CommentsInline(admin.StackedInline):
 
 
 @admin.register(Seminar)
-class SeminarAdmin(admin.ModelAdmin):
+class SeminarAdmin(VersionAdmin):
     search_fields = [
         "title",
         "description",

@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
-from model_utils import Choices
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
+
+from model_utils import Choices
 
 from backend.groups.models import JANUNGroup
 

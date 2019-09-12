@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "reversion",
     "django_filters",
     "allauth",
     "allauth.account",
