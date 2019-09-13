@@ -1,46 +1,20 @@
 {% extends "admin/change_list.html" %}
 {% load humanize %}
 
-
-{% comment %} {% block content %}
-<table class="stats">
-    <thead>
-        <tr>
-            <th></th>
-            <th><div class="text"><a>Förderung</a></div></th>
-            <th><div class="text"><a>TNT</a></div></th>
-            <th><div class="text"><a>€/TNT</a></div></th>
-            <th><div class="text"><a># TN</a></div></th>
-            <th><div class="text"><a>Tage</a></div></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="row1">
-            <td>Summe</td>
-            <td>{{ funding_sum|floatformat:2|intcomma }}</td>
-            <td>{{ tnt_sum }}</td>
-            <td></td>
-            <td>{{ attendees_sum }}</td>
-            <td>{{ training_days_sum }}</td>
-        </tr>
-        <tr class="row2">
-            <td>Mittel</td>
-            <td>{{ funding_avg|floatformat:2|intcomma }}</td>
-            <td>{{ tnt_avg|floatformat:2 }}</td>
-            <td>{{ tnt_cost_avg|floatformat:2 }}</td>
-            <td>{{ attendees_avg|floatformat:2 }}</td>
-            <td>{{ training_days_avg|floatformat:2 }}</td>
-        </tr>
-        <tr class="row1">
-            <td>Max</td>
-            <td>{{ funding_max|floatformat:2|intcomma }}</td>
-            <td>{{ tnt_max }}</td>
-            <td>{{ tnt_cost_max|floatformat:2 }}</td>
-            <td>{{ attendees_max }}</td>
-            <td>{{ training_days_max }}</td>
-        </tr>
-    </tbody>
+{% block content %}
+<table id="change_list_stats" class="text-green">
+    <tr>
+        <td><span class="big">{{ cl.result_count }}</span> Seminare</td>
+        <td><span class="big">{{ funding_sum|floatformat:2 }}</span> €</td>
+        <td><span class="big">{{ tnt_sum|default:"?"|intcomma }}</span> TNT</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Ø <span class="bi">{{ funding_avg|floatformat:2 }}</span> €</td>
+        <td>Ø <span class="bi">{{ tnt_avg|default:"?"|floatformat:2 }}</span> TNT</td>
+        <td>Ø <span class="bi">{{ tnt_cost_avg|floatformat:2|intcomma|default:"?" }}</span> €/TNT</td>
+    </tr>
 </table>
-
+       
 {{ block.super }}
-{% endblock %} {% endcomment %}
+{% endblock %}

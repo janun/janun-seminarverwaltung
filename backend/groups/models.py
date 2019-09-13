@@ -1,5 +1,19 @@
 from django.db import models
 from django.utils.text import slugify
+from django.db.models import Count, Sum
+
+
+class JANUNGroupQuerySet(models.QuerySet):
+    def add_annotations(self):
+        return self.annotate(
+            seminar_count=Count("seminars"),
+            actual_tnt_sum=Sum("seminars__actual_attendence_days_total"),
+        )
+
+
+class JANUNGroupManager(models.Manager.from_queryset(JANUNGroupQuerySet)):
+    def get_queryset(self):
+        return super().get_queryset().add_annotations()
 
 
 class JANUNGroup(models.Model):
@@ -14,6 +28,8 @@ class JANUNGroup(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    objects = JANUNGroupManager()
 
     class Meta:
         ordering = ("name",)

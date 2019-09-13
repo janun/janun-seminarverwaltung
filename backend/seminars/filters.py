@@ -57,16 +57,6 @@ class QuarterListFilter(MultipleListFilter):
             ("4", "4. Quartal"),
         )
 
-    def queryset(self, request, queryset):
-        if request.GET.get(self.parameter_name):
-            kwargs = {self.parameter_name: request.GET[self.parameter_name].split(",")}
-            queryset = queryset.filter(**kwargs)
-        return queryset
-
-    # def queryset(self, request, queryset):
-    #     if self.value():
-    #         return queryset.filter(start_date__quarter=self.value())
-
 
 class YearListFilter(admin.SimpleListFilter):
     template = "django_admin_listfilter_dropdown/dropdown_filter.html"

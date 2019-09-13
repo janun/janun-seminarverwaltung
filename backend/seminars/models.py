@@ -100,6 +100,7 @@ class Seminar(models.Model):
         User,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="seminars",
         verbose_name="Eigentümer_in",
     )
@@ -117,11 +118,17 @@ class Seminar(models.Model):
     end_date = models.DateField("End-Datum")
     end_time = models.TimeField("End-Zeit", blank=True, null=True)
     location = models.CharField("Ort", max_length=255, blank=True)
-    planned_training_days = models.PositiveSmallIntegerField("geplante Bildungstage")
-    planned_attendees_min = models.PositiveSmallIntegerField("geplante TN min.")
-    planned_attendees_max = models.PositiveSmallIntegerField("geplante TN max.")
+    planned_training_days = models.PositiveSmallIntegerField(
+        "geplante Bildungstage", null=True
+    )
+    planned_attendees_min = models.PositiveSmallIntegerField(
+        "geplante TN min.", null=True
+    )
+    planned_attendees_max = models.PositiveSmallIntegerField(
+        "geplante TN max.", null=True
+    )
     requested_funding = models.DecimalField(
-        "angeforderte Förderung", max_digits=10, decimal_places=2
+        "angeforderte Förderung", max_digits=10, decimal_places=2, null=True
     )
 
     # Abrechnungsfelder:
@@ -146,6 +153,7 @@ class Seminar(models.Model):
     actual_funding = models.DecimalField(
         "Förderbedarf", max_digits=10, decimal_places=2, blank=True, null=True
     )
+    transferred_at = models.DateField("überwiesen am", blank=True, null=True)
     expense_catering = models.DecimalField(
         "Ausgaben für Verpflegung",
         max_digits=10,
@@ -218,7 +226,11 @@ class Seminar(models.Model):
             raise ValidationError(
                 {"end_date": "End-Datum muss nach Start-Datum liegen."}
             )
-        if self.planned_attendees_max < self.planned_attendees_min:
+        if (
+            self.planned_attendees_max
+            and self.planned_attendees_min
+            and self.planned_attendees_max < self.planned_attendees_min
+        ):
             raise ValidationError(
                 {
                     "planned_attendees_max": "Muss größer/gleich "
@@ -256,36 +268,6 @@ class Seminar(models.Model):
             datetime.date(year + 1, 1, 15),
         ]
         return deadlines[quarter]
-
-    # def get_income_total(self) -> Optional[Decimal]:
-    #     return add_none(self.income_fees, self.income_public, self.income_other)
-
-    # get_income_total.short_description = "Gesamt-Einnahmen"
-    # income_total = property(get_income_total)
-
-    # def get_expense_total(self) -> Optional[Decimal]:
-    #     return add_none(
-    #         self.expense_accomodation,
-    #         self.expense_catering,
-    #         self.expense_other,
-    #         self.expense_referent,
-    #         self.expense_travel,
-    #     )
-
-    # get_expense_total.short_description = "Gesamt-Ausgaben"
-    # expense_total = property(get_expense_total)
-
-    # def get_expense_minus_income(self) -> Optional[Decimal]:
-    #     if not self.expense_total and not self.income_total:
-    #         return None
-    #     if not self.income_total:
-    #         return self.expense_total
-    #     if not self.expense_total:
-    #         return -self.income_total
-    #     return self.expense_total - self.income_total
-
-    # get_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
-    # expense_minus_income = property(get_expense_minus_income)
 
 
 class SeminarComment(models.Model):

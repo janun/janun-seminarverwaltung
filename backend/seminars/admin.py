@@ -1,18 +1,64 @@
-import csv
+import datetime
 
 from django.contrib import admin
 from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
-from django.http import HttpResponse
 from django.template.defaultfilters import floatformat
+from django.utils.html import format_html
+from django.utils import timezone
+from django.urls import reverse
 
 from reversion.admin import VersionAdmin
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
+from import_export import fields, resources
+from import_export.widgets import ForeignKeyWidget
+from import_export.admin import ImportExportMixin
+
+from backend.users.models import User
+from backend.groups.models import JANUNGroup
+
 from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment
 from .filters import QuarterListFilter, YearListFilter, DeadlineFilter, StatusListFilter
+
+
+def admin_change_url(obj):
+    app_label = obj._meta.app_label
+    model_name = obj._meta.model.__name__.lower()
+    return reverse("admin:{}_{}_change".format(app_label, model_name), args=(obj.pk,))
+
+
+def admin_link(attr, short_description, empty_description="-"):
+    def wrap(func):
+        def field_func(self, obj):
+            related_obj = getattr(obj, attr)
+            if related_obj is None:
+                return empty_description
+            url = admin_change_url(related_obj)
+            return format_html('<a href="{}">{}</a>', url, func(self, related_obj))
+
+        field_func.short_description = short_description
+        field_func.allow_tags = True
+        return field_func
+
+    return wrap
+
+
+class SeminarResource(resources.ModelResource):
+    owner = fields.Field(
+        column_name="owner", attribute="owner", widget=ForeignKeyWidget(User, "name")
+    )
+
+    group = fields.Field(
+        column_name="group",
+        attribute="group",
+        widget=ForeignKeyWidget(JANUNGroup, "name"),
+    )
+
+    class Meta:
+        model = Seminar
 
 
 class CommentInlineFormset(forms.BaseInlineFormSet):
@@ -39,7 +85,8 @@ class CommentsInline(admin.StackedInline):
 
 
 @admin.register(Seminar)
-class SeminarAdmin(VersionAdmin):
+class SeminarAdmin(ImportExportMixin, VersionAdmin):
+    resource_class = SeminarResource
     history_latest_first = True
     search_fields = [
         "title",
@@ -55,15 +102,16 @@ class SeminarAdmin(VersionAdmin):
         "start_date",
         "status",
         "owner",
-        "group",
+        "get_group",
         "training_days",
         "attendees",
         "tnt",
-        "formatted_funding",
-        "deadline",
+        "funding",
+        "tnt_cost",
+        "colored_deadline",
     )
     autocomplete_fields = ["owner", "group"]
-    list_editable = ("status",)
+    # list_editable = ("status",)
     readonly_fields = (
         "created_at",
         "updated_at",
@@ -152,7 +200,14 @@ class SeminarAdmin(VersionAdmin):
         ),
         (
             "Abrechnung - Bilanz",
-            {"fields": ("formatted_expense_minus_income", "actual_funding", "advance")},
+            {
+                "fields": (
+                    "formatted_expense_minus_income",
+                    "actual_funding",
+                    "advance",
+                    "transferred_at",
+                )
+            },
         ),
         ("Meta", {"fields": ("owner", "created_at", "updated_at")}),
     )
@@ -160,11 +215,14 @@ class SeminarAdmin(VersionAdmin):
     class Media:
         pass
 
-    actions = ["export_as_csv", "create_proof_of_use"]
+    def get_changeform_initial_data(self, request):
+        get_data = super().get_changeform_initial_data(request)
+        get_data["owner"] = request.user
+        return get_data
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context)
-        if hasattr(response, "context_data"):
+        if hasattr(response, "context_data") and "cl" in response.context_data:
             queryset = response.context_data["cl"].queryset
             extra_context = queryset.aggregate(
                 funding_sum=Sum("funding"),
@@ -188,16 +246,36 @@ class SeminarAdmin(VersionAdmin):
     # formatted_fields and accessors to annotated values
     # ------------------------------------------------------------------------------
 
+    @admin_link("group", "JANUN-Gruppe")
+    def get_group(self, group):
+        return group
+
     def formatted_deadline(self, obj):
         return obj.deadline.strftime("%d.%m.%Y")
 
     formatted_deadline.short_description = "Abrechnungsdeadline"
 
-    def formatted_funding(self, obj):
+    def colored_deadline(self, obj):
+        color = "transparent"
+        if obj.status in ("angemeldet", "zugesagt", "stattgefunden"):
+            if obj.deadline <= timezone.now().date():
+                color = "red"
+            elif obj.deadline - timezone.now().date() < datetime.timedelta(days=14):
+                color = "orange"
+        return format_html(
+            '<span class="small-circle" style="background:{0};"></span> {1}'.format(
+                color, obj.deadline.strftime("%d.%m.%Y")
+            )
+        )
+
+    colored_deadline.short_description = "Abrechnungsdeadline"
+    colored_deadline.admin_order_field = "deadline"
+
+    def funding(self, obj):
         return floatformat(obj.funding, 2)
 
-    formatted_funding.short_description = "Förderung"
-    formatted_funding.admin_order_field = "funding"
+    funding.short_description = "Förderung"
+    funding.admin_order_field = "funding"
 
     def training_days(self, obj):
         return obj.training_days
@@ -216,6 +294,12 @@ class SeminarAdmin(VersionAdmin):
 
     tnt.short_description = "TNT"
     tnt.admin_order_field = "tnt"
+
+    def tnt_cost(self, obj):
+        return floatformat(obj.tnt_cost, 2)
+
+    tnt_cost.short_description = "€/TNT"
+    tnt_cost.admin_order_field = "tnt_cost"
 
     def formatted_income_total(self, obj):
         return floatformat(obj.income_total, 2)
@@ -238,19 +322,7 @@ class SeminarAdmin(VersionAdmin):
     # actions
     # ------------------------------------------------------------------------------
 
-    def export_as_csv(self, request, queryset):
-        meta = self.model._meta
-        field_names = [field.name for field in meta.fields]
-        field_verbose_names = [field.verbose_name for field in meta.fields]
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
-        writer = csv.writer(response)
-        writer.writerow(field_verbose_names)
-        for obj in queryset:
-            writer.writerow([getattr(obj, field) for field in field_names])
-        return response
-
-    export_as_csv.short_description = "CSV-Export"
+    actions = ["create_proof_of_use"]
 
     def create_proof_of_use(self, request, queryset):
         context = {"seminars": queryset}

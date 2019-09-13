@@ -152,3 +152,31 @@ th {
 #changelist-filter li.selected a {
     color: var(--green-500);
 }
+
+
+.small-circle {
+    display: inline-block;
+    border-radius: 100%;
+    width: 8px;
+    height: 8px;
+}
+
+.big {
+    font-size: 20px;
+    font-weight: bold;
+    
+}
+
+.text-green {
+    color: var(--green-500);
+}
+
+
+/* right align numerical values in change list */
+.field-training_days, .column-training_days,
+.field-attendees, .column-attendees,
+.field-tnt, .column-tnt,
+.field-tnt_cost, .column-tnt_cost,
+.field-funding, .column-funding {
+    text-align: right;
+}
