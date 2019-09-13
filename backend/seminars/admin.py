@@ -40,6 +40,7 @@ class CommentsInline(admin.StackedInline):
 
 @admin.register(Seminar)
 class SeminarAdmin(VersionAdmin):
+    history_latest_first = True
     search_fields = [
         "title",
         "description",
@@ -249,7 +250,7 @@ class SeminarAdmin(VersionAdmin):
             writer.writerow([getattr(obj, field) for field in field_names])
         return response
 
-    export_as_csv.short_description = "Ausgewählte als CSV exportieren"
+    export_as_csv.short_description = "CSV-Export"
 
     def create_proof_of_use(self, request, queryset):
         context = {"seminars": queryset}
@@ -257,9 +258,7 @@ class SeminarAdmin(VersionAdmin):
         visible_filename = "Verwendungsnachweis.odt"
         return FileResponse(odt_filepath, visible_filename)
 
-    create_proof_of_use.short_description = (
-        "Ausgewählte als Verwendungsnachweis exportieren"
-    )
+    create_proof_of_use.short_description = "Verwendungsnachweis"
 
 
 # admin.site.register(SeminarComment)

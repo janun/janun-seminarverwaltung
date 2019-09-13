@@ -25,9 +25,10 @@ body {
     
 }
 
+/* cabin not looking good in form inputs :( */
 /* input, textarea, select, .form-row p, form .button {
     font-family: var(--font-family);
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.5;
 } */
 
@@ -39,13 +40,22 @@ a:focus, a:hover {
     color: var(--green-900);
 }
 
-
+/* de-emphasize object-tools */
 .object-tools a:link, .object-tools a:visited {
-    background-color: var(--green-500);
+    background: inherit;
+    font-size: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    color: var(--text-color);
+    border: 1px solid #ccc;
 }
-.object-tools a:focus, .object-tools a:hover {
-    background-color: var(--green-700);
+
+/* emphasize addlink */
+.object-tools a.addlink {
+    padding-right: 12px;
 }
+
+
 
 input[type="submit"].default, .submit-row input.default {
     background-color: var(--green-500);
@@ -83,10 +93,9 @@ input[type="submit"].default:focus, .submit-row input.default:focus {
     color: var(--text-color);
 }
 
-#header#header .janunbrand.janunbrand {
+#header#header #site-name a {
     font-weight: bold;
     font-size: 16px;
-    margin-right: 20px;
     color: var(--green-500);
 }
 
@@ -127,10 +136,11 @@ th {
 }
 
 
-
+/* de-emphasize delete link */
 .submit-row a.deletelink, .submit-row a.deletelink:focus, .submit-row a.deletelink:hover, .submit-row a.deletelink:active {
     background: inherit;
     color: inherit;
+    font-size: 13px;
 }
 
 
