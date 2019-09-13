@@ -125,3 +125,8 @@ th {
 .button, input[type="submit"], input[type="button"], .submit-row input, a.button {
     background: #b9b9b9;
 }
+
+
+#changelist-filter li.selected a {
+    color: var(--green-500);
+}

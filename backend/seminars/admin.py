@@ -5,16 +5,14 @@ from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
 from django.http import HttpResponse
-from reversion.admin import VersionAdmin
+from django.template.defaultfilters import floatformat
 
-from django_admin_listfilter_dropdown.filters import (
-    ChoiceDropdownFilter,
-    RelatedDropdownFilter,
-)
+from reversion.admin import VersionAdmin
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment
-from .filters import QuarterListFilter, YearListFilter, OwnerFilter, DeadlineFilter
+from .filters import QuarterListFilter, YearListFilter, DeadlineFilter, StatusListFilter
 
 
 class CommentInlineFormset(forms.BaseInlineFormSet):
@@ -60,7 +58,7 @@ class SeminarAdmin(VersionAdmin):
         "training_days",
         "attendees",
         "tnt",
-        "funding",
+        "formatted_funding",
         "deadline",
     )
     autocomplete_fields = ["owner", "group"]
@@ -69,16 +67,16 @@ class SeminarAdmin(VersionAdmin):
         "created_at",
         "updated_at",
         "formatted_deadline",
-        "income_total",
-        "expense_total",
-        "expense_minus_income",
+        "formatted_income_total",
+        "formatted_expense_total",
+        "formatted_expense_minus_income",
     )
     list_select_related = ("owner", "group")
     list_filter = (
-        ("status", ChoiceDropdownFilter),
         YearListFilter,
         QuarterListFilter,
-        OwnerFilter,
+        StatusListFilter,
+        ("owner", RelatedDropdownFilter),
         ("group", RelatedDropdownFilter),
         DeadlineFilter,
     )
@@ -135,7 +133,7 @@ class SeminarAdmin(VersionAdmin):
                     "expense_referent",
                     "expense_travel",
                     "expense_other",
-                    "expense_total",
+                    "formatted_expense_total",
                 ),
             },
         ),
@@ -147,13 +145,13 @@ class SeminarAdmin(VersionAdmin):
                     "income_fees",
                     "income_public",
                     "income_other",
-                    "income_total",
+                    "formatted_income_total",
                 ),
             },
         ),
         (
             "Abrechnung - Bilanz",
-            {"fields": ("expense_minus_income", "actual_funding", "advance")},
+            {"fields": ("formatted_expense_minus_income", "actual_funding", "advance")},
         ),
         ("Meta", {"fields": ("owner", "created_at", "updated_at")}),
     )
@@ -186,16 +184,19 @@ class SeminarAdmin(VersionAdmin):
             response.context_data.update(extra_context)
         return response
 
+    # formatted_fields and accessors to annotated values
+    # ------------------------------------------------------------------------------
+
     def formatted_deadline(self, obj):
         return obj.deadline.strftime("%d.%m.%Y")
 
     formatted_deadline.short_description = "Abrechnungsdeadline"
 
-    def funding(self, obj):
-        return obj.funding
+    def formatted_funding(self, obj):
+        return floatformat(obj.funding, 2)
 
-    funding.short_description = "Förderung"
-    funding.admin_order_field = "funding"
+    formatted_funding.short_description = "Förderung"
+    formatted_funding.admin_order_field = "funding"
 
     def training_days(self, obj):
         return obj.training_days
@@ -214,6 +215,27 @@ class SeminarAdmin(VersionAdmin):
 
     tnt.short_description = "TNT"
     tnt.admin_order_field = "tnt"
+
+    def formatted_income_total(self, obj):
+        return floatformat(obj.income_total, 2)
+
+    formatted_income_total.short_description = "Gesamt-Einnahmen"
+    formatted_income_total.admin_order_field = "income_total"
+
+    def formatted_expense_total(self, obj):
+        return floatformat(obj.expense_total, 2)
+
+    formatted_expense_total.short_description = "Gesamt-Ausgaben"
+    formatted_expense_total.admin_order_field = "expense_total"
+
+    def formatted_expense_minus_income(self, obj):
+        return floatformat(obj.expense_minus_income, 2)
+
+    formatted_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
+    formatted_expense_minus_income.admin_order_field = "expense_minus_income"
+
+    # actions
+    # ------------------------------------------------------------------------------
 
     def export_as_csv(self, request, queryset):
         meta = self.model._meta

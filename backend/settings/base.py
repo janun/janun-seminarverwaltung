@@ -53,7 +53,6 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "admin_auto_filters",
     "django_admin_listfilter_dropdown",
 ]
 LOCAL_APPS = [

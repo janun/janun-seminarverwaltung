@@ -17,7 +17,6 @@ django-allauth = "*"
 django-model-utils = "*"
 argon2-cffi = "*"
 django-environ = "*"
-django-admin-autocomplete-filter = "*"
 django-admin-list-filter-dropdown = "*"
 django-reversion = "*"
 

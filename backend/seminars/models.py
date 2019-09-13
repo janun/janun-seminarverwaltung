@@ -1,11 +1,12 @@
 import datetime
 from decimal import Decimal
 from typing import Optional
+from model_utils import Choices
 
 from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper
 from django.core.validators import ValidationError
-from model_utils import Choices
+from django.db.models.functions import Coalesce
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -24,29 +25,47 @@ def add_none(*p) -> Optional[Decimal]:
 
 class SeminarQuerySet(models.QuerySet):
     def add_annotations(self):
-        return self.annotate(
-            funding=Case(
-                When(actual_funding=None, then="requested_funding"),
-                default="actual_funding",
-            ),
-            tnt=Case(
-                When(
-                    actual_attendence_days_total=None,
-                    then=F("planned_attendees_max") * F("planned_training_days"),
+        return (
+            self.annotate(
+                planned_attendence_days=F("planned_attendees_max")
+                * F("planned_training_days")
+            )
+            .annotate(
+                funding=Case(
+                    When(actual_funding=None, then="requested_funding"),
+                    default="actual_funding",
                 ),
-                default="actual_attendence_days_total",
-            ),
-            tnt_cost=ExpressionWrapper(
-                F("funding") / F("tnt"), output_field=models.DecimalField()
-            ),
-            attendees=Case(
-                When(actual_attendees_total=None, then="planned_attendees_max"),
-                default="actual_attendees_total",
-            ),
-            training_days=Case(
-                When(actual_training_days=None, then="planned_training_days"),
-                default="actual_training_days",
-            ),
+                tnt=Case(
+                    When(
+                        actual_attendence_days_total=None,
+                        then="planned_attendence_days",
+                    ),
+                    default="actual_attendence_days_total",
+                ),
+                tnt_cost=ExpressionWrapper(
+                    F("funding") / F("tnt"), output_field=models.DecimalField()
+                ),
+                attendees=Case(
+                    When(actual_attendees_total=None, then="planned_attendees_max"),
+                    default="actual_attendees_total",
+                ),
+                training_days=Case(
+                    When(actual_training_days=None, then="planned_training_days"),
+                    default="actual_training_days",
+                ),
+                income_total=Coalesce("income_fees", 0)
+                + Coalesce("income_public", 0)
+                + Coalesce("income_other", 0),
+                expense_total=Coalesce("expense_accomodation", 0)
+                + Coalesce("expense_catering", 0)
+                + Coalesce("expense_other", 0)
+                + Coalesce("expense_referent", 0)
+                + Coalesce("expense_travel", 0),
+            )
+            .annotate(
+                expense_minus_income=Coalesce("expense_total", 0)
+                - Coalesce("income_total", 0)
+            )
         )
 
 
@@ -227,28 +246,6 @@ class Seminar(models.Model):
         self.deadline = self.calc_deadline()
         super().save(*args, **kwargs)
 
-    @property
-    def planned_tnt(self) -> int:
-        return self.planned_attendees_max * self.planned_training_days
-
-    # def get_tnt(self) -> int:
-    #     return self.actual_attendence_days_total or self.planned_tnt
-
-    # get_tnt.short_description = "TNT"
-    # tnt = property(get_tnt)
-
-    # def get_attendees(self) -> int:
-    #     return self.actual_attendees_total or self.planned_attendees_max
-
-    # get_attendees.short_description = "TN"
-    # attendees = property(get_attendees)
-
-    # def get_training_days(self) -> int:
-    #     return self.actual_training_days or self.planned_training_days
-
-    # get_training_days.short_description = "Bildungstage"
-    # training_days = property(get_training_days)
-
     def calc_deadline(self) -> datetime.date:
         quarter = get_quarter(self.end_date)
         year = self.end_date.year
@@ -260,35 +257,35 @@ class Seminar(models.Model):
         ]
         return deadlines[quarter]
 
-    def get_income_total(self) -> Optional[Decimal]:
-        return add_none(self.income_fees, self.income_public, self.income_other)
+    # def get_income_total(self) -> Optional[Decimal]:
+    #     return add_none(self.income_fees, self.income_public, self.income_other)
 
-    get_income_total.short_description = "Gesamt-Einnahmen"
-    income_total = property(get_income_total)
+    # get_income_total.short_description = "Gesamt-Einnahmen"
+    # income_total = property(get_income_total)
 
-    def get_expense_total(self) -> Optional[Decimal]:
-        return add_none(
-            self.expense_accomodation,
-            self.expense_catering,
-            self.expense_other,
-            self.expense_referent,
-            self.expense_travel,
-        )
+    # def get_expense_total(self) -> Optional[Decimal]:
+    #     return add_none(
+    #         self.expense_accomodation,
+    #         self.expense_catering,
+    #         self.expense_other,
+    #         self.expense_referent,
+    #         self.expense_travel,
+    #     )
 
-    get_expense_total.short_description = "Gesamt-Ausgaben"
-    expense_total = property(get_expense_total)
+    # get_expense_total.short_description = "Gesamt-Ausgaben"
+    # expense_total = property(get_expense_total)
 
-    def get_expense_minus_income(self) -> Optional[Decimal]:
-        if not self.expense_total and not self.income_total:
-            return None
-        if not self.income_total:
-            return self.expense_total
-        if not self.expense_total:
-            return -self.income_total
-        return self.expense_total - self.income_total
+    # def get_expense_minus_income(self) -> Optional[Decimal]:
+    #     if not self.expense_total and not self.income_total:
+    #         return None
+    #     if not self.income_total:
+    #         return self.expense_total
+    #     if not self.expense_total:
+    #         return -self.income_total
+    #     return self.expense_total - self.income_total
 
-    get_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
-    expense_minus_income = property(get_expense_minus_income)
+    # get_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
+    # expense_minus_income = property(get_expense_minus_income)
 
 
 class SeminarComment(models.Model):
