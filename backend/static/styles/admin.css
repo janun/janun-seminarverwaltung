@@ -12,7 +12,8 @@
     --green-900: #1a4614;
     --background-color: #fcfefb;
     --text-color: #2d3748;
-    --gray-500: #e7e7e7;
+    --gray-500: #b9b9b9;
+    
 }
 
 body {
@@ -75,7 +76,7 @@ input[type="submit"].default:focus, .submit-row input.default:focus {
     background-color: white;
     color: var(--text-color);
     box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
-    margin-bottom: 20px;
+    
 }
 
 #header#header a {
@@ -96,7 +97,18 @@ input[type="submit"].default:focus, .submit-row input.default:focus {
 }
 
 div.breadcrumbs {
-    display: none;
+    background: transparent;
+    color: rgba(0,0,0,.5);
+    font-size: 12px;
+    padding: 20px 40px;
+}
+
+div.breadcrumbs a {
+    color: var(--green-400);
+}
+
+div.breadcrumbs a:hover, div.breadcrumbs a:focus {
+    color: var(--green-500);
 }
 
 
@@ -123,7 +135,7 @@ th {
 
 
 .button, input[type="submit"], input[type="button"], .submit-row input, a.button {
-    background: #b9b9b9;
+    background: var(--gray-500);
 }
 
 
