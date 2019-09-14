@@ -113,6 +113,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "backend.users.middleware.SetLastVisitMiddleware",
+    "reversion.middleware.RevisionMiddleware",
 ]
 
 # STATIC

@@ -1,7 +1,6 @@
 {% extends 'admin/base.html' %}
 {% load static %}
 
-
 {% block extrahead %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "styles/admin.css" %}">
@@ -10,7 +9,7 @@
 
 {% block branding %}
 <div class="header-left">
-    <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:"JANUN Seminarverwaltung" }}</a></h1>
     {% if has_permission %}
         <div class="custom-menu">
             {% if perms.seminars %}

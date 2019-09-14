@@ -1,5 +1,7 @@
 from django.contrib import admin
-
+from django.utils import timezone
+from django.db.models import Sum, Avg
+from django.template.defaultfilters import floatformat
 
 from .models import JANUNGroup
 
@@ -18,25 +20,53 @@ class JANUNGroupAdmin(admin.ModelAdmin):
         "name",
         "members_display",
         "hats_display",
-        "seminar_count",
-        "actual_tnt_sum",
+        "seminar_count_this_year",
+        "tnt_sum_this_year",
+        "funding_this_year",
+        "tnt_cost_this_year",
     )
     inlines = [MembershipInline]
     search_fields = ["name"]
 
     fieldsets = ((None, {"fields": ("name",)}),)
 
-    def seminar_count(self, obj):
-        return obj.seminar_count
+    # statistic
+    # -----------
+    def seminar_count_this_year(self, obj):
+        return obj.seminars.this_year().is_confirmed().count()
 
-    seminar_count.short_description = "# Seminare"
-    seminar_count.admin_order_field = "seminar_count"
+    seminar_count_this_year.short_description = "Seminare {0}".format(
+        timezone.now().year
+    )
 
-    def actual_tnt_sum(self, obj):
-        return obj.actual_tnt_sum
+    def tnt_sum_this_year(self, obj):
+        return (
+            obj.seminars.this_year()
+            .is_confirmed()
+            .aggregate(tnt_sum=Sum("tnt"))["tnt_sum"]
+        )
 
-    actual_tnt_sum.short_description = "TNT"
-    actual_tnt_sum.admin_order_field = "actual_tnt_sum"
+    tnt_sum_this_year.short_description = "TNT {0}".format(timezone.now().year)
+
+    def funding_this_year(self, obj):
+        return floatformat(
+            obj.seminars.this_year()
+            .is_confirmed()
+            .aggregate(funding_sum=Sum("funding"))["funding_sum"],
+            2,
+        )
+
+    funding_this_year.short_description = "Förderung {0}".format(timezone.now().year)
+
+    def tnt_cost_this_year(self, obj):
+        return floatformat(
+            obj.seminars.this_year()
+            .is_confirmed()
+            .aggregate(tnt_cost_avg=Avg("tnt_cost"))["tnt_cost_avg"],
+            2,
+        )
+
+    tnt_cost_this_year.short_description = "€/TNT {0}".format(timezone.now().year)
 
     def members_display(self, obj):
         return ", ".join([member.name for member in obj.members.all()])

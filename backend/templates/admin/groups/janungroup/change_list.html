@@ -1,0 +1,14 @@
+{% extends "admin/change_list.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+/* right align numeric fields */
+.column-seminar_count_this_year, .field-seminar_count_this_year,
+.column-tnt_sum_this_year, .field-tnt_sum_this_year,
+.column-funding_this_year, .field-funding_this_year,
+.column-tnt_cost_this_year, .field-tnt_cost_this_year {
+  text-align: right
+}
+</style>
+{% endblock %}

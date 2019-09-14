@@ -5,10 +5,7 @@ from django.db.models import Count, Sum
 
 class JANUNGroupQuerySet(models.QuerySet):
     def add_annotations(self):
-        return self.annotate(
-            seminar_count=Count("seminars"),
-            actual_tnt_sum=Sum("seminars__actual_attendence_days_total"),
-        )
+        return self
 
 
 class JANUNGroupManager(models.Manager.from_queryset(JANUNGroupQuerySet)):

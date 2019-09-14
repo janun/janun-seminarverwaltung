@@ -8,8 +8,11 @@ from django.template.defaultfilters import floatformat
 from django.utils.html import format_html
 from django.utils import timezone
 from django.urls import reverse
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
-from reversion.admin import VersionAdmin
+import reversion
+
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from import_export import fields, resources
@@ -84,8 +87,12 @@ class CommentsInline(admin.StackedInline):
         return formset
 
 
+class ChangeStatusForm(forms.Form):
+    new_status = forms.ChoiceField(label="Neuer Status", choices=Seminar.STATES)
+
+
 @admin.register(Seminar)
-class SeminarAdmin(ImportExportMixin, VersionAdmin):
+class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
     resource_class = SeminarResource
     history_latest_first = True
     search_fields = [
@@ -129,6 +136,7 @@ class SeminarAdmin(ImportExportMixin, VersionAdmin):
         ("group", RelatedDropdownFilter),
         DeadlineFilter,
     )
+    change_list_template = "admin/seminars/seminar/change_list.html"
     formfield_overrides = {
         models.CharField: {"widget": forms.widgets.TextInput(attrs={"size": "100"})}
     }
@@ -322,7 +330,7 @@ class SeminarAdmin(ImportExportMixin, VersionAdmin):
     # actions
     # ------------------------------------------------------------------------------
 
-    actions = ["create_proof_of_use"]
+    actions = ["create_proof_of_use", "change_status"]
 
     def create_proof_of_use(self, request, queryset):
         context = {"seminars": queryset}
@@ -331,6 +339,31 @@ class SeminarAdmin(ImportExportMixin, VersionAdmin):
         return FileResponse(odt_filepath, visible_filename)
 
     create_proof_of_use.short_description = "Verwendungsnachweis"
+
+    def change_status(self, request, queryset):
+        if "new_status" in request.POST:
+            form = ChangeStatusForm(request.POST)
+            if form.is_valid():
+                new_status = form.cleaned_data["new_status"]
+                count = queryset.count()
+                for seminar in queryset:
+                    seminar.status = new_status
+                    seminar.save()
+                self.message_user(
+                    request,
+                    "Status auf {0} geändert bei {1} Seminaren".format(
+                        new_status, count
+                    ),
+                )
+                return HttpResponseRedirect(request.get_full_path())
+        form = ChangeStatusForm()
+        return render(
+            request,
+            "admin/seminars/seminar/change_status.html",
+            context={"seminars": queryset, "form": form},
+        )
+
+    change_status.short_description = "Status ändern"
 
 
 # admin.site.register(SeminarComment)

@@ -1,20 +1,5 @@
 {% extends "admin/change_list.html" %}
-{% load humanize %}
 
 {% block content %}
-<table id="change_list_stats" class="text-green">
-    <tr>
-        <td><span class="big">{{ cl.result_count }}</span> Seminare</td>
-        <td><span class="big">{{ funding_sum|floatformat:2 }}</span> €</td>
-        <td><span class="big">{{ tnt_sum|default:"?"|intcomma }}</span> TNT</td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Ø <span class="bi">{{ funding_avg|floatformat:2 }}</span> €</td>
-        <td>Ø <span class="bi">{{ tnt_avg|default:"?"|floatformat:2 }}</span> TNT</td>
-        <td>Ø <span class="bi">{{ tnt_cost_avg|floatformat:2|intcomma|default:"?" }}</span> €/TNT</td>
-    </tr>
-</table>
-       
 {{ block.super }}
 {% endblock %}

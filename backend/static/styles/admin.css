@@ -1,28 +1,26 @@
 :root {
-    --font-family: "Cabin", sans-serif;
-    --green-50 : #fcfefb;
-    --green-100: #f6fff1;
-    --green-200: #d8f2d8;
-    --green-300: #aee1a5;
-    --green-400: #82b460;
-    --green-500: #3a9d00;
-    --green-600: #308701;
-    --green-700: #2b7b03;
-    --green-800: #236707;
-    --green-900: #1a4614;
-    --background-color: #fcfefb;
-    --text-color: #2d3748;
-    --gray-500: #b9b9b9;
-    
+  --font-family: "Cabin", sans-serif;
+  --green-50: #fcfefb;
+  --green-100: #f6fff1;
+  --green-200: #d8f2d8;
+  --green-300: #aee1a5;
+  --green-400: #82b460;
+  --green-500: #3a9d00;
+  --green-600: #308701;
+  --green-700: #2b7b03;
+  --green-800: #236707;
+  --green-900: #1a4614;
+  --background-color: #fcfefb;
+  --text-color: #2d3748;
+  --gray-500: #b9b9b9;
 }
 
 body {
-    font-size: 16px;
-    background: var(--background-color);
-    font-family: var(--font-family);
-    color: var(--text-color);
-    line-height: 1.5;
-    
+  font-size: 16px;
+  background: var(--background-color);
+  font-family: var(--font-family);
+  color: var(--text-color);
+  line-height: 1.5;
 }
 
 /* cabin not looking good in form inputs :( */
@@ -32,151 +30,134 @@ body {
     line-height: 1.5;
 } */
 
-
 a:link, a:visited {
-    color: var(--green-700);
+  color: var(--green-700);
 }
+
 a:focus, a:hover {
-    color: var(--green-900);
+  color: var(--green-900);
 }
 
 /* de-emphasize object-tools */
 .object-tools a:link, .object-tools a:visited {
-    background: inherit;
-    font-size: inherit;
-    text-transform: inherit;
-    letter-spacing: inherit;
-    color: var(--text-color);
-    border: 1px solid #ccc;
+  background: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  color: var(--text-color);
+  border: 1px solid #ccc;
 }
 
 /* emphasize addlink */
 .object-tools a.addlink {
-    padding-right: 12px;
+  padding-right: 12px;
 }
-
-
 
 input[type="submit"].default, .submit-row input.default {
-    background-color: var(--green-500);
+  background-color: var(--green-500);
 }
+
 input[type="submit"].default:hover, .submit-row input.default:hover,
 input[type="submit"].default:focus, .submit-row input.default:focus {
-    background-color: var(--green-700);
+  background-color: var(--green-700);
 }
 
-
 .module h2, .module caption, .inline-group h2 {
-    background-color: #f5f5f5;
-    color: var(--green-600);
-    padding: 15px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  background-color: #f5f5f5;
+  color: var(--green-600);
+  padding: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .module.module h2 a, .module.module caption a, .inline-group.inline-group h2 a {
-    color: var(--green-600);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  color: var(--green-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-
 #header {
-    height: 50px;
-    background-color: white;
-    color: var(--text-color);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
-    
+  height: 50px;
+  background-color: white;
+  color: var(--text-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 #header#header a {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 #header#header #site-name a {
-    font-weight: bold;
-    font-size: 16px;
-    color: var(--green-500);
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--green-500);
 }
 
-
 #header .header-left {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 div.breadcrumbs {
-    background: transparent;
-    color: rgba(0,0,0,.5);
-    font-size: 12px;
-    padding: 20px 40px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  padding: 20px 40px;
 }
 
 div.breadcrumbs a {
-    color: var(--green-400);
+  color: var(--green-400);
 }
 
 div.breadcrumbs a:hover, div.breadcrumbs a:focus {
-    color: var(--green-500);
+  color: var(--green-500);
 }
 
-
 #header .custom-menu a {
-    margin: 0px 10px;
+  margin: 0px 10px;
 }
 
 #header#header .custom-menu a.active {
-    color: var(--green-600);
-    font-weight: bold;
+  color: var(--green-600);
+  font-weight: bold;
 }
-
 
 th {
-    font-weight: normal;
+  font-weight: normal;
 }
-
 
 /* de-emphasize delete link */
 .submit-row a.deletelink, .submit-row a.deletelink:focus, .submit-row a.deletelink:hover, .submit-row a.deletelink:active {
-    background: inherit;
-    color: inherit;
-    font-size: 13px;
+  background: inherit;
+  color: inherit;
+  font-size: 13px;
 }
-
 
 .button, input[type="submit"], input[type="button"], .submit-row input, a.button {
-    background: var(--gray-500);
+  background: var(--gray-500);
 }
-
 
 #changelist-filter li.selected a {
-    color: var(--green-500);
+  color: var(--green-500);
 }
 
-
 .small-circle {
-    display: inline-block;
-    border-radius: 100%;
-    width: 8px;
-    height: 8px;
+  display: inline-block;
+  border-radius: 100%;
+  width: 8px;
+  height: 8px;
 }
 
 .big {
-    font-size: 20px;
-    font-weight: bold;
-    
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
 }
 
 .text-green {
-    color: var(--green-500);
+  color: var(--green-500);
 }
 
-
-/* right align numerical values in change list */
-.field-training_days, .column-training_days,
-.field-attendees, .column-attendees,
-.field-tnt, .column-tnt,
-.field-tnt_cost, .column-tnt_cost,
-.field-funding, .column-funding {
-    text-align: right;
+.button.primary, input[type=submit].primary, input[type=button].primary, .submit-row input.primary, a.button.primary {
+  background: var(--green-500);
 }

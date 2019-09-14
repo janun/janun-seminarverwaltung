@@ -1,0 +1,45 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}{% endblock %}
+
+
+{% block content %}
+<h1>Status ändern von {{ seminars|length }} Seminaren</h1>
+<form action="" method="post">{% csrf_token %}
+  {{ form.as_p }}
+
+  <input type="hidden" name="action" value="change_status" />
+  <a href="{{ request.get_full_path }}">Abbrechen</a>
+  <input type="submit" class="primary" value="Status ändern"/>
+  
+  <br>
+  <br>
+
+  Es geht um folgende Seminare:
+  <table style="margin: 20px 0px">
+    <thead>
+      <tr>
+        <th><div class="text">Titel</div></th>
+        <th><div class="text">Start-Datum</div></th>
+        <th><div class="text">jetziger Status</div></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for seminar in seminars %}
+        <tr>
+          <input type="hidden" name="_selected_action" value="{{ seminar.pk }}" />
+          <td>{{ seminar.title }}</td>
+          <td>{{ seminar.start_date }}</td>
+          <td>{{ seminar.status }}<td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if seminars|length > 10 %}
+    <a href="{{ request.get_full_path }}">Abbrechen</a>
+    <input type="submit" class="primary" value="Status ändern"/>
+  {% endif %}
+
+</form>
+{% endblock %}

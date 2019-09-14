@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -68,6 +69,40 @@ class SeminarQuerySet(models.QuerySet):
             )
         )
 
+    def is_confirmed(self):
+        return self.filter(
+            status__in=(
+                "zugesagt",
+                "stattgefunden",
+                "Abrechnung abgeschickt",
+                "Abrechnung angekommen",
+                "rechnerische Prüfung",
+                "inhaltliche Prüfung",
+                "Zweitprüfung",
+                "fertig geprüft",
+                "überwiesen",
+            )
+        )
+
+    def is_rejected(self):
+        return self.filter(
+            status__in=(
+                "abgelehnt",
+                "abgesagt",
+                "ohne Abrechnung",
+                "Abrechnung unmöglich",
+            )
+        )
+
+    def last_year(self):
+        return self.filter(start_date__year=timezone.now().year - 1)
+
+    def this_year(self):
+        return self.filter(start_date__year=timezone.now().year)
+
+    def next_year(self):
+        return self.filter(start_date__year=timezone.now().year + 1)
+
 
 class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
     def get_queryset(self):
@@ -119,16 +154,16 @@ class Seminar(models.Model):
     end_time = models.TimeField("End-Zeit", blank=True, null=True)
     location = models.CharField("Ort", max_length=255, blank=True)
     planned_training_days = models.PositiveSmallIntegerField(
-        "geplante Bildungstage", null=True
+        "geplante Bildungstage", null=True, blank=True
     )
     planned_attendees_min = models.PositiveSmallIntegerField(
-        "geplante TN min.", null=True
+        "geplante TN min.", null=True, blank=True
     )
     planned_attendees_max = models.PositiveSmallIntegerField(
-        "geplante TN max.", null=True
+        "geplante TN max.", null=True, blank=True
     )
     requested_funding = models.DecimalField(
-        "angeforderte Förderung", max_digits=10, decimal_places=2, null=True
+        "angeforderte Förderung", max_digits=10, decimal_places=2, null=True, blank=True
     )
 
     # Abrechnungsfelder:
@@ -219,7 +254,7 @@ class Seminar(models.Model):
     objects = SeminarManager()
 
     def __str__(self) -> str:
-        return self.title
+        return "{0} am {1}".format(self.title, self.start_date.strftime("%d.%m.%Y"))
 
     def clean(self):
         if self.end_date < self.start_date:
