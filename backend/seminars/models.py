@@ -4,7 +4,8 @@ from typing import Optional
 from model_utils import Choices
 
 from django.db import models
-from django.db.models import Case, When, F, ExpressionWrapper
+from django.db.models import Case, When, F, ExpressionWrapper, Value
+from django.db.models.functions import ExtractYear, Concat
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -29,7 +30,26 @@ class SeminarQuerySet(models.QuerySet):
         return (
             self.annotate(
                 planned_attendence_days=F("planned_attendees_max")
-                * F("planned_training_days")
+                * F("planned_training_days"),
+                deadline=Case(
+                    When(
+                        start_date__quarter=1,
+                        then=Concat(ExtractYear("start_date"), Value("-04-15")),
+                    ),
+                    When(
+                        start_date__quarter=2,
+                        then=Concat(ExtractYear("start_date"), Value("-07-15")),
+                    ),
+                    When(
+                        start_date__quarter=3,
+                        then=Concat(ExtractYear("start_date"), Value("-10-15")),
+                    ),
+                    When(
+                        start_date__quarter=4,
+                        then=Concat(ExtractYear("start_date") + 1, Value("-01-15")),
+                    ),
+                    output_field=models.DateField(),
+                ),
             )
             .annotate(
                 funding=Case(
@@ -239,10 +259,6 @@ class Seminar(models.Model):
         "Sonstige Einnahmen", max_digits=10, decimal_places=2, blank=True, null=True
     )
 
-    deadline = models.DateField(
-        "Abrechnungsdeadline", help_text="Aus End-Datum errechnet"
-    )
-
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
 
@@ -288,21 +304,6 @@ class Seminar(models.Model):
             raise ValidationError(
                 {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
             )
-
-    def save(self, *args, **kwargs):
-        self.deadline = self.calc_deadline()
-        super().save(*args, **kwargs)
-
-    def calc_deadline(self) -> datetime.date:
-        quarter = get_quarter(self.end_date)
-        year = self.end_date.year
-        deadlines = [
-            datetime.date(year, 4, 15),
-            datetime.date(year, 7, 15),
-            datetime.date(year, 10, 15),
-            datetime.date(year + 1, 1, 15),
-        ]
-        return deadlines[quarter]
 
 
 class SeminarComment(models.Model):

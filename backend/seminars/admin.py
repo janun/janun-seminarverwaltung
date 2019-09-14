@@ -4,10 +4,8 @@ from django.contrib import admin
 from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
-from django.template.defaultfilters import floatformat
 from django.utils.html import format_html
 from django.utils import timezone
-from django.urls import reverse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
@@ -21,32 +19,11 @@ from import_export.admin import ImportExportMixin
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
+from backend.utils import format_currency, format_with, admin_link
 
 from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment
 from .filters import QuarterListFilter, YearListFilter, DeadlineFilter, StatusListFilter
-
-
-def admin_change_url(obj):
-    app_label = obj._meta.app_label
-    model_name = obj._meta.model.__name__.lower()
-    return reverse("admin:{}_{}_change".format(app_label, model_name), args=(obj.pk,))
-
-
-def admin_link(attr, short_description, empty_description="-"):
-    def wrap(func):
-        def field_func(self, obj):
-            related_obj = getattr(obj, attr)
-            if related_obj is None:
-                return empty_description
-            url = admin_change_url(related_obj)
-            return format_html('<a href="{}">{}</a>', url, func(self, related_obj))
-
-        field_func.short_description = short_description
-        field_func.allow_tags = True
-        return field_func
-
-    return wrap
 
 
 class SeminarResource(resources.ModelResource):
@@ -108,7 +85,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         "title",
         "start_date",
         "status",
-        "owner",
+        "get_owner",
         "get_group",
         "training_days",
         "attendees",
@@ -254,9 +231,17 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
     # formatted_fields and accessors to annotated values
     # ------------------------------------------------------------------------------
 
-    @admin_link("group", "JANUN-Gruppe")
-    def get_group(self, group):
-        return group
+    @admin_link
+    def get_group(self, obj):
+        return obj.group
+
+    get_group.short_description = Seminar._meta.get_field("group").verbose_name
+
+    @admin_link
+    def get_owner(self, obj):
+        return obj.owner
+
+    get_owner.short_description = Seminar._meta.get_field("owner").verbose_name
 
     def formatted_deadline(self, obj):
         return obj.deadline.strftime("%d.%m.%Y")
@@ -279,8 +264,9 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
     colored_deadline.short_description = "Abrechnungsdeadline"
     colored_deadline.admin_order_field = "deadline"
 
+    @format_with(format_currency)
     def funding(self, obj):
-        return floatformat(obj.funding, 2)
+        return obj.funding
 
     funding.short_description = "Förderung"
     funding.admin_order_field = "funding"
@@ -289,7 +275,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         return obj.training_days
 
     training_days.short_description = "Bildungstage"
-    training_days.admin_order_field = "traning_days"
+    training_days.admin_order_field = "training_days"
 
     def attendees(self, obj):
         return obj.attendees
@@ -303,26 +289,30 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
     tnt.short_description = "TNT"
     tnt.admin_order_field = "tnt"
 
+    @format_with(format_currency)
     def tnt_cost(self, obj):
-        return floatformat(obj.tnt_cost, 2)
+        return obj.tnt_cost
 
     tnt_cost.short_description = "€/TNT"
     tnt_cost.admin_order_field = "tnt_cost"
 
+    @format_with(format_currency)
     def formatted_income_total(self, obj):
-        return floatformat(obj.income_total, 2)
+        return obj.income_total
 
     formatted_income_total.short_description = "Gesamt-Einnahmen"
     formatted_income_total.admin_order_field = "income_total"
 
+    @format_with(format_currency)
     def formatted_expense_total(self, obj):
-        return floatformat(obj.expense_total, 2)
+        return obj.expense_total
 
     formatted_expense_total.short_description = "Gesamt-Ausgaben"
     formatted_expense_total.admin_order_field = "expense_total"
 
+    @format_with(format_currency)
     def formatted_expense_minus_income(self, obj):
-        return floatformat(obj.expense_minus_income, 2)
+        return obj.expense_minus_income
 
     formatted_expense_minus_income.short_description = "Ausgaben minus Einnahmen"
     formatted_expense_minus_income.admin_order_field = "expense_minus_income"

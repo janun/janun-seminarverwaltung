@@ -1,5 +1,5 @@
 {% extends "admin/change_list.html" %}
-{% load humanize %}
+{% load janun %}
 
 {% block extrahead %}
 {{ block.super }}
@@ -20,14 +20,14 @@
 <table id="change_list_stats">
     <tr>
         <td><span class="big">{{ cl.result_count }}</span> Seminare</td>
-        <td><span class="big">{{ funding_sum|floatformat:2 }}</span> €</td>
-        <td><span class="big">{{ tnt_sum|default:"?"|intcomma }}</span> TNT</td>
+        <td><span class="big">{{ funding_sum|number }}</span> €</td>
+        <td><span class="big">{{ tnt_sum|number:0 }}</span> TNT</td>
     </tr>
     <tr>
         <td></td>
-        <td>Ø <span class="bi">{{ funding_avg|floatformat:2 }}</span> €</td>
-        <td>Ø <span class="bi">{{ tnt_avg|default:"?"|floatformat:2 }}</span> TNT</td>
-        <td>Ø <span class="bi">{{ tnt_cost_avg|floatformat:2|intcomma|default:"?" }}</span> €/TNT</td>
+        <td>Ø <span class="bi">{{ funding_avg|number }}</span> €</td>
+        <td>Ø <span class="bi">{{ tnt_avg|number }}</span> TNT</td>
+        <td>Ø <span class="bi">{{ tnt_cost_avg|number }}</span> €/TNT</td>
     </tr>
 </table>
 {% endif %}

@@ -11,17 +11,11 @@
     </a>
 
     <div class="sm:ml-10 flex">
-      <a class="mx-2 flex items-center" href="/seminars/">
-        Seminare
+      {% if request.user.is_active and request.user.is_staff %}
+      <a class="mx-2 flex items-center" href="/admin/">
+        Verwaltung
       </a>
-
-       <a class="mx-2 flex items-center" href="/seminars/">
-        Kontos
-      </a>
-
-       <a class="mx-2 flex items-center" href="/seminars/">
-        Gruppen
-      </a>
+      {% endif %}
     </div>
 
   </div>
