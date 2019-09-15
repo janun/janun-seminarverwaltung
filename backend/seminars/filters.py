@@ -1,39 +1,24 @@
-import datetime
-
 from django.contrib import admin
-from django.utils import timezone
 
 from .models import Seminar
 from .filter_multiple import MultipleListFilter
 
 
 class DeadlineFilter(admin.SimpleListFilter):
-    title = "Deadline und Status"
+    title = "Deadline"
     parameter_name = "deadline"
 
     def lookups(self, request, model_admin):
         return (
             ("expired", "abgelaufen"),
-            ("soon_expired", "in 2 Wochen"),
-            ("not_soon_expired", "mehr als 2 Wochen hin"),
+            ("soon", "in 2 Wochen"),
+            ("not_soon", "mehr als 2 Wochen hin"),
+            ("not_applicable", "Nicht mehr anwendbar"),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == "expired":
-            return queryset.filter(
-                deadline__lte=timezone.now(),
-                status__in=("angemeldet", "zugesagt", "stattgefunden"),
-            )
-        if self.value() == "soon_expired":
-            return queryset.filter(
-                deadline__lte=timezone.now() + datetime.timedelta(days=14),
-                deadline__gt=timezone.now(),
-                status__in=("angemeldet", "zugesagt", "stattgefunden"),
-            )
-        if self.value() == "not_soon_expired":
-            return queryset.filter(
-                deadline__gt=timezone.now() + datetime.timedelta(days=14)
-            )
+        if self.value():
+            return queryset.filter(deadline_status=self.value())
         return queryset
 
 

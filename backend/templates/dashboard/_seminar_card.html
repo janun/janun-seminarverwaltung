@@ -1,0 +1,28 @@
+<a
+  class="block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+  style="min-height: 130px"
+  href="{{ seminar.get_absolute_url }}"
+>
+  <div class="flex items-baseline justify-between mb-1">
+    <span class="text-xs text-grey-600">
+      {{ seminar.start_date | date }} in {{ seminar.location }}
+    </span>
+    <span class="text-xs font-bold">{{ seminar.status }}</span>
+  </div>
+
+  <h3 class="mt-1 mb-2 leading-tight text-gray-800 font-bold">
+    {{ seminar.title }}
+  </h3>
+
+  {% if seminar.group %}
+    <span class="text-xs mb-1">Gruppe: {{ seminar.group.name }} </span>
+  {% endif %}
+
+  <div class="flex items-baseline mt-auto">
+    {% if seminar.deadline_applicable %}
+      <span class="text-xs ml-auto" title="Deadline">
+        {{ seminar.deadline | date }}
+      </span>
+    {% endif %}
+  </div>
+</a>

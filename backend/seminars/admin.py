@@ -1,11 +1,8 @@
-import datetime
-
 from django.contrib import admin
 from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
 from django.utils.html import format_html
-from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
@@ -250,11 +247,10 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
 
     def colored_deadline(self, obj):
         color = "transparent"
-        if obj.status in ("angemeldet", "zugesagt", "stattgefunden"):
-            if obj.deadline <= timezone.now().date():
-                color = "red"
-            elif obj.deadline - timezone.now().date() < datetime.timedelta(days=14):
-                color = "orange"
+        if obj.deadline_status == "soon":
+            color = "yellow"
+        if obj.deadline_status == "expired":
+            color = "red"
         return format_html(
             '<span class="small-circle" style="background:{0};"></span> {1}'.format(
                 color, obj.deadline.strftime("%d.%m.%Y")

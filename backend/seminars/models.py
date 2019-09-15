@@ -4,7 +4,7 @@ from typing import Optional
 from model_utils import Choices
 
 from django.db import models
-from django.db.models import Case, When, F, ExpressionWrapper, Value
+from django.db.models import Case, When, F, ExpressionWrapper, Value, Q
 from django.db.models.functions import ExtractYear, Concat, Cast
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
@@ -59,6 +59,14 @@ class SeminarQuerySet(models.QuerySet):
                 ),
             )
             .annotate(
+                deadline_applicable=Case(
+                    When(
+                        status__in=("angemeldet", "zugesagt", "stattgefunden"),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=models.BooleanField(),
+                ),
                 funding=Case(
                     When(actual_funding=None, then="requested_funding"),
                     default="actual_funding",
@@ -91,8 +99,27 @@ class SeminarQuerySet(models.QuerySet):
                 + Coalesce("expense_travel", 0),
             )
             .annotate(
+                deadline_status=Case(
+                    When(
+                        Q(deadline_applicable=True) & Q(deadline__lte=timezone.now()),
+                        then=Value("expired"),
+                    ),
+                    When(
+                        Q(deadline_applicable=True)
+                        & Q(deadline__lte=timezone.now() - datetime.timedelta(days=14)),
+                        then=Value("soon"),
+                    ),
+                    When(
+                        Q(deadline_applicable=True)
+                        & Q(deadline__gt=timezone.now() - datetime.timedelta(days=14)),
+                        then=Value("not_soon"),
+                    ),
+                    When(deadline_applicable=False, then=Value("not_applicable")),
+                    default=Value("unknown"),
+                    output_field=models.CharField(),
+                ),
                 expense_minus_income=Coalesce("expense_total", 0)
-                - Coalesce("income_total", 0)
+                - Coalesce("income_total", 0),
             )
         )
 
