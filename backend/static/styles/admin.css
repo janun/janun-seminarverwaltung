@@ -11,7 +11,7 @@
   --green-800: #236707;
   --green-900: #1a4614;
   --background-color: var(--green-50);
-  --text-color: #2d3748;
+  --text-color: #1a202c;
   --gray-500: #b9b9b9;
 }
 
@@ -48,8 +48,8 @@ a:focus, a:hover {
   border: 1px solid #ccc;
 }
 
-/* emphasize addlink */
-.object-tools a.addlink {
+/* fix padding */
+.object-tools a.viewsitelink, .object-tools a.golink, .object-tools a.addlink {
   padding-right: 12px;
 }
 

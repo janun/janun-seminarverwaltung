@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils import timezone
-from django.db.models import Sum, Avg
+from django.utils.html import format_html
+from django.urls import reverse
 
 from backend.utils import format_currency, format_number, format_with
 
@@ -22,7 +23,7 @@ class JANUNGroupAdmin(admin.ModelAdmin):
         "members_display",
         "hats_display",
         "seminar_count_this_year",
-        "tnt_sum_this_year",
+        "tnt_this_year",
         "funding_this_year",
         "tnt_cost_this_year",
     )
@@ -31,44 +32,42 @@ class JANUNGroupAdmin(admin.ModelAdmin):
 
     fieldsets = ((None, {"fields": ("name",)}),)
 
-    # statistic
-    # -----------
+    # statistic getters
+    # -----------------------
     def seminar_count_this_year(self, obj):
-        return obj.seminars.this_year().is_confirmed().count()
+        url = reverse(
+            "admin:seminars_seminar_changelist"
+        ) + "?group__id__exact={0}&year={1}".format(obj.pk, timezone.now().year)
+
+        return format_html('<a href="{0}">{1}</a>'.format(url, obj.seminars_this_year))
 
     seminar_count_this_year.short_description = "# Seminare {0}".format(
         timezone.now().year
     )
+    seminar_count_this_year.admin_order_field = "seminars_this_year"
 
     @format_with(format_number)
-    def tnt_sum_this_year(self, obj):
-        return (
-            obj.seminars.this_year()
-            .is_confirmed()
-            .aggregate(tnt_sum=Sum("tnt"))["tnt_sum"]
-        )
+    def tnt_this_year(self, obj):
+        return obj.tnt_this_year
 
-    tnt_sum_this_year.short_description = "∑ TNT {0}".format(timezone.now().year)
+    tnt_this_year.short_description = "∑ TNT {0}".format(timezone.now().year)
+    tnt_this_year.admin_order_field = "tnt_this_year"
 
     @format_with(format_currency)
     def funding_this_year(self, obj):
-        return (
-            obj.seminars.this_year()
-            .is_confirmed()
-            .aggregate(funding_sum=Sum("funding"))["funding_sum"]
-        )
+        return obj.funding_this_year
 
     funding_this_year.short_description = "∑ Förderung {0}".format(timezone.now().year)
+    funding_this_year.admin_order_field = "funding_this_year"
 
     @format_with(format_currency)
     def tnt_cost_this_year(self, obj):
-        return (
-            obj.seminars.this_year()
-            .is_confirmed()
-            .aggregate(tnt_cost_avg=Avg("tnt_cost"))["tnt_cost_avg"]
-        )
+        return obj.tnt_cost_simple_this_year
 
-    tnt_cost_this_year.short_description = "Ø €/TNT {0}".format(timezone.now().year)
+    tnt_cost_this_year.short_description = "Förderung/TNT {0}".format(
+        timezone.now().year
+    )
+    tnt_cost_this_year.admin_order_field = "tnt_cost_simple_this_year"
 
     def members_display(self, obj):
         return ", ".join([member.name for member in obj.members.all()])

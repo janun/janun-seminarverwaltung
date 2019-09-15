@@ -3,5 +3,55 @@
 {% block title %}{{ block.super }} {{ seminar.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ seminar.title }}</h1>
+<div class="my-6">
+ {% if user.is_staff %}
+    <a class="float-right text-gray-600" href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
+  {% endif %}
+  <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
+</div>
+
+<div class="mb-1">
+  Am {{ seminar.start_date | date }}
+  {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
+</div>
+
+<div class="text-sm">
+  {% if seminar.owner %}
+    <div>
+      Besitzer_in:
+      {% if user.is_staff %}
+        <a class="text-green-500" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
+      {% else %}
+        {{ seminar.owner.name }}
+      {% endif %}
+    </div>
+  {% endif %}
+
+
+  {% if seminar.group %}
+    <div>
+      JANUN-Gruppe:
+      <a class="text-green-500" href="{{ seminar.group.get_absolute_url }}">
+        {{ seminar.group.name }}
+      </a>
+    </div>
+  {% endif %}
+
+  {% if seminar.deadline_applicable %}
+    <div>
+      Abrechnungs-Deadline: {{ seminar.deadline | date }}
+      {% if seminar.deadline_status == 'expired' %}
+        <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg" type="submit">Speichern</button>
+</form>
+
+
 {% endblock content %}

@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 from typing import Optional
 from model_utils import Choices
+from django_extensions.db.fields import AutoSlugField
 
 from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper, Value, Q
@@ -9,13 +10,11 @@ from django.db.models.functions import ExtractYear, Concat, Cast
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.text import slugify
 from django.urls import reverse
-from django.utils.crypto import get_random_string
-
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
+from backend.utils import slugify_german
 
 
 def get_quarter(date: datetime.date) -> int:
@@ -68,12 +67,12 @@ class SeminarQuerySet(models.QuerySet):
                     output_field=models.BooleanField(),
                 ),
                 funding=Case(
-                    When(actual_funding=None, then="requested_funding"),
+                    When(actual_funding__isnull=True, then="requested_funding"),
                     default="actual_funding",
                 ),
                 tnt=Case(
                     When(
-                        actual_attendence_days_total=None,
+                        actual_attendence_days_total__isnull=True,
                         then="planned_attendence_days",
                     ),
                     default="actual_attendence_days_total",
@@ -82,11 +81,16 @@ class SeminarQuerySet(models.QuerySet):
                     F("funding") / F("tnt"), output_field=models.DecimalField()
                 ),
                 attendees=Case(
-                    When(actual_attendees_total=None, then="planned_attendees_max"),
+                    When(
+                        actual_attendees_total__isnull=True,
+                        then="planned_attendees_max",
+                    ),
                     default="actual_attendees_total",
                 ),
                 training_days=Case(
-                    When(actual_training_days=None, then="planned_training_days"),
+                    When(
+                        actual_training_days__isnull=True, then="planned_training_days"
+                    ),
                     default="actual_training_days",
                 ),
                 income_total=Coalesce("income_fees", 0)
@@ -182,7 +186,15 @@ class Seminar(models.Model):
     )
 
     title = models.CharField("Titel", max_length=255)
-    slug = models.SlugField("URL-Titel", max_length=100, unique=True, null=True)
+    slug = AutoSlugField(
+        "URL-Titel",
+        populate_from="title",
+        max_length=100,
+        unique=True,
+        null=True,
+        editable=False,
+        slugify_function=slugify_german,
+    )
     status = models.CharField(
         "Status", max_length=255, choices=STATES, default=STATES.angemeldet
     )
@@ -308,27 +320,9 @@ class Seminar(models.Model):
         return "{0} am {1}".format(self.title, self.start_date.strftime("%d.%m.%Y"))
 
     def get_absolute_url(self):
-        return reverse("seminar_detail", args=[self.slug])
-
-    def create_slug(self):
-        random_length = 12
-        slug_max_length = self._meta.get_field("slug").max_length
-        simple_slug = slugify(
-            self.title.replace("ö", "oe").replace("ä", "ae").replace("ü", "ue")
-        )[: slug_max_length - random_length - 1]
-        slug = ""
-        while not slug or Seminar.objects.filter(slug=slug):
-            slug = "{0}-{1}".format(
-                simple_slug,
-                get_random_string(
-                    random_length, allowed_chars="abcdefghijklmnopqrstuvwxyz"
-                ),
-            )
-        return slug
-
-    def save(self, *args, **kwargs):
-        self.slug = self.create_slug()
-        super().save(*args, **kwargs)
+        return reverse(
+            "seminar_detail", kwargs={"slug": self.slug, "year": self.start_date.year}
+        )
 
     def clean(self):
         if self.end_date < self.start_date:

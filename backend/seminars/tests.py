@@ -10,9 +10,3 @@ class SeminarTestCase(TestCase):
         Seminar.objects.create(
             title="Test", start_date="2019-06-01", end_date="2019-06-01"
         )
-
-    def test_create_slug(self):
-        """slugify works"""
-        one = Seminar.objects.all()[0]
-        two = Seminar.objects.all()[1]
-        self.assertNotEqual(one.create_slug(), two.create_slug())

@@ -4,6 +4,11 @@ from . import views
 urlpatterns = [
     path("", views.Dashboard.as_view(), name="list"),
     path(
-        "seminars/<slug:slug>", views.SeminarDetailView.as_view(), name="seminar_detail"
+        "seminars/<int:year>/<slug:slug>",
+        views.SeminarDetailView.as_view(),
+        name="seminar_detail",
+    ),
+    path(
+        "groups/<slug:slug>", views.JANUNGroupDetailView.as_view(), name="group_detail"
     ),
 ]

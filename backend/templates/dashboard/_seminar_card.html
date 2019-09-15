@@ -5,9 +5,10 @@
 >
   <div class="flex items-baseline justify-between mb-1">
     <span class="text-xs text-grey-600">
-      {{ seminar.start_date | date }} in {{ seminar.location }}
+      <span title="Datum">{{ seminar.start_date | date }}</span>
+      <span title="Ort">in {{ seminar.location|truncatechars:10 }}</span>
     </span>
-    <span class="text-xs font-bold">{{ seminar.status }}</span>
+    <span title="Status" class="text-xs">{{ seminar.status }}</span>
   </div>
 
   <h3 class="mt-1 mb-2 leading-tight text-gray-800 font-bold">
@@ -15,12 +16,13 @@
   </h3>
 
   {% if seminar.group %}
-    <span class="text-xs mb-1">Gruppe: {{ seminar.group.name }} </span>
+    <span title="JANUN-Gruppe" class="text-xs mb-1">{{ seminar.group.name }} </span>
   {% endif %}
 
   <div class="flex items-baseline mt-auto">
     {% if seminar.deadline_applicable %}
-      <span class="text-xs ml-auto" title="Deadline">
+      <span class="text-xs ml-auto {% if seminar.deadline_status == 'expired' %}px-2 bg-red-300 text-gray-800 rounded-sm{% endif %}" 
+            title="Deadline {% if seminar.deadline_status == 'expired' %}abgelaufen!{% endif %}">
         {{ seminar.deadline | date }}
       </span>
     {% endif %}

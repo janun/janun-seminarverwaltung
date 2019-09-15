@@ -97,6 +97,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         "created_at",
         "updated_at",
         "formatted_deadline",
+        "planned_attendence_days",
         "formatted_income_total",
         "formatted_expense_total",
         "formatted_expense_minus_income",
@@ -131,7 +132,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
             },
         ),
         (
-            "Förderung",
+            "Anmeldung - Förderung",
             {
                 "fields": (
                     "group",
@@ -139,6 +140,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
                     "planned_attendees_min",
                     "planned_attendees_max",
                     "requested_funding",
+                    "planned_attendence_days",
                 )
             },
         ),
@@ -233,6 +235,12 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         return obj.group
 
     get_group.short_description = Seminar._meta.get_field("group").verbose_name
+
+    def planned_attendence_days(self, obj):
+        return obj.planned_attendence_days
+
+    planned_attendence_days.short_description = "Geplante TNT"
+    planned_attendence_days.admin_order_field = "planned_attendence_days"
 
     @admin_link
     def get_owner(self, obj):

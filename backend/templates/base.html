@@ -14,12 +14,17 @@
     {% endblock %}
   </head>
 
-  <body class="font-sans bg-green-50 text-gray-800">
+  <body class="font-sans bg-green-50 text-gray-900 antialiased">
     {% include "_navbar.html" %}
 
     <div class="mx-auto max-w-5xl">
       {% for message in messages %}
-        <div class="{{ message.tags }}">{{ message }}</div>
+        <div class="py-4 px-8 rounded mt-2
+                    {% if message.tags == "success" %}bg-green-200{% endif %}
+                    {% if message.tags == "error" %}bg-red-200{% endif %}
+          ">
+          {{ message }}
+        </div>
       {% endfor %}
 
       {% block content %}{% endblock content %}
@@ -27,9 +32,7 @@
 
     {% include "_footer.html" %}
 
-    {% block javascript %}
-      <script src="{% static 'js/base.js' %}"></script>
-    {% endblock javascript %}
+    {% block javascript %}{% endblock javascript %}
   </body>
 
 </html>

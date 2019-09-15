@@ -19,6 +19,7 @@ django-admin-list-filter-dropdown = "*"
 django-reversion = "*"
 django-model-utils = "*"
 django-import-export = "*"
+django-extensions = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

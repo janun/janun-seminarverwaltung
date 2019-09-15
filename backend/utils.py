@@ -4,6 +4,7 @@ import functools
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 
 def format_number(value, decimals=0):
@@ -31,7 +32,8 @@ def format_with(formatter_func):
     return decorator
 
 
-# def set_short_description()
+def slugify_german(content):
+    return slugify(content.replace("ä", "ae").replace("ü", "ue").replace("ö", "oe"))
 
 
 def admin_change_url(obj):
