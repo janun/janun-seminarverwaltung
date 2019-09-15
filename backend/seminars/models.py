@@ -9,6 +9,10 @@ from django.db.models.functions import ExtractYear, Concat, Cast
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.text import slugify
+from django.urls import reverse
+from django.utils.crypto import get_random_string
+
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -151,6 +155,7 @@ class Seminar(models.Model):
     )
 
     title = models.CharField("Titel", max_length=255)
+    slug = models.SlugField("URL-Titel", max_length=100, unique=True, null=True)
     status = models.CharField(
         "Status", max_length=255, choices=STATES, default=STATES.angemeldet
     )
@@ -274,6 +279,29 @@ class Seminar(models.Model):
 
     def __str__(self) -> str:
         return "{0} am {1}".format(self.title, self.start_date.strftime("%d.%m.%Y"))
+
+    def get_absolute_url(self):
+        return reverse("seminar_detail", args=[self.slug])
+
+    def create_slug(self):
+        random_length = 12
+        slug_max_length = self._meta.get_field("slug").max_length
+        simple_slug = slugify(
+            self.title.replace("ö", "oe").replace("ä", "ae").replace("ü", "ue")
+        )[: slug_max_length - random_length - 1]
+        slug = ""
+        while not slug or Seminar.objects.filter(slug=slug):
+            slug = "{0}-{1}".format(
+                simple_slug,
+                get_random_string(
+                    random_length, allowed_chars="abcdefghijklmnopqrstuvwxyz"
+                ),
+            )
+        return slug
+
+    def save(self, *args, **kwargs):
+        self.slug = self.create_slug()
+        super().save(*args, **kwargs)
 
     def clean(self):
         if self.end_date < self.start_date:

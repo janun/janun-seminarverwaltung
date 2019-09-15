@@ -1,6 +1,6 @@
 import random
 
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from backend.seminars.models import Seminar
 
@@ -23,3 +23,8 @@ class Dashboard(ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user)
+
+
+class SeminarDetailView(DetailView):
+    model = Seminar
+    template_name = "dashboard/seminar_detail.html"

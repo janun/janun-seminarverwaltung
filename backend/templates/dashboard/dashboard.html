@@ -6,33 +6,41 @@
 
 
 <div class="flex flex-wrap items-center mb-2">
-    <h2 class="text-green-500 font-bold text-xl">
+  <h2 class="text-green-500 font-bold text-xl">
     Deine Seminare
-    <span
-        v-if="seminars"
-        class="text-sm text-gray-600 font-normal"
-    >
-        ({{ seminars|length }})
-    </span>
-    </h2>
-    <a class="ml-auto inline-flex items-center py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg" href="/seminars/apply">
-        Seminar anmelden
-    </a>
+    <small class="text-sm text-gray-600 font-normal">({{ seminars|length }})</small>
+  </h2>
+  <a class="ml-auto inline-flex items-center py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg" href="/seminars/apply">
+    Seminar anmelden
+  </a>
 </div>
 
 
-{% regroup seminars by year as year_list %}
-<ul>
-    {% for year, seminar_list in year_list %}
-        <li>{{ year }}
-        <ul>
-            {% for seminar in seminar_list %}
-                <li>{{ seminar }}</li>
-            {% endfor %}
-        </ul>
-        </li>
-    {% endfor %}
-</ul>
 
+
+{% if seminars %}
+{% regroup seminars by year as year_list %}
+  {% for year, seminar_list in year_list %}
+    <h4 class="mb-4">
+      {{ year }}
+      <small class="text-sm text-gray-600">({{ seminar_list|length }})</small>
+    </h4>
+
+    <div class="flex flex-wrap items-stretch -m-4">
+      {% for seminar in seminar_list %}
+        <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
+          <a class="block bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+             style="min-height: 130px"
+             href="{{ seminar.get_absolute_url }}">
+            {{ seminar.title }}
+          </a>
+        </div>
+      {% endfor %}
+      </div>
+
+  {% endfor %}
+{% else %}
+  <p>Keine Seminare gefunden.</p>
+{% endif %}
 
 {% endblock content %}
