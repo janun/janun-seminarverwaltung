@@ -320,7 +320,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
     # actions
     # ------------------------------------------------------------------------------
 
-    actions = ["create_proof_of_use", "change_status"]
+    actions = ["create_proof_of_use", "change_status", "list_selected"]
 
     def create_proof_of_use(self, request, queryset):
         context = {"seminars": queryset}
@@ -354,6 +354,13 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         )
 
     change_status.short_description = "Status ändern"
+
+    def list_selected(self, request, queryset):
+        id_list = queryset.values_list("id", flat=True)
+        id_str = ",".join(str(x) for x in id_list)
+        return HttpResponseRedirect(request.path + "?id__in=" + id_str)
+
+    list_selected.short_description = "Nur ausgewählte anzeigen"
 
 
 # admin.site.register(SeminarComment)
