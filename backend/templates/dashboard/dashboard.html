@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="font-bold text-2xl text-green-500 mb-6 mt-10">{{ greeting }}, {{ user.name }}!</h1>
+
+
+<div class="flex flex-wrap items-center mb-2">
+    <h2 class="text-green-500 font-bold text-xl">
+    Deine Seminare
+    <span
+        v-if="seminars"
+        class="text-sm text-gray-600 font-normal"
+    >
+        ({{ seminars|length }})
+    </span>
+    </h2>
+    <a class="ml-auto inline-flex items-center py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg" href="/seminars/apply">
+        Seminar anmelden
+    </a>
+</div>
+
+
+{% regroup seminars by year as year_list %}
+<ul>
+    {% for year, seminar_list in year_list %}
+        <li>{{ year }}
+        <ul>
+            {% for seminar in seminar_list %}
+                <li>{{ seminar }}</li>
+            {% endfor %}
+        </ul>
+        </li>
+    {% endfor %}
+</ul>
+
+
+{% endblock content %}

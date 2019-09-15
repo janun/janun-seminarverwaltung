@@ -5,7 +5,7 @@ from model_utils import Choices
 
 from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper, Value
-from django.db.models.functions import ExtractYear, Concat
+from django.db.models.functions import ExtractYear, Concat, Cast
 from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -28,25 +28,28 @@ def add_none(*p) -> Optional[Decimal]:
 class SeminarQuerySet(models.QuerySet):
     def add_annotations(self):
         return (
-            self.annotate(
+            self.annotate(year=ExtractYear("start_date"))
+            .annotate(
                 planned_attendence_days=F("planned_attendees_max")
                 * F("planned_training_days"),
                 deadline=Case(
                     When(
                         start_date__quarter=1,
-                        then=Concat(ExtractYear("start_date"), Value("-04-15")),
+                        then=Concat(Cast("year", models.TextField()), Value("-04-15")),
                     ),
                     When(
                         start_date__quarter=2,
-                        then=Concat(ExtractYear("start_date"), Value("-07-15")),
+                        then=Concat(Cast("year", models.TextField()), Value("-07-15")),
                     ),
                     When(
                         start_date__quarter=3,
-                        then=Concat(ExtractYear("start_date"), Value("-10-15")),
+                        then=Concat(Cast("year", models.TextField()), Value("-10-15")),
                     ),
                     When(
                         start_date__quarter=4,
-                        then=Concat(ExtractYear("start_date") + 1, Value("-01-15")),
+                        then=Concat(
+                            Cast("year", models.TextField()) + 1, Value("-01-15")
+                        ),
                     ),
                     output_field=models.DateField(),
                 ),

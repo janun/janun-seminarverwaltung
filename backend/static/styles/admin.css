@@ -10,7 +10,7 @@
   --green-700: #2b7b03;
   --green-800: #236707;
   --green-900: #1a4614;
-  --background-color: #fcfefb;
+  --background-color: var(--green-50);
   --text-color: #2d3748;
   --gray-500: #b9b9b9;
 }

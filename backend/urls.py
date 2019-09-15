@@ -3,10 +3,7 @@ from django.urls import include, path
 from django.contrib import admin
 
 
-urlpatterns = [
-    path("seminars/", include("backend.seminars.urls")),
-    path("admin/", admin.site.urls),
-]
+urlpatterns = [path("", include("dashboard.urls")), path("admin/", admin.site.urls)]
 
 if settings.DEBUG:
     import debug_toolbar
