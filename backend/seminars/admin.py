@@ -1,4 +1,8 @@
+from decimal import InvalidOperation
+
 from django.contrib import admin
+from django.urls import path
+from django.template.response import TemplateResponse
 from django import forms
 from django.db import models
 from django.db.models import Max, Sum, Avg
@@ -217,13 +221,21 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
                 tnt_max=Max("tnt"),
                 tnt_cost_avg=Avg("tnt_cost"),
                 tnt_cost_max=Max("tnt_cost"),
-                attendees_sum=Sum("attendees"),
-                attendees_avg=Avg("attendees"),
-                attendees_max=Max("attendees"),
-                training_days_sum=Sum("training_days"),
-                training_days_avg=Avg("training_days"),
-                training_days_max=Max("training_days"),
+                # attendees_sum=Sum("attendees"),
+                # attendees_avg=Avg("attendees"),
+                # attendees_max=Max("attendees"),
+                # training_days_sum=Sum("training_days"),
+                # training_days_avg=Avg("training_days"),
+                # training_days_max=Max("training_days"),
             )
+            try:
+                extra_context["tnt_cost"] = (
+                    extra_context["funding_sum"] // extra_context["tnt_sum"]
+                )
+            except TypeError:
+                pass
+            except InvalidOperation:
+                pass
             response.context_data.update(extra_context)
         return response
 
@@ -365,6 +377,15 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         return HttpResponseRedirect(request.path + "?id__in=" + id_str)
 
     list_selected.short_description = "Nur ausgewählte anzeigen"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [path("stats/", self.admin_site.admin_view(self.stats))]
+        return my_urls + urls
+
+    def stats(self, request):
+        context = dict(self.admin_site.each_context(request))
+        return TemplateResponse(request, "admin/seminars/seminar/stats.html", context)
 
 
 # admin.site.register(SeminarComment)
