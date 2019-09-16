@@ -47,10 +47,15 @@
   {% endif %}
 </div>
 
+<hr class="bg-gray-300 h-px my-5" />
+
 <form method="post">
   {% csrf_token %}
+  <button class="float-right button button-primary" type="submit">Speichern</button>
   {{ form.as_p }}
-  <button class="py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg" type="submit">Speichern</button>
+  
+  <hr class="bg-gray-300 h-px my-5" />
+  <button class="float-right button button-primary" type="submit">Speichern</button>
 </form>
 
 
