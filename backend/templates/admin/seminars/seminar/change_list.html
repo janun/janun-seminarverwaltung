@@ -1,5 +1,13 @@
-{% extends "admin/change_list.html" %}
+{% extends "admin/import_export/change_list.html" %}
 {% load janun %}
+{% load admin_urls %}
+
+{% block object-tools-items %}
+  {% include "admin/import_export/change_list_export_item.html" %}
+  {% include "admin/import_export/change_list_import_item.html" %}
+  <li><a href="stats" class="stats_link">Statistik</a></li>
+  {{ block.super }}
+{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
@@ -22,19 +30,6 @@
             <td><span class="big">{{ cl.result_count }}</span> Seminare</td>
             <td><span class="big">{{ funding_sum|number }}</span> €</td>
             <td><span class="big">{{ tnt_sum|number:0 }}</span> TNT</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>Ø <span>{{ funding_avg|number }}</span> €</td>
-            <td>Ø <span>{{ tnt_avg|number }}</span> TNT</td>
-            <td><span>{{ tnt_cost|number }}</span> €/TNT</td>
-            <td>Ø <span>{{ tnt_cost_avg|number }}</span> €/TNT</td>
-        </tr>
-         <tr>
-            <td></td>
-            <td>Max <span>{{ funding_max|number }}</span> €</td>
-            <td>Max <span>{{ tnt_max|number }}</span> TNT</td>
-            <td>Max <span>{{ tnt_cost_max|number }}</span> €/TNT</td>
         </tr>
     </table>
 {% endif %}

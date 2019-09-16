@@ -5,10 +5,12 @@ from django.urls import path
 from django.template.response import TemplateResponse
 from django import forms
 from django.db import models
-from django.db.models import Max, Sum, Avg
+from django.db.models import Max, Sum, Avg, Count
 from django.utils.html import format_html
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.utils import timezone
+from django.urls import reverse
 
 import reversion
 
@@ -20,7 +22,7 @@ from import_export.admin import ImportExportMixin
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
-from backend.utils import format_currency, format_with, admin_link
+from backend.utils import format_currency, format_with, admin_link, median_value
 
 from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment
@@ -213,29 +215,8 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         if hasattr(response, "context_data") and "cl" in response.context_data:
             queryset = response.context_data["cl"].queryset
             extra_context = queryset.aggregate(
-                funding_sum=Sum("funding"),
-                funding_avg=Avg("funding"),
-                funding_max=Max("funding"),
-                tnt_sum=Sum("tnt"),
-                tnt_avg=Avg("tnt"),
-                tnt_max=Max("tnt"),
-                tnt_cost_avg=Avg("tnt_cost"),
-                tnt_cost_max=Max("tnt_cost"),
-                # attendees_sum=Sum("attendees"),
-                # attendees_avg=Avg("attendees"),
-                # attendees_max=Max("attendees"),
-                # training_days_sum=Sum("training_days"),
-                # training_days_avg=Avg("training_days"),
-                # training_days_max=Max("training_days"),
+                funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
             )
-            try:
-                extra_context["tnt_cost"] = (
-                    extra_context["funding_sum"] // extra_context["tnt_sum"]
-                )
-            except TypeError:
-                pass
-            except InvalidOperation:
-                pass
             response.context_data.update(extra_context)
         return response
 
@@ -385,6 +366,46 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
 
     def stats(self, request):
         context = dict(self.admin_site.each_context(request))
+        queryset = Seminar.objects.this_year().is_confirmed()
+        extra_context = queryset.aggregate(
+            count=Count("pk"),
+            funding_sum=Sum("funding"),
+            funding_avg=Avg("funding"),
+            funding_max=Max("funding"),
+            tnt_sum=Sum("tnt"),
+            tnt_avg=Avg("tnt"),
+            tnt_max=Max("tnt"),
+            tnt_cost_avg=Avg("tnt_cost"),
+            tnt_cost_max=Max("tnt_cost"),
+        )
+        try:
+            extra_context["tnt_cost"] = (
+                extra_context["funding_sum"] // extra_context["tnt_sum"]
+            )
+        except TypeError:
+            pass
+        except InvalidOperation:
+            pass
+        extra_context["funding_median"] = median_value(queryset, "funding")
+        extra_context["tnt_median"] = median_value(queryset, "tnt")
+        extra_context["tnt_cost_median"] = median_value(queryset, "tnt_cost")
+        status_list = (
+            "zugesagt",
+            "stattgefunden",
+            "Abrechnung abgeschickt",
+            "Abrechnung angekommen",
+            "rechnerische Prüfung",
+            "inhaltliche Prüfung",
+            "Zweitprüfung",
+            "fertig geprüft",
+            "überwiesen",
+        )
+        extra_context["queryset_url"] = reverse(
+            "admin:seminars_seminar_changelist"
+        ) + "?year={0}&status__in={1}".format(
+            timezone.now().year, ",".join(status_list)
+        )
+        context.update(extra_context)
         return TemplateResponse(request, "admin/seminars/seminar/stats.html", context)
 
 

@@ -1,10 +1,19 @@
 import re
 import functools
+from decimal import Decimal
 
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
+
+
+def median_value(queryset, term):
+    count = queryset.count()
+    values = queryset.values_list(term, flat=True).order_by(term)
+    if count % 2 == 1:
+        return values[int(round(count / 2))]
+    return sum(values[count / 2 - 1 : count / 2 + 1]) / Decimal(2.0)
 
 
 def format_number(value, decimals=0):
