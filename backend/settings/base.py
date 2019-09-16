@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "crispy_forms",
     "import_export",
     "reversion",
     "allauth",
@@ -195,3 +196,5 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+CRISPY_TEMPLATE_PACK = "janunforms"
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("janunforms",)

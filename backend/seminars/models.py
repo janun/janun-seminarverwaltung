@@ -324,6 +324,9 @@ class Seminar(models.Model):
             "seminar_detail", kwargs={"slug": self.slug, "year": self.start_date.year}
         )
 
+    def get_admin_change_url(self):
+        return reverse("admin:seminars_seminar_change", args=(self.pk,))
+
     def clean(self):
         if self.end_date < self.start_date:
             raise ValidationError(

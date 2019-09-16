@@ -20,6 +20,7 @@ django-reversion = "*"
 django-model-utils = "*"
 django-import-export = "*"
 django-extensions = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

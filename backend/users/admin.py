@@ -25,6 +25,7 @@ admin.site.unregister(EmailAddress)
 admin.site.site_header = "JANUN Seminarverwaltung"
 admin.site.site_title = "JANUN Seminarverwaltung"
 admin.site.index_title = "JANUN Seminarverwaltung"
+admin.site.site_url = None
 
 
 class UserAdmin(BaseUserAdmin):

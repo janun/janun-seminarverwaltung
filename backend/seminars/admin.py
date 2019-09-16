@@ -366,7 +366,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
 
     def stats(self, request):
         context = dict(self.admin_site.each_context(request))
-        queryset = Seminar.objects.this_year().is_confirmed()
+        queryset = Seminar.objects.this_year().is_confirmed().order_by("start_date")
         extra_context = queryset.aggregate(
             count=Count("pk"),
             funding_sum=Sum("funding"),
@@ -405,7 +405,9 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
         ) + "?year={0}&status__in={1}".format(
             timezone.now().year, ",".join(status_list)
         )
+        extra_context["seminars"] = queryset
         context.update(extra_context)
+
         return TemplateResponse(request, "admin/seminars/seminar/stats.html", context)
 
 
