@@ -63,21 +63,17 @@
 
   <form class="mb-12 {% if not form.editable %}not-editable{% endif %}" method="post">
     {% csrf_token %}
-    {% if form.editable %}
-      <div class="flex">
-        <button class="ml-auto button button-primary" type="submit">Speichern</button>
-      </div>
-    {% endif %}
+    <div class="flex">
+      <button {% if not form.editable %}disabled{% endif %} class="ml-auto button button-primary" type="submit">Speichern</button>
+    </div>
     
     <div class="{% if form.editable %}border-t-2 border-gray-300{% endif %} mt-5 pt-5">
       {% crispy form %}
     </div>
     
-    {% if form.editable %}
-      <div class="flex">
-        <button class="ml-auto button button-primary" type="submit">Speichern</button>
-      </div>
-    {% endif %}
+    <div class="flex">
+      <button {% if not form.editable %}disabled{% endif %} class="ml-auto button button-primary" type="submit">Speichern</button>
+    </div>
   </form>
 
 </div>

@@ -4,6 +4,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
 
 from .models import Seminar
+from .states import all_states
 
 
 class SeminarChangeForm(forms.ModelForm):
@@ -14,7 +15,15 @@ class SeminarChangeForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset("Status", "status"),
+            Fieldset(
+                "Status",
+                "status",
+                HTML(
+                    '<p class="text-sm mb-5 text-gray-800">{0}</p>'.format(
+                        all_states["zugesagt"]["description"]
+                    )
+                ),
+            ),
             Fieldset(
                 "Inhalt",
                 Field("title", css_class="w-full"),
@@ -52,13 +61,13 @@ class SeminarChangeForm(forms.ModelForm):
             self.editable = False
             for key in self.Meta.fields:
                 self.fields[key].disabled = True
-            self.helper.layout.insert(
-                0,
+            self.helper.layout[0].insert(
+                2,
                 HTML(
-                    '<h5 class="text-gray-800 font-bold">Nicht editierbar</h5>'
                     '<p class="text-sm mb-10 text-gray-800">'
                     "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>"
-                    "Kontaktiere uns, wenn noch etwas geändert werden muss.</p>"
+                    '<a class="underline href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
+                    "wenn noch etwas geändert werden muss.</p>"
                 ),
             )
 

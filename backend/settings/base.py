@@ -115,6 +115,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "backend.users.middleware.SetLastVisitMiddleware",
+    "backend.users.middleware.RequireLoginMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -201,3 +202,13 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 # ------------------------------------------------------------------------------
 CRISPY_TEMPLATE_PACK = "janunforms"
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("janunforms",)
+
+LOGIN_REQUIRED_URLS_EXCEPTIONS = (
+    r"/accounts/login/$",
+    r"/accounts/logout/$",
+    r"/accounts/signup/$",
+    r"/accounts/password/reset/$",
+    r"^/accounts/password/reset/done/$",
+    r"^password/reset/key/(.*)$",
+    r"^password/reset/key/done/$",
+)

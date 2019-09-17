@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
@@ -21,7 +21,7 @@ admin.site.unregister(SocialToken)
 admin.site.unregister(EmailAddress)
 
 # enforce normal login for admin login
-# admin.site.login = login_required(admin.site.login)
+admin.site.login = login_required(admin.site.login)
 admin.site.site_header = "JANUN Seminarverwaltung"
 admin.site.site_title = "JANUN Seminarverwaltung"
 admin.site.index_title = "JANUN Seminarverwaltung"
