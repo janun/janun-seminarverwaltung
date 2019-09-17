@@ -5,7 +5,8 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
-from backend.seminars.models import Seminar, JANUNGroup
+from backend.seminars.models import Seminar
+from backend.groups.models import JANUNGroup
 from backend.seminars.forms import SeminarChangeForm
 
 
@@ -29,8 +30,10 @@ class Dashboard(LoginRequiredMixin, ListView):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class SeminarDetailView(LoginRequiredMixin, UpdateView):
-    model = Seminar
+class SeminarUpdateView(LoginRequiredMixin, UpdateView):
+    queryset = Seminar.objects.select_related("owner", "group").prefetch_related(
+        "comments"
+    )
     template_name = "dashboard/seminar_detail.html"
     form_class = SeminarChangeForm
     success_message = "Deine Änderungen wurden gespeichert."
@@ -44,6 +47,16 @@ class SeminarDetailView(LoginRequiredMixin, UpdateView):
             self.request, "Es gab Probleme beim Speichern. Schau in’s Formular."
         )
         return super().form_invalid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comments"] = self.object.comments.filter(is_internal=False)
+        return context
 
 
 class JANUNGroupDetailView(LoginRequiredMixin, DetailView):

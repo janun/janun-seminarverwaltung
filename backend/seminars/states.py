@@ -92,7 +92,7 @@ all_states = {
         "staff_only": True,
     },
     "überwiesen": {
-        "description": "",
+        "description": "Die Förderung wurde überwiesen.",
         "color": "green",
         "sources": ["fertig geprüft"],
         "staff_only": True,
@@ -100,7 +100,7 @@ all_states = {
 }
 
 
-def get_next_states(status: str, is_staff: bool) -> List[str]:
+def get_next_states(status: str, is_staff: bool = False) -> List[str]:
     return [
         state
         for state, info in all_states.items()

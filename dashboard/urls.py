@@ -5,7 +5,7 @@ urlpatterns = [
     path("", views.Dashboard.as_view(), name="dashboard"),
     path(
         "seminars/<int:year>/<slug:slug>",
-        views.SeminarDetailView.as_view(),
+        views.SeminarUpdateView.as_view(),
         name="seminar_detail",
     ),
     path(

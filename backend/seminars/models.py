@@ -383,6 +383,10 @@ class SeminarComment(models.Model):
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
 
+    @property
+    def was_edited(self):
+        return self.updated_at - self.created_at > datetime.timedelta(seconds=1)
+
     class Meta:
         ordering = ("-created_at",)
         verbose_name = "Kommentar"
