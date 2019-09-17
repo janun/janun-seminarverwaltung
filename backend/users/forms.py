@@ -56,7 +56,12 @@ class ProfileForm(forms.ModelForm):
                 Link(
                     reverse("account_change_password"),
                     "Passwort ändern",
-                    "text-gray-700 underline",
+                    "block my-1 text-gray-700 underline",
+                ),
+                Link(
+                    reverse("two-factor-setup"),
+                    "Zwei-Faktor-Authentisierung einstellen",
+                    "block my-1 text-gray-700 underline",
                 ),
             ),
         )

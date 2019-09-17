@@ -21,6 +21,7 @@ django-model-utils = "*"
 django-import-export = "*"
 django-extensions = "*"
 django-crispy-forms = "*"
+django-allauth-2fa = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

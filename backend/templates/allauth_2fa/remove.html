@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg">
+    <h1 class="text-green-500 font-bold text-2xl mb-5">Zwei-Faktor-Authentisierung ausschalten</h1>
+    <p class="my-5">Sicher?</p>
+
+    <form method="post">
+    {% csrf_token %}
+    <button class="button button-secondary" type="submit">2FA ausschalten</button>
+    </form>
+</div>
+{% endblock %}

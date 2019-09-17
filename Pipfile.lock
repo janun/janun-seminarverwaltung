@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "27e5d758a61aec03a3e348ae4193b7959c32aa01715d0f6d8ab95628edcfe362"
+            "sha256": "434d8a426116ee87b025093a1eb0aa2e86b2bd4f67c57e9680beb3f9c0dae9c6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -138,6 +138,13 @@
             "index": "pypi",
             "version": "==0.40.0"
         },
+        "django-allauth-2fa": {
+            "hashes": [
+                "sha256:e6628bb2fcd3d31dcb8deab8439673f6619c2446e39dd59a27b6217794e2b2d3"
+            ],
+            "index": "pypi",
+            "version": "==0.7"
+        },
         "django-crispy-forms": {
             "hashes": [
                 "sha256:5952bab971110d0b86c278132dae0aa095beee8f723e625c3d3fa28888f1675f",
@@ -178,6 +185,13 @@
             "index": "pypi",
             "version": "==3.2.0"
         },
+        "django-otp": {
+            "hashes": [
+                "sha256:7c3f114effc6971794f67994e340a56a3ed0ba8dbd9e665581304616df142e71",
+                "sha256:fd98e24dec9dab1779589fa5769b94c027353724fd13e1c94d5e7bf2257b4ca9"
+            ],
+            "version": "==0.7.1"
+        },
         "django-reversion": {
             "hashes": [
                 "sha256:1aeed0b723b5be14c4dc7e7c7e03f9538e7ef29c997585e2e8fb414cf38818f4",
@@ -188,8 +202,7 @@
         },
         "et-xmlfile": {
             "hashes": [
-                "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b",
-                "sha256:839e2f56de4c65e1871b8b33c6adaba2836dc3db28dec097ebddd04c522298d5"
+                "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"
             ],
             "version": "==1.0.1"
         },
@@ -305,6 +318,13 @@
                 "sha256:f81025eddd0327c7d4cfe9b62cf33190e1e736cc6e97502b3ec425f574b3e7a8"
             ],
             "version": "==5.1.2"
+        },
+        "qrcode": {
+            "hashes": [
+                "sha256:3996ee560fc39532910603704c82980ff6d4d5d629f9c3f25f34174ce8606cf5",
+                "sha256:505253854f607f2abf4d16092c61d4e9d511a3b4392e60bff957a68592b04369"
+            ],
+            "version": "==6.1"
         },
         "requests": {
             "hashes": [

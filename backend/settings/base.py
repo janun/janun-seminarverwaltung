@@ -55,6 +55,10 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "django_admin_listfilter_dropdown",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
+    "allauth_2fa",
 ]
 LOCAL_APPS = [
     "backend.seminars.apps.SeminarsConfig",
@@ -112,6 +116,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
+    "allauth_2fa.middleware.AllauthTwoFactorMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "backend.users.middleware.SetLastVisitMiddleware",
@@ -187,6 +193,7 @@ MANAGERS = ADMINS
 
 # django-allauth
 # ------------------------------------------------------------------------------
+ACCOUNT_ADAPTER = "allauth_2fa.adapter.OTPAdapter"
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
@@ -204,11 +211,12 @@ CRISPY_TEMPLATE_PACK = "janunforms"
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("janunforms",)
 
 LOGIN_REQUIRED_URLS_EXCEPTIONS = (
-    r"/accounts/login/$",
-    r"/accounts/logout/$",
-    r"/accounts/signup/$",
-    r"/accounts/password/reset/$",
+    r"^/accounts/login/$",
+    r"^/accounts/logout/$",
+    r"^/accounts/signup/$",
+    r"^/accounts/password/reset/$",
     r"^/accounts/password/reset/done/$",
-    r"^password/reset/key/(.*)$",
-    r"^password/reset/key/done/$",
+    r"^/accounts/password/reset/key/(.*)$",
+    r"^/accounts/password/reset/key/done/$",
+    r"^/accounts/two-factor-authenticate$",
 )

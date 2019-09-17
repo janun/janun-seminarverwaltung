@@ -10,6 +10,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("accounts/profile", ProfileView.as_view(), name="account_profile"),
+    path("accounts/", include("allauth_2fa.urls")),
+    path("accounts/", include("allauth.urls")),
 ]
 
 if settings.DEBUG:
