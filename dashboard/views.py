@@ -1,7 +1,8 @@
 import random
 
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import ModelFormMixin
+from django.views.generic.edit import UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 from backend.seminars.models import Seminar, JANUNGroup
@@ -13,7 +14,7 @@ def get_greeting():
     return random.choice(greetings)
 
 
-class Dashboard(ListView):
+class Dashboard(LoginRequiredMixin, ListView):
     model = Seminar
     context_object_name = "seminars"
     template_name = "dashboard/dashboard.html"
@@ -28,20 +29,14 @@ class Dashboard(ListView):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class SeminarDetailView(ModelFormMixin, DetailView):
+class SeminarDetailView(LoginRequiredMixin, UpdateView):
     model = Seminar
     template_name = "dashboard/seminar_detail.html"
     form_class = SeminarChangeForm
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        return self.form_invalid(form)
+    success_message = "Deine Änderungen wurden gespeichert."
 
     def form_valid(self, form):
-        messages.success(self.request, "Deine Änderungen wurden gespeichert.")
+        messages.success(self.request, self.success_message)
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -51,6 +46,6 @@ class SeminarDetailView(ModelFormMixin, DetailView):
         return super().form_invalid(form)
 
 
-class JANUNGroupDetailView(DetailView):
+class JANUNGroupDetailView(LoginRequiredMixin, DetailView):
     model = JANUNGroup
     template_name = "dashboard/group_detail.html"

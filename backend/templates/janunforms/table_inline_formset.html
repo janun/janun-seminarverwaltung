@@ -33,25 +33,25 @@
         <tbody>
             <tr class="d-none empty-form">
                 {% for field in formset.empty_form %}
-                    {% include 'janunbootstrap4/field.html' with tag="td" form_show_labels=False %}
+                    {% include './field.html' with tag="td" form_show_labels=False %}
                 {% endfor %}
             </tr>
 
             {% for form in formset %}
                 {% if form_show_errors and not form.is_extra %}
-                    {% include "janunbootstrap4/errors.html" %}
+                    {% include "./errors.html" %}
                 {% endif %}
 
                 <tr>
                     {% for field in form %}
-                        {% include 'janunbootstrap4/field.html' with tag="td" form_show_labels=False %}
+                        {% include './field.html' with tag="td" form_show_labels=False %}
                     {% endfor %}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {% include "janunbootstrap4/inputs.html" %}
+    {% include "./inputs.html" %}
 
 {% if formset_tag %}</form>{% endif %}
 {% endspecialspaceless %}

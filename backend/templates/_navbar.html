@@ -12,11 +12,32 @@
 
     <div class="sm:ml-10 flex">
       {% if request.user.is_active and request.user.is_staff %}
-      <a class="mx-2 flex items-center" href="/admin/">
-        Verwaltung
-      </a>
+        <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
       {% endif %}
     </div>
+
+    {% if user.is_authenticated %}
+      <div class="ml-auto flex">
+        <a class="mx-2 flex items-center" href="{% url 'account_profile' %}">
+          {{ user.username }}
+        </a>
+        <form class="flex items-center" method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="mx-2 flex items-center">
+            Logout
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="ml-auto flex">
+        <a class="mx-2 flex items-center" href="{% url 'account_login' %}">
+          Anmelden
+        </a>
+        <a class="mx-2 flex items-center" href="{% url 'account_signup' %}">
+          Konto Anlegen
+        </a>
+      </div>
+    {% endif %}
 
   </div>
 </nav>

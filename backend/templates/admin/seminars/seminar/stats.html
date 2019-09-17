@@ -1,6 +1,13 @@
 {% extends "admin/base_site.html" %}
 {% load janun static %}
 
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'chart.js/dist/Chart.min.js' %}"></script>
+{% endblock extrahead %}
+
+
 {% block content %}
 <h1>Statistik</h1>
 
@@ -50,122 +57,120 @@
 </div>
 
 <style>
-    .stats td {
-        text-align:right
-    }
+.stats td {
+    text-align:right
+}
 </style>
 
 
-<div style="width: 100%">
-    <canvas id="chart" width="100" height="25"></canvas>                      
+<div class="chart-container">
+    <canvas id="chart" width="100" height="25"></canvas>
 </div>
-
-<script src="{% static 'chart.js/dist/Chart.min.js' %}"></script>
 
 
 <script type="text/javascript">
-    palette = [
-        '#aee1a5','#81c155', '#3a9d00', '#308701', '#2b7b03', '#236707',
-    ]
-    colors = []
-    var i;
-    for (i = 0; i < {{ seminars.count }}; i++) {
-        colors.push(palette[i % palette.length])
-    }
+palette = [
+    '#aee1a5','#81c155', '#3a9d00', '#308701', '#2b7b03', '#236707',
+]
+colors = []
+var i;
+for (i = 0; i < {{ seminars.count }}; i++) {
+    colors.push(palette[i % palette.length])
+}
 
-    seminars = [
-        {% for s in seminars %}
-            {
-                title: "{{ s.title }}",
-                funding: "{{ s.funding|stringformat:'f' }}",
-                tnt: "{{ s.tnt }}",
-                tnt_cost: "{{ s.tnt_cost|stringformat:'f' }}",
-                url: "{{ s.get_admin_change_url }}",
-                start_date: "{{ s.start_date|date:'d.m.' }}",
-            },
-        {% endfor %}
-    ];
-    
-    var ctx = document.getElementById('chart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: seminars.map(s => s.title + " am " + s.start_date),
-            datasets: [
-                {
-                    label: 'Förderung',
-                    data: seminars.map(s => s.funding),
-                    backgroundColor: colors,
-                    yAxisID: 'euro',
-                },
-                {
-                    label: 'TNT',
-                    data: seminars.map(s => s.tnt),
-                    yAxisID: 'tnt',
-                },
-                {
-                    label: '€/TNT',
-                    data: seminars.map(s => s.tnt_cost),
-                    yAxisID: 'euro',
-                }
-            ]
+seminars = [
+    {% for s in seminars %}
+        {
+            title: "{{ s.title }}",
+            funding: "{{ s.funding|stringformat:'f' }}",
+            tnt: "{{ s.tnt }}",
+            tnt_cost: "{{ s.tnt_cost|stringformat:'f' }}",
+            url: "{{ s.get_admin_change_url }}",
+            start_date: "{{ s.start_date|date:'d.m.' }}",
         },
-        options:{
-            onClick: function(event) {
-                var element = myChart.getElementAtEvent(event);
-                if (element.length) {
-                    var index = element[0]._index;
-                    var url = seminars[index].url;
-                    window.location = url;
-                }
+    {% endfor %}
+];
+
+var ctx = document.getElementById('chart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: seminars.map(s => s.title + " am " + s.start_date),
+        datasets: [
+            {
+                label: 'Förderung',
+                data: seminars.map(s => s.funding),
+                backgroundColor: colors,
+                yAxisID: 'euro',
             },
-            title: {
-				display: true,
-				text: 'Seminare {% now 'Y' %}, Status: min. zugesagt'
-			},
-			tooltips: {
-				mode: 'index',
-				intersect: true
-			},
-            scales: {
-                xAxes: [{
+            {
+                label: 'TNT',
+                data: seminars.map(s => s.tnt),
+                yAxisID: 'tnt',
+            },
+            {
+                label: '€/TNT',
+                data: seminars.map(s => s.tnt_cost),
+                yAxisID: 'euro',
+            }
+        ]
+    },
+    options:{
+        onClick: function(event) {
+            var element = myChart.getElementAtEvent(event);
+            if (element.length) {
+                var index = element[0]._index;
+                var url = seminars[index].url;
+                window.location = url;
+            }
+        },
+        title: {
+            display: true,
+            text: 'Seminare {% now 'Y' %}, Status: min. zugesagt'
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: true
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                gridLines: {
+                    display: false
+                },
+                ticks: {
+                    display: false,
+                },
+                scaleLabel: {
                     display: true,
-                    gridLines: {
-                        display: false
-                    },
-                    ticks: {
-                       display: false,
-                    },
+                    labelString: "Seminar (nach Datum)"
+                }
+            }],
+            yAxes: [
+                { 
+                    id: "euro",
+                    type: 'linear',
+                    position: 'left',
                     scaleLabel: {
                         display: true,
-                        labelString: "Seminar (nach Datum)"
+                        labelString: "Euro"
                     }
-                }],
-                yAxes: [
-                    { 
-                        id: "euro",
-                        type: 'linear',
-                        position: 'left',
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Euro"
-                        }
+                },
+                {
+                    id: "tnt",
+                    type: "linear",
+                    position: "right",
+                    scaleLabel: {
+                        display: true,
+                        labelString: "TNT"
                     },
-                    {
-                        id: "tnt",
-                        type: "linear",
-                        position: "right",
-                        scaleLabel: {
-                            display: true,
-                            labelString: "TNT"
-                        },
-                            gridLines: {
-                            display: false
-                        },
-                    }
-                ]
-            }
+                        gridLines: {
+                        display: false
+                    },
+                }
+            ]
         }
-    });
+    }
+});
 </script>
 {% endblock %}

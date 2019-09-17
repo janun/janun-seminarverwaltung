@@ -2,31 +2,35 @@ from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
-from crispy_forms.bootstrap import Tab, TabHolder, AppendedText
 
 from .models import Seminar
 
 
 class SeminarChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        self.editable = True
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Fieldset("Status", "status"),
-            Fieldset("Inhalt", "title", "description"),
+            Fieldset(
+                "Inhalt",
+                Field("title", css_class="w-full"),
+                Field("description", css_class="w-full"),
+            ),
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div("start_date", css_class="col col-md-3"),
-                    Div("start_time", css_class="col col-md-3"),
-                    css_class="row",
+                    Div("start_date", css_class="mx-2"),
+                    Div("start_time", css_class="mx-2"),
+                    css_class="flex flex-wrap -mx-2",
                 ),
                 Div(
-                    Div("end_date", css_class="col col-md-3"),
-                    Div("end_time", css_class="col col-md-3"),
-                    css_class="row",
+                    Div("end_date", css_class="mx-2"),
+                    Div("end_time", css_class="mx-2"),
+                    css_class="flex flex-wrap -mx-2",
                 ),
                 "location",
             ),
@@ -34,9 +38,9 @@ class SeminarChangeForm(forms.ModelForm):
                 "Förderung",
                 "planned_training_days",
                 Div(
-                    Div("planned_attendees_min", css_class="col col-md-3"),
-                    Div("planned_attendees_max", css_class="col col-md-3"),
-                    css_class="row",
+                    Div("planned_attendees_min", css_class="mx-2"),
+                    Div("planned_attendees_max", css_class="mx-2"),
+                    css_class="flex flex-wrap -mx-2",
                 ),
                 "group",
                 "requested_funding",
@@ -44,22 +48,19 @@ class SeminarChangeForm(forms.ModelForm):
         )
 
         # disable editing for teamers if state not angemeldet:
-        # if not self.request or (
-        #     self.request.user.role == "TEAMER" and self.instance.state != "ANGEMELDET"
-        # ):
-        #     for key in self.Meta.fields:
-        #         self.fields[key].disabled = True
-        #     self.helper.layout[0][0].insert(
-        #         0,
-        #         HTML(
-        #             """<div class="alert alert-light">
-        #             <h5 class="alert-heading">Nicht editierbar</h5>
-        #             <p class="mb-0"><b>In diesem Status</b> können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>
-        #             Kontaktiere uns, wenn noch etwas geändert werden muss.</p>
-        #             </div>
-        #         """
-        #         ),
-        #     )
+        if not self.request or (self.instance.state != "angemeldet"):
+            self.editable = False
+            for key in self.Meta.fields:
+                self.fields[key].disabled = True
+            self.helper.layout.insert(
+                0,
+                HTML(
+                    '<h5 class="text-gray-800 font-bold">Nicht editierbar</h5>'
+                    '<p class="text-sm mb-10 text-gray-800">'
+                    "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>"
+                    "Kontaktiere uns, wenn noch etwas geändert werden muss.</p>"
+                ),
+            )
 
     class Meta:
         model = Seminar

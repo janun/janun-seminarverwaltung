@@ -4,62 +4,81 @@
 
 {% block title %}{{ block.super }} {{ seminar.title }}{% endblock %}
 
+
+{% block css %}
+{{ block.super }}
+<style>
+  .optionalField {
+    display: none;
+  }
+</style>
+{% endblock css %}
+
+
 {% block content %}
-<div class="my-6">
- {% if user.is_staff %}
-    <a class="float-right text-gray-600" href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
-  {% endif %}
-  <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
-</div>
+<div class="mx-auto max-w-3xl">
 
-<div class="mb-1">
-  Am {{ seminar.start_date | date }}
-  {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
-</div>
+  <div class="mb-5">
+  {% if user.is_staff %}
+      <a class="float-right text-gray-600" href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
+    {% endif %}
+    <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
+  </div>
 
-<div class="text-sm">
-  {% if seminar.owner %}
-    <div>
-      Besitzer_in:
-      {% if user.is_staff %}
-        <a class="text-green-500" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
-      {% else %}
-        {{ seminar.owner.name }}
-      {% endif %}
+  <div class="mb-1">
+    Am {{ seminar.start_date | date }}
+    {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
+  </div>
+
+  <div class="text-sm">
+    {% if seminar.owner %}
+      <div>
+        Besitzer_in:
+        {% if user.is_staff %}
+          <a class="text-green-500" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
+        {% else %}
+          {{ seminar.owner.name }}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if seminar.group %}
+      <div>
+        JANUN-Gruppe:
+        <a class="text-green-500" href="{{ seminar.group.get_absolute_url }}">
+          {{ seminar.group.name }}
+        </a>
+      </div>
+    {% endif %}
+
+    {% if seminar.deadline_applicable %}
+      <div>
+        Abrechnungs-Deadline: {{ seminar.deadline | date }}
+        {% if seminar.deadline_status == 'expired' %}
+          <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <form class="mb-12 {% if not form.editable %}not-editable{% endif %}" method="post">
+    {% csrf_token %}
+    {% if form.editable %}
+      <div class="flex">
+        <button class="ml-auto button button-primary" type="submit">Speichern</button>
+      </div>
+    {% endif %}
+    
+    <div class="{% if form.editable %}border-t-2 border-gray-300{% endif %} mt-5 pt-5">
+      {% crispy form %}
     </div>
-  {% endif %}
+    
+    {% if form.editable %}
+      <div class="flex">
+        <button class="ml-auto button button-primary" type="submit">Speichern</button>
+      </div>
+    {% endif %}
+  </form>
 
-
-  {% if seminar.group %}
-    <div>
-      JANUN-Gruppe:
-      <a class="text-green-500" href="{{ seminar.group.get_absolute_url }}">
-        {{ seminar.group.name }}
-      </a>
-    </div>
-  {% endif %}
-
-  {% if seminar.deadline_applicable %}
-    <div>
-      Abrechnungs-Deadline: {{ seminar.deadline | date }}
-      {% if seminar.deadline_status == 'expired' %}
-        <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
-      {% endif %}
-    </div>
-  {% endif %}
 </div>
-
-<hr class="bg-gray-300 h-px my-5" />
-
-<form method="post">
-  {% csrf_token %}
-  <button class="float-right button button-primary" type="submit">Speichern</button>
-  
-  {% crispy form %}
-  
-  <hr class="bg-gray-300 h-px my-5" />
-  <button class="float-right button button-primary" type="submit">Speichern</button>
-</form>
-
-
 {% endblock content %}

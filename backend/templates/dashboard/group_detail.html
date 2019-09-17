@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ block.super }} {{ group.title }}{% endblock %}
+
+
+{% block content %}
+<h1>{{ group.title }}</h1>
+<p>Hier sollen noch Informationen zur Gruppe und ihren Seminaren folgen.</p>
+{% endblock content %}

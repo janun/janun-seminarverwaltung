@@ -1,0 +1,19 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ block.super }} Dein Profil{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-xl bg-white shadow-lg px-8 pb-8 pt-4 rounded-lg">
+  <h1 class="mb-8 font-bold text-2xl text-green-500">Dein Profil</h1>
+
+  <form class="login" method="POST" action="">
+    {% csrf_token %}
+    {% crispy form %}
+   
+    <div class="flex">
+      <button class="ml-auto button button-primary" type="submit">Speichern</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

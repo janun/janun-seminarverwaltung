@@ -219,18 +219,23 @@ class Seminar(models.Model):
     start_time = models.TimeField("Start-Zeit", blank=True, null=True)
     end_date = models.DateField("End-Datum")
     end_time = models.TimeField("End-Zeit", blank=True, null=True)
-    location = models.CharField("Ort", max_length=255, blank=True)
+    location = models.CharField(
+        "Ort",
+        max_length=255,
+        blank=True,
+        help_text="Stadt, in der das Seminar stattfindet",
+    )
     planned_training_days = models.PositiveSmallIntegerField(
         "geplante Bildungstage", null=True, blank=True
     )
     planned_attendees_min = models.PositiveSmallIntegerField(
-        "geplante TN min.", null=True, blank=True
+        "geplante Teilnehmende min.", null=True, blank=True
     )
     planned_attendees_max = models.PositiveSmallIntegerField(
-        "geplante TN max.", null=True, blank=True
+        "geplante Teilnehmende max.", null=True, blank=True
     )
     requested_funding = models.DecimalField(
-        "angeforderte Förderung", max_digits=10, decimal_places=2, null=True, blank=True
+        "gewünschte Förderung", max_digits=10, decimal_places=2, null=True, blank=True
     )
 
     # Abrechnungsfelder:

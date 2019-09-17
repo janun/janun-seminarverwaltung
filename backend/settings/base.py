@@ -78,9 +78,10 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "dashboard:dashboard"
+LOGIN_REDIRECT_URL = "dashboard"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -192,6 +193,8 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
+ACCOUNT_SIGNUP_FORM_CLASS = "backend.users.forms.SignupForm"
+ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 
 
 # Your stuff...

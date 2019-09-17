@@ -3,9 +3,9 @@
 {% specialspaceless %}
     {% if include_media %}{{ form.media }}{% endif %}
     {% if form_show_errors %}
-        {% include "janunbootstrap4/errors.html" %}
+        {% include "./errors.html" %}
     {% endif %}
     {% for field in form %}
-        {% include "janunbootstrap4/field.html" %}
+        {% include "./field.html" %}
     {% endfor %}
 {% endspecialspaceless %}
