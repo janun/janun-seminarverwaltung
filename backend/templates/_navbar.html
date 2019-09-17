@@ -10,7 +10,7 @@
       <span class="ml-2 text-green-500 font-bold">Seminare</span>
     </a>
 
-    <div class="sm:ml-10 flex">
+    <div class="sm:ml-10 hidden sm:flex">
       {% if request.user.is_active and request.user.is_staff %}
         <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
       {% endif %}

@@ -56,12 +56,11 @@ class ProfileForm(forms.ModelForm):
                 Link(
                     reverse("account_change_password"),
                     "Passwort ändern",
-                    "text-gray-700",
+                    "text-gray-700 underline",
                 ),
             ),
-            Fieldset("Gruppen", "janun_groups"),
         )
 
     class Meta:
         model = User
-        fields = ("name", "email", "username", "janun_groups", "telephone")
+        fields = ("name", "email", "username", "telephone")

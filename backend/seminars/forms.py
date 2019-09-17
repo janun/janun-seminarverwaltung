@@ -25,6 +25,16 @@ class SeminarChangeForm(forms.ModelForm):
         label="Kommentar",
     )
 
+    def get_state_description(self):
+        html = '<p class="text-sm font-bold mb-5 text-gray-800">{0}</p>'.format(
+            all_states[self.instance.status]["description"]
+        )
+        if self.instance.status == "überwiesen" and self.instance.transferred_at:
+            html = '<p class="text-sm font-bold mb-5 text-gray-800">Am {0} überwiesen.</p>'.format(
+                self.instance.transferred_at.strftime("%d.%m.%Y")
+            )
+        return html
+
     def __init__(self, *args, **kwargs):
         self.editable = True
         self.request = kwargs.pop("request", None)
@@ -32,15 +42,7 @@ class SeminarChangeForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset(
-                "Status",
-                "status",
-                HTML(
-                    '<p class="text-sm font-bold mb-5 text-gray-800">{0}</p>'.format(
-                        all_states[self.instance.status]["description"]
-                    )
-                ),
-            ),
+            Fieldset("Status", "status", HTML(self.get_state_description())),
             Fieldset(
                 "Inhalt",
                 Field("title", css_class="w-full"),
@@ -51,12 +53,12 @@ class SeminarChangeForm(forms.ModelForm):
                 Div(
                     Div("start_date", css_class="mx-2"),
                     Div("start_time", css_class="mx-2"),
-                    css_class="flex -mx-2",
+                    css_class="md:flex -mx-2",
                 ),
                 Div(
                     Div("end_date", css_class="mx-2"),
                     Div("end_time", css_class="mx-2"),
-                    css_class="flex -mx-2",
+                    css_class="md:flex -mx-2",
                 ),
                 "location",
             ),
@@ -66,7 +68,7 @@ class SeminarChangeForm(forms.ModelForm):
                 Div(
                     Div("planned_attendees_min", css_class="mx-2"),
                     Div("planned_attendees_max", css_class="mx-2"),
-                    css_class="flex -mx-2",
+                    css_class="md:flex -mx-2",
                 ),
                 "group",
                 "requested_funding",
@@ -79,14 +81,13 @@ class SeminarChangeForm(forms.ModelForm):
         self.fields["status"].choices = [(status, status) for status in possible_states]
 
         # set possible group choices:
-        possible_groups = JANUNGroup.objects.filter(
-            pk__in=[group.pk for group in self.request.user.janun_groups.all()]
-            + [self.instance.group.pk]
-        )
+        group_pks = [group.pk for group in self.request.user.janun_groups.all()]
+        if self.instance.group:
+            group_pks += [self.instance.group.pk]
+        possible_groups = JANUNGroup.objects.filter(pk__in=group_pks)
         self.fields["group"].queryset = possible_groups
-        print(list(self.fields["group"].choices))
 
-        # disable editing for teamers if state not angemeldet:
+        # disable editing if state not angemeldet:
         if self.instance.status != "angemeldet":
             self.editable = False
             for key in self.Meta.seminar_fields:
