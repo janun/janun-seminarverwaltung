@@ -62,7 +62,157 @@
 }
 </style>
 
-{% include "admin/seminars/seminar/stats/_seminar_chart.html" %}
+<div class="chart-container" style="margin-top: 100px;">
+    <canvas id="seminar_chart_funding" width="100" height="25"></canvas>
+</div>
+<div class="chart-container" style="margin-top: 100px;">
+    <canvas id="seminar_chart_tnt" width="100" height="25"></canvas>
+</div>
+<div class="chart-container" style="margin-top: 100px;">
+    <canvas id="seminar_chart_tnt_cost" width="100" height="25"></canvas>
+</div>
 
-{% include "admin/seminars/seminar/stats/_group_chart.html" %}
+<script type="text/javascript">
+palette = [ 
+    '#fcff5d',
+    '#7dfc00',
+    '#0ec434',
+    '#228c68',
+    '#8ad8e8',
+    '#235b54',
+    '#29bdab',
+    '#3998f5',
+    '#37294f',
+    '#277da7',
+    '#3750db',
+    '#f22020',
+    '#991919',
+    '#ffcba5',
+    '#e68f66',
+    '#c56133',
+    '#96341c',
+    '#632819',
+    '#ffc413',
+    '#f47a22',
+    '#2f2aa0',
+    '#b732cc',
+    '#772b9d',
+    '#f07cab',
+    '#d30b94',
+    '#edeff3',
+    '#c3a5b4',
+    '#946aa2',
+    '#5d4c86',
+]
+
+groups = [
+    {% for g in groups %}
+        {
+            pk: {{ g.pk }},
+            name: "{{ g.name }}",
+            seminars: {{ g.seminars_this_year }},
+            funding: {{ g.funding_this_year|stringformat:'f'|default:0 }},
+            url: "{{ s.get_admin_change_url }}",
+        },
+    {% endfor %}
+];
+
+seminars = [
+    {% for s in seminars %}
+        {
+            title: "{{ s.title }}",
+            funding: "{{ s.funding|stringformat:'f' }}",
+            tnt: "{{ s.tnt }}",
+            tnt_cost: "{{ s.tnt_cost|stringformat:'f' }}",
+            url: "{{ s.get_admin_change_url }}",
+            start_date: "{{ s.start_date|date:'d.m.' }}",
+            group: "{{ s.group.name }}",
+            group_pk: "{{ s.group.pk }}"
+        },
+    {% endfor %}
+];
+
+function clickHandler(event) {
+    var element = seminarChart.getElementAtEvent(event);
+    if (element.length) {
+        var index = element[0]._index;
+        var url = seminars[index].url;
+        window.location = url;
+    }
+}
+
+var seminarChart = new Chart(document.getElementById('seminar_chart_funding'), {
+    type: 'bar',
+    data: {
+        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        datasets: [
+            {
+                label: 'Förderung',
+                data: seminars.map(s => s.funding),
+                backgroundColor: seminars.map(s => palette[s.group_pk]),
+            },
+        ]
+    },
+    options:{
+        legend: { display: false },
+        onClick: clickHandler,
+        title: {
+            display: true,
+            text: 'Förderung'
+        },
+        tooltips: { mode: 'index', intersect: true },
+        scales: {xAxes: [{display: false}]}
+    }
+});
+
+
+var tntChart = new Chart(document.getElementById('seminar_chart_tnt'), {
+    type: 'bar',
+    data: {
+        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        datasets: [
+            {
+                label: 'TNT',
+                data: seminars.map(s => s.tnt),
+                backgroundColor: seminars.map(s => palette[s.group_pk]),
+            },
+        ]
+    },
+    options:{
+        legend: { display: false },
+        onClick: clickHandler,
+        title: {
+            display: true,
+            text: 'TNT'
+        },
+        tooltips: { mode: 'index', intersect: true },
+        scales: {xAxes: [{display: false}]}
+    }
+});
+
+var tntCostChart = new Chart(document.getElementById('seminar_chart_tnt_cost'), {
+    type: 'bar',
+    data: {
+        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        datasets: [
+            {
+                label: '€/TNT',
+                data: seminars.map(s => s.tnt_cost),
+                backgroundColor: seminars.map(s => palette[s.group_pk]),
+            },
+        ]
+    },
+    options:{
+        legend: { display: false },
+        onClick: clickHandler,
+        title: {
+            display: true,
+            text: '€/TNT'
+        },
+        tooltips: { mode: 'index', intersect: true },
+        scales: {xAxes: [{display: false}]}
+    }
+});
+</script>
+
 {% endblock %}

@@ -1,61 +1,53 @@
 <div class="chart-container">
-  <canvas id="group_chart" width="100" height="25"></canvas>
+  <canvas id="group_chart" width="25" height="25"></canvas>
 </div>
 
 <script type="text/javascript">
-  palette = [
-      '#aee1a5','#81c155', '#3a9d00', '#308701', '#2b7b03', '#236707',
-  ]
-  colors = []
-  var i;
-  for (i = 0; i < {{ seminars.count }}; i++) {
-      colors.push(palette[i % palette.length])
-  }
+  
+  
 
-  groups = [
-      {% for g in groups %}
-          {
-              name: "{{ g.name }}",
-              seminars: "{{ g.seminars_this_year }}",
-              funding: "{{ g.funding_this_year|stringformat:'f' }}",
-              tnt: "{{ g.tnt_this_year }}",
-              tnt_cost: "{{ s.tnt_cost_simple_this_year|stringformat:'f' }}",
-              url: "{{ s.get_admin_change_url }}",
-          },
-      {% endfor %}
-  ];
+groups = [
+    {% for g in groups %}
+        {
+            pk: {{ g.pk }},
+            name: "{{ g.name }}",
+            seminars: {{ g.seminars_this_year }},
+            funding: {{ g.funding_this_year|stringformat:'f'|default:0 }},
+            url: "{{ s.get_admin_change_url }}",
+        },
+    {% endfor %}
+];
 
-  var ctx = document.getElementById('group_chart').getContext('2d');
-  var myChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-          datasets: [
-              {
-                  //label: 'Förderung',
-                  data: groups.map(g => g.funding),
-                  backgroundColor: colors,
-              },
-          ],
-          labels: groups.map(g => g.name),
-          
-      },
-      options:{
-          onClick: function(event) {
-              var element = myChart.getElementAtEvent(event);
-              if (element.length) {
-                  var index = element[0]._index;
-                  var url = seminars[index].url;
-                  window.location = url;
-              }
-          },
-          title: {
-              display: true,
-              text: 'Gruppen {% now 'Y' %}'
-          },
-          tooltips: {
-              mode: 'index',
-              intersect: true
-          },
-      }
-  });
+var ctx = document.getElementById('group_chart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        datasets: [
+            {
+                data: groups.map(g => g.funding),
+                backgroundColor: groups.map(g => palette[g.pk]),
+            },
+        ],
+        labels: groups.map(g => g.name),
+        
+    },
+    options:{
+        onClick: function(event) {
+            var element = myChart.getElementAtEvent(event);
+            if (element.length) {
+                var index = element[0]._index;
+                var url = seminars[index].url;
+                window.location = url;
+            }
+        },
+        title: {
+            display: true,
+            text: 'Gruppen {% now 'Y' %}'
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: true
+        },
+    }
+});
 </script>
