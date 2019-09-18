@@ -14,13 +14,20 @@ class Link(HTML):
         super().__init__(html)
 
 
+data_protection_url = (
+    "https://www.janun.de/documents/111/Datenverarbeitung_Seminarabrechnung.pdf"
+)
+
+
 class SignupForm(forms.Form):
     name = forms.CharField(max_length=30, label="Voller Name")
     janun_groups = forms.ModelMultipleChoiceField(
         queryset=JANUNGroup.objects.all(), label="JANUN-Gruppe(n)", required=False
     )
     data_protection_read = forms.BooleanField(
-        label="Ich habe die Datenschutzbedingungen gelesen und verstanden.",
+        label='Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
+            data_protection_url
+        ),
         required=True,
     )
 

@@ -5,9 +5,9 @@
 
 {% block content %}
 <div class="mx-auto max-w-lg md:bg-white md:shadow-lg rounded-lg px-8 pb-8 pt-6">
-    <h1 class="font-bold text-2xl text-green-500">Konto anlegen</h1>
+    <h1 class="font-bold text-2xl text-green-500">Konto Anlegen</h1>
 
-    <p class="my-5">Hast Du bereits ein Konto? <a class="text-green-500" href="{{ login_url }}">Anmelden</a>.</p>
+    <p class="my-5">Hast Du bereits ein Konto? <a class="text-green-500" href="{{ login_url }}">← Anmelden</a></p>
 
     <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
     {% csrf_token %}
