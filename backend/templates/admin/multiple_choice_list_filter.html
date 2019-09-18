@@ -8,6 +8,7 @@
         </li>
     {% endif %}
 {% endfor %}
+<hr>
 {% for choice in choices %}
     {% if not choice.reset %}
         <li{% if choice.selected %} class="selected"{% endif %}>

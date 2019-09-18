@@ -24,15 +24,12 @@
 {% endblock %}
 
 {% block content %}
-{% if cl.result_count > 0 %}
-    <table id="change_list_stats">
-        <tr>
-            <td><span class="big">{{ cl.result_count }}</span> Seminare</td>
-            <td><span class="big">{{ funding_sum|number }}</span> €</td>
-            <td><span class="big">{{ tnt_sum|number:0 }}</span> TNT</td>
-        </tr>
-    </table>
-{% endif %}
+<div style="margin-bottom: 20px">
+  <span>zugesagt {% now 'Y' %}:</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.count }}</span> Seminare</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.funding_sum|number }}</span> €</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.tnt_sum|number:0 }}</span> TNT</span>
+</div>
        
 {{ block.super }}
 {% endblock %}

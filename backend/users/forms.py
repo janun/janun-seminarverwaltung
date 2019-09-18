@@ -43,6 +43,9 @@ class SignupForm(forms.Form):
             Fieldset(None, "data_protection_read"),
         )
 
+        # set autofocus
+        self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
     def signup(self, request, user):
         user.name = self.cleaned_data["name"]
         user.janun_groups.set(self.cleaned_data["janun_groups"])
@@ -62,16 +65,18 @@ class ProfileForm(forms.ModelForm):
                 "username",
                 Link(
                     reverse("account_change_password"),
-                    "Passwort ändern",
-                    "block my-1 text-gray-700 underline",
+                    "Passwort ändern →",
+                    "block mb-6 mt-4 text-gray-700 hover:text-gray-900",
                 ),
                 Link(
                     reverse("two-factor-setup"),
-                    "Zwei-Faktor-Authentisierung einstellen",
-                    "block my-1 text-gray-700 underline",
+                    "Zwei-Faktor-Authentisierung →",
+                    "block text-gray-700 hover:text-gray-900",
                 ),
             ),
         )
+
+        self.fields["username"].help_text = ""
 
     class Meta:
         model = User

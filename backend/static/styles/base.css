@@ -37,8 +37,7 @@
 }
 
 .form-control {
-  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal;
-
+  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal max-w-full;
   transition: box-shadow 200ms;
 }
 

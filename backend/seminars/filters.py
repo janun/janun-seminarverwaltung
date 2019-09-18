@@ -1,7 +1,10 @@
+import itertools
+
 from django.contrib import admin
 
 from .models import Seminar
 from .filter_multiple import MultipleListFilter
+from .states import STATES_CONFIRMED
 
 
 class DeadlineFilter(admin.SimpleListFilter):
@@ -27,7 +30,20 @@ class StatusListFilter(MultipleListFilter):
     parameter_name = "status__in"
 
     def lookups(self, request, model_admin):
-        return Seminar.STATES
+        return Seminar.STATE_CHOICES
+
+    def choices(self, changelist):
+        choices = super().choices(changelist)
+        all_confirmed_option = {
+            "selected": self.value() == ",".join(STATES_CONFIRMED),
+            "query_string": changelist.get_query_string(
+                {self.parameter_name: ",".join(STATES_CONFIRMED)}
+            ),
+            "display": "Alle zugesagten",
+            "reset": True,
+        }
+        choices = itertools.chain(choices, [all_confirmed_option])
+        return choices
 
 
 class QuarterListFilter(MultipleListFilter):

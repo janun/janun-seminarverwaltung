@@ -1,7 +1,7 @@
 from typing import List
 
 
-all_states = {
+STATE_INFO = {
     "angemeldet": {
         "description": "Das Seminar wurde angemeldet.",
         "sources": ["zurückgezogen", "abgesagt"],
@@ -100,9 +100,29 @@ all_states = {
 }
 
 
+STATES_APPLIED = ("angemeldet",)
+
+STATES_CONFIRMED = (
+    "zugesagt",
+    "stattgefunden",
+    "Abrechnung abgeschickt",
+    "Abrechnung angekommen",
+    "rechnerische Prüfung",
+    "inhaltliche Prüfung",
+    "Zweitprüfung",
+    "fertig geprüft",
+    "überwiesen",
+)
+
+
+STATES_REJECTED = ("abgelehnt", "abgesagt", "ohne Abrechnung", "Abrechnung unmöglich")
+
+STATES = STATES_APPLIED + STATES_CONFIRMED + STATES_REJECTED
+
+
 def get_next_states(status: str, is_staff: bool = False) -> List[str]:
     return [
         state
-        for state, info in all_states.items()
+        for state, info in STATE_INFO.items()
         if status in info["sources"] and (is_staff or not info["staff_only"])
     ]

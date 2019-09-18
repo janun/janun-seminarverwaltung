@@ -68,7 +68,7 @@ class CommentsInline(admin.StackedInline):
 
 
 class ChangeStatusForm(forms.Form):
-    new_status = forms.ChoiceField(label="Neuer Status", choices=Seminar.STATES)
+    new_status = forms.ChoiceField(label="Neuer Status", choices=Seminar.STATE_CHOICES)
 
 
 @admin.register(Seminar)
@@ -212,12 +212,26 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context)
-        if hasattr(response, "context_data") and "cl" in response.context_data:
-            queryset = response.context_data["cl"].queryset
-            extra_context = queryset.aggregate(
-                funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
+        filtered_query_set = response.context_data["cl"].queryset
+        extra_context = {}
+
+        # stat for this year
+        this_year_confirmed = (
+            Seminar.objects.this_year()
+            .is_confirmed()
+            .aggregate(
+                count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
             )
-            response.context_data.update(extra_context)
+        )
+        extra_context["this_year_confirmed"] = this_year_confirmed
+
+        # stat for filtered_query_set
+        stats = filtered_query_set.aggregate(
+            count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
+        )
+        response.context_data["cl"].stats = stats
+
+        response.context_data.update(extra_context)
         return response
 
     # formatted_fields and accessors to annotated values

@@ -1,0 +1,22 @@
+{% load i18n static janun %}
+
+{% if cl.search_fields %}
+<div id="toolbar"><form id="changelist-search" method="get">
+<div><!-- DIV needed for valid HTML -->
+<label for="searchbar"><img src="{% static "admin/img/search.svg" %}" alt="Search"></label>
+<input type="text" size="40" name="{{ search_var }}" value="{{ cl.query }}" id="searchbar" autofocus>
+<input type="submit" value="{% trans 'Search' %}">
+
+<span class="" style="margin-left: 20px;">
+    <span style="margin-left: 20px;">{{ cl.result_count }} Suchergebnisse</span></td>
+    <span style="margin-left: 20px;">{{ cl.stats.funding_sum|number|default:"?" }} €</span></td>
+    <span style="margin-left: 20px;">{{ cl.stats.tnt_sum|number:0|default:"?" }} TNT</span></td>
+</span>
+    
+ 
+{% for pair in cl.params.items %}
+    {% if pair.0 != search_var %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+{% endfor %}
+</div>
+</form></div>
+{% endif %}

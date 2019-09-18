@@ -16,6 +16,8 @@ from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.utils import slugify_german
 
+from .states import STATES_CONFIRMED, STATES_REJECTED, STATES
+
 
 def get_quarter(date: datetime.date) -> int:
     return (date.month - 1) // 3
@@ -128,29 +130,10 @@ class SeminarQuerySet(models.QuerySet):
         )
 
     def is_confirmed(self):
-        return self.filter(
-            status__in=(
-                "zugesagt",
-                "stattgefunden",
-                "Abrechnung abgeschickt",
-                "Abrechnung angekommen",
-                "rechnerische Prüfung",
-                "inhaltliche Prüfung",
-                "Zweitprüfung",
-                "fertig geprüft",
-                "überwiesen",
-            )
-        )
+        return self.filter(status__in=(STATES_CONFIRMED))
 
     def is_rejected(self):
-        return self.filter(
-            status__in=(
-                "abgelehnt",
-                "abgesagt",
-                "ohne Abrechnung",
-                "Abrechnung unmöglich",
-            )
-        )
+        return self.filter(status__in=(STATES_REJECTED))
 
     def last_year(self):
         return self.filter(start_date__year=timezone.now().year - 1)
@@ -168,22 +151,7 @@ class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
 
 
 class Seminar(models.Model):
-    STATES = Choices(
-        "angemeldet",
-        "zugesagt",
-        "abgelehnt",
-        "abgesagt",
-        "stattgefunden",
-        "ohne Abrechnung",
-        "Abrechnung abgeschickt",
-        "Abrechnung angekommen",
-        "Abrechnung unmöglich",
-        "rechnerische Prüfung",
-        "inhaltliche Prüfung",
-        "Zweitprüfung",
-        "fertig geprüft",
-        "überwiesen",
-    )
+    STATE_CHOICES = Choices(*STATES)
 
     title = models.CharField("Titel", max_length=255)
     slug = AutoSlugField(
@@ -196,7 +164,10 @@ class Seminar(models.Model):
         slugify_function=slugify_german,
     )
     status = models.CharField(
-        "Status", max_length=255, choices=STATES, default=STATES.angemeldet
+        "Status",
+        max_length=255,
+        choices=STATE_CHOICES,
+        default=STATE_CHOICES.angemeldet,
     )
     owner = models.ForeignKey(
         User,

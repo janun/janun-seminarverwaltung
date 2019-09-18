@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
 
 from backend.groups.models import JANUNGroup
 from .models import Seminar, SeminarComment
-from .states import all_states, get_next_states
+from .states import STATE_INFO, get_next_states
 
 
 non_editable_text = (
@@ -27,7 +27,7 @@ class SeminarChangeForm(forms.ModelForm):
 
     def get_state_description(self):
         html = '<p class="text-sm font-bold mb-5 text-gray-800">{0}</p>'.format(
-            all_states[self.instance.status]["description"]
+            STATE_INFO[self.instance.status]["description"]
         )
         if self.instance.status == "überwiesen" and self.instance.transferred_at:
             html = '<p class="text-sm font-bold mb-5 text-gray-800">Am {0} überwiesen.</p>'.format(
