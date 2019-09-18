@@ -406,6 +406,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
             timezone.now().year, ",".join(status_list)
         )
         extra_context["seminars"] = queryset
+        extra_context["groups"] = JANUNGroup.objects.all()
         context.update(extra_context)
 
         return TemplateResponse(request, "admin/seminars/seminar/stats.html", context)
