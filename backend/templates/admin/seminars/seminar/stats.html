@@ -121,6 +121,7 @@ seminars = [
     {% for s in seminars %}
         {
             title: "{{ s.title }}",
+            label: "{{ s.title }} am {{ s.start_date|date:'d.m.' }} {% if s.group %}({{ s.group.name }}){% else %}(Einzelperson){% endif %}",
             funding: "{{ s.funding|stringformat:'f' }}",
             tnt: "{{ s.tnt }}",
             tnt_cost: "{{ s.tnt_cost|stringformat:'f' }}",
@@ -132,19 +133,11 @@ seminars = [
     {% endfor %}
 ];
 
-function clickHandler(event) {
-    var element = seminarChart.getElementAtEvent(event);
-    if (element.length) {
-        var index = element[0]._index;
-        var url = seminars[index].url;
-        window.location = url;
-    }
-}
 
 var seminarChart = new Chart(document.getElementById('seminar_chart_funding'), {
     type: 'bar',
     data: {
-        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        labels: seminars.map(s => s.label),
         datasets: [
             {
                 label: 'Förderung',
@@ -155,13 +148,33 @@ var seminarChart = new Chart(document.getElementById('seminar_chart_funding'), {
     },
     options:{
         legend: { display: false },
-        onClick: clickHandler,
+        onClick: function clickHandler(event) {
+            var element = seminarChart.getElementAtEvent(event);
+            if (element.length) {
+                var index = element[0]._index;
+                var url = seminars[index].url;
+                window.location = url;
+            }
+        },
         title: {
             display: true,
             text: 'Förderung'
         },
         tooltips: { mode: 'index', intersect: true },
-        scales: {xAxes: [{display: false}]}
+        scales: {
+            xAxes: [{
+                display: true,
+                type: 'category',
+                scaleLabel: { display: true, labelString: 'Seminare nach Datum (Farbe: Gruppe)' },
+                ticks: { display: false },
+                gridLines: false
+            }],
+            yAxes: [{
+                display: true,
+                type: 'linear',
+                scaleLabel: { display: true, labelString: 'Förderung in EUR' }
+            }]
+        }
     }
 });
 
@@ -169,7 +182,7 @@ var seminarChart = new Chart(document.getElementById('seminar_chart_funding'), {
 var tntChart = new Chart(document.getElementById('seminar_chart_tnt'), {
     type: 'bar',
     data: {
-        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        labels: seminars.map(s => s.label),
         datasets: [
             {
                 label: 'TNT',
@@ -180,23 +193,43 @@ var tntChart = new Chart(document.getElementById('seminar_chart_tnt'), {
     },
     options:{
         legend: { display: false },
-        onClick: clickHandler,
+        onClick: function clickHandler(event) {
+            var element = tntChart.getElementAtEvent(event);
+            if (element.length) {
+                var index = element[0]._index;
+                var url = seminars[index].url;
+                window.location = url;
+            }
+        },
         title: {
             display: true,
             text: 'TNT'
         },
         tooltips: { mode: 'index', intersect: true },
-        scales: {xAxes: [{display: false}]}
+        scales: {
+            xAxes: [{
+                display: true,
+                type: 'category',
+                scaleLabel: { display: true, labelString: 'Seminare nach Datum (Farbe: Gruppe)' },
+                ticks: { display: false },
+                gridLines: false
+            }],
+            yAxes: [{
+                display: true,
+                type: 'linear',
+                scaleLabel: { display: true, labelString: 'TNT' }
+            }]
+        }
     }
 });
 
 var tntCostChart = new Chart(document.getElementById('seminar_chart_tnt_cost'), {
     type: 'bar',
     data: {
-        labels: seminars.map(s => s.title + " am " + s.start_date + " von " + s.group),
+        labels: seminars.map(s => s.label),
         datasets: [
             {
-                label: '€/TNT',
+                label: 'Förderungskosten EUR/TNT',
                 data: seminars.map(s => s.tnt_cost),
                 backgroundColor: seminars.map(s => palette[s.group_pk]),
             },
@@ -204,13 +237,33 @@ var tntCostChart = new Chart(document.getElementById('seminar_chart_tnt_cost'), 
     },
     options:{
         legend: { display: false },
-        onClick: clickHandler,
+        onClick: function clickHandler(event) {
+            var element = tntCostChart.getElementAtEvent(event);
+            if (element.length) {
+                var index = element[0]._index;
+                var url = seminars[index].url;
+                window.location = url;
+            }
+        },
         title: {
             display: true,
-            text: '€/TNT'
+            text: 'Förderungskosten EUR/TNT'
         },
         tooltips: { mode: 'index', intersect: true },
-        scales: {xAxes: [{display: false}]}
+        scales: {
+            xAxes: [{
+                display: true,
+                type: 'category',
+                scaleLabel: { display: true, labelString: 'Seminare nach Datum (Farbe: Gruppe)' },
+                ticks: { display: false },
+                gridLines: false
+            }],
+            yAxes: [{
+                display: true,
+                type: 'linear',
+                scaleLabel: { display: true, labelString: 'EUR/TNT' }
+            }]
+        }
     }
 });
 </script>
