@@ -14,11 +14,12 @@
       {% if request.user.is_active and request.user.is_staff %}
         <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
       {% endif %}
+      <a class="mx-2 flex items-center" href="{% url 'seminar_list' %}">Deine Seminare</a>
     </div>
 
     {% if user.is_authenticated %}
       <div class="ml-auto flex">
-        <a class="mx-2 flex items-center" href="{% url 'account_profile' %}">
+        <a title="Konto-Einstellungen" class="mx-2 flex items-center" href="{% url 'account_profile' %}">
           {{ user.username }}
         </a>
         <form class="flex items-center" method="post" action="{% url 'account_logout' %}">

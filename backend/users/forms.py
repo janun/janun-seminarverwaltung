@@ -59,7 +59,7 @@ class ProfileForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset("Kontakt", "name", "email", "telephone"),
+            Fieldset("Kontakt", "name", "email", "telephone", "address"),
             Fieldset(
                 "Anmeldung",
                 "username",
@@ -77,7 +77,8 @@ class ProfileForm(forms.ModelForm):
         )
 
         self.fields["username"].help_text = ""
+        self.fields["address"].widget.attrs.update({"rows": 3})
 
     class Meta:
         model = User
-        fields = ("name", "email", "username", "telephone")
+        fields = ("name", "email", "username", "telephone", "address")

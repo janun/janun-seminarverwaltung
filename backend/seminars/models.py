@@ -134,6 +134,9 @@ class SeminarQuerySet(models.QuerySet):
 
     def is_rejected(self):
         return self.filter(status__in=(STATES_REJECTED))
+    
+    def is_not_rejected(self):
+        return self.exclude(status__in=(STATES_REJECTED))
 
     def last_year(self):
         return self.filter(start_date__year=timezone.now().year - 1)

@@ -2,17 +2,7 @@
 {% load crispy_forms_tags %}
 
 
-{% block title %}{{ block.super }} {{ seminar.title }}{% endblock %}
-
-
-{% block css %}
-{{ block.super }}
-<style>
-  .optionalField {
-    display: none;
-  }
-</style>
-{% endblock css %}
+{% block head_title %}{{ seminar.title }}{% endblock %}
 
 
 {% block content %}
@@ -76,22 +66,6 @@
     </div>
   </form>
 
-  {% if comments %}
-  <h2 id="comments" class="text-green-500 font-bold mb-3 text-base">Kommentare</h2>
-    {% for comment in comments %}
-      <div class="bg-white shadow max-w-lg my-5 px-4 pt-2 pb-4 rounded">
-        <div class="text-xs my-2 text-gray-600">
-          {{ comment.owner }}, {{ comment.created_at|date:"d.m.y H:i" }}
-          {% if comment.was_edited %}, (bearbeitet {{ comment.updated_at|date:"d.m.y H:i" }}){% endif %}
-          <!-- <div class="float-right">
-            <button type="button" class="hover:text-gray-900 mx-1 select-none">bearbeiten</button>
-            <button type="button" class="hover:text-gray-900 mx-1 select-none">löschen</button>
-          </div>-->
-        </div>
-        <p class="whitespace-pre-wrap">{{ comment.text }}</p>
-      </div>
-    {% endfor %}
-  {% endif %}
-
+  {% include "./_comments.html" %}
 </div>
 {% endblock content %}

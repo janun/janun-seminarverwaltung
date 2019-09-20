@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg">
-  <h1 class="mb-8 font-bold text-2xl text-green-500">Dein Profil</h1>
+  <h1 class="mb-8 font-bold text-2xl text-green-500">Konto-Einstellungen</h1>
 
   <form class="login" method="POST" action="">
     {% csrf_token %}
@@ -25,12 +25,14 @@
           <div class="mb-4">
             <div class="col-form-label">Gruppen-Mitgliedschaften</div>
             {% if user.janun_groups.all %}
-              <p>Du bist Mitlied in:</p>
               <ul>
                 {% for group in user.janun_groups.all %}
                   <li><a class="text-green-500" href="{% url 'group_detail' group.slug %}">{{ group.name }}</a></li>
                 {% endfor %}
               </ul>
+              {% if not user.is_reviewed %}
+                <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
+              {% endif %}
             {% else %}
               <p>Du bist in keinen Gruppen Mitglied.</p>
             {% endif %}
@@ -46,6 +48,9 @@
                   <li><a class="text-green-500" href="#">{{ group.name }}</a></li>
                 {% endfor %}
               </ul>
+              {% if not user.is_reviewed %}
+                <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
+              {% endif %}
             {% else %}
               <p>Du hast keine Gruppen-Hüte.</p>
             {% endif %}

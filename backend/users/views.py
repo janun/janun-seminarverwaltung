@@ -1,5 +1,4 @@
 from django.views.generic.edit import UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.contrib import messages
 
@@ -8,7 +7,7 @@ from .models import User
 from .forms import ProfileForm
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
+class ProfileView(UpdateView):
     model = User
     form_class = ProfileForm
     template_name = "account/profile.html"

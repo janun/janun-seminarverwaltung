@@ -2,10 +2,44 @@
 {% load crispy_forms_tags %}
 
 
-{% block title %}{{ block.super }} {{ group.title }}{% endblock %}
+{% block head_title %}{{ group.name }}{% endblock %}
 
 
 {% block content %}
-<h1>{{ group.title }}</h1>
-<p>Hier sollen noch Informationen zur Gruppe und ihren Seminaren folgen.</p>
+<h1 class="text-green-500 font-bold text-2xl mb-6">{{ group.name }}</h1>
+
+{% if user.is_staff %}
+  <div class="mb-6">
+    <h2 class="text-green-500 font-bold text-lg">Gruppenhüte</h2>
+    {% if group.group_hats.all %}
+      {{ group.group_hats.all|join:", " }}
+    {% else %}
+      <p>Keine Hüte gefunden.</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+<div class="mb-6">
+  <h2 class="text-green-500 font-bold text-xl">Mitglieder</h2>
+  {% if group.members.all %}
+    {{ group.members.all|join:", " }}
+  {% else %}
+    <p>Keine Mitglieder gefunden.</p>
+  {% endif %}
+</div>
+
+<h2 class="text-green-500 font-bold text-xl mb-2">Seminare</h2>
+ 
+<h3 class="font-bold text-gray-700 mb-2">Nächstes Jahr</h3>
+{% include "./_seminar_table.html" with seminars=seminars_next_year stats=stats_next_year %}
+
+
+<h3 class="font-bold text-gray-700 mb-2 mt-8">Dieses Jahr</h3>
+{% include "./_seminar_table.html" with seminars=seminars_this_year stats=stats_this_year %}
+
+
+<h3 class="font-bold text-gray-700 mb-2 mt-8">Letztes Jahr</h3>
+{% include "./_seminar_table.html" with seminars=seminars_last_year stats=stats_last_year %}
+      
+
 {% endblock content %}

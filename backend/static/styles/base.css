@@ -37,8 +37,13 @@
 }
 
 .form-control {
-  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal max-w-full;
+  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal w-full;
+
   transition: box-shadow 200ms;
+}
+
+.custom-control {
+  @apply w-full;
 }
 
 .form-control:focus {
@@ -61,7 +66,7 @@
   @apply border-red-500;
 }
 
-form.not-editable .form-control {
+.form-control:disabled {
   @apply bg-transparent;
 }
 

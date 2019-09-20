@@ -1,13 +1,23 @@
 import random
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import (
+    ListView,
+    TemplateView,
+    DetailView,
+    DeleteView,
+    CreateView,
+)
+from django.core.exceptions import PermissionDenied
 from django.views.generic.edit import UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.db.models import Sum
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
-from backend.seminars.models import Seminar
+from backend.seminars.models import Seminar, SeminarComment
 from backend.groups.models import JANUNGroup
 from backend.seminars.forms import SeminarChangeForm
+from backend.utils import AjaxableResponseMixin
 
 
 def get_greeting():
@@ -15,22 +25,37 @@ def get_greeting():
     return random.choice(greetings)
 
 
-class Dashboard(LoginRequiredMixin, ListView):
-    model = Seminar
+class Dashboard(TemplateView):
     context_object_name = "seminars"
     template_name = "dashboard/dashboard.html"
-    paginate_by = 100
+    seminar_limit = 25
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["greeting"] = get_greeting()
+        context["janun_groups"] = self.request.user.janun_groups.all()
+        context["group_hats"] = self.request.user.group_hats.all()
+        context["seminars"] = self.request.user.seminars.all()[: self.seminar_limit]
+        context["show_more_link"] = (
+            self.request.user.seminars.count() > self.seminar_limit
+        )
+        return context
+
+
+class SeminarListView(ListView):
+    model = Seminar
+    context_object_name = "seminars"
+    template_name = "dashboard/seminars.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class SeminarUpdateView(LoginRequiredMixin, UpdateView):
+class SeminarUpdateView(UpdateView):
     queryset = Seminar.objects.select_related("owner", "group").prefetch_related(
         "comments"
     )
@@ -59,6 +84,45 @@ class SeminarUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class JANUNGroupDetailView(LoginRequiredMixin, DetailView):
+class JANUNGroupDetailView(DetailView):
     model = JANUNGroup
     template_name = "dashboard/group_detail.html"
+    context_object_name = "group"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["seminars_next_year"] = self.object.seminars.next_year().order_by(
+            "start_date"
+        )
+        context["stats_next_year"] = (
+            context["seminars_next_year"]
+            .is_not_rejected()
+            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
+        )
+        context["seminars_this_year"] = self.object.seminars.this_year().order_by(
+            "start_date"
+        )
+        context["stats_this_year"] = (
+            context["seminars_this_year"]
+            .is_not_rejected()
+            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
+        )
+        context["seminars_last_year"] = self.object.seminars.last_year().order_by(
+            "start_date"
+        )
+        context["stats_last_year"] = (
+            context["seminars_last_year"]
+            .is_not_rejected()
+            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
+        )
+        return context
+
+
+class CommentDeleteView(AjaxableResponseMixin, DeleteView):
+    model = SeminarComment
+    success_url = "/"
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().owner != self.request.user:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)

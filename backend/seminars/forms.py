@@ -11,7 +11,7 @@ from .states import STATE_INFO, get_next_states
 non_editable_text = (
     '<p class="text-sm mb-10 text-gray-800">'
     "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>"
-    '<a class="underline href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
+    '<a class="underline" href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
     "wenn noch etwas geändert werden muss.</p>"
 )
 

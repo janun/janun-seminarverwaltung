@@ -3,10 +3,16 @@ from . import views
 
 urlpatterns = [
     path("", views.Dashboard.as_view(), name="dashboard"),
+    path("seminars/", views.SeminarListView.as_view(), name="seminar_list"),
     path(
         "seminars/<int:year>/<slug:slug>",
         views.SeminarUpdateView.as_view(),
         name="seminar_detail",
+    ),
+    path(
+        "comments/<int:pk>/delete",
+        views.CommentDeleteView.as_view(),
+        name="comment_delete",
     ),
     path(
         "groups/<slug:slug>", views.JANUNGroupDetailView.as_view(), name="group_detail"
