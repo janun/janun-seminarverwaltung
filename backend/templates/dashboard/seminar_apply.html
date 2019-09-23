@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block body_class %}wizard-page{% endblock %}
+
+{% block extrahead %}
+{{ wizard.form.media }}
+<style>.navbar {display: none;}</style>
+{% endblock %}
+
+{% block head_title %}Neues Seminar anmelden{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl md:bg-white md:shadow-lg pb-8 pt-8 rounded-lg">
+
+  <h1 class="text-gray-600 text-sm mb-6 md:px-8 pb-6">
+    Neues Seminar anmelden
+    ({{ wizard.steps.step1 }}/{{ wizard.steps.count }})
+  </h1>
+
+  <form class="md:px-8" action="" method="POST">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    <input type="submit" value="Speichern" class="hidden" />
+
+    <div class="flex items-start">
+      <ul class="w-1/4 bg-gray-100 rounded shadow mb-10 mr-12 px-2">
+        {% for step_name, step_form in steps.items %}
+          <li>
+            <button class="flex items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
+                name="wizard_goto_step" type="submit" value="{{ step_name }}">
+              {{ step_form.Meta.short_title }}
+              {% if step_form.is_valid %}
+                <svg viewBox="0 0 24 24" class="ml-1 h-4 w-4 fill-current text-white rounded-full bg-green-500"><path d="M10 14.59l6.3-6.3a1 1 0 0 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-3-3a1 1 0 0 1 1.4-1.42l2.3 2.3z"></path></svg>
+              {% elif step_form.errors %}
+                <svg viewBox="0 0 24 24" class="ml-1 h-4 w-4 fill-current text-white rounded-full bg-red-600"><path d="M13.41 12l2.83 2.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 1 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12z"></path></svg>
+              {% endif %}
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="w-3/4 mb-8">
+        <h2 class="text-green-500 text-xl mb-2 ">{{ form.Meta.title }}</h2>
+        {% if wizard.form.forms %}
+          {{ wizard.form.management_form }}
+          {% for form in wizard.form.forms %}
+            {% crispy form %}
+          {% endfor %}
+        {% else %}
+          {% crispy wizard.form %}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center">
+      {% if wizard.steps.prev %}
+        <button class="text-gray-600" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">← Zurück</button>
+      {% else %}
+        <a class="text-gray-600" onclick="return confirmCancel()" href="{% url 'seminar_apply' %}?reset">
+          ✖ Abbrechen
+        </a>
+      {% endif %}
+
+      {% if wizard.steps.next %}
+        <button class="button button-primary ml-auto" type="submit">Weiter →</button>
+      {% else %}
+        <button class="button button-primary ml-auto" type="submit">Anmelden</button>
+      {% endif %}
+    </div>
+
+  </form>
+</div>
+
+<script>
+  function confirmCancel() {
+    return confirm('Wirklich abbrechen? Deine Angaben gehen verloren, wenn Du jetzt abbrichst.');
+  }
+</script>
+{% endblock content %}

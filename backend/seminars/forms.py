@@ -10,8 +10,8 @@ from .states import STATE_INFO, get_next_states
 
 non_editable_text = (
     '<p class="text-sm mb-10 text-gray-800">'
-    "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden.<br>"
-    '<a class="underline" href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
+    "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden."
+    '<br><a class="underline" href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
     "wenn noch etwas geändert werden muss.</p>"
 )
 
@@ -127,3 +127,141 @@ class SeminarChangeForm(forms.ModelForm):
             "group",
         )
         fields = seminar_fields + ("comment",)
+
+
+class SeminarStepForm(forms.ModelForm):
+    use_required_attribute = False
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        list(self.fields.values())[0].widget.attrs["autofocus"] = "autofocus"
+
+    class Meta:
+        model = Seminar
+        title = ""
+        short_title = ""
+        fields = ()
+
+
+class ContentSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            HTML(
+                '<p class="mb-4 text-gray-700">Beschreibe uns Dein Seminar, '
+                "damit wir entscheiden können, ob wir es fördern können.</p>"
+            ),
+            "title",
+            "description",
+        )
+
+    class Meta(SeminarStepForm.Meta):
+        title = "Seminarinhalte"
+        short_title = "Inhalt"
+        fields = ("title", "description")
+
+
+class DateLocationSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Div(
+                Div("start_date", css_class="mx-2"),
+                Div("start_time", css_class="mx-2"),
+                css_class="flex -mx-2",
+            ),
+            Div(
+                Div("end_date", css_class="mx-2"),
+                Div("end_time", css_class="mx-2"),
+                css_class="flex -mx-2",
+            ),
+            "location",
+        )
+
+    class Meta(SeminarStepForm.Meta):
+        model = Seminar
+        title = "Wann & Wo"
+        short_title = "Wann & Wo"
+        fields = ("start_date", "start_time", "end_date", "end_time", "location")
+
+
+class TrainingDaysSeminarForm(SeminarStepForm):
+    class Meta(SeminarStepForm.Meta):
+        title = "Wieviele Bildungstage hat Dein Seminar?"
+        short_title = "Bildungstage"
+        fields = ("planned_training_days",)
+
+
+class AttendeesSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Div(
+                Div("planned_attendees_min", css_class="mx-2"),
+                Div("planned_attendees_max", css_class="mx-2"),
+                css_class="flex -mx-2",
+            )
+        )
+
+    class Meta(SeminarStepForm.Meta):
+        title = "Mit wievielen Teilnehmenden rechnest Du?"
+        short_title = "Teilnehmende"
+        fields = ("planned_attendees_min", "planned_attendees_max")
+
+
+class GroupSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs["request"].user
+        if user.janun_groups.count() == 1:
+            kwargs["initial"]["group"] = user.janun_groups.get()
+        super().__init__(*args, **kwargs)
+        self.fields["group"].queryset = user.janun_groups
+
+    class Meta(SeminarStepForm.Meta):
+        title = "Meldest Du das Seminar für eine JANUN-Gruppe an?"
+        short_title = "Gruppe"
+        fields = ("group",)
+
+
+class FundingSeminarForm(SeminarStepForm):
+    class Meta(SeminarStepForm.Meta):
+        title = "Wieviel Förderung benötigst Du?"
+        short_title = "Förderung"
+        fields = ("requested_funding",)
+
+
+class ConfirmSeminarForm(SeminarStepForm):
+    confirm_policy = forms.BooleanField(
+        label='Ich habe die <a class="underline" target="_blank" href="{}">'
+        "Seminarabrechnungsrichtlinie</a> gelesen.".format(
+            "https://www.janun.de/downloads"
+        ),
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.requested_funding:
+            self.fields["confirm_funding"] = forms.BooleanField(
+                label="Ich möchte die <b>Förderung von {} €</b> beantragen.".format(
+                    self.instance.requested_funding
+                ),
+                required=True,
+            )
+
+        deadline = self.instance.get_deadline()
+        print(self.instance.__dict__)
+        if deadline:
+            self.fields["confirm_deadline"] = forms.BooleanField(
+                label="Ich reiche alle Unterlagen bis zur <b>Abrechnungsdeadline am {}</b> ein.".format(
+                    deadline.strftime("%d.%m.%Y")
+                ),
+                required=True,
+            )
+
+    class Meta(SeminarStepForm.Meta):
+        title = "Bestätigung"
+        short_title = "Bestätigung"

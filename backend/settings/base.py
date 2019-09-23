@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "formtools",
     "crispy_forms",
     "import_export",
     "reversion",

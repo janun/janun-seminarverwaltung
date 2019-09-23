@@ -1,23 +1,25 @@
 import random
+from collections import OrderedDict
 
 from django.views.generic import (
     ListView,
     TemplateView,
     DetailView,
     DeleteView,
-    CreateView,
+    UpdateView,
 )
 from django.core.exceptions import PermissionDenied
-from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.db.models import Sum
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+
+from formtools.wizard.views import SessionWizardView
 
 from backend.seminars.models import Seminar, SeminarComment
 from backend.groups.models import JANUNGroup
 from backend.seminars.forms import SeminarChangeForm
 from backend.utils import AjaxableResponseMixin
+from backend.seminars import forms as seminar_forms
 
 
 def get_greeting():
@@ -126,3 +128,54 @@ class CommentDeleteView(AjaxableResponseMixin, DeleteView):
         if self.get_object().owner != self.request.user:
             raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
+
+
+class SeminarApplyView(SessionWizardView):
+    template_name = "dashboard/seminar_apply.html"
+    form_list = [
+        seminar_forms.ContentSeminarForm,
+        seminar_forms.DateLocationSeminarForm,
+        seminar_forms.GroupSeminarForm,
+        seminar_forms.TrainingDaysSeminarForm,
+        seminar_forms.AttendeesSeminarForm,
+        seminar_forms.FundingSeminarForm,
+        seminar_forms.ConfirmSeminarForm,
+    ]
+
+    def get_form_instance(self, step):
+        if not getattr(self, "instance", None):
+            self.instance = Seminar()
+            for form_key in self.get_form_list():
+                self.get_form(
+                    step=form_key,
+                    data=self.storage.get_step_data(form_key),
+                    files=self.storage.get_step_files(form_key),
+                ).is_valid()
+        return self.instance
+
+    def get_steps(self):
+        forms = OrderedDict()
+        for form_key in self.get_form_list():
+            forms[form_key] = self.get_form(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key),
+            )
+        return forms
+
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        context["steps"] = self.get_steps()
+        return context
+
+    def done(self, form_list, **kwargs):
+        return render(
+            self.request,
+            "done.html",
+            {"form_data": [form.cleaned_data for form in form_list]},
+        )

@@ -9,6 +9,7 @@ urlpatterns = [
         views.SeminarUpdateView.as_view(),
         name="seminar_detail",
     ),
+    path("seminars/apply", views.SeminarApplyView.as_view(), name="seminar_apply"),
     path(
         "comments/<int:pk>/delete",
         views.CommentDeleteView.as_view(),

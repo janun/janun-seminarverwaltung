@@ -7,7 +7,6 @@ from django_extensions.db.fields import AutoSlugField
 from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper, Value, Q
 from django.db.models.functions import ExtractYear, Concat, Cast
-from django.core.validators import ValidationError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.urls import reverse
@@ -134,7 +133,7 @@ class SeminarQuerySet(models.QuerySet):
 
     def is_rejected(self):
         return self.filter(status__in=(STATES_REJECTED))
-    
+
     def is_not_rejected(self):
         return self.exclude(status__in=(STATES_REJECTED))
 
@@ -296,7 +295,7 @@ class Seminar(models.Model):
     objects = SeminarManager()
 
     def __str__(self) -> str:
-        return "{0} am {1}".format(self.title, self.start_date.strftime("%d.%m.%Y"))
+        return self.title
 
     def get_absolute_url(self):
         return reverse(
@@ -306,38 +305,17 @@ class Seminar(models.Model):
     def get_admin_change_url(self):
         return reverse("admin:seminars_seminar_change", args=(self.pk,))
 
-    def clean(self):
-        if self.end_date < self.start_date:
-            raise ValidationError(
-                {"end_date": "End-Datum muss nach Start-Datum liegen."}
-            )
-        if (
-            self.planned_attendees_max
-            and self.planned_attendees_min
-            and self.planned_attendees_max < self.planned_attendees_min
-        ):
-            raise ValidationError(
-                {
-                    "planned_attendees_max": "Muss größer/gleich "
-                    "sein als der Minimal-Wert"
-                }
-            )
-        if (
-            self.actual_attendees_jfg
-            and self.actual_attendees_total
-            and self.actual_attendees_jfg > self.actual_attendees_total
-        ):
-            raise ValidationError(
-                {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
-            )
-        if (
-            self.actual_attendence_days_jfg
-            and self.actual_attendence_days_total
-            and self.actual_attendence_days_jfg > self.actual_attendence_days_total
-        ):
-            raise ValidationError(
-                {"actual_attendees_jfg": "Muss kleiner/gleich sein als der Gesamt-Wert"}
-            )
+    def get_deadline(self):
+        if not self.start_date:
+            return None
+        year = self.start_date.year
+        deadlines = {
+            1: datetime.date(year, 4, 15),
+            2: datetime.date(year, 7, 15),
+            3: datetime.date(year, 10, 15),
+            4: datetime.date(year, 1, 15),
+        }
+        return deadlines[get_quarter(self.start_date)]
 
 
 class SeminarComment(models.Model):
