@@ -63,7 +63,7 @@
 }
 
 .invalid-feedback {
-  @apply text-red-600;
+  @apply text-red-600 mt-1;
 }
 
 .form-control.is-invalid {

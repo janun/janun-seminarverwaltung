@@ -157,6 +157,8 @@ class ContentSeminarForm(SeminarStepForm):
             "title",
             "description",
         )
+        self.fields["title"].required = True
+        self.fields["description"].required = True
 
     class Meta(SeminarStepForm.Meta):
         title = "Seminarinhalte"
@@ -180,6 +182,17 @@ class DateLocationSeminarForm(SeminarStepForm):
             ),
             "location",
         )
+        self.fields["start_date"].required = True
+        self.fields["end_date"].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+        if end_date and start_date:
+            if end_date < start_date:
+                msg = "Muss nach Start-Datum liegen"
+                self.add_error("end_date", msg)
 
     class Meta(SeminarStepForm.Meta):
         model = Seminar
@@ -189,6 +202,10 @@ class DateLocationSeminarForm(SeminarStepForm):
 
 
 class TrainingDaysSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["planned_training_days"].required = True
+
     class Meta(SeminarStepForm.Meta):
         title = "Wieviele Bildungstage hat Dein Seminar?"
         short_title = "Bildungstage"
@@ -205,6 +222,17 @@ class AttendeesSeminarForm(SeminarStepForm):
                 css_class="flex -mx-2",
             )
         )
+        self.fields["planned_attendees_min"].required = True
+        self.fields["planned_attendees_max"].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        planned_attendees_min = cleaned_data.get("planned_attendees_min")
+        planned_attendees_max = cleaned_data.get("planned_attendees_max")
+        if planned_attendees_max and planned_attendees_min:
+            if planned_attendees_max < planned_attendees_min:
+                msg = "Muss größer/gleich dem Minimalwert sein."
+                self.add_error("planned_attendees_max", msg)
 
     class Meta(SeminarStepForm.Meta):
         title = "Mit wievielen Teilnehmenden rechnest Du?"
