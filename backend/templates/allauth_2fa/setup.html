@@ -5,7 +5,7 @@
 
 
 {% block content %}
-<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 py-4 rounded-lg">
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 md:py-4 rounded-lg">
     <h1 class="text-green-500 font-bold mb-5 text-2xl">Zwei-Faktor-Authentisierung einstellen</h1>
     <p class="mb-2">
         Durch die Zwei-Faktor-Authentisierung wird die Anmeldung deutlich sicherer.
@@ -36,8 +36,8 @@
             {% csrf_token %}
             {{ form|crispy }}
 
-            <div class="mt-12 flex">
-                <a class="button button-secondary" href="{% url 'account_profile' %}">Abbrechen</a>
+            <div class="mt-12 flex items-center">
+                <a class="text-gray-700" href="{% url 'account_profile' %}">Abbrechen</a>
                 <button class="ml-auto button button-primary" type="submit">Bestätigen</button>
             </div>
         </form>

@@ -1,0 +1,45 @@
+.form-group {
+  @apply mb-5;
+}
+
+.col-form-label {
+  @apply block mb-1 text-sm text-gray-700 font-bold;
+}
+
+.form-control {
+  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal w-full;
+
+  transition: box-shadow 200ms;
+}
+
+.custom-control {
+  @apply w-full;
+}
+
+.form-control:focus {
+  @apply outline-none shadow-outline;
+}
+
+.form-control.has-error {
+  @apply border-red-600;
+}
+
+.form-text {
+  @apply block text-sm -mt-1 mb-1 text-gray-600;
+}
+
+.invalid-feedback {
+  @apply text-red-600 mt-1;
+}
+
+.form-control.is-invalid {
+  @apply border-red-500;
+}
+
+.form-control:disabled {
+  @apply bg-transparent;
+}
+
+.optionalField {
+  display: none;
+}

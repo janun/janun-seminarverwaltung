@@ -1,53 +1,25 @@
-import random
 from collections import OrderedDict
 
-from django.views.generic import (
-    ListView,
-    TemplateView,
-    DetailView,
-    DeleteView,
-    UpdateView,
-)
+from django.views.generic import ListView, DeleteView, UpdateView
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.db.models import Sum
 from django.shortcuts import render
+from django.views.generic import TemplateView
+from django.contrib.messages.views import SuccessMessageMixin
 
 from formtools.wizard.views import SessionWizardView
 
+from backend.mixins import ErrorMessageMixin
 from backend.seminars.models import Seminar, SeminarComment
-from backend.groups.models import JANUNGroup
 from backend.seminars.forms import SeminarChangeForm
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
 
-def get_greeting():
-    greetings = ("Willkommen", "Hallo", "Guten Tag", "Hey", "Hi", "Moin", "Tach")
-    return random.choice(greetings)
-
-
-class Dashboard(TemplateView):
-    context_object_name = "seminars"
-    template_name = "dashboard/dashboard.html"
-    seminar_limit = 25
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["greeting"] = get_greeting()
-        context["janun_groups"] = self.request.user.janun_groups.all()
-        context["group_hats"] = self.request.user.group_hats.all()
-        context["seminars"] = self.request.user.seminars.all()[: self.seminar_limit]
-        context["show_more_link"] = (
-            self.request.user.seminars.count() > self.seminar_limit
-        )
-        return context
-
-
 class SeminarListView(ListView):
     model = Seminar
     context_object_name = "seminars"
-    template_name = "dashboard/seminars.html"
+    template_name = "seminars/seminars.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -57,23 +29,14 @@ class SeminarListView(ListView):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class SeminarUpdateView(UpdateView):
+class SeminarUpdateView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
+    form_class = SeminarChangeForm
     queryset = Seminar.objects.select_related("owner", "group").prefetch_related(
         "comments"
     )
-    template_name = "dashboard/seminar_detail.html"
-    form_class = SeminarChangeForm
+    template_name = "seminars/seminar_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
-
-    def form_valid(self, form):
-        messages.success(self.request, self.success_message)
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request, "Es gab Probleme beim Speichern. Schau in’s Formular."
-        )
-        return super().form_invalid(form)
+    error_message = "Es gab Probleme beim Speichern. Schau in’s Formular."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -83,40 +46,6 @@ class SeminarUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["comments"] = self.object.comments.filter(is_internal=False)
-        return context
-
-
-class JANUNGroupDetailView(DetailView):
-    model = JANUNGroup
-    template_name = "dashboard/group_detail.html"
-    context_object_name = "group"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["seminars_next_year"] = self.object.seminars.next_year().order_by(
-            "start_date"
-        )
-        context["stats_next_year"] = (
-            context["seminars_next_year"]
-            .is_not_rejected()
-            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
-        )
-        context["seminars_this_year"] = self.object.seminars.this_year().order_by(
-            "start_date"
-        )
-        context["stats_this_year"] = (
-            context["seminars_this_year"]
-            .is_not_rejected()
-            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
-        )
-        context["seminars_last_year"] = self.object.seminars.last_year().order_by(
-            "start_date"
-        )
-        context["stats_last_year"] = (
-            context["seminars_last_year"]
-            .is_not_rejected()
-            .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
-        )
         return context
 
 
@@ -131,7 +60,7 @@ class CommentDeleteView(AjaxableResponseMixin, DeleteView):
 
 
 class SeminarApplyView(SessionWizardView):
-    template_name = "dashboard/seminar_apply.html"
+    template_name = "seminars/seminar_apply.html"
     form_list = [
         seminar_forms.ContentSeminarForm,
         seminar_forms.DateLocationSeminarForm,
@@ -141,6 +70,13 @@ class SeminarApplyView(SessionWizardView):
         seminar_forms.FundingSeminarForm,
         seminar_forms.ConfirmSeminarForm,
     ]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # restore saved steps
+            return self.render(self.get_form())
+        except KeyError:
+            return super().get(request, *args, **kwargs)
 
     def get_form_instance(self, step):
         if not getattr(self, "instance", None):
@@ -174,8 +110,14 @@ class SeminarApplyView(SessionWizardView):
         return context
 
     def done(self, form_list, **kwargs):
+        self.instance.owner = self.request.user
+        self.instance.save()
         return render(
             self.request,
-            "done.html",
-            {"form_data": [form.cleaned_data for form in form_list]},
+            "seminars/seminar_apply_done.html",
+            {"instance": self.instance},
         )
+
+
+class ApplyDoneTestView(TemplateView):
+    template_name = "seminars/seminar_apply_done.html"

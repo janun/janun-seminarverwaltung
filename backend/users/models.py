@@ -22,7 +22,7 @@ class User(AbstractUser):
     last_name = None  # type: ignore
     name = models.CharField(max_length=255)
     address = models.TextField("Post-Adresse", blank=True)
-    telephone = models.CharField("Telefon-Nummer", max_length=100, blank=True)
+    telephone = models.CharField("Telefonnummer", max_length=100, blank=True)
     role = models.CharField(
         "Rolle", max_length=255, choices=ROLES, default=ROLES.Teamer_in
     )

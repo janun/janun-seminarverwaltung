@@ -27,8 +27,7 @@
 
 
 <div class="md:flex flex-wrap items-center mb-2">
-  <a class="md:order-1 my-4 ml-auto inline-flex items-center py-1.5 px-5 font-bold shadow text-white rounded-full bg-green-500 hover:shadow-lg"
-     href="{% url 'seminar_apply' %}">
+  <a class="md:order-1 my-4 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
     Seminar anmelden
   </a>
   <h2 class="text-green-500 font-bold text-xl">
@@ -40,7 +39,7 @@
   <div class="flex flex-wrap items-stretch -m-4">
     {% for seminar in seminars %}
       <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
-        {% include "dashboard/_seminar_card.html" %}
+        {% include "seminars/_seminar_card.html" %}
       </div>
     {% endfor %}
   </div>
@@ -50,7 +49,7 @@
 
 {% if show_more_link %}
   <div class="md:flex my-8">
-    <a href="#" class="ml-auto button button-secondary">Alle Seminare →</a>
+    <a href="#" class="ml-auto button">Alle Seminare →</a>
   </div>
 {% endif %}
 

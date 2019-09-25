@@ -2,16 +2,13 @@ from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
 
-from backend.users.views import ProfileView
-
 
 urlpatterns = [
-    path("", include("dashboard.urls")),
+    path("", include("backend.dashboard.urls")),
+    path("seminars/", include("backend.seminars.urls")),
+    path("groups/", include("backend.groups.urls")),
+    path("accounts/", include("backend.users.urls")),
     path("admin/", admin.site.urls),
-    path("accounts/", include("allauth.urls")),
-    path("accounts/profile", ProfileView.as_view(), name="account_profile"),
-    path("accounts/", include("allauth_2fa.urls")),
-    path("accounts/", include("allauth.urls")),
 ]
 
 if settings.DEBUG:

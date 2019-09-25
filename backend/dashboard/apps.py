@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class DashboardConfig(AppConfig):
-    name = 'dashboard'
+    name = "backend.dashboard"
+    verbose_name = "Übersicht"

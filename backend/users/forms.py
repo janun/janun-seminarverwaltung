@@ -30,6 +30,7 @@ class SignupForm(forms.Form):
         ),
         required=True,
     )
+    telephone = forms.CharField(max_length=100, label="Telefonnummer", required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -49,6 +50,7 @@ class SignupForm(forms.Form):
     def signup(self, request, user):
         user.name = self.cleaned_data["name"]
         user.janun_groups.set(self.cleaned_data["janun_groups"])
+        user.telephone = self.cleaned_data["telephone"]
         user.save()
 
 

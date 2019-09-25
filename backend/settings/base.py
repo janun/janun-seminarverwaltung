@@ -65,6 +65,7 @@ LOCAL_APPS = [
     "backend.seminars.apps.SeminarsConfig",
     "backend.users.apps.UsersConfig",
     "backend.groups.apps.GroupsConfig",
+    "backend.dashboard.apps.DashboardConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -105,8 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"user_attributes": ("username", "name", "email")},
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {"NAME": "backend.validators.PwnedPasswordValidator"},
 ]
 
 # MIDDLEWARE
@@ -204,6 +205,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
 ACCOUNT_SIGNUP_FORM_CLASS = "backend.users.forms.SignupForm"
 ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
+ACCOUNT_SESSION_REMEMBER = False
 
 
 # Your stuff...

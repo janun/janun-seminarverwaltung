@@ -10,7 +10,11 @@ gulp.task("styles", function() {
 
 gulp.task("watch", function() {
   gulp.watch(
-    ["backend/templates/**/*.html", "backend/static/styles/*.css"],
+    [
+      "backend/templates/**/*.html",
+      "backend/static/styles/*.css",
+      "backend/**/*.py"
+    ],
     gulp.parallel("styles")
   );
 });

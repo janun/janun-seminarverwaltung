@@ -36,7 +36,6 @@ class SeminarChangeForm(forms.ModelForm):
         return html
 
     def __init__(self, *args, **kwargs):
-        self.editable = True
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -89,7 +88,6 @@ class SeminarChangeForm(forms.ModelForm):
 
         # disable editing if state not angemeldet:
         if self.instance.status != "angemeldet":
-            self.editable = False
             for key in self.Meta.seminar_fields:
                 if key != "status":
                     self.fields[key].disabled = True
@@ -281,7 +279,6 @@ class ConfirmSeminarForm(SeminarStepForm):
             )
 
         deadline = self.instance.get_deadline()
-        print(self.instance.__dict__)
         if deadline:
             self.fields["confirm_deadline"] = forms.BooleanField(
                 label="Ich reiche alle Unterlagen bis zur <b>Abrechnungsdeadline am {}</b> ein.".format(

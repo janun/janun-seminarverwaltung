@@ -10,14 +10,13 @@
       <span class="ml-2 text-green-500 font-bold">Seminare</span>
     </a>
 
-    <div class="sm:ml-10 hidden sm:flex">
-      {% if request.user.is_active and request.user.is_staff %}
-        <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
-      {% endif %}
-      <a class="mx-2 flex items-center" href="{% url 'seminar_list' %}">Deine Seminare</a>
-    </div>
-
     {% if user.is_authenticated %}
+      <div class="sm:ml-10 hidden sm:flex">
+        {% if request.user.is_active and request.user.is_staff %}
+          <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
+        {% endif %}
+          <a class="mx-2 flex items-center" href="{% url 'seminar_list' %}">Deine Seminare</a>
+      </div>
       <div class="ml-auto flex">
         <a title="Konto-Einstellungen" class="mx-2 flex items-center" href="{% url 'account_profile' %}">
           {{ user.username }}
@@ -28,15 +27,6 @@
             Logout
           </button>
         </form>
-      </div>
-    {% else %}
-      <div class="ml-auto flex">
-        <a class="mx-2 flex items-center" href="{% url 'account_login' %}">
-          Anmelden
-        </a>
-        <a class="mx-2 flex items-center" href="{% url 'account_signup' %}">
-          Konto Anlegen
-        </a>
       </div>
     {% endif %}
 
