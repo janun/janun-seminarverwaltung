@@ -3,17 +3,11 @@
 }
 
 .col-form-label {
-  @apply block mb-1 text-sm text-gray-700 font-bold;
+  @apply block mb-1 text-sm text-gray-900 tracking-wide;
 }
 
 .form-control {
-  @apply appearance-none rounded py-2 px-3 bg-white border border-gray-400 leading-normal w-full;
-
-  transition: box-shadow 200ms;
-}
-
-.custom-control {
-  @apply w-full;
+  @apply appearance-none rounded py-2 px-3 bg-gray-100 border border-gray-400 leading-normal;
 }
 
 .form-control:focus {
@@ -25,7 +19,7 @@
 }
 
 .form-text {
-  @apply block text-sm -mt-1 mb-1 text-gray-600;
+  @apply block text-xs -mt-1 mb-1 text-gray-700;
 }
 
 .invalid-feedback {
@@ -37,7 +31,7 @@
 }
 
 .form-control:disabled {
-  @apply bg-transparent;
+  @apply cursor-not-allowed;
 }
 
 .optionalField {

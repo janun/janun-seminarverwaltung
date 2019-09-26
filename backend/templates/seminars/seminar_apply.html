@@ -12,14 +12,12 @@
 {% block head_title %}Seminar anmelden{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-3xl md:bg-white md:shadow-lg pb-8 md:pt-6 rounded-lg">
+<div class="mx-auto max-w-3xl md:bg-white md:shadow-lg pb-8 md:pt-6 -mt-5 md:mt-0 rounded-lg">
 
-  <div class="flex items-center mb-8 md:px-8 pb-6 border-b">
-    <h1 class="text-green-500">
-      Seminar anmelden
-    </h1>
+  <div class="flex items-center mb-6 md:mb-8 md:px-8 pb-4 md:pb-6 border-b">
+    <h1 class="text-green-500">Seminar anmelden</h1>
     <span class="text-gray-500 ml-2 text-sm">{{ wizard.steps.step1 }} / {{ wizard.steps.count }}</span>
-    <a title="Abbrechen" class="block h-4 w-4 ml-auto text-gray-600" href="/">
+    <a title="Abbrechen" class="block h-4 w-4 ml-auto text-gray-600 hover:text-gray-800 focus:text-gray-800" href="/">
       ✖
     </a>
   </div>
@@ -30,7 +28,7 @@
     <input type="submit" value="Speichern" class="hidden" />
 
     <div class="flex items-start">
-      <ul class="w-1/4 bg-gray-100 rounded shadow mb-10 mr-12 pl-4 pr-2 hidden md:block">
+      <ul class="md:w-1/4 bg-gray-100 rounded shadow mb-10 mr-12 pl-4 pr-2 hidden md:block">
         {% for step_name, step_form in steps.items %}
           <li>
             <button class="flex items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
@@ -46,7 +44,7 @@
         {% endfor %}
       </ul>
 
-      <div class="md:w-3/4 mb-8">
+      <div class="w-full md:w-3/4 mb-8">
         <h2 class="text-green-500 text-xl mb-2 ">{{ form.Meta.title }}</h2>
         {% if wizard.form.forms %}
           {{ wizard.form.management_form }}
@@ -60,18 +58,18 @@
     </div>
 
     <div class="mt-6 flex items-center">
-      {% if wizard.steps.prev %}
-        <button class="text-gray-600" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">← Zurück</button>
+      {% if wizard.steps.next %}
+        <button class="order-2 button button-primary ml-auto" type="submit">Weiter →</button>
       {% else %}
-        <a class="text-gray-600" href="/">
-          ✖ Abbrechen
-        </a>
+        <button class="order-2 button button-primary ml-auto" type="submit">Anmelden</button>
       {% endif %}
 
-      {% if wizard.steps.next %}
-        <button class="button button-primary ml-auto" type="submit">Weiter →</button>
+      {% if wizard.steps.prev %}
+        <button class="text-gray-600 hover:text-gray-800 focus:text-gray-800" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">← Zurück</button>
       {% else %}
-        <button class="button button-primary ml-auto" type="submit">Anmelden</button>
+        <a class="text-gray-600 hover:text-gray-800 focus:text-gray-800" href="/">
+          ✖ Abbrechen
+        </a>
       {% endif %}
     </div>
 

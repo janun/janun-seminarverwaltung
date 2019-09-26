@@ -309,12 +309,12 @@ class Seminar(models.Model):
         if not self.start_date:
             return None
         year = self.start_date.year
-        deadlines = {
-            1: datetime.date(year, 4, 15),
-            2: datetime.date(year, 7, 15),
-            3: datetime.date(year, 10, 15),
-            4: datetime.date(year, 1, 15),
-        }
+        deadlines = [
+            datetime.date(year, 4, 15),
+            datetime.date(year, 7, 15),
+            datetime.date(year, 10, 15),
+            datetime.date(year, 1, 15),
+        ]
         return deadlines[get_quarter(self.start_date)]
 
 

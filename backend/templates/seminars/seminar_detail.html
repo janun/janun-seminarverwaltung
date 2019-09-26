@@ -7,65 +7,74 @@
 
 {% block content %}
 <div class="mx-auto max-w-3xl">
-
-  <div class="mb-5">
   {% if user.is_staff %}
-      <a class="float-right text-gray-600" href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
-    {% endif %}
-    <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
-  </div>
-
-  <div class="mb-1">
-    Am {{ seminar.start_date | date }}
-    {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
-  </div>
-
-  <div class="text-sm">
-    {% if seminar.owner %}
-      <div>
-        Besitzer_in:
-        {% if user.is_staff %}
-          <a class="text-green-500" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
-        {% else %}
-          {{ seminar.owner.name }}
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if seminar.group %}
-      <div>
-        JANUN-Gruppe:
-        <a class="text-green-500" href="{{ seminar.group.get_absolute_url }}">
-          {{ seminar.group.name }}
-        </a>
-      </div>
-    {% endif %}
-
-    {% if seminar.deadline_applicable %}
-      <div>
-        Abrechnungs-Deadline: {{ seminar.deadline | date }}
-        {% if seminar.deadline_status == 'expired' %}
-          <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
-        {% endif %}
-      </div>
-    {% endif %}
-  </div>
-
-  <form class="mb-12" method="post">
-    {% csrf_token %}
-    <div class="flex">
-      <button class="ml-auto button button-primary" type="submit">Speichern</button>
+    <div class="flex mb-4 -mt-4">
+      <a class="ml-auto text-gray-600 hover:text-gray-800 focus:text-gray-800"
+         href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
     </div>
-    
-    <div class="border-t-2 border-gray-300 mt-5 pt-5">
-      {% crispy form %}
+  {% endif %}
+
+  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pt-6">
+
+    <div class="mb-5">
+      <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
     </div>
-    
-    <div class="flex">
-      <button class="ml-auto button button-primary" type="submit">Speichern</button>
+
+    <div class="mb-4 text-gray-900">
+      Am {{ seminar.start_date | date }}
+      {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
     </div>
-  </form>
+
+    <div class="text-sm text-gray-600 mb-10">
+      {% if seminar.owner %}
+        <div>
+          Besitzer_in:
+          {% if user.is_staff %}
+            <a class="" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
+          {% else %}
+            {{ seminar.owner.name }}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if seminar.group %}
+        <div>
+          JANUN-Gruppe:
+          <a class="" href="{{ seminar.group.get_absolute_url }}">
+            {{ seminar.group.name }}
+          </a>
+        </div>
+      {% endif %}
+
+      {% if seminar.deadline_applicable %}
+        <div>
+          Abrechnungs-Deadline: {{ seminar.deadline | date }}
+          {% if seminar.deadline_status == 'expired' %}
+            <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mt-5 pt-5">
+        {% crispy form %}
+      </div>
+      
+      <div class="md:sticky md:bottom-0 md:bg-gray-100 md:py-4 md:border-t md:-mx-8 md:px-8 rounded-b-lg">
+        <div class="flex items-center">
+          {% if seminar.status == 'angemeldet' %}
+            <a class="text-red-500" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>
+          {% endif %}
+          <button class="ml-auto button button-primary" type="submit">Speichern</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
 
   {% include "./_comments.html" %}
+
 </div>
 {% endblock content %}

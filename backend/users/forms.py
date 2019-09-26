@@ -2,7 +2,7 @@ from django import forms
 from django.urls import reverse
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, HTML
+from crispy_forms.layout import Layout, Fieldset, HTML, Field
 
 from backend.groups.models import JANUNGroup
 from .models import User
@@ -61,7 +61,13 @@ class ProfileForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset("Kontakt", "name", "email", "telephone", "address"),
+            Fieldset(
+                "Kontakt",
+                Field("name", css_class="w-full"),
+                Field("email", css_class="w-full"),
+                Field("telephone", css_class="w-full"),
+                Field("address", css_class="w-full resize-none"),
+            ),
             Fieldset(
                 "Anmeldung",
                 "username",

@@ -1,11 +1,10 @@
 from collections import OrderedDict
 
-from django.views.generic import ListView, DeleteView, UpdateView
+from django.views.generic import ListView, DeleteView, UpdateView, CreateView
 from django.core.exceptions import PermissionDenied
-from django.contrib import messages
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 
 from formtools.wizard.views import SessionWizardView
 
@@ -20,10 +19,6 @@ class SeminarListView(ListView):
     model = Seminar
     context_object_name = "seminars"
     template_name = "seminars/seminars.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user)
@@ -49,14 +44,17 @@ class SeminarUpdateView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
         return context
 
 
-class CommentDeleteView(AjaxableResponseMixin, DeleteView):
-    model = SeminarComment
+class SeminarDeleteView(SuccessMessageMixin, DeleteView):
+    model = Seminar
+    template_name = "seminars/seminar_delete.html"
     success_url = "/"
+    success_message = "{} wurde gelöscht."
 
-    def dispatch(self, request, *args, **kwargs):
-        if self.get_object().owner != self.request.user:
-            raise PermissionDenied()
-        return super().dispatch(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        seminar_title = self.get_object().title
+        result = super().delete(request, *args, **kwargs)
+        messages.success(self.request, self.success_message.format(seminar_title))
+        return result
 
 
 class SeminarApplyView(SessionWizardView):
@@ -71,12 +69,14 @@ class SeminarApplyView(SessionWizardView):
         seminar_forms.ConfirmSeminarForm,
     ]
 
-    def get(self, request, *args, **kwargs):
-        try:
-            # restore saved steps
-            return self.render(self.get_form())
-        except KeyError:
-            return super().get(request, *args, **kwargs)
+    # def get(self, request, *args, **kwargs):
+    #     try:
+    #         # restore saved steps
+    #         form = self.get_form()
+    #         messages.info(request, "Frühere Formulareingaben wiederhergestellt")
+    #         return self.render(form)
+    #     except KeyError:
+    #         return super().get(request, *args, **kwargs)
 
     def get_form_instance(self, step):
         if not getattr(self, "instance", None):
@@ -113,11 +113,40 @@ class SeminarApplyView(SessionWizardView):
         self.instance.owner = self.request.user
         self.instance.save()
         return render(
-            self.request,
-            "seminars/seminar_apply_done.html",
-            {"instance": self.instance},
+            self.request, "seminars/seminar_apply_done.html", {"seminar": self.instance}
         )
 
 
-class ApplyDoneTestView(TemplateView):
-    template_name = "seminars/seminar_apply_done.html"
+# TODO: get only comments for seminars the user is allowed to see
+class CommentListView(AjaxableResponseMixin, ListView):
+    model = SeminarComment
+    template_name = "seminars/_comment_list.html"
+    context_object_name = "comments"
+
+    def get_queryset(self):
+        seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
+        return seminar.comments.all()
+
+
+# TODO: Allow to comment only on forms the user is allowed to access
+class CommentCreateView(AjaxableResponseMixin, CreateView):
+    model = SeminarComment
+    fields = ("text",)
+    success_url = "/"
+
+    def form_valid(self, form):
+        form.instance.seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
+        result = super().form_valid(form)
+        self.object.owner = self.request.user
+        self.object.save()
+        return result
+
+
+class CommentDeleteView(AjaxableResponseMixin, DeleteView):
+    model = SeminarComment
+    success_url = "/"
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().owner != self.request.user:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)

@@ -1,42 +1,28 @@
 from django import forms
+from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
 
 from backend.groups.models import JANUNGroup
-from .models import Seminar, SeminarComment
+from .models import Seminar
 from .states import STATE_INFO, get_next_states
 
 
-non_editable_text = (
-    '<p class="text-sm mb-10 text-gray-800">'
-    "In diesem Status können die Seminardetails jetzt nicht (mehr) bearbeitet werden."
-    '<br><a class="underline" href="mailto:seminare@janun.de">Kontaktiere uns</a>, '
-    "wenn noch etwas geändert werden muss.</p>"
-)
-
-
 class SeminarChangeForm(forms.ModelForm):
-    comment = forms.CharField(
-        widget=forms.Textarea(
-            attrs={"rows": 3, "placeholder": "Dein Kommentar", "class": "w-full"}
-        ),
-        required=False,
-        label="Kommentar",
-    )
-
     def get_state_description(self):
-        html = '<p class="text-sm font-bold mb-5 text-gray-800">{0}</p>'.format(
-            STATE_INFO[self.instance.status]["description"]
-        )
+        text = STATE_INFO[self.instance.status]["description"]
         if self.instance.status == "überwiesen" and self.instance.transferred_at:
-            html = '<p class="text-sm font-bold mb-5 text-gray-800">Am {0} überwiesen.</p>'.format(
+            text = "Am {0} überwiesen.".format(
                 self.instance.transferred_at.strftime("%d.%m.%Y")
             )
+        html = '<p class="text-sm mb-5 -mt-2 text-gray-700">{0}</p>'.format(text)
         return html
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
+        self.disabled = False
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -50,13 +36,13 @@ class SeminarChangeForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div("start_date", css_class="mx-2"),
-                    Div("start_time", css_class="mx-2"),
+                    Div("start_date", css_class="mx-2 md:w-1/2"),
+                    Div("start_time", css_class="mx-2 md:w-1/2"),
                     css_class="md:flex -mx-2",
                 ),
                 Div(
-                    Div("end_date", css_class="mx-2"),
-                    Div("end_time", css_class="mx-2"),
+                    Div("end_date", css_class="mx-2 md:w-1/2"),
+                    Div("end_time", css_class="mx-2 md:w-1/2"),
                     css_class="md:flex -mx-2",
                 ),
                 "location",
@@ -65,8 +51,8 @@ class SeminarChangeForm(forms.ModelForm):
                 "Förderung",
                 "planned_training_days",
                 Div(
-                    Div("planned_attendees_min", css_class="mx-2"),
-                    Div("planned_attendees_max", css_class="mx-2"),
+                    Div("planned_attendees_min", css_class="mx-2 md:w-1/2"),
+                    Div("planned_attendees_max", css_class="mx-2 md:w-1/2"),
                     css_class="md:flex -mx-2",
                 ),
                 "group",
@@ -74,6 +60,11 @@ class SeminarChangeForm(forms.ModelForm):
             ),
             "comment",
         )
+
+        self.fields["start_date"].help_text = "z.B. {}".format(
+            timezone.now().today().strftime("%d.%m.%Y")
+        )
+        self.fields["start_time"].help_text = "z.B. 15:00"
 
         # set possible status choices:
         possible_states = get_next_states(self.instance.status) + [self.instance.status]
@@ -88,28 +79,14 @@ class SeminarChangeForm(forms.ModelForm):
 
         # disable editing if state not angemeldet:
         if self.instance.status != "angemeldet":
-            for key in self.Meta.seminar_fields:
+            self.disabled = True
+            for key in self.Meta.fields:
                 if key != "status":
                     self.fields[key].disabled = True
-            self.helper.layout[1].insert(0, HTML(non_editable_text))
-            self.helper.layout[2].insert(0, HTML(non_editable_text))
-            self.helper.layout[3].insert(0, HTML(non_editable_text))
-
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-        if self.cleaned_data["comment"]:
-            comment = SeminarComment(
-                text=self.cleaned_data["comment"],
-                seminar=instance,
-                owner=self.request.user,
-            )
-            comment.save()
-            self.instance.comments.add(comment)
-        return instance
 
     class Meta:
         model = Seminar
-        seminar_fields = (
+        fields = (
             "status",
             "title",
             "description",
@@ -124,7 +101,6 @@ class SeminarChangeForm(forms.ModelForm):
             "requested_funding",
             "group",
         )
-        fields = seminar_fields + ("comment",)
 
 
 class SeminarStepForm(forms.ModelForm):
@@ -135,6 +111,7 @@ class SeminarStepForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+        # set autofocus on the first field
         list(self.fields.values())[0].widget.attrs["autofocus"] = "autofocus"
 
     class Meta:
@@ -149,14 +126,19 @@ class ContentSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             HTML(
-                '<p class="mb-4 text-gray-700">Beschreibe uns Dein Seminar, '
+                '<p class="mb-4 text-gray-800">Beschreibe uns Dein Seminar, '
                 "damit wir entscheiden können, ob wir es fördern können.</p>"
             ),
-            "title",
-            "description",
+            Field("title", css_class="w-full"),
+            Field("description", css_class="w-full"),
         )
         self.fields["title"].required = True
         self.fields["description"].required = True
+        self.fields[
+            "description"
+        ].help_text = (
+            "Um was genau geht es in dem Seminar? Welche Inhalte werden vermittelt?"
+        )
 
     class Meta(SeminarStepForm.Meta):
         title = "Seminarinhalte"
@@ -169,18 +151,22 @@ class DateLocationSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             Div(
-                Div("start_date", css_class="mx-2"),
-                Div("start_time", css_class="mx-2"),
+                Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
                 css_class="flex -mx-2",
             ),
             Div(
-                Div("end_date", css_class="mx-2"),
-                Div("end_time", css_class="mx-2"),
+                Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                 css_class="flex -mx-2",
             ),
-            "location",
+            Field("location", css_class="w-full"),
         )
         self.fields["start_date"].required = True
+        self.fields["start_date"].help_text = "z.B. {}".format(
+            timezone.now().today().strftime("%d.%m.%Y")
+        )
+        self.fields["start_time"].help_text = "z.B. 15:00"
         self.fields["end_date"].required = True
 
     def clean(self):
@@ -202,6 +188,17 @@ class DateLocationSeminarForm(SeminarStepForm):
 class TrainingDaysSeminarForm(SeminarStepForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Field("planned_training_days", css_class="w-32"),
+            HTML(
+                "<p>Bildungstage sind Tage, an denen <strong>min. 6 Zeitstunden Bildungsarbeit</strong> stattfinden.</p>"
+                '<h4 class="mt-4 mb-1 font-bold">2-tägige Seminare am Wochenende (Fr/Sa & Sa/So)</h4>'
+                "<p>sind schon 2 Bildungstage, wenn insg. 8 Stunden Bildungsarbeit stattfinden.</p>"
+                '<h4 class="mt-4 mb-1 font-bold">An- und Abreisetage</h4>'
+                "<p>sind zusammen 1 Bildungstag, wenn an beiden zusammen min. 6 Zeitstunden Bildungsarbeit stattfinden.</p>"
+                "<p>sind je 1 Bildungstag, wenn außerdem am Anreisetag vor 12 Uhr begonnen wird und am Abreisetag nach 15.30 Uhr geendet wird.</p>"
+            ),
+        )
         self.fields["planned_training_days"].required = True
 
     class Meta(SeminarStepForm.Meta):
@@ -215,13 +212,32 @@ class AttendeesSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             Div(
-                Div("planned_attendees_min", css_class="mx-2"),
-                Div("planned_attendees_max", css_class="mx-2"),
+                Div(
+                    Field("planned_attendees_min", label="Minimal", css_class="w-full"),
+                    css_class="mx-2 w-1/2",
+                ),
+                Div(
+                    Field("planned_attendees_max", css_class="w-full"),
+                    css_class="mx-2 w-1/2",
+                ),
                 css_class="flex -mx-2",
-            )
+            ),
+            HTML(
+                '<p class="mt-4">Seminare mit <strong>weniger als 10</strong> Teilnehmenden können nicht gefördert werden. '
+                "Die Förderung geht nur <strong>bis 40</strong> Teilnehmende, aber Ausnahmen sind manchmal möglich.</p>"
+                '<h4 class="mt-6 mb-1 font-bold">Mehr als die Hälfte der Teilnehmenden:</h4>'
+                '<ul class="list-disc">'
+                "<li>müssen ihren Wohnsitz in Niedersachsen haben.</li>"
+                "<li>müssen mindestens 12 Jahre alt sein und maximal 27.</li>"
+                "</ul>"
+                "<p>Diese Quoten müssen über den gesamten Seminarzeitraum eingehalten werden.</p>"
+            ),
         )
         self.fields["planned_attendees_min"].required = True
+        self.fields["planned_attendees_min"].validators = [MinValueValidator(10)]
+        self.fields["planned_attendees_min"].label = "Mindestens"
         self.fields["planned_attendees_max"].required = True
+        self.fields["planned_attendees_max"].label = "Maximal"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -252,7 +268,36 @@ class GroupSeminarForm(SeminarStepForm):
         fields = ("group",)
 
 
+def get_funding(instance):
+    if not instance.planned_training_days or not instance.planned_attendees_max:
+        return None
+    return 12 * instance.planned_training_days * instance.planned_attendees_max
+
+
 class FundingSeminarForm(SeminarStepForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        funding = get_funding(self.instance)
+        if funding:
+            funding_text = (
+                "<p>Du kannst <strong>maximal {} €</strong> beantragen.</p>"
+                '<p class="mb-4">Solltest Du aber auch mit weniger Förderung auskommen, '
+                "können evtl. mehr Seminare bei JANUN stattfinden.</p>"
+            ).format(funding)
+            self.fields["requested_funding"].validators = [MaxValueValidator(funding)]
+        else:
+            funding_text = '<p class="mb-4">Bitte die vorigen Schritte ausfüllen.</p>'
+        self.helper.layout = Layout(
+            HTML(funding_text),
+            Field("requested_funding"),
+            HTML(
+                '<p class="text-sm mt-4">JANUN fördert Seminare, finanziert sie aber nicht komplett. '
+                "Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.). "
+                "Der Richtwert für Teilnahmebeiträge ist 3,50 € pro Person und Tag. "
+                "Ausgenommen sind eintägige Seminare.</p>"
+            ),
+        )
+
     class Meta(SeminarStepForm.Meta):
         title = "Wieviel Förderung benötigst Du?"
         short_title = "Förderung"
