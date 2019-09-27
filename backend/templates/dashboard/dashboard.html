@@ -12,15 +12,23 @@
 
 {% if janun_groups|length > 0 %}
   <div class="mb-10">
-    <h2 class="text-green-500 font-bold text-xl mb-4">
+    <h2 class="font-bold text-xl mb-4">
       Deine Gruppen
       <small class="text-sm text-gray-600 font-normal">({{ janun_groups|length }})</small>
     </h2>
-    <ul>
+    <div class="flex flex-wrap items-stretch -m-4">
       {% for group in janun_groups.all %}
-        <li><a class="text-green-500" href="{{ group.get_absolute_url }}">{{ group.name }}</a></li>
+        <div class="lg:w-1/4 sm:w-1/2 w-full p-4">
+          <a class="block h-full bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+             style="min-height: 60px;"
+             href="{{ group.get_absolute_url }}">
+            <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">
+              {{ group.name }}
+            </h3>
+          </a>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
     {% if not user.is_reviewed %}
       <p class="my-2 text-gray-700 italic">
         Du kannst aber z.Z. auf keine Gruppendetails zugreifen,
@@ -31,7 +39,7 @@
 {% endif %}
 
 
-<h2 class="text-green-500 font-bold text-xl mb-2">
+<h2 class="font-bold text-xl mb-6">
   Deine letzten Seminare
 </h2>
 
