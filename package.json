@@ -4,10 +4,6 @@
   "repository": "https://github.com/janun/janun-seminarverwaltung",
   "license": "MIT",
   "version": "0.0.1",
-  "engines": {
-    "node": "12.x",
-    "yarn": "1.17.3"
-  },
   "scripts": {
     "build": "gulp --production"
   },
