@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "chart.js": "^2.8.0",
-    "postcss-import": "^12.0.1",
-    "tailwindcss": "^1.1.2",
     "typeface-cabin": "^0.0.72"
   },
   "devDependencies": {
+    "postcss-import": "^12.0.1",
+    "tailwindcss": "^1.1.2",
     "@fullhuman/postcss-purgecss": "^1.3.0",
     "@tailwindcss/custom-forms": "^0.2.1",
     "cssnano": "^4.1.10",
