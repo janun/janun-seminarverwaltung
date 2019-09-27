@@ -3,8 +3,8 @@
   <form id="createCommentForm"
         action="{% url 'comment_create' seminar.start_date.year seminar.slug %}" method="POST">
     {% csrf_token %}
-    <textarea class="bg-white form-control w-full resize-none" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
-    <div class="flex">
+    <textarea class="bg-white form-textarea w-full" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
+    <div class="flex mt-2">
       <button id="commentSubmit" type="submit" class="ml-auto button button-primary">Kommentieren</button>
     </div>
   </form>

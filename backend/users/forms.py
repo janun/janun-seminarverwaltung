@@ -77,12 +77,12 @@ class ProfileForm(forms.ModelForm):
                 Link(
                     reverse("account_change_password"),
                     "Passwort ändern →",
-                    "block mb-6 mt-4 text-gray-700 hover:text-gray-900",
+                    "block mb-6 mt-4 text-gray-700 hover:text-gray-800",
                 ),
                 Link(
                     reverse("two-factor-setup"),
                     "Zwei-Faktor-Authentisierung →",
-                    "block text-gray-700 hover:text-gray-900",
+                    "block text-gray-700 hover:text-gray-800",
                 ),
             ),
         )

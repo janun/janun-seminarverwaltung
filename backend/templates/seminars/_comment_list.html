@@ -10,7 +10,7 @@
             {% if comment.owner == user %}
               <form class="commentDeleteForm" method="POST" action="{% url 'comment_delete' comment.pk %}">
                 {% csrf_token %}
-                <button type="submit" class="hover:text-gray-900 mx-1 select-none">löschen</button>
+                <button type="submit" class="hover:text-gray-800 mx-1 select-none">löschen</button>
               </form>
             {% endif %}
           </div>
