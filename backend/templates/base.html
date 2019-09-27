@@ -39,7 +39,9 @@
 
     {% include "_footer.html" %}
 
-    {% block javascript %}{% endblock javascript %}
+    {% block javascript %}
+      <script type="text/javascript" src="{% static 'scripts/autogrow.js' %}"></script>
+    {% endblock javascript %}
   </body>
 
 </html>

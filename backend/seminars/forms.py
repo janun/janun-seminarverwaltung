@@ -33,7 +33,7 @@ class SeminarChangeForm(forms.ModelForm):
             Fieldset(
                 "Inhalt",
                 Field("title", css_class="w-full"),
-                Field("description", css_class="w-full"),
+                Field("description", css_class="w-full js-autogrow"),
             ),
             Fieldset(
                 "Zeit & Ort",
@@ -143,7 +143,7 @@ class ContentSeminarForm(SeminarStepForm):
                 "damit wir entscheiden können, ob wir es fördern können.</p>"
             ),
             Field("title", css_class="w-full"),
-            Field("description", css_class="w-full"),
+            Field("description", css_class="w-full js-autogrow"),
         )
         self.fields["title"].required = True
         self.fields["description"].required = True
