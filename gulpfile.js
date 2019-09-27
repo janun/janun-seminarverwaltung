@@ -1,14 +1,16 @@
 const gulp = require("gulp");
 
-gulp.task("styles", function() {
+exports.styles = function () {
+  // BUG: if other files than base.css changed,
+  //      compiles but does not actually change output
   const postcss = require("gulp-postcss");
   return gulp
     .src("backend/static/styles/base.css")
     .pipe(postcss())
     .pipe(gulp.dest("backend/static/css"));
-});
+};
 
-gulp.task("watch", function() {
+exports.watch = function () {
   gulp.watch(
     [
       "backend/templates/**/*.html",
@@ -17,6 +19,6 @@ gulp.task("watch", function() {
     ],
     gulp.parallel("styles")
   );
-});
+};
 
-gulp.task("default", gulp.parallel("styles"));
+exports.default = exports.styles;
