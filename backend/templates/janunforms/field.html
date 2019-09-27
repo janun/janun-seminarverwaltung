@@ -28,7 +28,7 @@
             {% if field|is_checkbox and form_show_labels %}
                 <div>
                     <label for="{{ field.id_for_label }}" class="inline-flex items-baseline {% if field.field.required %}requiredField{% endif %}">
-                        {% crispy_field field 'class' 'form-checkbox border-gray-400 text-green-500' %}
+                        {% crispy_field field 'class' 'form-checkbox' %}
                         <span class="ml-2 select-none">{{ field.label|safe }}{% if not field.field.required %} <small class="text-secondary optionalField">(optional)</small>{% endif %}</span>
                     </label>
                 </div>
@@ -36,15 +36,15 @@
             {% elif field|is_select %}
                 {% if field|is_selectmultiple %}
                     {% if field.errors %}
-                        {% crispy_field field 'class' 'form-multiselect bg-gray-100 block mt-1 is-invalid' %}
+                        {% crispy_field field 'class' 'form-multiselect block is-invalid' %}
                     {% else %}
-                        {% crispy_field field 'class' 'form-multiselect bg-gray-100 block mt-1' %}
+                        {% crispy_field field 'class' 'form-multiselect block' %}
                     {% endif %}
                 {% else %}
                     {% if field.errors %}
-                        {% crispy_field field 'class' 'form-select block mt-1 is-invalid' %}
+                        {% crispy_field field 'class' 'form-select block is-invalid' %}
                     {% else %}
-                        {% crispy_field field 'class' 'form-select block mt-1' %}
+                        {% crispy_field field 'class' 'form-select block' %}
                     {% endif %}
                 {% endif %}
                 {% include './layout/help_text_and_errors.html' %}
@@ -53,10 +53,18 @@
                   {% include './layout/help_text.html' %}
                 {% endif %}
                 <div class="{{ field_class }}">
-                    {% if field.errors %}
-                      {% crispy_field field 'class' 'form-control is-invalid' %}
+                    {% if field|is_textarea %}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'form-textarea is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'form-textarea' %}
+                        {% endif %}
                     {% else %}
-                      {% crispy_field field 'class' 'form-control' %}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'form-input is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'form-input' %}
+                        {% endif %}
                     {% endif %}
                     {% if field.field.widget.attrs.help_below %}
                       {% include './layout/help_text.html' %}

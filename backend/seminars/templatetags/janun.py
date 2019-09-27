@@ -14,3 +14,8 @@ def number(value, decimals=2):
 @register.filter
 def is_selectmultiple(field):
     return isinstance(field.field.widget, forms.SelectMultiple)
+
+
+@register.filter
+def is_textarea(field):
+    return isinstance(field.field.widget, forms.Textarea)
