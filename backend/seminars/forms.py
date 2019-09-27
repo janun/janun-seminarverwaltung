@@ -38,13 +38,23 @@ class SeminarChangeForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div("start_date", css_class="mx-2 md:w-1/2"),
-                    Div("start_time", css_class="mx-2 md:w-1/2"),
+                    Div(
+                        Field("start_date", css_class="w-full"),
+                        css_class="mx-2 md:w-1/2",
+                    ),
+                    Div(
+                        Field("start_time", css_class="w-full"),
+                        css_class="mx-2 md:w-1/2",
+                    ),
                     css_class="md:flex -mx-2",
                 ),
                 Div(
-                    Div("end_date", css_class="mx-2 md:w-1/2"),
-                    Div("end_time", css_class="mx-2 md:w-1/2"),
+                    Div(
+                        Field("end_date", css_class="w-full"), css_class="mx-2 md:w-1/2"
+                    ),
+                    Div(
+                        Field("end_time", css_class="w-full"), css_class="mx-2 md:w-1/2"
+                    ),
                     css_class="md:flex -mx-2",
                 ),
                 Field("location", css_class="w-full"),
