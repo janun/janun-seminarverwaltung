@@ -1,5 +1,4 @@
 {% if comments %}
-  <h2 id="comments" class="text-green-500 font-bold mb-3 text-base">Kommentare</h2>
   <div id="commentList">
     {% for comment in comments %}
       <div id="comment_{{ comment.pk }}" class="bg-white shadow max-w-lg my-5 px-4 pt-2 pb-4 rounded">
@@ -15,7 +14,7 @@
             {% endif %}
           </div>
         </div>
-        <p class="whitespace-pre-wrap">{{ comment.text }}</p>
+        <div class="text-sm">{{ comment.text|linebreaksbr }}</div>
       </div>
     {% endfor %}
   </div>

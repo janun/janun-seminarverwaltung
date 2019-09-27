@@ -1,5 +1,5 @@
-<div class="mt-32 max-w-xl">
-  <h2 class="text-green-500 font-bold mb-2">Kommentieren</h2>
+<div class="mt-24 max-w-xl">
+  <h2 class="text-green-500 text-xl font-bold mb-4">Kommentare</h2>
   <form id="createCommentForm"
         action="{% url 'comment_create' seminar.start_date.year seminar.slug %}" method="POST">
     {% csrf_token %}
@@ -13,6 +13,7 @@
     {% include "./_comment_list.html" %}
   </div>
 </div>
+
 
 <script>
 var getUrl = "{% url 'comment_list' seminar.start_date.year seminar.slug %}";
