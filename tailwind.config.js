@@ -4,6 +4,29 @@ module.exports = {
     fontFamily: {
       sans: ["Cabin", "sans-serif"]
     },
+    customForms: theme => ({
+      default: {
+        'input, textarea, multiselect, select, checkbox, radio': {
+          backgroundColor: theme('colors.gray.100'),
+          '&:hover': {
+            borderColor: theme('colors.gray.400'),
+          },
+          '&:disabled': {
+            cursor: 'not-allowed',
+            borderColor: theme('colors.gray.300'),
+          },
+          '&.is-invalid': {
+            borderColor: theme('colors.red.600'),
+          }
+        },
+        'checkbox, radio': {
+          color: theme('colors.gray.700'),
+        },
+        textarea: {
+          resize: 'none'
+        }
+      },
+    }),
     extend: {
       colors: {
         green: {
