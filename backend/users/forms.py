@@ -89,6 +89,9 @@ class ProfileForm(forms.ModelForm):
 
         self.fields["username"].help_text = ""
 
+        # set autofocus
+        self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
     class Meta:
         model = User
         fields = ("name", "email", "username", "telephone")
