@@ -1,33 +1,37 @@
-{% if seminars %}
-  <table class="seminar-table w-full table-fixed">
-    <thead>
-      <tr class="text-left text-gray-700 text-sm border-b-2 border-gray-500">
-        <th class="text-left pr-2 w-1/2">Titel</th>
-        <th class="text-right px-2">Datum</th>
-        <th class="text-left px-2 w-48">Status</th>
-        <th class="text-right px-2">TNT</th>
-        <th class="text-right pl-2">Förderung</th>
-      </tr>
-    </head>
-    <tbody>
-      {% for seminar in seminars %}
-        <tr class="border-b hover:bg-green-100">
-          <td class="text-left pr-2 py-2"><a class="text-green-700 hover:text-green-900" href="{{ seminar.get_absolute_url }}">{{ seminar.title }}</a></td>
-          <td class="text-right px-2">{{ seminar.start_date|date:"d.m.y" }}</td>
-          <td class="text-left px-2">{{ seminar.status }}</td>
-          <td class="text-right px-2">{{ seminar.tnt }}</td>
-          <td class="text-right pl-2">{{ seminar.funding|floatformat:2 }}</td>
+<div class="text-sm bg-white shadow rounded mt-0 border-t border-gray-300 overflow-hidden relative">
+  <div class="overflow-y-auto scrollbar-w-2 scrollbar-track-gray-lighter scrollbar-thumb-rounded scrollbar-thumb-gray scrolling-touch">
+    <table class="seminar-table w-full text-left table-collapse">
+      <thead>
+        <tr class="text-left text-gray-700 text-sm border-b">
+          <th class="bg-gray-100 text-left p-2 pl-4 w-1/2">Titel</th>
+          <th class="bg-gray-100 text-right p-2">Datum</th>
+          <th class="bg-gray-100 text-left p-2 w-48">Status</th>
+          <th class="bg-gray-100 text-right p-2">TNT</th>
+          <th class="bg-gray-100 text-right p-2 pr-4">Förderung</th>
         </tr>
-      {% endfor %}
-      <tr class="border-t-2 border-gray-500">
-        <td class="text-left px-2 py-1"></td>
-        <td class="text-right px-2"></td>
-        <td class="text-left px-2"></td>
-        <td class="text-right px-2 font-bold">{{ stats.tnt_sum }}</td>
-        <td class="text-right pl-2 font-bold">{{ stats.funding_sum|floatformat:2 }}</td>
-      </tr>
-    </tbody>
-  </table>
-{% else %}
-  <p class="my-2">Keine Seminare gefunden.</p>
-{% endif %}
+      </thead>
+      <tbody class="align-baseline">
+        {% for seminar in seminars %}
+          <tr class="border-b border-gray-200">
+            <td class="text-left p-2 pl-4"><a class="text-green-800 hover:underline" href="{{ seminar.get_absolute_url }}">{{ seminar.title }}</a></td>
+            <td class="text-right p-2">{{ seminar.start_date|date:"d.m.y" }}</td>
+            <td class="text-left p-2">{{ seminar.status }}</td>
+            <td class="text-right p-2">{{ seminar.tnt }}</td>
+            <td class="text-right p-2 pr-4">{{ seminar.funding|floatformat:2 }}</td>
+          </tr>
+        {% empty %}
+          <tr class="border-b border-gray-200">
+            <td class="text-left p-2 pl-4 italic">— keine</td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td class="bg-gray-100 text-left p-2 pl-4"></td>
+          <td class="bg-gray-100 text-right p-2"></td>
+          <td class="bg-gray-100 text-left p-2"></td>
+          <td class="bg-gray-100 text-right p-2 font-bold">{{ stats.tnt_sum|default:0 }}</td>
+          <td class="bg-gray-100 text-right p-2 pr-4 font-bold">{{ stats.funding_sum|default:0|floatformat:2 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
