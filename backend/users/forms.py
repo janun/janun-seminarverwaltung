@@ -47,6 +47,10 @@ class SignupForm(forms.Form):
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
 
+        # remove placeholders
+        for field in ("email", "username"):
+            del self.fields[field].widget.attrs["placeholder"]
+
     def signup(self, request, user):
         user.name = self.cleaned_data["name"]
         user.janun_groups.set(self.cleaned_data["janun_groups"])
@@ -66,7 +70,6 @@ class ProfileForm(forms.ModelForm):
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
                 Field("telephone", css_class="w-full"),
-                Field("address", css_class="w-full resize-none"),
             ),
             Fieldset(
                 "Anmeldung",
@@ -85,8 +88,7 @@ class ProfileForm(forms.ModelForm):
         )
 
         self.fields["username"].help_text = ""
-        self.fields["address"].widget.attrs.update({"rows": 3})
 
     class Meta:
         model = User
-        fields = ("name", "email", "username", "telephone", "address")
+        fields = ("name", "email", "username", "telephone")

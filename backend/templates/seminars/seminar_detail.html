@@ -14,21 +14,21 @@
     </div>
   {% endif %}
 
-  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pt-6">
+  <div class="md:bg-white md:shadow-lg md:border-t-4 border-green-500 md:rounded-b-lg md:px-8 md:pt-6">
 
     <div class="mb-5">
       <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
     </div>
 
-    <div class="mb-4 text-gray-900">
+    <div class="mb-1 text-gray-900">
       Am {{ seminar.start_date | date }}
       {% if seminar.location %}<span>in {{ seminar.location }}</span>{% endif %}
     </div>
 
-    <div class="text-sm text-gray-600 mb-10">
-      {% if seminar.owner %}
-        <div>
-          Besitzer_in:
+    <div class="text-gray-900">
+      {% if seminar.owner and seminar.owner != user %}
+        <div class="mb-1">
+          von
           {% if user.is_staff %}
             <a class="" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
           {% else %}
@@ -38,8 +38,8 @@
       {% endif %}
 
       {% if seminar.group %}
-        <div>
-          JANUN-Gruppe:
+        <div class="mb-1">
+          für
           <a class="" href="{{ seminar.group.get_absolute_url }}">
             {{ seminar.group.name }}
           </a>
@@ -60,9 +60,33 @@
       {% csrf_token %}
       <div class="mt-5 pt-5">
         {% crispy form %}
+
+        <div class="fieldset border-none">
+          <div class="fieldset-header">Abrechnung</div>
+          <div class="fieldset-content">
+            {% if seminar.has_accounting %}
+            <div>
+              <span class="text-xl text-gray-700 font-bold">{{ seminar.actual_attendees_total }}</span>
+              {{ seminar.actual_attendees_total|pluralize:"Teilnehmender,Teilnehmende" }}
+            </div>
+            <div>
+              <span class="text-xl text-gray-700 font-bold">{{ seminar.actual_training_days }}</span>
+              {{ seminar.actual_training_days|pluralize:"Bildungstag,Bildungstage" }}
+            </div>
+            <div>
+              <span class="text-xl text-gray-700 font-bold">{{ seminar.actual_attendence_days_total }}</span> TNT
+            </div>
+             <div>
+              <span class="text-xl text-gray-700 font-bold">{{ seminar.actual_funding }}</span> Euro Förderung
+            </div>
+            {% else %}
+              <p>Hier ist momentan nichts eingetragen.</p>
+            {% endif %}
+          </div>
+        </div>
       </div>
       
-      <div class="md:sticky md:bottom-0 md:bg-gray-100 md:py-4 md:border-t md:-mx-8 md:px-8 rounded-b-lg">
+      <div class="md:sticky md:bottom-0 md:bg-gray-100 md:py-4 md:border-t md:-mx-8 md:px-8 md:rounded-b-lg">
         <div class="flex items-center">
           {% if seminar.status == 'angemeldet' %}
             <a class="text-red-500" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>

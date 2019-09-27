@@ -26,25 +26,28 @@
 
         {% if not field|is_checkboxselectmultiple and not field|is_radioselect %}
             {% if field|is_checkbox and form_show_labels %}
-                <div class="custom-control custom-checkbox">
-                    {% crispy_field field 'class' 'custom-control-input' %}
-                    <label for="{{ field.id_for_label }}" class="custom-control-label{% if field.field.required %} requiredField{% endif %}">
-                        {{ field.label|safe }}{% if not field.field.required %} <small class="text-secondary optionalField">(optional)</small>{% endif %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="inline-flex items-baseline {% if field.field.required %}requiredField{% endif %}">
+                        {% crispy_field field 'class' 'form-checkbox border-gray-400 text-green-500' %}
+                        <span class="ml-2 select-none">{{ field.label|safe }}{% if not field.field.required %} <small class="text-secondary optionalField">(optional)</small>{% endif %}</span>
                     </label>
                 </div>
                 {% include './layout/help_text_and_errors.html' %}
             {% elif field|is_select %}
-              <div class="custom-control custom-select relative inline-block">
-                {% if field.errors %}
-                    {% crispy_field field 'class' 'w-full pr-8 form-control custom-select is-invalid' %}
+                {% if field|is_selectmultiple %}
+                    {% if field.errors %}
+                        {% crispy_field field 'class' 'form-multiselect bg-gray-100 block mt-1 is-invalid' %}
+                    {% else %}
+                        {% crispy_field field 'class' 'form-multiselect bg-gray-100 block mt-1' %}
+                    {% endif %}
                 {% else %}
-                    {% crispy_field field 'class' 'w-full pr-8 form-control custom-select' %}
-                {% endif %}
-                {% if not field|is_selectmultiple %}
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2"><svg viewBox="0 0 20 20" class="fill-current h-4 w-4"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg></div>
+                    {% if field.errors %}
+                        {% crispy_field field 'class' 'form-select block mt-1 is-invalid' %}
+                    {% else %}
+                        {% crispy_field field 'class' 'form-select block mt-1' %}
+                    {% endif %}
                 {% endif %}
                 {% include './layout/help_text_and_errors.html' %}
-              </div>
             {% else %}
                 {% if not field.field.widget.attrs.help_below %}
                   {% include './layout/help_text.html' %}

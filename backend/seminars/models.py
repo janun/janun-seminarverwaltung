@@ -305,6 +305,15 @@ class Seminar(models.Model):
     def get_admin_change_url(self):
         return reverse("admin:seminars_seminar_change", args=(self.pk,))
 
+    def has_accounting(self):
+        fields = [
+            "actual_attendees_total",
+            "actual_attendence_days_total",
+            "actual_funding",
+            "actual_training_days",
+        ]
+        return all(getattr(self, field) is not None for field in fields)
+
     def get_deadline(self):
         if not self.start_date:
             return None

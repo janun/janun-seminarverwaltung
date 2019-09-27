@@ -17,7 +17,9 @@ class SeminarChangeForm(forms.ModelForm):
             text = "Am {0} überwiesen.".format(
                 self.instance.transferred_at.strftime("%d.%m.%Y")
             )
-        html = '<p class="text-sm mb-5 -mt-2 text-gray-700">{0}</p>'.format(text)
+        html = '<p class="text-sm mb-2 -mt-2 text-gray-700">{0}</p>'.format(text)
+        if self.instance.status != "angemeldet":
+            html += '<p class="text-sm mb-5">Seminardetails können jetzt nicht mehr geändert werden.</p>'
         return html
 
     def __init__(self, *args, **kwargs):
@@ -45,7 +47,7 @@ class SeminarChangeForm(forms.ModelForm):
                     Div("end_time", css_class="mx-2 md:w-1/2"),
                     css_class="md:flex -mx-2",
                 ),
-                "location",
+                Field("location", css_class="w-full"),
             ),
             Fieldset(
                 "Förderung",
@@ -67,7 +69,7 @@ class SeminarChangeForm(forms.ModelForm):
         self.fields["start_time"].help_text = "z.B. 15:00"
 
         # set possible status choices:
-        possible_states = get_next_states(self.instance.status) + [self.instance.status]
+        possible_states = [self.instance.status] + get_next_states(self.instance.status)
         self.fields["status"].choices = [(status, status) for status in possible_states]
 
         # set possible group choices:
@@ -101,6 +103,7 @@ class SeminarChangeForm(forms.ModelForm):
             "requested_funding",
             "group",
         )
+        widgets = {"status": forms.RadioSelect}
 
 
 class SeminarStepForm(forms.ModelForm):
@@ -322,7 +325,6 @@ class ConfirmSeminarForm(SeminarStepForm):
                 ),
                 required=True,
             )
-
         deadline = self.instance.get_deadline()
         if deadline:
             self.fields["confirm_deadline"] = forms.BooleanField(

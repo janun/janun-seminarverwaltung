@@ -3,7 +3,7 @@
   <form id="createCommentForm"
         action="{% url 'comment_create' seminar.start_date.year seminar.slug %}" method="POST">
     {% csrf_token %}
-    <textarea class="form-control w-full resize-none" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
+    <textarea class="bg-white form-control w-full resize-none" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
     <div class="flex">
       <button id="commentSubmit" type="submit" class="ml-auto button button-primary">Kommentieren</button>
     </div>
@@ -81,9 +81,7 @@ function attachDeleteHandlers() {
       var XHR = new XMLHttpRequest();
       XHR.addEventListener('load', function(loadEvent) {
         if (loadEvent.target.status === 200) {
-          var formId = form.getAttribute("data-id");
-          var element = document.getElementById(formId);
-          element.parentNode.removeChild(element);
+          loadComments();
         } else {
           alert("Kommentar konnte nicht gelöscht werden.");
         }

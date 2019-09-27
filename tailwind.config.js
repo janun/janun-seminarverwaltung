@@ -32,6 +32,8 @@ module.exports = {
       }
     }
   },
-  variants: {},
-  plugins: []
+  variants: {
+    boxShadow: ["responsive", "hover", "focus", "focus-within"]
+  },
+  plugins: [require("@tailwindcss/custom-forms")]
 };

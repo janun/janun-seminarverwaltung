@@ -11,12 +11,19 @@
     <span title="Status" class="text-xs">{{ seminar.status }}</span>
   </div>
 
-  <h3 class="mt-1 mb-2 leading-tight text-gray-800 font-bold">
+  <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">
     {{ seminar.title }}
   </h3>
 
+  <div class="flex text-gray-800 mb-1 text-sm">
+    <div title="Förderung"><span class="font-bold-">{{ seminar.funding }}</span> <span class="text-xs">€</span></div>
+    <div title="Teilnehmerinnentage" class="ml-4"><span class="font-bold-">{{ seminar.tnt }}</span> <span class="text-xs">TNT</span></div>
+  </div>
+
   {% if seminar.group %}
-    <span title="JANUN-Gruppe" class="text-xs mb-1">{{ seminar.group.name }} </span>
+    <span title="JANUN-Gruppe" class="text-xs mb-1">für {{ seminar.group.name }}</span>
+  {% else %}
+    <span class="text-xs mb-1">als Einzelperson</span>
   {% endif %}
 
   <div class="flex items-baseline mt-auto">
