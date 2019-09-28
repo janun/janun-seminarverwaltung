@@ -38,8 +38,18 @@ class SignupForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset("Kontakt", "name", "email", "telephone"),
-            Fieldset("Anmeldung", "username", "password1", "password2"),
+            Fieldset(
+                "Kontakt",
+                Field("name", css_class="w-full"),
+                Field("email", css_class="w-full"),
+                Field("telephone", css_class="w-full"),
+            ),
+            Fieldset(
+                "Anmeldung",
+                Field("username", css_class="w-full"),
+                Field("password1", css_class="w-full"),
+                Field("password2", css_class="w-full"),
+            ),
             Fieldset("Gruppen", "janun_groups"),
             Fieldset(None, "data_protection_read"),
         )
