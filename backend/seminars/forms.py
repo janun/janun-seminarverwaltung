@@ -39,33 +39,29 @@ class SeminarChangeForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div(
-                        Field("start_date", css_class="w-full"),
-                        css_class="mx-2 md:w-1/2",
-                    ),
-                    Div(
-                        Field("start_time", css_class="w-full"),
-                        css_class="mx-2 md:w-1/2",
-                    ),
+                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
                     css_class="md:flex -mx-2",
                 ),
                 Div(
-                    Div(
-                        Field("end_date", css_class="w-full"), css_class="mx-2 md:w-1/2"
-                    ),
-                    Div(
-                        Field("end_time", css_class="w-full"), css_class="mx-2 md:w-1/2"
-                    ),
+                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="md:flex -mx-2",
                 ),
                 Field("location", css_class="w-full"),
             ),
             Fieldset(
                 "Förderung",
-                "planned_training_days",
+                Field("planned_training_days", css_class="w-24"),
                 Div(
-                    Div("planned_attendees_min", css_class="mx-2 md:w-1/2"),
-                    Div("planned_attendees_max", css_class="mx-2 md:w-1/2"),
+                    Div(
+                        Field("planned_attendees_min", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("planned_attendees_max", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
                     css_class="md:flex -mx-2",
                 ),
                 "group",
@@ -226,14 +222,8 @@ class AttendeesSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             Div(
-                Div(
-                    Field("planned_attendees_min", label="Minimal", css_class="w-full"),
-                    css_class="mx-2 w-1/2",
-                ),
-                Div(
-                    Field("planned_attendees_max", css_class="w-full"),
-                    css_class="mx-2 w-1/2",
-                ),
+                Div(Field("planned_attendees_min", css_class="w-24"), css_class="mx-2"),
+                Div(Field("planned_attendees_max", css_class="w-24"), css_class="mx-2"),
                 css_class="flex -mx-2",
             ),
             HTML(
@@ -301,6 +291,7 @@ class FundingSeminarForm(SeminarStepForm):
             self.fields["requested_funding"].validators = [MaxValueValidator(funding)]
         else:
             funding_text = '<p class="mb-4">Bitte die vorigen Schritte ausfüllen.</p>'
+
         self.helper.layout = Layout(
             HTML(funding_text),
             AppendedText("requested_funding", "€"),
