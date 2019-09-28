@@ -22,7 +22,11 @@ data_protection_url = (
 class SignupForm(forms.Form):
     name = forms.CharField(max_length=30, label="Voller Name")
     janun_groups = forms.ModelMultipleChoiceField(
-        queryset=JANUNGroup.objects.all(), label="JANUN-Gruppe(n)", required=False
+        queryset=JANUNGroup.objects.all(),
+        label="JANUN-Gruppe(n)",
+        required=False,
+        widget=forms.CheckboxSelectMultiple(),
+        help_text="Wähle aus, in welchen Gruppen Du Mitglied bist",
     )
     data_protection_read = forms.BooleanField(
         label='Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
