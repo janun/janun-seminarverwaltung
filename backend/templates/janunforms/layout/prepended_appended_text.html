@@ -17,18 +17,20 @@
                 {% crispy_field field %}
                 {% if crispy_appended_text %}<span class="input-group{% if active %} active{% endif %}{% if input_size %} {{ input_size }}{% endif %}">{{ crispy_appended_text|safe }}</span>{% endif %}
             {% else %}
-                <div class="input-group">
-                    {% if crispy_prepended_text %}
-                      <div class="input-group-prepend{% if active %} active{% endif %}{% if input_size %} {{ input_size }}{% endif %}">
-                        <span class="input-group-text">{{ crispy_prepended_text|safe }}</span>
-                      </div>
-                    {% endif %}
-                    {% crispy_field field 'class' 'form-control' %}
-                    {% if crispy_appended_text %}
-                      <div class="input-group-append{% if active %} active{% endif %}{% if input_size %} {{ input_size }}{% endif %}">
-                        <span class="input-group-text">{{ crispy_appended_text|safe }}</span>
-                      </div>
-                    {% endif %}
+                <div class="mb-2">
+                    <div class="inline-flex relative items-center">
+                        {% if crispy_prepended_text %}
+                        <div class="ml-4">
+                        {{ crispy_prepended_text|safe }}
+                        </div>
+                        {% endif %}
+                        {% crispy_field field 'class' 'form-input pr-6' %}
+                        {% if crispy_appended_text %}
+                        <div class="absolute mr-2 right-0">
+                            {{ crispy_appended_text|safe }}
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             {% endif %}
 

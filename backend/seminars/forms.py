@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
+from crispy_forms.bootstrap import AppendedText
 
 from backend.groups.models import JANUNGroup
 from .models import Seminar
@@ -68,7 +69,7 @@ class SeminarChangeForm(forms.ModelForm):
                     css_class="md:flex -mx-2",
                 ),
                 "group",
-                "requested_funding",
+                AppendedText("requested_funding", "€", css_class="w-40"),
             ),
             "comment",
         )
@@ -302,7 +303,7 @@ class FundingSeminarForm(SeminarStepForm):
             funding_text = '<p class="mb-4">Bitte die vorigen Schritte ausfüllen.</p>'
         self.helper.layout = Layout(
             HTML(funding_text),
-            Field("requested_funding"),
+            AppendedText("requested_funding", "€"),
             HTML(
                 '<p class="text-sm mt-4">JANUN fördert Seminare, finanziert sie aber nicht komplett. '
                 "Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.). "
