@@ -35,6 +35,9 @@ class SignupForm(forms.Form):
         required=True,
     )
     telephone = forms.CharField(max_length=100, label="Telefonnummer", required=False)
+    address = forms.CharField(
+        label="Postadresse", required=False, widget=forms.Textarea(attrs={"rows": 3})
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -47,6 +50,7 @@ class SignupForm(forms.Form):
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
                 Field("telephone", css_class="w-full"),
+                Field("address", css_class="w-full js-autogrow"),
             ),
             Fieldset(
                 "Anmeldung",
@@ -69,6 +73,7 @@ class SignupForm(forms.Form):
         user.name = self.cleaned_data["name"]
         user.janun_groups.set(self.cleaned_data["janun_groups"])
         user.telephone = self.cleaned_data["telephone"]
+        user.address = self.cleaned_data["address"]
         user.save()
 
 
@@ -84,6 +89,7 @@ class ProfileForm(forms.ModelForm):
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
                 Field("telephone", css_class="w-full"),
+                Field("address", css_class="w-full js-autogrow"),
             ),
             Fieldset(
                 "Anmeldung",
@@ -108,4 +114,5 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("name", "email", "username", "telephone")
+        fields = ("name", "email", "username", "telephone", "address")
+        widgets = {"address": forms.Textarea(attrs={"rows": 3})}
