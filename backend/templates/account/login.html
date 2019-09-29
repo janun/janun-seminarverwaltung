@@ -9,7 +9,7 @@
 
   <p class="mb-5 mt-4">
     Noch kein Konto?
-    <a class="text-green-500" href="{{ signup_url }}">Konto erstellen →</a>
+    <a class="text-green-500" href="{{ signup_url }}">Konto anlegen →</a>
   </p>
 
   <form class="login form-control-w-full" method="POST" action="{% url 'account_login' %}">
@@ -19,7 +19,9 @@
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
 
-    <a class="block mb-6 -mt-3 text-gray-700 text-sm" href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
+    <a class="inline-block -m-1 p-1 mb-6 text-gray-600 hover:text-gray-800 focus:text-gray-800 text-sm"
+       href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
+
     <div class="flex">
       <button class="md:ml-auto button button-primary" type="submit">Anmelden →</button>
     </div>
