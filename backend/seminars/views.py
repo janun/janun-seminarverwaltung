@@ -69,14 +69,16 @@ class SeminarApplyView(SessionWizardView):
         seminar_forms.ConfirmSeminarForm,
     ]
 
-    # def get(self, request, *args, **kwargs):
-    #     try:
-    #         # restore saved steps
-    #         form = self.get_form()
-    #         messages.info(request, "Frühere Formulareingaben wiederhergestellt")
-    #         return self.render(form)
-    #     except KeyError:
-    #         return super().get(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        try:
+            # restore saved steps
+            form = self.get_form()
+            if form.instance.title:
+                messages.info(request, "Frühere Formulareingaben wiederhergestellt")
+                return self.render(form)
+        except KeyError:
+            pass
+        return super().get(request, *args, **kwargs)
 
     def get_form_instance(self, step):
         if not getattr(self, "instance", None):
