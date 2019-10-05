@@ -5,12 +5,14 @@
 
 {% block content %}
 <div class="mx-auto max-w-sm md:bg-white md:shadow-lg md:p-8 md:pt-4 rounded-lg">
-  <h1 class="font-bold text-2xl text-green-500">Anmelden</h1>
+  <h1 class="font-bold text-2xl">Anmelden</h1>
 
-  <p class="mb-5 mt-4">
-    Noch kein Konto?
-    <a class="text-green-500" href="{{ signup_url }}">Konto anlegen →</a>
-  </p>
+  <div class="mt-2 mb-5 text-gray-700">
+    Oder:
+    <a class="underline hover:text-gray-900 focus:text-gray-900" href="{{ signup_url }}">
+      Neues Konto anlegen
+    </a>
+  </div>
 
   <form class="login form-control-w-full" method="POST" action="{% url 'account_login' %}">
     {% csrf_token %}
@@ -23,7 +25,10 @@
        href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
 
     <div class="flex">
-      <button class="md:ml-auto button button-primary" type="submit">Anmelden →</button>
+      <button class="md:ml-auto button button-primary" type="submit">
+        Anmelden
+        <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+      </button>
     </div>
   </form>
 </div>

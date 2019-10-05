@@ -4,8 +4,8 @@
 {% block head_title %}{{ block.super }} Dein Profil{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-2xl md:bg-white md:shadow-lg md:px-8 md:pt-4 md:border-t-4 md:border-green-500 md:rounded-b-lg">
-  <h1 class="mb-8 font-bold text-2xl text-green-500">Konto-Einstellungen</h1>
+<div class="mx-auto max-w-2xl md:bg-white md:shadow-lg md:px-8 md:pt-4 md:rounded-lg">
+  <h1 class="mb-8 font-bold text-2xl">Konto-Einstellungen</h1>
 
   <form class="login" method="POST" action="">
     {% csrf_token %}

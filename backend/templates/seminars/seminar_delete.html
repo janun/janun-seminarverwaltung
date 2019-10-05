@@ -18,13 +18,16 @@
 
     <form action="" method="POST">
       {% csrf_token %}
-      <div class="flex items-center mt-5">
-        <a class="button" href="{{ seminar.get_absolute_url }}">Abbrechen</a>
-        <button class="ml-auto button bg-red-500 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Löschen</button>
+      <div class="flex items-center justify-end mt-5">
+        <a id="cancel" class="button mx-4" href="{{ seminar.get_absolute_url }}">Abbrechen</a>
+        <button class="mx-4 button bg-red-500 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Löschen</button>
       </div>
     </form>
 
   </div>
 
 </div>
+<script>
+  document.getElementById("cancel").focus()
+</script>
 {% endblock content %}

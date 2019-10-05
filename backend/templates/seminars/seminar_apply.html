@@ -14,10 +14,12 @@
 {% block content %}
 <div class="mx-auto max-w-3xl md:bg-white md:shadow-lg pb-8 md:pt-6 -mt-5 md:mt-0 rounded-lg">
 
-  <div class="flex items-center mb-6 md:mb-8 md:px-8 pb-4 md:pb-6 border-b">
-    <h1 class="text-green-500">Seminar anmelden</h1>
-    <span class="text-gray-500 ml-2 text-sm">{{ wizard.steps.step1 }} / {{ wizard.steps.count }}</span>
-    <a title="Abbrechen" class="block h-4 w-4 ml-auto text-gray-600 hover:text-gray-800 focus:text-gray-800" href="/">
+  <div class="flex items-center justify-between mb-6 md:mb-8 md:px-8 pb-4 md:pb-6 border-b">
+    <div class="flex items-center">
+      <h1>Seminar anmelden</h1>
+      <span class="text-gray-600 ml-2 text-sm">{{ wizard.steps.step1 }} / {{ wizard.steps.count }}</span>
+    </div>
+    <a title="Abbrechen" class="flex items-center justify-center rounded-full h-10 w-10 -m-4 text-gray-600 hover:bg-gray-200 hover:text-gray-800 focus:text-gray-800" href="/">
       ✖
     </a>
   </div>
@@ -31,7 +33,7 @@
       <ul class="md:w-1/4 bg-gray-100 rounded shadow mb-10 mr-12 pl-4 pr-2 hidden md:block">
         {% for step_name, step_form in steps.items %}
           <li>
-            <button class="flex items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
+            <button class="flex w-full items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
                 name="wizard_goto_step" type="submit" value="{{ step_name }}">
               {{ step_form.Meta.short_title }}
               {% if step_form.is_valid %}
@@ -45,7 +47,7 @@
       </ul>
 
       <div class="w-full md:w-3/4 mb-8">
-        <h2 class="text-green-500 text-xl mb-2 ">{{ form.Meta.title }}</h2>
+        <h2 class="font-bold text-xl mb-2 ">{{ form.Meta.title }}</h2>
         {% if wizard.form.forms %}
           {{ wizard.form.management_form }}
           {% for form in wizard.form.forms %}
@@ -57,19 +59,24 @@
       </div>
     </div>
 
-    <div class="mt-6 flex items-center">
+    <div class="mt-6 flex items-center justify-end md:bg-gray-100 md:px-4 md:-mx-8 md:-mb-8 md:py-6 md:rounded-b-lg">
       {% if wizard.steps.next %}
-        <button class="order-2 button button-primary ml-auto" type="submit">Weiter →</button>
+        <button class="mx-4 order-2 button button-primary auto" type="submit">
+          Weiter
+          <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+        </button>
       {% else %}
-        <button class="order-2 button button-primary ml-auto" type="submit">Anmelden</button>
+        <button class="mx-4 order-2 button button-primary auto" type="submit">
+          Anmelden
+          <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+        </button>
       {% endif %}
 
       {% if wizard.steps.prev %}
-        <button class="text-gray-600 hover:text-gray-800 focus:text-gray-800" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">← Zurück</button>
-      {% else %}
-        <a class="text-gray-600 hover:text-gray-800 focus:text-gray-800" href="/">
-          ✖ Abbrechen
-        </a>
+        <button class="flex items-center order-1 text-gray-600 hover:text-gray-800 focus:text-gray-800 p-3 -my-3 mx-4" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">
+          <svg viewBox="0 0 20 20" class="mr-2 fill-current h-3 w-3"><path d="M3.828 9l6.071-6.071-1.414-1.414L0 10l.707.707 7.778 7.778 1.414-1.414L3.828 11H20V9H3.828z"></path></svg>  
+          Zurück
+        </button>
       {% endif %}
     </div>
 
