@@ -86,12 +86,12 @@
         </div>
       </div>
       
-      <div class="md:sticky md:bottom-0 md:bg-gray-100 md:py-4 md:border-t md:-mx-8 md:px-8 md:rounded-b-lg">
-        <div class="flex items-center">
+      <div class="md:fixed md:inset-x-0 md:bottom-0 md:bg-white-75 md:border-t-2">
+        <div class="flex items-center justify-end mx-auto max-w-3xl px-8 py-4">
+          <button class="order-10 button button-primary" type="submit">Speichern</button>
           {% if seminar.status == 'angemeldet' %}
-            <a class="text-red-500" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>
+            <a class="mx-6 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>
           {% endif %}
-          <button class="ml-auto button button-primary" type="submit">Speichern</button>
         </div>
       </div>
     </form>

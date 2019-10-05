@@ -40,7 +40,8 @@ module.exports = {
           900: "#1a4614"
         },
         "gray-20": "#fdfdfd",
-        "gray-150": "#f4f8fa"
+        "gray-150": "#f4f8fa",
+        "white-75": "rgba(255, 255, 255, 0.75)"
       },
       maxWidth: {
         xxs: "10rem"
