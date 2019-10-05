@@ -92,6 +92,9 @@ class SeminarChangeForm(forms.ModelForm):
             for key in self.Meta.fields:
                 if key != "status":
                     self.fields[key].disabled = True
+                    self.fields[key].widget.attrs.update(
+                        title="Kann in diesem Status nicht geändert werden."
+                    )
 
     class Meta:
         model = Seminar
