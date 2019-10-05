@@ -7,18 +7,17 @@
 
 {% block content %}
 <div class="mx-auto max-w-3xl">
+  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pt-6">
+ 
+
+    <div class="mb-5 flex items-start justify-between">
       <h1 class="font-bold text-2xl">{{ seminar.title }}</h1>
-  {% if user.is_staff %}
-    <div class="flex mb-4 -mt-4">
-      <a class="ml-auto text-gray-600 hover:text-gray-800 focus:text-gray-800"
-         href="{% url 'admin:seminars_seminar_change' seminar.pk %}">Verwaltungsansicht →</a>
-    </div>
-  {% endif %}
-
-  <div class="md:bg-white md:shadow-lg md:border-t-4 border-green-500 md:rounded-b-lg md:px-8 md:pt-6">
-
-    <div class="mb-5">
-      <h1 class="font-bold text-2xl text-green-500">{{ seminar.title }}</h1>
+      {% if user.is_staff %}
+        <a class="text-sm flex items-center text-gray-500 hover:text-gray-800 focus:text-gray-800"
+          href="{% url 'admin:seminars_seminar_change' seminar.pk %}">
+          Verwaltungsansicht
+        </a>
+      {% endif %}
     </div>
 
     <div class="mb-1">
