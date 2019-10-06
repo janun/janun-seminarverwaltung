@@ -11,11 +11,11 @@
     <span title="Status" class="text-xs">{{ seminar.status }}</span>
   </div>
 
-  <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">
+  <h3 class="mt-1 mb-2 leading-tight text-gray-800 font-bold text-lg">
     {{ seminar.title }}
   </h3>
 
-  <div class="flex text-gray-800 mb-1 text-sm">
+  <div class="flex text-gray-800 mb-2 text-sm">
     <div title="Förderung"><span class="font-bold-">{{ seminar.funding }}</span> <span class="text-xs">€</span></div>
     <div title="Teilnehmerinnentage" class="ml-4"><span class="font-bold-">{{ seminar.tnt }}</span> <span class="text-xs">TNT</span></div>
   </div>
@@ -28,9 +28,11 @@
     {% endif %}
 
     {% if seminar.deadline_applicable %}
-      <span class="text-xs ml-auto {% if seminar.deadline_status == 'expired' %}px-2 bg-red-300 text-gray-800 rounded-sm{% endif %}" 
-            title="Deadline {% if seminar.deadline_status == 'expired' %}abgelaufen!{% endif %}">
+      <span class="inline-flex items-center text-xs ml-auto {% if seminar.deadline_status == 'expired' %}text-red-600{% endif %}" title="Deadline {% if seminar.deadline_status == 'expired' %}abgelaufen!{% endif %}">
         {{ seminar.deadline | date }}
+        {% if seminar.deadline_status == 'expired' %}
+          <svg class="h-4 w-4 ml-1 fill-current text-red-600" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 5v6h2V5H9zm0 8v2h2v-2H9z"/></svg>
+        {% endif %}
       </span>
     {% endif %}
   </div>

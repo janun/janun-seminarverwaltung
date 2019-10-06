@@ -50,7 +50,10 @@
         <div>
           Abrechnungs-Deadline: {{ seminar.deadline | date }}
           {% if seminar.deadline_status == 'expired' %}
-            <span class="px-2 bg-red-300 rounded-sm ml-1">abgelaufen!</span>
+            <span class="text-red-600 ml-2">
+              <svg class="inline-block h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 5v6h2V5H9zm0 8v2h2v-2H9z"/></svg>
+              abgelaufen
+            </span>
           {% endif %}
         </div>
       {% endif %}
@@ -63,7 +66,7 @@
 
         <div class="fieldset border-none">
           <div class="fieldset-header">Abrechnung</div>
-          <div class="fieldset-content">
+          <div class="fieldset-content mb-10">
             {% if seminar.has_accounting %}
             <div>
               <span class="text-xl text-gray-700 font-bold">{{ seminar.actual_attendees_total }}</span>
