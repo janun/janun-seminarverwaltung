@@ -23,6 +23,7 @@ django-extensions = "*"
 django-crispy-forms = "*"
 django-allauth-2fa = "*"
 django-formtools = "*"
+formulas = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

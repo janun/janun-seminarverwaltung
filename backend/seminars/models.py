@@ -3,6 +3,8 @@ from decimal import Decimal
 from typing import Optional
 from model_utils import Choices
 from django_extensions.db.fields import AutoSlugField
+import formulas
+from formulas.errors import FormulaError
 
 from django.db import models
 from django.db.models import Case, When, F, ExpressionWrapper, Value, Q
@@ -10,6 +12,7 @@ from django.db.models.functions import ExtractYear, Concat, Cast
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -27,6 +30,83 @@ def add_none(*p) -> Optional[Decimal]:
     if all(v is None for v in p):
         return None
     return sum(filter(None, p))
+
+
+class FundingRate(models.Model):
+    year = models.IntegerField("Jahr")
+
+    group_rate = models.DecimalField(
+        "Satz für Gruppen", max_digits=10, decimal_places=2
+    )
+    group_rate_one_day = models.DecimalField(
+        "Satz für Gruppen für Eintagesseminare",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    group_limit_formula = models.CharField(
+        "Formel für Gruppen-Limit",
+        max_length=255,
+        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450)",
+        blank=True,
+    )
+    group_limit = models.DecimalField(
+        "Gruppen-Limit",
+        blank=True,
+        null=True,
+        max_digits=10,
+        decimal_places=2,
+        help_text="Hat Vorrang vor der Formel",
+    )
+
+    single_rate = models.DecimalField(
+        "Satz für Einzelpersonen", max_digits=10, decimal_places=2
+    )
+    single_rate_one_day = models.DecimalField(
+        "Satz für Einzelpersonen für Eintagesseminare",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    single_limit_formula = models.CharField(
+        "Formel für Einzelpersonen-Limit",
+        max_length=255,
+        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450)",
+        blank=True,
+    )
+    single_limit = models.DecimalField(
+        "Einzelpersonen-Limit",
+        blank=True,
+        null=True,
+        max_digits=10,
+        decimal_places=2,
+        help_text="Hat Vorrang vor der Formel",
+    )
+
+    def test_formula(self, formula):
+        formulas.Parser().ast(formula)[1].compile()
+
+    def clean(self):
+        if self.single_limit_formula:
+            try:
+                self.test_formula(self.single_limit_formula)
+            except FormulaError as error:
+                raise ValidationError({"single_limit_formula": error})
+
+        if self.group_limit_formula:
+            try:
+                self.test_formula(self.group_limit_formula)
+            except FormulaError as error:
+                raise ValidationError({"group_limit_formula": error})
+
+    def __str__(self):
+        return "%s" % self.year
+
+    class Meta:
+        verbose_name = "Förderungssatz"
+        verbose_name_plural = "Förderungssätze"
 
 
 class SeminarQuerySet(models.QuerySet):
@@ -325,6 +405,9 @@ class Seminar(models.Model):
             datetime.date(year, 1, 15),
         ]
         return deadlines[get_quarter(self.start_date)]
+
+    def get_max_funding(self):
+        pass
 
 
 class SeminarComment(models.Model):

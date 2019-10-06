@@ -25,7 +25,7 @@ from backend.groups.models import JANUNGroup
 from backend.utils import format_currency, format_with, admin_link, median_value
 
 from .templateddocs import fill_template, FileResponse
-from .models import Seminar, SeminarComment
+from .models import Seminar, SeminarComment, FundingRate
 from .filters import QuarterListFilter, YearListFilter, DeadlineFilter, StatusListFilter
 
 
@@ -69,6 +69,36 @@ class CommentsInline(admin.StackedInline):
 
 class ChangeStatusForm(forms.Form):
     new_status = forms.ChoiceField(label="Neuer Status", choices=Seminar.STATE_CHOICES)
+
+
+@admin.register(FundingRate)
+class FundingRateAdmin(admin.ModelAdmin):
+    list_display = ("year", "group_rate", "single_rate")
+    fieldsets = (
+        (None, {"fields": ("year",)}),
+        (
+            "Gruppen",
+            {
+                "fields": (
+                    "group_rate",
+                    "group_rate_one_day",
+                    "group_limit_formula",
+                    "group_limit",
+                )
+            },
+        ),
+        (
+            "Einzelpersonen",
+            {
+                "fields": (
+                    "single_rate",
+                    "single_rate_one_day",
+                    "single_limit_formula",
+                    "single_limit",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(Seminar)
