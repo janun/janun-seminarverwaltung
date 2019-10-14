@@ -12,7 +12,7 @@ from django.db.models.functions import ExtractYear, Concat, Cast
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.urls import reverse
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
@@ -100,6 +100,37 @@ class FundingRate(models.Model):
                 self.test_formula(self.group_limit_formula)
             except FormulaError as error:
                 raise ValidationError({"group_limit_formula": error})
+
+    def get_rate(self, has_group: bool, days: int) -> Decimal:
+        if has_group:
+            if days == 1:
+                return self.group_rate_one_day
+            return self.group_rate
+        if days == 1:
+            return self.single_rate_one_day
+        return self.single_rate
+
+    def limit(self, seminar, funding: Decimal) -> Decimal:
+        upper_limit = self.group_limit if seminar.group else self.single_limit
+        if funding > upper_limit:
+            return upper_limit
+
+        formula = (
+            self.group_limit_formula if seminar.group else self.single_limit_formula
+        )
+        lower_limit = (
+            formulas.Parser().ast(formula)[1].compile()(B=seminar.planned_training_days)
+        )
+        if funding > lower_limit:
+            return lower_limit
+
+        return funding
+
+    def get_max_funding(self, seminar) -> Decimal:
+        rate = self.get_rate(seminar.group, seminar.planned_training_days)
+        tnt = seminar.planned_training_days * seminar.planned_attendees_max
+        funding = rate * tnt
+        return self.limit(seminar, funding)
 
     def __str__(self):
         return "%s" % self.year
@@ -429,7 +460,9 @@ class Seminar(models.Model):
         return deadlines[get_quarter(self.start_date)]
 
     def get_max_funding(self):
-        pass
+        year = self.start_date.year
+        fr = FundingRate.objects.get(year=year)
+        return fr.get_max_funding(self)
 
 
 class SeminarComment(models.Model):
