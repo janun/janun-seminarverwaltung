@@ -182,15 +182,6 @@ class DateLocationSeminarForm(SeminarStepForm):
         self.fields["start_time"].help_text = "z.B. 15:00"
         self.fields["end_date"].required = True
 
-    def clean(self):
-        cleaned_data = super().clean()
-        start_date = cleaned_data.get("start_date")
-        end_date = cleaned_data.get("end_date")
-        if end_date and start_date:
-            if end_date < start_date:
-                msg = "Muss nach Start-Datum liegen"
-                self.add_error("end_date", msg)
-
     class Meta(SeminarStepForm.Meta):
         model = Seminar
         title = "Wann & Wo"

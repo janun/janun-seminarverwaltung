@@ -374,6 +374,28 @@ class Seminar(models.Model):
 
     objects = SeminarManager()
 
+    def clean(self):
+        if self.end_date and self.start_date:
+            if self.end_date < self.start_date:
+                raise ValidationError(
+                    {"end_date": "Muss größer/gleich Start-Datum sein"}
+                )
+            if self.end_date == self.start_date and self.start_time and self.end_time:
+                if self.end_time < self.start_time:
+                    raise ValidationError(
+                        {"end_time": "Muss größer/gleich Start-Zeit sein"}
+                    )
+            if self.planned_training_days:
+                days = (self.end_date - self.start_date).days + 1
+                if self.planned_training_days > days:
+                    raise ValidationError(
+                        {
+                            "planned_training_days": "Muss kleiner gleich {} (Dauer des Seminars) sein".format(
+                                days
+                            )
+                        }
+                    )
+
     def __str__(self) -> str:
         return self.title
 
