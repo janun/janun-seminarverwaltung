@@ -3,12 +3,26 @@
 {% block head_title %}Übersicht{% endblock %}
 
 {% block content %}
-<div class="flex items-center mb-6">
+<div class="md:flex items-center mb-6">
   <h1 class="font-bold text-2xl text-green-500">{{ greeting }}, {{ user.name }}!</h1>
-  <a class="ml-auto button button-primary" href="{% url 'seminar_apply' %}">
+  <a class="my-5 md:my-0 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
     Seminar anmelden
   </a>
 </div>
+
+{% if not user.telephone %}
+<div class="mb-12 rounded px-4 py-3 max-w-xl bg-white shadow">
+  <h2 class="font-bold text-lg mb-2 text-red-600">Keine Telefonnummer angegeben ☹</h2>
+  <p class="text-sm">Bitte gib uns deine Telefonnummer, damit wir dich bei <strong>dringenden Abrechnungsproblemen</strong> erreichen können.</p>
+
+  <div class="flex justify-end">
+    <a href="{% url 'account_profile' %}" class="text-sm flex items-center mt-3 hover:underline">
+      Nummer angeben
+      <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+    </a>
+  </div>
+</div>
+{% endif %}
 
 {% if janun_groups|length > 0 %}
   <div class="mb-10">

@@ -108,6 +108,7 @@ class ProfileForm(forms.ModelForm):
         )
 
         self.fields["username"].help_text = ""
+        self.fields["email"].required = True
 
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
