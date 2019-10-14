@@ -48,7 +48,7 @@ class SeminarDeleteView(SuccessMessageMixin, DeleteView):
     model = Seminar
     template_name = "seminars/seminar_delete.html"
     success_url = "/"
-    success_message = "{} wurde gelöscht."
+    success_message = "Das Seminar {} wurde gelöscht."
 
     def delete(self, request, *args, **kwargs):
         seminar_title = self.get_object().title
