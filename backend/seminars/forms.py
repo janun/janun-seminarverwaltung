@@ -305,6 +305,7 @@ class FundingSeminarForm(SeminarStepForm):
                 "Ausgenommen sind eintägige Seminare.</p>"
             ),
         )
+        self.fields["requested_funding"].required = True
 
     class Meta(SeminarStepForm.Meta):
         title = "Wieviel Förderung benötigst Du?"
