@@ -36,11 +36,7 @@
             <button class="flex w-full items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
                 name="wizard_goto_step" type="submit" value="{{ step_name }}">
               {{ step_form.Meta.short_title }}
-              {% if step_form.is_valid %}
-                <svg viewBox="0 0 24 24" class="ml-1 h-4 w-4 fill-current text-white rounded-full bg-green-500"><path d="M10 14.59l6.3-6.3a1 1 0 0 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-3-3a1 1 0 0 1 1.4-1.42l2.3 2.3z"></path></svg>
-              {% elif step_form.errors %}
-                <svg viewBox="0 0 24 24" class="ml-1 h-4 w-4 fill-current text-white rounded-full bg-red-600"><path d="M13.41 12l2.83 2.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 1 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12z"></path></svg>
-              {% endif %}
+              
             </button>
           </li>
         {% endfor %}
