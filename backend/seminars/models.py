@@ -112,25 +112,27 @@ class FundingRate(models.Model):
 
     def limit(self, seminar, funding: Decimal) -> Decimal:
         upper_limit = self.group_limit if seminar.group else self.single_limit
-        if funding > upper_limit:
+        if upper_limit and funding > upper_limit:
             return upper_limit
 
         formula = (
             self.group_limit_formula if seminar.group else self.single_limit_formula
         )
-        lower_limit = (
-            formulas.Parser().ast(formula)[1].compile()(B=seminar.planned_training_days)
-        )
-        if funding > lower_limit:
-            return lower_limit
+        if formula:
+            lower_limit = (
+                formulas.Parser().ast(formula)[1].compile()(B=seminar.planned_training_days)
+            )
+            if lower_limit and funding > lower_limit:
+                return lower_limit
 
         return funding
 
     def get_max_funding(self, seminar) -> Decimal:
-        rate = self.get_rate(seminar.group, seminar.planned_training_days)
-        tnt = seminar.planned_training_days * seminar.planned_attendees_max
-        funding = rate * tnt
-        return self.limit(seminar, funding)
+        if seminar.planned_training_days and seminar.planned_attendees_max:
+            rate = self.get_rate(seminar.group, seminar.planned_training_days)
+            tnt = seminar.planned_training_days * seminar.planned_attendees_max
+            funding = rate * tnt
+            return self.limit(seminar, funding)
 
     def __str__(self):
         return "%s" % self.year
@@ -460,9 +462,13 @@ class Seminar(models.Model):
         return deadlines[get_quarter(self.start_date)]
 
     def get_max_funding(self):
-        year = self.start_date.year
-        fr = FundingRate.objects.get(year=year)
-        return fr.get_max_funding(self)
+        if self.start_date:
+            year = self.start_date.year
+            try:
+                fr = FundingRate.objects.get(year=year)
+            except FundingRate.DoesNotExist:
+                fr = FundingRate.objects.get(year=year - 1)
+            return fr.get_max_funding(self)
 
 
 class SeminarComment(models.Model):
