@@ -1,13 +1,22 @@
 from django.views.generic import DetailView
 from django.db.models import Sum
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from .models import JANUNGroup
 
 
-class JANUNGroupDetailView(DetailView):
+class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
     model = JANUNGroup
     template_name = "groups/group_detail.html"
     context_object_name = "group"
+
+    def test_func(self):
+        if not self.request.user.is_reviewed:
+            return False
+        return (
+            self.get_object() in self.request.user.janun_groups.all()
+            or self.get_object() in self.request.user.group_hats.all()
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

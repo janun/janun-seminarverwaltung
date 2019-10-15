@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from formtools.wizard.views import SessionWizardView
 
@@ -24,7 +25,24 @@ class SeminarListView(ListView):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class SeminarUpdateView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
+def user_may_access_seminar(user, seminar):
+    if user == seminar.owner:
+        return True
+    if (
+        seminar.group
+        and user.is_reviewed
+        and (
+            seminar.group in user.janun_groups.all()
+            or seminar.group in user.group_hats.all()
+        )
+    ):
+        return True
+    return False
+
+
+class SeminarUpdateView(
+    UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
+):
     form_class = SeminarChangeForm
     queryset = Seminar.objects.select_related("owner", "group").prefetch_related(
         "comments"
@@ -32,6 +50,9 @@ class SeminarUpdateView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
     template_name = "seminars/seminar_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
     error_message = "Es gab Probleme beim Speichern. Schau in’s Formular."
+
+    def test_func(self):
+        return user_may_access_seminar(self.request.user, self.get_object())
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -44,11 +65,19 @@ class SeminarUpdateView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
         return context
 
 
-class SeminarDeleteView(SuccessMessageMixin, DeleteView):
+class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Seminar
     template_name = "seminars/seminar_delete.html"
     success_url = "/"
     success_message = "Das Seminar {} wurde gelöscht."
+
+    def test_func(self):
+        user = self.request.user
+        seminar = self.get_object()
+
+        if user == seminar.owner:
+            return True
+        return False
 
     def delete(self, request, *args, **kwargs):
         seminar_title = self.get_object().title
@@ -121,7 +150,6 @@ class SeminarApplyView(SessionWizardView):
         )
 
 
-# TODO: get only comments for seminars the user is allowed to see
 class CommentListView(AjaxableResponseMixin, ListView):
     model = SeminarComment
     template_name = "seminars/_comment_list.html"
@@ -129,17 +157,21 @@ class CommentListView(AjaxableResponseMixin, ListView):
 
     def get_queryset(self):
         seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
-        return seminar.comments.all()
+        if user_may_access_seminar(self.request.user, seminar):
+            return seminar.comments.all()
+        return SeminarComment.objects.none()
 
 
-# TODO: Allow to comment only on forms the user is allowed to access
 class CommentCreateView(AjaxableResponseMixin, CreateView):
     model = SeminarComment
     fields = ("text",)
     success_url = "/"
 
     def form_valid(self, form):
-        form.instance.seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
+        seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
+        if not user_may_access_seminar(self.request.user, seminar):
+            raise PermissionDenied()
+        form.instance.seminar = seminar
         result = super().form_valid(form)
         self.object.owner = self.request.user
         self.object.save()
