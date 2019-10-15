@@ -89,14 +89,17 @@
         </div>
       </div>
       
-      <div class="md:fixed md:inset-x-0 md:bottom-0 md:bg-white-75 md:border-t-2">
-        <div class="flex items-center justify-end mx-auto max-w-3xl px-8 py-4">
-          <button class="order-10 button button-primary" type="submit">Speichern</button>
-          {% if seminar.status == 'angemeldet' %}
-            <a class="mx-6 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>
-          {% endif %}
+      {% if form.show_save_button %}
+        <div class="md:fixed md:inset-x-0 md:bottom-0 md:bg-white-75 md:border-t-2">
+          <div class="flex items-center justify-end mx-auto max-w-3xl px-8 py-4"> 
+            <button class="order-10 button button-primary" type="submit">Speichern</button>
+            {% if seminar.status == 'angemeldet' %}
+              <a class="mx-6 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Löschen</a>
+            {% endif %}
+          </div>
         </div>
-      </div>
+      {% endif %}
+      
     </form>
 
   </div>

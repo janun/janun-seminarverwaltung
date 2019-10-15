@@ -26,6 +26,7 @@ class SeminarChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         self.disabled = False
+        self.show_save_button = True
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -77,10 +78,14 @@ class SeminarChangeForm(forms.ModelForm):
 
         # validate funding:
         max_funding = self.instance.get_max_funding()
-        self.fields["requested_funding"].validators = [MaxValueValidator(max_funding)]
+        if max_funding:
+            self.fields["requested_funding"].validators = [
+                MaxValueValidator(max_funding)
+            ]
 
         # set possible status choices:
-        possible_states = [self.instance.status] + get_next_states(self.instance.status)
+        next_states = get_next_states(self.instance.status)
+        possible_states = [self.instance.status] + next_states
         self.fields["status"].choices = [(status, status) for status in possible_states]
 
         # set possible group choices:
@@ -99,6 +104,12 @@ class SeminarChangeForm(forms.ModelForm):
                     self.fields[key].widget.attrs.update(
                         title="Kann in diesem Status nicht geändert werden."
                     )
+
+        if self.disabled and not next_states:
+            self.show_save_button = False
+
+        if not self.request.user == self.instance.owner:
+            self.show_save_button = False
 
     class Meta:
         model = Seminar
