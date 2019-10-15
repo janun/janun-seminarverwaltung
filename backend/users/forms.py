@@ -3,6 +3,8 @@ from django.urls import reverse
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, HTML, Field
+from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
+from phonenumber_field.formfields import PhoneNumberField
 
 from backend.groups.models import JANUNGroup
 from .models import User
@@ -34,7 +36,14 @@ class SignupForm(forms.Form):
         ),
         required=True,
     )
-    telephone = forms.CharField(max_length=100, label="Telefonnummer", required=False)
+    telephone = PhoneNumberField(
+        label="Telefonnummer",
+        required=False,
+        widget=PhoneNumberInternationalFallbackWidget,
+        error_messages={
+            "invalid": "Bitte gültige Telefonnummer eingeben, z.B. 0511 1241512"
+        },
+    )
     address = forms.CharField(
         label="Postadresse", required=False, widget=forms.Textarea(attrs={"rows": 3})
     )
@@ -116,4 +125,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("name", "email", "username", "telephone", "address")
-        widgets = {"address": forms.Textarea(attrs={"rows": 3})}
+        widgets = {
+            "address": forms.Textarea(attrs={"rows": 3}),
+            "telephone": PhoneNumberInternationalFallbackWidget,
+        }

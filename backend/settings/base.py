@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "phonenumber_field",
     "formtools",
     "crispy_forms",
     "import_export",
@@ -226,3 +227,6 @@ LOGIN_REQUIRED_URLS_EXCEPTIONS = (
     r"^/accounts/password/reset/key/done/$",
     r"^/accounts/two-factor-authenticate$",
 )
+
+
+PHONENUMBER_DEFAULT_REGION = "DE"

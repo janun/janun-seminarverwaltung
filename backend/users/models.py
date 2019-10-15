@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext as _
 
 from model_utils import Choices
+from phonenumber_field.modelfields import PhoneNumberField
 
 from backend.groups.models import JANUNGroup
 
@@ -21,7 +23,13 @@ class User(AbstractUser):
     first_name = None  # type: ignore
     last_name = None  # type: ignore
     name = models.CharField(max_length=255)
-    telephone = models.CharField("Telefonnummer", max_length=100, blank=True)
+    telephone = PhoneNumberField(
+        "Telefonnummer",
+        error_messages={
+            "invalid": "Bitte gültige Telefonnummer eingeben, z.B. 0511 1241512"
+        },
+        blank=True,
+    )
     address = models.TextField("Postadresse", blank=True)
     role = models.CharField(
         "Rolle", max_length=255, choices=ROLES, default=ROLES.Teamer_in

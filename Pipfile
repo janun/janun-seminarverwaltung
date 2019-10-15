@@ -24,6 +24,8 @@ django-crispy-forms = "*"
 django-allauth-2fa = "*"
 django-formtools = "*"
 formulas = "*"
+django-phonenumber-field = "*"
+phonenumberslite = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
