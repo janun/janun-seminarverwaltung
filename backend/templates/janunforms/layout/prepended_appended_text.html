@@ -20,15 +20,15 @@
                 <div class="mb-2">
                     <div class="inline-flex relative items-center">
                         {% if crispy_prepended_text %}
-                        <div class="ml-4">
-                        {{ crispy_prepended_text|safe }}
-                        </div>
+                            <div class="ml-4">{{ crispy_prepended_text|safe }}</div>
                         {% endif %}
-                        {% crispy_field field 'class' 'form-input pr-6' %}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'form-input pr-6 is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'form-input pr-6' %}
+                        {% endif %}
                         {% if crispy_appended_text %}
-                        <div class="absolute mr-2 right-0">
-                            {{ crispy_appended_text|safe }}
-                        </div>
+                            <div class="absolute mr-2 right-0">{{ crispy_appended_text|safe }}</div>
                         {% endif %}
                     </div>
                 </div>
