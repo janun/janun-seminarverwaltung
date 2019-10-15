@@ -75,6 +75,10 @@ class SeminarChangeForm(forms.ModelForm):
         )
         self.fields["start_time"].help_text = "z.B. 15:00"
 
+        # validate funding:
+        max_funding = self.instance.get_max_funding()
+        self.fields["requested_funding"].validators = [MaxValueValidator(max_funding)]
+
         # set possible status choices:
         possible_states = [self.instance.status] + get_next_states(self.instance.status)
         self.fields["status"].choices = [(status, status) for status in possible_states]
@@ -266,16 +270,10 @@ class GroupSeminarForm(SeminarStepForm):
         fields = ("group",)
 
 
-def get_funding(instance):
-    if not instance.planned_training_days or not instance.planned_attendees_max:
-        return None
-    return 12 * instance.planned_training_days * instance.planned_attendees_max
-
-
 class FundingSeminarForm(SeminarStepForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        funding = get_funding(self.instance)
+        funding = self.instance.get_max_funding()
         if funding:
             funding_text = (
                 "<p>Du kannst <strong>maximal {} €</strong> beantragen.</p>"
