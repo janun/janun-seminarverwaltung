@@ -53,6 +53,35 @@
 {% endif %}
 
 
+{% if group_hats|length > 0 %}
+  <div class="mb-10">
+    <h2 class="font-bold text-xl mb-4">
+      Deine Gruppenhüte
+      <small class="text-sm text-gray-600 font-normal">({{ group_hats|length }})</small>
+    </h2>
+    <div class="flex flex-wrap items-stretch -m-4">
+      {% for group in group_hats.all %}
+        <div class="lg:w-1/4 sm:w-1/2 w-full p-4">
+          <a class="block h-full bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+             style="min-height: 60px;"
+             href="{{ group.get_absolute_url }}">
+            <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">
+              {{ group.name }}
+            </h3>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    {% if not user.is_reviewed %}
+      <p class="my-2 text-gray-700 italic">
+        Du kannst aber z.Z. auf keine Gruppendetails zugreifen,
+        da dein Konto noch nicht überprüft wurde.
+      </p>
+    {% endif %}
+  </div>
+{% endif %}
+
+
 <h2 class="font-bold text-xl mb-6">
   Deine letzten Seminare
 </h2>
