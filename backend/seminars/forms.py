@@ -1,5 +1,5 @@
 from django import forms
-from django.utils import timezone
+from django.utils import timezone, formats
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from crispy_forms.helper import FormHelper
@@ -273,14 +273,16 @@ class GroupSeminarForm(SeminarStepForm):
 class FundingSeminarForm(SeminarStepForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        funding = self.instance.get_max_funding()
-        if funding:
+        max_funding = self.instance.get_max_funding()
+        if max_funding:
             funding_text = (
                 "<p>Du kannst <strong>maximal {} €</strong> beantragen.</p>"
                 '<p class="mb-4">Solltest Du aber auch mit weniger Förderung auskommen, '
                 "können evtl. mehr Seminare bei JANUN stattfinden.</p>"
-            ).format(funding)
-            self.fields["requested_funding"].validators = [MaxValueValidator(funding)]
+            ).format(formats.localize(max_funding, use_l10n=True))
+            self.fields["requested_funding"].validators = [
+                MaxValueValidator(max_funding)
+            ]
         else:
             funding_text = '<p class="mb-4">Bitte die vorigen Schritte ausfüllen.</p>'
 
