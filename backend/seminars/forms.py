@@ -284,7 +284,7 @@ class FundingSeminarForm(SeminarStepForm):
                 MaxValueValidator(max_funding)
             ]
         else:
-            funding_text = '<p class="mb-4">Bitte die vorigen Schritte ausfüllen.</p>'
+            funding_text = ""
 
         self.helper.layout = Layout(
             HTML(funding_text),

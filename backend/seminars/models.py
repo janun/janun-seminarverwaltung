@@ -120,7 +120,9 @@ class FundingRate(models.Model):
         )
         if formula:
             lower_limit = (
-                formulas.Parser().ast(formula)[1].compile()(B=seminar.planned_training_days)
+                formulas.Parser()
+                .ast(formula)[1]
+                .compile()(B=seminar.planned_training_days)
             )
             if lower_limit and funding > lower_limit:
                 return lower_limit
@@ -467,7 +469,10 @@ class Seminar(models.Model):
             try:
                 fr = FundingRate.objects.get(year=year)
             except FundingRate.DoesNotExist:
-                fr = FundingRate.objects.get(year=year - 1)
+                try:
+                    fr = FundingRate.objects.get(year=year - 1)
+                except FundingRate.DoesNotExist:
+                    return None
             return fr.get_max_funding(self)
 
 
