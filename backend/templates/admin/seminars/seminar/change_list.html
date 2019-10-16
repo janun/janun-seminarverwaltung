@@ -27,8 +27,8 @@
 <div style="margin-bottom: 20px">
   <span>zugesagt {% now 'Y' %}:</span>
   <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.count }}</span> Seminare</span>
-  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.funding_sum|number }}</span> €</span>
-  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.tnt_sum|number:0 }}</span> TNT</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.funding_sum|number|default:0 }}</span> €</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.tnt_sum|number:0|default:0 }}</span> TNT</span>
 </div>
        
 {{ block.super }}
