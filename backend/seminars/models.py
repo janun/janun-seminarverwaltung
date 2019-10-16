@@ -167,7 +167,7 @@ class SeminarQuerySet(models.QuerySet):
                     When(
                         start_date__quarter=4,
                         then=Concat(
-                            Cast("year", models.TextField()) + 1, Value("-01-15")
+                            Cast(F("year") + 1, models.TextField()), Value("-01-15")
                         ),
                     ),
                     output_field=models.DateField(),
