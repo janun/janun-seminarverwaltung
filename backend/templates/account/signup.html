@@ -1,0 +1,30 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Neues Konto anlegen{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl md:bg-white md:shadow-lg md:rounded-lg md:px-8 pb-8 pt-6">
+  <h1 class="mb-10 font-bold text-2xl">Neues Konto Anlegen</h1>
+
+  <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    {% crispy form %}
+    <div class="flex">
+      <button class="md:ml-auto button button-primary" type="submit">
+        Anlegen
+        <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+.form-control, .custom-control {
+  width: 100%;
+}
+.optionalField {
+  display: inline-block;
+}
+</style>
+{% endblock %}

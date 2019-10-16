@@ -1,11 +1,14 @@
 from django.conf import settings
-from django.urls import include, path, re_path
-from django.views.generic import TemplateView
+from django.urls import include, path
+from django.contrib import admin
 
 
 urlpatterns = [
-    path("api/", include("backend.api.urls")),
-    re_path(r"^.*", TemplateView.as_view(template_name="index.html")),
+    path("", include("backend.dashboard.urls")),
+    path("seminars/", include("backend.seminars.urls")),
+    path("groups/", include("backend.groups.urls")),
+    path("accounts/", include("backend.users.urls")),
+    path("admin/", admin.site.urls),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head_title %}Zwei-Faktor-Authentisierung Backup-Tokens{% endblock %}
+
+
+{% block content %}
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg">
+<h1 class="text-green-500 font-bold mb-5 text-2xl">Zwei-Faktor-Authentisierung ist aktiv</h1>
+
+<a class="mb-10 button" href="{% url 'two-factor-remove' %}">2FA ausschalten</a>
+
+<h2 class="text-green-500 font-bold mb-5 text-xl">Backup-Tokens</h2>
+<p>
+    Mit Backup-Tokens bekommst du im Notfall Zugriff, falls du deinen Token-Generator (z.B. dein Handy) verlieren solltest.
+    Speichere sie an einem sicheren Ort, z.B. einen Passwort-Manager oder ausgedruckt.
+</p>
+
+<div class="my-8">
+    {% if backup_tokens %}
+        {% if reveal_tokens %}
+            <ul>
+                {% for token in backup_tokens %}
+                    <li>{{ token.token }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                Du hast in der Vergangenheit schon mal Backup-Tokens generiert.
+                Die werden hier aber aus Sicherheitsgrünfen nicht angezeigt.
+                Du kannst aber neue generieren.
+            </p>
+        {% endif %}
+    {% else %}
+        <p class="font-bold">Du hast offenbar noch keine Backup-Tokens generiert.</p>
+    {% endif %}
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <button class="button button-primary" type="submit">Backup-Tokens generieren</button>
+</form>
+
+</div>
+{% endblock %}

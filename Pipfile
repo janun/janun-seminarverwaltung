@@ -7,20 +7,25 @@ name = "pypi"
 python_version = "3.6"
 
 [packages]
-django = "*"
-djangorestframework = "*"
+django = "~=2.2"
 gunicorn = "*"
 whitenoise = "==4.0"
 dj-database-url = "*"
 psycopg2-binary = "*"
-django-filter = "*"
-django-import-export = "*"
-django-rest-auth = "*"
 django-allauth = "*"
-drf-extensions = "*"
-django-model-utils = "*"
 argon2-cffi = "*"
 django-environ = "*"
+django-admin-list-filter-dropdown = "*"
+django-reversion = "*"
+django-model-utils = "*"
+django-import-export = "*"
+django-extensions = "*"
+django-crispy-forms = "*"
+django-allauth-2fa = "*"
+django-formtools = "*"
+formulas = "*"
+django-phonenumber-field = "*"
+phonenumberslite = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
@@ -29,8 +34,11 @@ pylint-django = "*"
 pylint-quotes = "*"
 flake8 = "*"
 flake8-django = "*"
-black = "==19.3b0" # "*" fails to install
+black = "==19.3b0"
 mypy = "*"
 django-stubs = "*"
 dataclasses = "*" # needed by django-stubs
-djangorestframework-stubs = "*"
+selenium = "*"
+
+[pipenv]
+allow_prereleases = true

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block body_class %}wizard-page{% endblock %}
+
+{% block extrahead %}
+{{ wizard.form.media }}
+<style>.navbar {display: none;}</style>
+{% endblock %}
+
+{% block head_title %}Seminar anmelden{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl md:bg-white md:shadow-lg pb-8 md:pt-6 -mt-5 md:mt-0 rounded-lg">
+
+  <div class="flex items-center justify-between mb-6 md:mb-8 md:px-8 pb-4 md:pb-6 border-b">
+    <div class="flex items-center">
+      <h1>Seminar anmelden</h1>
+      <span class="text-gray-600 ml-2 text-sm">{{ wizard.steps.step1 }} / {{ wizard.steps.count }}</span>
+    </div>
+    <a title="Abbrechen" class="flex items-center justify-center rounded-full h-10 w-10 -m-4 text-gray-600 hover:bg-gray-200 hover:text-gray-800 focus:text-gray-800" href="/">
+      <svg viewBox="0 0 24 24" class="h-6 w-6 fill-current"><path d="M13.41 12l2.83 2.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 1 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12z"></path></svg>
+    </a>
+  </div>
+
+  <form class="md:px-8" action="" method="POST">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    <input type="submit" value="Speichern" class="hidden" />
+
+    <div class="flex items-start">
+      <ul class="md:w-1/4 bg-gray-100 rounded shadow mb-10 mr-12 pl-4 pr-2 hidden md:block">
+        {% for step_name, step_form in steps.items %}
+          <li>
+            <button class="flex w-full items-center my-3 {% if wizard.steps.current == step_name %}font-bold{% endif %}"
+                name="wizard_goto_step" type="submit" value="{{ step_name }}">
+              {{ step_form.Meta.short_title }}
+              
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="w-full md:w-3/4 mb-8">
+        <h2 class="font-bold text-xl mb-2 ">{{ form.Meta.title }}</h2>
+        {% if wizard.form.forms %}
+          {{ wizard.form.management_form }}
+          {% for form in wizard.form.forms %}
+            {% crispy form %}
+          {% endfor %}
+        {% else %}
+          {% crispy wizard.form %}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end md:bg-gray-100 md:px-4 md:-mx-8 md:-mb-8 md:py-6 md:rounded-b-lg">
+      {% if wizard.steps.next %}
+        <button class="mx-4 order-2 button button-primary auto" type="submit">
+          Weiter
+          <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+        </button>
+      {% else %}
+        <button class="mx-4 order-2 button button-primary auto" type="submit">
+          Anmelden
+          <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+        </button>
+      {% endif %}
+
+      {% if wizard.steps.prev %}
+        <button class="flex items-center order-1 text-gray-600 hover:text-gray-800 focus:text-gray-800 p-3 -my-3 mx-4" type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">
+          <svg viewBox="0 0 20 20" class="mr-2 fill-current h-3 w-3"><path d="M3.828 9l6.071-6.071-1.414-1.414L0 10l.707.707 7.778 7.778 1.414-1.414L3.828 11H20V9H3.828z"></path></svg>  
+          Zurück
+        </button>
+      {% endif %}
+    </div>
+
+  </form>
+</div>
+{% endblock content %}

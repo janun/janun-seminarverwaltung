@@ -1,0 +1,27 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "typeface-cabin/index.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "styles/admin.css" %}">
+{% endblock %}
+
+{% block branding %}
+<div class="header-left">
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:"JANUN Seminarverwaltung" }}</a></h1>
+    {% if has_permission %}
+        <div class="custom-menu">
+            {% if perms.seminars %}
+                <a class="{% if opts.app_label == "seminars" %}active{% endif %}" href="/admin/seminars/seminar">Seminare</a>
+            {% endif %}
+            {% if perms.users %}
+                <a class="{% if opts.app_label == "users" %}active{% endif %}" href="/admin/users/user">Konten</a>
+            {% endif %}
+            {% if perms.groups %}
+                <a class="{% if opts.app_label == "groups" %}active{% endif %}" href="/admin/groups/janungroup">Gruppen</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

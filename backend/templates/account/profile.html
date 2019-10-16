@@ -1,0 +1,74 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ block.super }} Dein Profil{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl md:bg-white md:shadow-lg md:px-8 md:pt-4 md:rounded-lg">
+  <h1 class="mb-8 font-bold text-2xl">Konto-Einstellungen</h1>
+
+  <form class="login" method="POST" action="">
+    {% csrf_token %}
+    {% crispy form %}
+
+    <div class="fieldset border-none">
+        <div class="fieldset-header">Berechtigungen</div>
+        <div class="fieldset-content">
+
+          <div class="mb-4">
+            <div class="col-form-label">Konto-Rolle</div>
+            {{ user.role }}
+          </div>
+
+          <div class="mb-4">
+            <div class="col-form-label">Gruppen-Mitgliedschaften</div>
+            {% if user.janun_groups.all %}
+              <ul>
+                {% for group in user.janun_groups.all %}
+                  <li><a class="text-green-500" href="{% url 'group_detail' group.slug %}">{{ group.name }}</a></li>
+                {% endfor %}
+              </ul>
+              {% if not user.is_reviewed %}
+                <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
+              {% endif %}
+            {% else %}
+              <p>keine</p>
+            {% endif %}
+          </div>
+
+          {% if user.is_staff %}
+          <div class="mb-4">
+            <div class="col-form-label">Gruppen-Hüte</div>
+            {% if user.group_hats.all %}
+              <p>Du hast Gruppen-Hüte für:</p>
+              <ul>
+                {% for group in user.group_hats.all %}
+                  <li><a class="text-green-500" href="#">{{ group.name }}</a></li>
+                {% endfor %}
+              </ul>
+              {% if not user.is_reviewed %}
+                <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
+              {% endif %}
+            {% else %}
+              <p>keine</p>
+            {% endif %}
+          </div>
+          {% endif %}
+          
+        </div>
+    </div>
+
+    <div class="md:fixed md:bottom-0 md:inset-x-0 md:bg-white-75 md:border-t-2">
+      <div class="flex items-center justify-end md:mx-auto md:max-w-2xl px-8 py-4">
+        <button class="button button-primary" type="submit">Speichern</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+.optionalField {
+  display: inline-block;
+}
+</style>
+{% endblock %}

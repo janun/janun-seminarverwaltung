@@ -1,0 +1,100 @@
+<div class="mt-24 max-w-xl">
+  <h2 class="text-green-500 text-xl font-bold mb-4">Kommentare</h2>
+  <form id="createCommentForm"
+        action="{% url 'comment_create' seminar.start_date.year seminar.slug %}" method="POST">
+    {% csrf_token %}
+    <textarea class="js-autogrow bg-white form-textarea w-full" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
+    <div class="flex mt-2">
+      <button id="commentSubmit" type="submit" class="ml-auto button button-primary">Kommentieren</button>
+    </div>
+  </form>
+
+  <div id="commentContainer" class="mt-10">
+    {% include "./_comment_list.html" %}
+  </div>
+</div>
+
+
+<script>
+var getUrl = "{% url 'comment_list' seminar.start_date.year seminar.slug %}";
+var container = document.getElementById("commentContainer");
+var createForm = document.getElementById("createCommentForm");
+var textarea = document.getElementById("id_text");
+var button = document.getElementById("commentSubmit");
+
+function onLoadError() {
+  container.innerHTML = "<p>Kommentare konnten nicht geladen werden.</p>";
+}
+
+function onCreateError() {
+  alert("Konnte Kommentar nicht schreiben.");
+}
+
+// disable button
+function disableButton() {
+  button.disabled = (textarea.value === "");
+}
+textarea.addEventListener("input", disableButton);
+disableButton();
+
+// load
+function loadComments() {
+  var XHR = new XMLHttpRequest();
+  XHR.addEventListener('load', function(loadEvent) {
+    if (loadEvent.target.status === 200) {
+      container.innerHTML = loadEvent.target.response;
+      attachDeleteHandlers();
+    } else {
+      onLoadError();
+    }
+  });
+  XHR.addEventListener('error', onLoadError);
+  XHR.open('GET', getUrl);
+  XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+  XHR.send();
+}
+
+// submit
+createForm.addEventListener("submit", function (formEvent) {
+  event.preventDefault();
+  var XHR = new XMLHttpRequest();
+  XHR.addEventListener('load', function(loadEvent) {
+    if (loadEvent.target.status === 200) {
+      textarea.value = "";
+      disableButton();
+      loadComments();
+    } else {
+      onCreateError();
+    }
+  });
+  XHR.addEventListener('error', onCreateError);
+  XHR.open('POST', createForm.action);
+  XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+  XHR.send(new FormData(createForm));
+});
+
+// delete
+function attachDeleteHandlers() {
+  var deleteForms = document.getElementsByClassName("commentDeleteForm");
+  Array.prototype.forEach.call(deleteForms, function (form) {
+    form.addEventListener("submit", function (formEvent) {
+      event.preventDefault();
+      var XHR = new XMLHttpRequest();
+      XHR.addEventListener('load', function(loadEvent) {
+        if (loadEvent.target.status === 200) {
+          loadComments();
+        } else {
+          alert("Kommentar konnte nicht gelöscht werden.");
+        }
+      });
+      XHR.addEventListener('error', function(errorEvent) {
+        alert("Kommentar konnte nicht gelöscht werden.");
+      });
+      XHR.open('POST', form.action);
+      XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+      XHR.send(new FormData(form));
+    })
+  })
+}
+attachDeleteHandlers();
+</script>

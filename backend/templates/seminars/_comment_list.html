@@ -1,0 +1,21 @@
+{% if comments %}
+  <div id="commentList">
+    {% for comment in comments %}
+      <div id="comment_{{ comment.pk }}" class="bg-white shadow max-w-lg my-5 px-4 pt-2 pb-4 rounded">
+        <div class="text-xs my-2 text-gray-600">
+          {{ comment.owner }}, {{ comment.created_at|date:"d.m.y H:i" }}
+          {% if comment.was_edited %}, (bearbeitet {{ comment.updated_at|date:"d.m.y H:i" }}){% endif %}
+          <div class="float-right">
+            {% if comment.owner == user %}
+              <form class="commentDeleteForm" method="POST" action="{% url 'comment_delete' comment.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="hover:text-gray-800 mx-1 select-none">löschen</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-sm">{{ comment.text|linebreaksbr }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

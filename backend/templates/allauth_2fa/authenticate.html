@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="mx-auto max-w-sm md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg">
+
+    <h1 class="text-green-500 font-bold text-2xl mb-5">Zwei-Faktor-Authentisierung</h1>
+
+    <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <p class="my-4 text-gray-700 text-sm">
+        Zugang verloren? Dann benutze einen Backup-Token oder kontaktiere uns.
+    </p>
+
+    <div class="flex">
+        <button class="md:ml-auto button button-primary" type="submit">Anmelden</button>
+    </div>
+    </form>
+</div>
+
+{% endblock %}

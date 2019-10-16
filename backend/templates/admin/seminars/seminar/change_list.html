@@ -1,0 +1,35 @@
+{% extends "admin/import_export/change_list.html" %}
+{% load janun %}
+{% load admin_urls %}
+
+{% block object-tools-items %}
+  {% include "admin/import_export/change_list_export_item.html" %}
+  {% include "admin/import_export/change_list_import_item.html" %}
+  <li><a href="stats" class="stats_link">Statistik</a></li>
+  {{ block.super }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+/* right align numerical values in change list */
+.field-training_days, .column-training_days,
+.field-attendees, .column-attendees,
+.field-tnt, .column-tnt,
+.field-tnt_cost, .column-tnt_cost,
+.field-funding, .column-funding {
+  text-align: right;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px">
+  <span>zugesagt {% now 'Y' %}:</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.count }}</span> Seminare</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.funding_sum|number }}</span> €</span>
+  <span style="margin-left: 10px;"><span class="big">{{ this_year_confirmed.tnt_sum|number:0 }}</span> TNT</span>
+</div>
+       
+{{ block.super }}
+{% endblock %}

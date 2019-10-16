@@ -38,26 +38,36 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
+    "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
-    "django_filters",
+    "phonenumber_field",
+    "formtools",
+    "crispy_forms",
+    "import_export",
+    "reversion",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "rest_auth",
-    "rest_auth.registration",
+    "django_admin_listfilter_dropdown",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
+    "allauth_2fa",
 ]
-LOCAL_APPS = ["backend.api"]
+LOCAL_APPS = [
+    "backend.seminars.apps.SeminarsConfig",
+    "backend.users.apps.UsersConfig",
+    "backend.groups.apps.GroupsConfig",
+    "backend.dashboard.apps.DashboardConfig",
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -67,7 +77,18 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
-AUTH_USER_MODEL = "api.User"
+# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
+AUTH_USER_MODEL = "users.User"
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
+LOGIN_REDIRECT_URL = "dashboard"
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-url
+LOGIN_URL = "account_login"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -86,41 +107,40 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"user_attributes": ("username", "name", "email")},
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-    # {"NAME": "janun_seminarverwaltung.validators.PwnedPasswordValidator"},
+    {"NAME": "backend.validators.PwnedPasswordValidator"},
 ]
 
 # MIDDLEWARE
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
+    "allauth_2fa.middleware.AllauthTwoFactorMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "backend.api.middleware.SetLastVisitMiddleware",
+    "backend.users.middleware.SetLastVisitMiddleware",
+    "backend.users.middleware.RequireLoginMiddleware",
+    "reversion.middleware.RevisionMiddleware",
 ]
 
 # STATIC
 # ------------------------------------------------------------------------------
-# Not really using staticfiles, since only serving an api
-STATIC_ROOT = str(ROOT_DIR("dist"))
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-root
+STATIC_ROOT = str(ROOT_DIR("staticfiles"))
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
-STATICFILES_DIRS = []
-STATICFILES_FINDERS = []
-
-
-# WhiteNoise
-# ------------------------------------------------------------------------------
-# Serve frontend files with whitenoise
-WHITENOISE_INDEX_FILE = True
-WHITENOISE_ROOT = ROOT_DIR("dist")
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = [str(APPS_DIR.path("static")), str(ROOT_DIR.path("node_modules"))]
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 
 # MEDIA
@@ -133,7 +153,7 @@ MEDIA_URL = "/media/"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [ROOT_DIR("dist")],
+        "DIRS": [APPS_DIR.path("templates")],
         "OPTIONS": {
             "debug": DEBUG,
             "loaders": [
@@ -154,7 +174,7 @@ TEMPLATES = [
     }
 ]
 
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+# FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -176,45 +196,37 @@ MANAGERS = ADMINS
 
 # django-allauth
 # ------------------------------------------------------------------------------
+ACCOUNT_ADAPTER = "allauth_2fa.adapter.OTPAdapter"
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_LOGIN_ON_PASSWORD_RESET = False
-
-
-# django-restframework
-# ------------------------------------------------------------------------------
-REST_FRAMEWORK = {
-    "COERCE_DECIMAL_TO_STRING": False,
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAdminUser",),
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-}
-
-REST_FRAMEWORK_EXTENSIONS = {
-    "DEFAULT_OBJECT_CACHE_KEY_FUNC": (
-        "backend.api.key_constructors.CustomObjectKeyFunction"
-    ),
-    "DEFAULT_LIST_CACHE_KEY_FUNC": "backend.api.key_constructors.CustomListKeyFunction",
-    "DEFAULT_OBJECT_ETAG_FUNC": "backend.api.key_constructors.CustomObjectKeyFunction",
-    "DEFAULT_LIST_ETAG_FUNC": "backend.api.key_constructors.CustomListKeyFunction",
-}
-
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "backend.api.serializers.UserProfileSerializer"
-}
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "backend.api.serializers.RegisterSerializer"
-}
-REST_SESSION_LOGIN = False
-
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_SIGNUP_FORM_CLASS = "backend.users.forms.SignupForm"
+ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
+ACCOUNT_SESSION_REMEMBER = False
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 10
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
+ACCOUNT_PRESERVE_USERNAME_CASING = False
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+CRISPY_TEMPLATE_PACK = "janunforms"
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("janunforms",)
+
+LOGIN_REQUIRED_URLS_EXCEPTIONS = (
+    r"^/accounts/login/$",
+    r"^/accounts/logout/$",
+    r"^/accounts/signup/$",
+    r"^/accounts/password/reset/$",
+    r"^/accounts/password/reset/done/$",
+    r"^/accounts/password/reset/key/(.*)$",
+    r"^/accounts/password/reset/key/done/$",
+    r"^/accounts/two-factor-authenticate$",
+)
+
+
+PHONENUMBER_DEFAULT_REGION = "DE"
