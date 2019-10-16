@@ -41,4 +41,4 @@ dataclasses = "*" # needed by django-stubs
 selenium = "*"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false
