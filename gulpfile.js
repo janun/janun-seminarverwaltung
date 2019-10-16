@@ -3,16 +3,16 @@ const gulp = require("gulp");
 function styles() {
   const postcss = require("gulp-postcss");
   return gulp
-    .src("backend/static/styles/base.css")
+    .src("backend/static_src/styles/base.css")
     .pipe(postcss())
-    .pipe(gulp.dest("backend/static/css"));
+    .pipe(gulp.dest("backend/static/styles"));
 }
 
 function watch() {
   gulp.watch(
     [
       "backend/templates/**/*.html",
-      "backend/static/styles/*.css",
+      "backend/static_src/styles/*.css",
       "backend/**/*.py"
     ],
     styles
