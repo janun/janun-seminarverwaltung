@@ -12,7 +12,7 @@ from django.db.models.functions import ExtractYear, Concat, Cast
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.urls import reverse
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
