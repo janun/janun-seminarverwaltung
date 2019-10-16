@@ -154,20 +154,32 @@ class SeminarQuerySet(models.QuerySet):
                 deadline=Case(
                     When(
                         start_date__quarter=1,
-                        then=Concat(Cast("year", models.TextField()), Value("-04-15")),
+                        then=Cast(
+                            Concat(Cast("year", models.TextField()), Value("-04-15")),
+                            models.DateField(),
+                        ),
                     ),
                     When(
                         start_date__quarter=2,
-                        then=Concat(Cast("year", models.TextField()), Value("-07-15")),
+                        then=Cast(
+                            Concat(Cast("year", models.TextField()), Value("-07-15")),
+                            models.DateField(),
+                        ),
                     ),
                     When(
                         start_date__quarter=3,
-                        then=Concat(Cast("year", models.TextField()), Value("-10-15")),
+                        then=Cast(
+                            Concat(Cast("year", models.TextField()), Value("-10-15")),
+                            models.DateField(),
+                        ),
                     ),
                     When(
                         start_date__quarter=4,
-                        then=Concat(
-                            Cast(F("year") + 1, models.TextField()), Value("-01-15")
+                        then=Cast(
+                            Concat(
+                                Cast(F("year") + 1, models.TextField()), Value("-01-15")
+                            ),
+                            models.DateField(),
                         ),
                     ),
                     output_field=models.DateField(),
