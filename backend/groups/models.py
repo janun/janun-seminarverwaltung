@@ -51,7 +51,7 @@ class JANUNGroupManager(models.Manager.from_queryset(JANUNGroupQuerySet)):
 class JANUNGroup(models.Model):
     slug = AutoSlugField(
         "URL-Titel",
-        populate_from="title",
+        populate_from="name",
         max_length=100,
         unique=True,
         null=True,
