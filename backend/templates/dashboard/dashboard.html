@@ -3,14 +3,9 @@
 {% block head_title %}Übersicht{% endblock %}
 
 {% block content %}
-<div class="md:flex items-center mb-6">
-  <h1 class="font-bold text-2xl text-green-500">{{ greeting }}, {{ user.name }}!</h1>
-  <a class="my-5 md:my-0 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
-    Seminar anmelden
-  </a>
-</div>
+<h1 class="mb-12 font-bold text-2xl">Willkommen, {{ user.name }}!</h1>
 
-{% if not user.telephone %}
+{% if user.role == "Teamer_in" and not user.telephone %}
 <div class="mb-12 rounded px-4 py-3 max-w-xl bg-white shadow">
   <h2 class="font-bold text-lg mb-2 text-red-600">Keine Telefonnummer angegeben ☹</h2>
   <p class="text-sm">Bitte gib uns deine Telefonnummer, damit wir dich bei <strong>dringenden Abrechnungsproblemen</strong> erreichen können.</p>
@@ -25,7 +20,7 @@
 {% endif %}
 
 {% if janun_groups|length > 0 %}
-  <div class="mb-10">
+  <div class="mb-16">
     <h2 class="font-bold text-xl mb-4">
       Deine Gruppen
       <small class="text-sm text-gray-600 font-normal">({{ janun_groups|length }})</small>
@@ -54,7 +49,7 @@
 
 
 {% if group_hats|length > 0 %}
-  <div class="mb-10">
+  <div class="mb-16">
     <h2 class="font-bold text-xl mb-4">
       Deine Gruppenhüte
       <small class="text-sm text-gray-600 font-normal">({{ group_hats|length }})</small>
@@ -82,21 +77,23 @@
 {% endif %}
 
 
-<h2 class="font-bold text-xl mb-6">
-  Deine letzten Seminare
+<h2 class="font-bold text-xl mb-4">
+  Deine {% if show_more_link %}letzten{% endif %} Seminare
 </h2>
 
-{% if seminars %}
-  <div class="flex flex-wrap items-stretch -m-4">
-    {% for seminar in seminars %}
-      <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
-        {% include "seminars/_seminar_card.html" %}
-      </div>
-    {% endfor %}
+<div class="flex flex-wrap items-stretch -m-4">
+  {% for seminar in seminars %}
+    <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
+      {% include "seminars/_seminar_card.html" %}
+    </div>
+  {% endfor %}
+  <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
+    <a href="{% url 'seminar_apply' %}" class="block group rounded-lg border border-dashed flex flex-col items-center justify-center" style="min-height: 140px;">
+      <svg class="fill-current text-gray-400 group-hover:text-gray-600 h-10 w-10 mb-2" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
+      <p class="text-gray-600 group-hover:text-gray-800">Neues Seminar Anmelden</p>
+    </a>
   </div>
-{% else %}
-  <p>Keine Seminare gefunden.</p>
-{% endif %}
+</div>
 
 {% if show_more_link %}
   <div class="md:flex my-8">

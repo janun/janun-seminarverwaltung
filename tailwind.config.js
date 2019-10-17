@@ -55,7 +55,8 @@ module.exports = {
     }
   },
   variants: {
-    boxShadow: ["responsive", "hover", "focus", "focus-within"]
+    boxShadow: ["responsive", "hover", "focus", "focus-within"],
+    textColor: ["responsive", "hover", "focus", "group-hover"],
   },
   plugins: [require("@tailwindcss/custom-forms")]
 };
