@@ -5,3 +5,7 @@
 @import "./forms.css";
 
 @import "tailwindcss/utilities";
+
+.transition-shadow {
+    transition: box-shadow 0.1s ease-out;
+}

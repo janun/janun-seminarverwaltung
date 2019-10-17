@@ -33,7 +33,7 @@
     <div class="flex flex-wrap items-stretch -m-4">
       {% for group in janun_groups.all %}
         <div class="lg:w-1/4 sm:w-1/2 w-full p-4">
-          <a class="block h-full bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+          <a class="block h-full bg-white rounded transition-shadow shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
              style="min-height: 60px;"
              href="{{ group.get_absolute_url }}">
             <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">
@@ -62,7 +62,7 @@
     <div class="flex flex-wrap items-stretch -m-4">
       {% for group in group_hats.all %}
         <div class="lg:w-1/4 sm:w-1/2 w-full p-4">
-          <a class="block h-full bg-white rounded shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
+          <a class="block h-full bg-white rounded transition-shadow shadow hover:shadow-md p-4 no-underline flex flex-col text-gray-600"
              style="min-height: 60px;"
              href="{{ group.get_absolute_url }}">
             <h3 class="mt-1 mb-1 leading-tight text-gray-800 font-bold">

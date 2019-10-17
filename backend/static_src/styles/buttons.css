@@ -31,15 +31,3 @@
 .button:disabled, .button.disabled {
   @apply bg-gray-400 pointer-events-none cursor-not-allowed;
 }
-
-.click-transform {
-  transition: transform 0.1s ease-out;
-}
-
-.click-transform:hover {
-  transform: translateY(-1px);
-}
-
-.click-transform:active {
-  transform: translateY(1px);
-}
