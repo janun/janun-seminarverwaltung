@@ -3,6 +3,27 @@
 {% block head_title %}Keine Berechtigung (403){% endblock %}
 
 {% block content %}
-<h1 class="text-red-700 font-bold text-2xl mb-6">Keine Berechtigung (403)</h1>
-<p>Sorry, Du hast nicht die erforderlichen Berechtigungen, um diese Seite zu sehen.</p>
+<div class="flex flex-col justify-center items-center mt-4">
+<svg class="fill-current text-red-600 w-32 mb-8" viewBox="0 0 143.857 218.155"><path d="M.15 172.18c0 44.676 39.638 45.973 40.133 45.975l62.018-.191c14.29 0 41.311-8.681 41.311-41.533l.123-45.84.122.076V77.253c0-6.569-5.506-11.909-12.274-11.909-6.767 0-12.278 5.34-12.278 11.91l.032 50.834-3.134-.228c-.27 0-7.355.072-13.106 5.741-5.085 5.008-7.666 12.875-7.666 23.376v1.44h-5.627v-1.44c0-12.098 3.157-21.318 9.384-27.426 5.124-5.035 11.295-6.596 14.69-7.087l.055-94.41c-1.188-5.515-6.172-9.458-12.061-9.458-6.8 0-12.335 5.34-12.335 11.905v73.82h-5.222V11.91C84.315 5.344 78.777 0 71.98 0c-6.8 0-12.335 5.344-12.335 11.91v92.411h-5.414V22.703c0-6.567-5.535-11.906-12.336-11.906-6.804 0-12.339 5.339-12.339 11.906v81.618h-4.88V48.917c0-6.562-5.535-11.91-12.341-11.91C5.532 37.007 0 42.355 0 48.917L.15 172.18"/></svg>
+<div>
+  <h1 class="text-red-700 font-bold text-3xl mb-4">Keine Berechtigung</h1>
+  <p class="font-bold mb-4">Tut uns leid, aber zu der aufgerufenen Seite hast du keinen Zugriff.</p>
+
+  <p class="font-bold mb-2">Versuch mal Folgendes:</p>
+  <ul class="list-disc pl-5">
+    <li>Geh <a class="js-goback underline" href="#">zurück</a></li>
+    <li>Geh zur <a class="underline" href="/">Startseite</a></li>
+    <li>Falls du denkst, das ist ein Fehler schick und eine <a class="underline" href="mailto:admin@janun.de">E-Mail</a>.</li>
+  </ul>
+</div>
+</div>
+
+<script>
+document.querySelectorAll(".js-goback").forEach(function (link) {
+  link.addEventListener('click', function (event) {
+    event.preventDefault();
+    window.history.back();
+  });
+});
+</script>
 {% endblock content %}

@@ -18,6 +18,8 @@ if settings.DEBUG:
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
 
     urlpatterns += [
+        path("403_csrf/", TemplateView.as_view(template_name="403_csrf.html")),
+        path("403/", TemplateView.as_view(template_name="403.html")),
         path("404/", TemplateView.as_view(template_name="404.html")),
         path("500/", TemplateView.as_view(template_name="500.html")),
     ]
