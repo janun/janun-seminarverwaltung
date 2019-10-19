@@ -25,7 +25,7 @@ class SignupForm(forms.Form):
     name = forms.CharField(max_length=30, label="Voller Name")
     janun_groups = forms.ModelMultipleChoiceField(
         queryset=JANUNGroup.objects.all(),
-        label="JANUN-Gruppe(n)",
+        label="JANUN-Gruppen",
         required=False,
         widget=forms.CheckboxSelectMultiple(),
         help_text="Wähle aus, in welchen Gruppen Du Mitglied bist",

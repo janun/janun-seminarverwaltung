@@ -40,7 +40,6 @@
           <div class="mb-4">
             <div class="col-form-label">Gruppen-Hüte</div>
             {% if user.group_hats.all %}
-              <p>Du hast Gruppen-Hüte für:</p>
               <ul>
                 {% for group in user.group_hats.all %}
                   <li><a class="text-green-500" href="#">{{ group.name }}</a></li>
