@@ -88,14 +88,14 @@ DEFAULT_FROM_EMAIL = env(
     default="JANUN Seminarverwaltung <noreply@seminare.janun.de>",
 )
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
-EMAIL_SUBJECT_PREFIX = env(
-    "DJANGO_EMAIL_SUBJECT_PREFIX", default="[JANUN Seminarverwaltung]"
-)
+EMAIL_SUBJECT_PREFIX = env("DJANGO_EMAIL_SUBJECT_PREFIX", default="[JANUN Seminare]")
 
 EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="localhost")
 EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
-EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="1025")
+EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="465")
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=True)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 
 # ADMIN
 # ------------------------------------------------------------------------------
