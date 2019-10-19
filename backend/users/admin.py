@@ -9,6 +9,11 @@ from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from allauth.account.models import EmailAddress
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
+from import_export import fields, resources
+from import_export.widgets import ManyToManyWidget
+from import_export.admin import ImportExportMixin
+
+from backend.groups.models import JANUNGroup
 from .models import User
 
 # remove unused apps from admin
@@ -22,13 +27,32 @@ admin.site.unregister(EmailAddress)
 
 # enforce normal login for admin login
 admin.site.login = login_required(admin.site.login)
+
 admin.site.site_header = "JANUN Seminarverwaltung"
 admin.site.site_title = "JANUN Seminarverwaltung"
 admin.site.index_title = "JANUN Seminarverwaltung"
 admin.site.site_url = None
 
 
-class UserAdmin(BaseUserAdmin):
+class UserResource(resources.ModelResource):
+    janun_groups = fields.Field(
+        column_name="janun_groups",
+        attribute="janun_groups",
+        widget=ManyToManyWidget(JANUNGroup, field="name"),
+    )
+
+    group_hats = fields.Field(
+        column_name="group_hats",
+        attribute="group_hats",
+        widget=ManyToManyWidget(JANUNGroup, field="name"),
+    )
+
+    class Meta:
+        model = User
+
+
+class UserAdmin(ImportExportMixin, BaseUserAdmin):
+    resource_class = UserResource
     search_fields = ["name", "username"]
     save_on_top = True
     list_display = (
