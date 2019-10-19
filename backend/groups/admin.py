@@ -19,9 +19,15 @@ class JANUNGroupResource(resources.ModelResource):
 class MembershipInline(admin.StackedInline):
     model = JANUNGroup.members.through  # pylint: disable=no-member
     extra = 0
-    verbose_name = "Mitglieder"
+    verbose_name = "Mitglied"
     verbose_name_plural = "Mitglieder"
-    autocomplete_fields = ("user",)
+
+
+class GroupHatInline(admin.StackedInline):
+    model = JANUNGroup.group_hats.through  # pylint: disable=no-member
+    extra = 0
+    verbose_name = "Gruppen-Hut"
+    verbose_name_plural = "Gruppen-Hüte"
 
 
 @admin.register(JANUNGroup)
@@ -36,7 +42,7 @@ class JANUNGroupAdmin(ImportExportMixin, admin.ModelAdmin):
         "funding_this_year",
         "tnt_cost_this_year",
     )
-    inlines = [MembershipInline]
+    inlines = [MembershipInline, GroupHatInline]
     search_fields = ["name"]
 
     fieldsets = ((None, {"fields": ("name",)}),)
