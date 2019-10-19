@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+
 from . import views
 
 urlpatterns = [
@@ -30,3 +32,6 @@ urlpatterns = [
         name="comment_delete",
     ),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [path("apply_done_test", views.SeminarApplyDoneTestView.as_view())]

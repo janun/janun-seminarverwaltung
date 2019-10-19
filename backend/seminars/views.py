@@ -1,6 +1,12 @@
 from collections import OrderedDict
 
-from django.views.generic import ListView, DeleteView, UpdateView, CreateView
+from django.views.generic import (
+    ListView,
+    DeleteView,
+    UpdateView,
+    CreateView,
+    TemplateView,
+)
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -155,6 +161,10 @@ class SeminarApplyView(SessionWizardView):
         return render(
             self.request, "seminars/seminar_apply_done.html", {"seminar": self.instance}
         )
+
+
+class SeminarApplyDoneTestView(TemplateView):
+    template_name = "seminars/seminar_apply_done.html"
 
 
 class CommentListView(AjaxableResponseMixin, ListView):
