@@ -158,8 +158,12 @@ class SeminarApplyView(SessionWizardView):
     def done(self, form_list, **kwargs):
         self.instance.owner = self.request.user
         self.instance.save()
+        email = self.request.user.email
+        # TODO: Send mail
         return render(
-            self.request, "seminars/seminar_apply_done.html", {"seminar": self.instance}
+            self.request,
+            "seminars/seminar_apply_done.html",
+            {"seminar": self.instance, "email": email},
         )
 
 

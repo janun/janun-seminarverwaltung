@@ -3,24 +3,23 @@
 {% block head_title %}{{ seminar.title }} erfolgreich angemeldet{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-2xl md:bg-white md:shadow-lg pb-8 md:pt-6 rounded-lg">
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg p-8 rounded-lg">
 
-  <div class="flex items-center mb-4 md:px-8 pb-6">
-    <h1 class="text-2xl font-bold">Seminar erfolgreich angemeldet</h1>
+  <div class="flex flex-col justify-center items-center mb-5 text-center">
+    <div class="flex justify-center items-center p-2 bg-green-200 rounded-full w-16 h-16 mb-6">
+      <svg class="fill-current text-green-700 w-12 h-12" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+    </div>
+    <h1 class="text-2xl font-bold mb-4">Seminar erfolgreich angemeldet</h1>
+    <p class="mb-2">Wir werden jetzt <strong>prüfen</strong>, ob wir es fördern können.</p>
+    <p class="mb-2">Wir haben dir auch eine <strong>Bestätigungsmail</strong> an {{ email }} geschickt.</p>
+    <p>Du kannst die Seminardetails noch <strong>bearbeiten bis wir es zugesagt haben</strong>.</p>
   </div>
 
-  <div class="md:px-8">
-
-    <p class="mb-5">Das Seminar <strong>{{ seminar.title }} am {{ seminar.start_date }}</strong> wurde erfolgreich angemeldet.</p>
-    <p class="font-bold mb-5">Wir werden jetzt prüfen, ob wir es fördern können.</p>
-
-    <div class="mt-6 flex items-center">
-      <a id="next" class="flex items-center button button-primary ml-auto" href="{{ seminar.get_absolute_url }}">
-        Seminar ansehen
-        <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
-      </a>
-    </div>
-
+  <div class="mt-10 flex flex-wrap items-center justify-end -mb-8 -mx-8 px-8 py-4 bg-gray-100 rounded-b-lg">
+    <a id="next" class="flex items-center button button-primary" href="{{ seminar.get_absolute_url }}">
+      Seminar ansehen
+      <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+    </a>
   </div>
 
 </div>
