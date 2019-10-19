@@ -3,9 +3,17 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.urls import reverse
 
+from import_export import resources
+from import_export.admin import ImportExportMixin
+
 from backend.utils import format_currency, format_number, format_with
 
 from .models import JANUNGroup
+
+
+class JANUNGroupResource(resources.ModelResource):
+    class Meta:
+        model = JANUNGroup
 
 
 class MembershipInline(admin.StackedInline):
@@ -17,7 +25,8 @@ class MembershipInline(admin.StackedInline):
 
 
 @admin.register(JANUNGroup)
-class JANUNGroupAdmin(admin.ModelAdmin):
+class JANUNGroupAdmin(ImportExportMixin, admin.ModelAdmin):
+    resource_class = JANUNGroupResource
     list_display = (
         "name",
         "members_display",
