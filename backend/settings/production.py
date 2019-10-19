@@ -94,8 +94,8 @@ EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="localhost")
 EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
 EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="465")
-EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
-EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
+EMAIL_USE_SSL = env.bool("DJANGO_EMAIL_USE_SSL", default=False)
+EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=False)
 
 # ADMIN
 # ------------------------------------------------------------------------------
