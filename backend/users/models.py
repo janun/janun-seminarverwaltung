@@ -2,12 +2,25 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext as _
 
 from model_utils import Choices
 from phonenumber_field.modelfields import PhoneNumberField
+from preferences.models import Preferences
 
 from backend.groups.models import JANUNGroup
+
+
+class JANUNSeminarPreferences(Preferences):
+    help_phone = PhoneNumberField("Hilfe-Telefon", blank=True)
+    help_email = models.EmailField("Hilfe-E-Mail", blank=True)
+    seminar_policy_url = models.URLField("Link Seminarrichtlinie", blank=True)
+    data_protection_policy_url = models.URLField(
+        "Link Datenschutzrichtlinie", blank=True
+    )
+
+    class Meta:
+        verbose_name = "Einstellung"
+        verbose_name_plural = "Einstellungen"
 
 
 class CaseInsensitiveUserManager(UserManager):

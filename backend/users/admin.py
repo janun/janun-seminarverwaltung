@@ -12,9 +12,10 @@ from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 from import_export import fields, resources
 from import_export.widgets import ManyToManyWidget
 from import_export.admin import ImportExportMixin
+from preferences.admin import PreferencesAdmin
 
 from backend.groups.models import JANUNGroup
-from .models import User
+from .models import User, JANUNSeminarPreferences
 
 # remove unused apps from admin
 admin.site.unregister(Group)
@@ -32,6 +33,9 @@ admin.site.site_header = "JANUN Seminarverwaltung"
 admin.site.site_title = "JANUN Seminarverwaltung"
 admin.site.index_title = "JANUN Seminarverwaltung"
 admin.site.site_url = None
+
+
+admin.site.register(JANUNSeminarPreferences, PreferencesAdmin)
 
 
 class UserResource(resources.ModelResource):

@@ -3,10 +3,20 @@
   
   <p>Irgendwas geht nicht oder Du hast Fragen?</p>
   <div class="flex flex-col flex-wrap items-center justify-center">
-    <a href="tel:+49 511 3940515" class="mx-1">Telefon: +49 511 3940515</a>
-    <a href="mailto:seminare@janun.de" class="mx-1">E-Mail: seminare@janun.de</a>
-    <a target="_blank" href="https://www.janun.de/downloads" class="mx-1">
-      Download Seminarrichtlinie
-    </a>
+    {% if preferences.JANUNSeminarPreferences.help_phone %}
+      <a href="tel:{{ preferences.JANUNSeminarPreferences.help_phone }}" class="mx-1">
+        Telefon: {{ preferences.JANUNSeminarPreferences.help_phone.as_national }}
+      </a>
+    {% endif %}
+    {% if preferences.JANUNSeminarPreferences.help_email %}
+      <a href="mailto:{{ preferences.JANUNSeminarPreferences.help_email }}" class="mx-1">
+        E-Mail: {{ preferences.JANUNSeminarPreferences.help_email }}
+      </a>
+    {% endif %}
+    {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
+      <a target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}" class="mx-1">
+        Download Seminarrichtlinie
+      </a>
+    {% endif %}
   </div>
 </div>

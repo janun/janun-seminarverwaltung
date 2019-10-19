@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "preferences",
     "phonenumber_field",
     "formtools",
     "crispy_forms",
@@ -170,6 +171,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "preferences.context_processors.preferences_cp",
             ],
         },
     }

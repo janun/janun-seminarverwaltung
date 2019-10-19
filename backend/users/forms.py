@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, HTML, Field
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.formfields import PhoneNumberField
+from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from .models import User
@@ -16,11 +17,6 @@ class Link(HTML):
         super().__init__(html)
 
 
-data_protection_url = (
-    "https://www.janun.de/documents/111/Datenverarbeitung_Seminarabrechnung.pdf"
-)
-
-
 class SignupForm(forms.Form):
     name = forms.CharField(max_length=30, label="Voller Name")
     janun_groups = forms.ModelMultipleChoiceField(
@@ -29,12 +25,6 @@ class SignupForm(forms.Form):
         required=False,
         widget=forms.CheckboxSelectMultiple(),
         help_text="Wähle aus, in welchen Gruppen Du Mitglied bist",
-    )
-    data_protection_read = forms.BooleanField(
-        label='Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
-            data_protection_url
-        ),
-        required=True,
     )
     telephone = PhoneNumberField(
         label="Telefonnummer",
@@ -73,6 +63,16 @@ class SignupForm(forms.Form):
 
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
+        # add data_protection_read field if policy setting set
+        if preferences.JANUNSeminarPreferences.data_protection_policy_url:
+            self.fields["data_protection_read"] = forms.BooleanField(
+                label='Ich habe die <a class="underline" href="{0}">'
+                "Datenschutzbedingungen</a> gelesen und verstanden.".format(
+                    preferences.JANUNSeminarPreferences.data_protection_policy_url
+                ),
+                required=True,
+            )
 
         # remove placeholders
         for field in ("email", "username"):
