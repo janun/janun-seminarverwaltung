@@ -11,6 +11,8 @@ class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
     context_object_name = "group"
 
     def test_func(self):
+        if self.request.user.is_superuser:
+            return True
         if not self.request.user.is_reviewed:
             return False
         return (

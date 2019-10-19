@@ -26,6 +26,8 @@ class SeminarListView(ListView):
 
 
 def user_may_access_seminar(user, seminar):
+    if user.is_superuser:
+        return True
     if user == seminar.owner:
         return True
     if (
