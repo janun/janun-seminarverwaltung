@@ -27,6 +27,8 @@ formulas = "*"
 django-phonenumber-field = "*"
 phonenumberslite = "*"
 django-preferences = "*"
+celery = "*"
+redis = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

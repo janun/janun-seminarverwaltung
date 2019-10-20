@@ -122,3 +122,4 @@ db.sqlite3
 .envs/*
 !.envs/.local/
 .~lock.*
+celerybeat-schedule

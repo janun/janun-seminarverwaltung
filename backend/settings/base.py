@@ -233,3 +233,13 @@ LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 
 
 PHONENUMBER_DEFAULT_REGION = "DE"
+
+
+# CELERY STUFF
+# ------------------------------------------------------------------------------
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379")
+CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://localhost:6379")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Berlin"
