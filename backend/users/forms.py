@@ -2,7 +2,7 @@ from django import forms
 from django.urls import reverse
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, HTML, Field
+from crispy_forms.layout import Layout, Fieldset, HTML, Field, Div
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.formfields import PhoneNumberField
 from preferences import preferences
@@ -34,6 +34,7 @@ class SignupForm(forms.Form):
             "invalid": "Bitte gültige Telefonnummer eingeben, z.B. 0511 1241512"
         },
     )
+    fax_number = forms.CharField(required=False)
     address = forms.CharField(
         label="Postadresse", required=False, widget=forms.Textarea(attrs={"rows": 3})
     )
@@ -49,6 +50,10 @@ class SignupForm(forms.Form):
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
                 Field("telephone", css_class="w-full"),
+                Div(
+                    Field("fax_number", autocomplete="off", tabindex="-1"),
+                    css_class="hidden",
+                ),
                 Field("address", css_class="w-full js-autogrow"),
             ),
             Fieldset(
@@ -77,6 +82,13 @@ class SignupForm(forms.Form):
         # remove placeholders
         for field in ("email", "username"):
             del self.fields[field].widget.attrs["placeholder"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # honeypot field
+        fax_number = cleaned_data["fax_number"]
+        if fax_number:
+            self.add_error(None, "Kein Zugang für Spammer")
 
     def signup(self, request, user):
         user.name = self.cleaned_data["name"]
