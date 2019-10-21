@@ -41,7 +41,6 @@ black = "==19.3b0"
 mypy = "*"
 django-stubs = "*"
 dataclasses = "*" # needed by django-stubs
-selenium = "*"
 
 [pipenv]
 allow_prereleases = false
