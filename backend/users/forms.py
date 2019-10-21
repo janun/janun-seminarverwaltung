@@ -116,10 +116,10 @@ class SignupForm(AllauthSignupForm):
 
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
-            self.fields["data_protection_read"].label = (
-                'Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
-                    preferences.JANUNSeminarPreferences.data_protection_policy_url
-                ),
+            self.fields[
+                "data_protection_read"
+            ].label = 'Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
+                preferences.JANUNSeminarPreferences.data_protection_policy_url
             )
 
         # remove placeholders
