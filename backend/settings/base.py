@@ -199,7 +199,7 @@ MANAGERS = ADMINS
 
 # django-allauth
 # ------------------------------------------------------------------------------
-ACCOUNT_ADAPTER = "allauth_2fa.adapter.OTPAdapter"
+ACCOUNT_ADAPTER = "backend.users.forms.AccountAdapter"
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
@@ -207,7 +207,7 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
-ACCOUNT_SIGNUP_FORM_CLASS = "backend.users.forms.SignupForm"
+ACCOUNT_FORMS = {"signup": "backend.users.forms.SignupForm"}
 ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 ACCOUNT_SESSION_REMEMBER = False
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"

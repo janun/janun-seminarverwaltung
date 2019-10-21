@@ -2,10 +2,15 @@ from django import forms
 from django.urls import reverse
 from django.contrib.auth import password_validation
 
+from allauth.account.forms import SignupForm as AllauthSignupForm
+from allauth_2fa.adapter import OTPAdapter
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, HTML, Field, Div
+
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.formfields import PhoneNumberField
+
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
@@ -18,7 +23,19 @@ class Link(HTML):
         super().__init__(html)
 
 
-class SignupForm(forms.Form):
+class AccountAdapter(OTPAdapter):
+    def save_user(self, request, user, form, commit=False):
+        user = super().save_user(request, user, form, commit=False)
+        cleaned_data = form.cleaned_data
+        user.name = cleaned_data["name"]
+        user.telephone = cleaned_data["telephone"]
+        user.address = cleaned_data["address"]
+        user.save()
+        user.janun_groups.set(cleaned_data["janun_groups"])
+        return user
+
+
+class SignupForm(AllauthSignupForm):
     name = forms.CharField(max_length=30, label="Voller Name")
     janun_groups = forms.ModelMultipleChoiceField(
         queryset=JANUNGroup.objects.all(),
@@ -101,13 +118,6 @@ class SignupForm(forms.Form):
         fax_number = cleaned_data["fax_number"]
         if fax_number:
             self.add_error(None, "Kein Zugang für Spammer")
-
-    def signup(self, request, user):
-        user.name = self.cleaned_data["name"]
-        user.janun_groups.set(self.cleaned_data["janun_groups"])
-        user.telephone = self.cleaned_data["telephone"]
-        user.address = self.cleaned_data["address"]
-        user.save()
 
 
 class ProfileForm(forms.ModelForm):
