@@ -75,10 +75,14 @@ class SignupForm(forms.Form):
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
 
+        # set some help_texts
         self.fields[
             "email"
         ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
 
+        self.fields[
+            "username"
+        ].help_text = "Erlaubt: Buchstaben, Ziffern, @-Zeichen, Punkt, Plus, Minus und Unterstrich<br>Groß-/Kleinschreibung ist egal."
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
             self.fields["data_protection_read"].label = (
@@ -138,6 +142,12 @@ class ProfileForm(forms.ModelForm):
 
         self.fields["username"].help_text = ""
         self.fields["email"].required = True
+        self.fields[
+            "email"
+        ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
+        self.fields[
+            "telephone"
+        ].help_text = "Für dringende Rückfragen zu Deinen Seminaren"
 
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
