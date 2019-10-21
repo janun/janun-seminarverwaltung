@@ -100,6 +100,20 @@ class SignupForm(AllauthSignupForm):
         self.fields[
             "username"
         ].help_text = "Erlaubt: Buchstaben, Ziffern, @-Zeichen, Punkt, Plus, Minus und Unterstrich<br>Groß-/Kleinschreibung ist egal."
+
+        self.fields["password1"].help_text = (
+            '<ul class="list-disc pl-4">'
+            "<li>Mindestens 8 Zeichen, empfohlen 12 oder mehr</li>"
+            "<li>Nicht nur Zahlen. (Sonderzeichen und alles andere erwünscht)</li>"
+            "<li>Nicht zu ähnlich zu den anderen Feldern</li>"
+            "<li>Darf kein bekanntes gehacktes Passwort sein</li>"
+            "</ul>"
+        )
+
+        self.fields[
+            "password2"
+        ].help_text = "Gib das gleiche Passwort nochmal ein (gegen Vertippen)"
+
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
             self.fields["data_protection_read"].label = (
@@ -109,7 +123,7 @@ class SignupForm(AllauthSignupForm):
             )
 
         # remove placeholders
-        for field in ("email", "username"):
+        for field in ("email", "username", "password1", "password2"):
             del self.fields[field].widget.attrs["placeholder"]
 
     def clean(self):
