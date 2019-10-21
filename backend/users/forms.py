@@ -40,6 +40,10 @@ class SignupForm(forms.Form):
     address = forms.CharField(
         label="Postadresse", required=False, widget=forms.Textarea(attrs={"rows": 3})
     )
+    data_protection_read = forms.BooleanField(
+        label="Ich habe die Datenschutzbedingungen gelesen und verstanden.",
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -75,14 +79,12 @@ class SignupForm(forms.Form):
             "email"
         ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
 
-        # add data_protection_read field if policy setting set
+        # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
-            self.fields["data_protection_read"] = forms.BooleanField(
-                label='Ich habe die <a class="underline" href="{0}">'
-                "Datenschutzbedingungen</a> gelesen und verstanden.".format(
+            self.fields["data_protection_read"].label = (
+                'Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
                     preferences.JANUNSeminarPreferences.data_protection_policy_url
                 ),
-                required=True,
             )
 
         # remove placeholders
