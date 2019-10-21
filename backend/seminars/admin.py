@@ -242,7 +242,7 @@ class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context)
-        if hasattr(response, "context_data"):
+        if hasattr(response, "context_data") and hasattr(response.context_data, "cl"):
             filtered_query_set = response.context_data["cl"].queryset
             extra_context = {}
 
