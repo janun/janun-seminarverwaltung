@@ -4,18 +4,29 @@
 
 
 {% block content %}
-<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg">
-<h1 class="text-green-500 font-bold mb-5 text-2xl">Zwei-Faktor-Authentisierung ist aktiv</h1>
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 pb-8 pt-4 rounded-lg md:border-t-4 md:border-green-500">
+<div class="flex flex-col justify-center items-center mb-5 text-center">
+    <div class="flex justify-center items-center p-2 bg-green-200 rounded-full w-16 h-16">
+      <svg class="fill-current text-green-700 w-12 h-12" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+    </div>
+</div>
+<h1 class="font-bold mb-4 text-2xl">Zwei-Faktor-Authentisierung ist aktiv</h1>
+<p class="mb-2">Super, Dein Konto ist jetzt mit Zwei-Faktor-Authentisierung geschützt.</p>
+<p>Zum Einloggen werden jetzt Benutzername, Passwort und Token-Generator benötigt.</p>
 
-<a class="mb-10 button" href="{% url 'two-factor-remove' %}">2FA ausschalten</a>
+<div class="flex justify-end mb-10 mt-5">
+    <a class="underline text-gray-700 hover:text-gray-800 focus:text-gray-800" href="{% url 'two-factor-remove' %}">2FA ausschalten</a>
+</div>
 
-<h2 class="text-green-500 font-bold mb-5 text-xl">Backup-Tokens</h2>
+<hr class="mb-10">
+
+<h2 class="font-bold mb-5 text-xl">Backup-Tokens</h2>
 <p>
-    Mit Backup-Tokens bekommst du im Notfall Zugriff, falls du deinen Token-Generator (z.B. dein Handy) verlieren solltest.
+    Mit Backup-Tokens bekommst du im Notfall Zugriff, <strong>falls du deinen Token-Generator (z.B. dein Handy) verlieren solltest</strong>.
     Speichere sie an einem sicheren Ort, z.B. einen Passwort-Manager oder ausgedruckt.
 </p>
 
-<div class="my-8">
+<div class="mt-5 mb-4">
     {% if backup_tokens %}
         {% if reveal_tokens %}
             <ul>
@@ -31,13 +42,15 @@
             </p>
         {% endif %}
     {% else %}
-        <p class="font-bold">Du hast offenbar noch keine Backup-Tokens generiert.</p>
+        <p>Du hast offenbar noch keine Backup-Tokens generiert.</p>
     {% endif %}
 </div>
 
 <form method="post">
   {% csrf_token %}
-  <button class="button button-primary" type="submit">Backup-Tokens generieren</button>
+  <div class="flex justify-end">
+    <button class="button button-primary" type="submit">Backup-Tokens generieren</button>
+  </div>
 </form>
 
 </div>

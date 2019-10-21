@@ -12,6 +12,7 @@
 
 .optionalField {
   display: none;
+  @apply font-normal;
 }
 
 .fieldset {

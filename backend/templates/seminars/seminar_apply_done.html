@@ -3,7 +3,7 @@
 {% block head_title %}{{ seminar.title }} erfolgreich angemeldet{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-xl md:bg-white md:shadow-lg p-8 rounded-lg">
+<div class="mx-auto max-w-xl md:bg-white md:shadow-lg p-8 rounded-lg md:border-t-4 md:border-green-500">
 
   <div class="flex flex-col justify-center items-center mb-5 text-center">
     <div class="flex justify-center items-center p-2 bg-green-200 rounded-full w-16 h-16 mb-6">
@@ -15,7 +15,7 @@
     <p>Du kannst die Seminardetails noch <strong>bearbeiten bis wir es zugesagt haben</strong>.</p>
   </div>
 
-  <div class="mt-10 flex flex-wrap items-center justify-end -mb-8 -mx-8 px-8 py-4 bg-gray-100 rounded-b-lg">
+  <div class="mt-10 flex flex-wrap items-center justify-center md:justify-end md:-mb-8 md:-mx-8 md:px-8 py-4 md:bg-gray-100 rounded-b-lg">
     <a id="next" class="flex items-center button button-primary" href="{{ seminar.get_absolute_url }}">
       Seminar ansehen
       <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>

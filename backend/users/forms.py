@@ -1,5 +1,6 @@
 from django import forms
 from django.urls import reverse
+from django.contrib.auth import password_validation
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, HTML, Field, Div
@@ -24,10 +25,11 @@ class SignupForm(forms.Form):
         label="JANUN-Gruppen",
         required=False,
         widget=forms.CheckboxSelectMultiple(),
-        help_text="Wähle aus, in welchen Gruppen Du Mitglied bist",
+        help_text="Wähle aus, in welchen Gruppen Du Mitglied bist.",
     )
     telephone = PhoneNumberField(
         label="Telefonnummer",
+        help_text="Für dringende Rückfragen zu Deinen Seminaren",
         required=False,
         widget=PhoneNumberInternationalFallbackWidget,
         error_messages={
@@ -68,6 +70,10 @@ class SignupForm(forms.Form):
 
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
+        self.fields[
+            "email"
+        ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
 
         # add data_protection_read field if policy setting set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
