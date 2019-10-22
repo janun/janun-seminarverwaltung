@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
 from crispy_forms.bootstrap import AppendedText
+from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from .models import Seminar
@@ -317,15 +318,17 @@ class FundingSeminarForm(SeminarStepForm):
 
 class ConfirmSeminarForm(SeminarStepForm):
     confirm_policy = forms.BooleanField(
-        label='Ich habe die <a class="underline" target="_blank" href="{}">'
-        "Seminarabrechnungsrichtlinie</a> gelesen.".format(
-            "https://www.janun.de/downloads"
-        ),
-        required=True,
+        label="Ich habe die Seminarabrechnungsrichtlinie gelesen.", required=True
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if preferences.JANUNSeminarPreferences.seminar_policy_url:
+            self.fields["confirm_policy"].label = (
+                'Ich habe die <a class="underline" target="_blank" href="{}">'
+                "Seminarabrechnungsrichtlinie</a> gelesen."
+            ).format(preferences.JANUNSeminarPreferences.seminar_policy_url)
+
         if self.instance.requested_funding:
             self.fields["confirm_funding"] = forms.BooleanField(
                 label="Ich möchte die <b>Förderung von {} €</b> beantragen.".format(
@@ -333,6 +336,7 @@ class ConfirmSeminarForm(SeminarStepForm):
                 ),
                 required=True,
             )
+
         deadline = self.instance.get_deadline()
         if deadline:
             self.fields["confirm_deadline"] = forms.BooleanField(
