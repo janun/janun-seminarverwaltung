@@ -43,7 +43,6 @@ class User(AbstractUser):
         },
         blank=True,
     )
-    address = models.TextField("Postadresse", blank=True)
     role = models.CharField(
         "Rolle", max_length=255, choices=ROLES, default=ROLES.Teamer_in
     )

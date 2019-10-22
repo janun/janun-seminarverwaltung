@@ -53,7 +53,6 @@ class SingupTestCase(TestCase):
                 "name": "Max Mustermann",
                 "email": "max@mustermann.com",
                 "telephone": "+495119897986",
-                "address": "Test-Adresse",
                 "username": "max",
                 "password1": "sadgadhe56egaefasdf",
                 "password2": "sadgadhe56egaefasdf",
@@ -67,5 +66,4 @@ class SingupTestCase(TestCase):
         user = post_response.context["user"]
         self.assertEqual(user.name, "Max Mustermann")
         self.assertEqual(user.telephone, "+495119897986")
-        self.assertEqual(user.address, "Test-Adresse")
         self.assertEqual(user.janun_groups.get(), self.testgroup)

@@ -80,7 +80,7 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Kontakt", {"fields": ("name", "email", "telephone", "address")}),
+        ("Kontakt", {"fields": ("name", "email", "telephone")}),
         ("Berechtigungen", {"fields": ("is_active", "is_reviewed", "role")}),
         ("Gruppen", {"fields": ("janun_groups", "group_hats")}),
         ("Datum", {"fields": ("last_visit", "date_joined", "updated_at")}),

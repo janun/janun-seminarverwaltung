@@ -29,7 +29,6 @@ class AccountAdapter(OTPAdapter):
         cleaned_data = form.cleaned_data
         user.name = cleaned_data["name"]
         user.telephone = cleaned_data["telephone"]
-        user.address = cleaned_data["address"]
         user.save()
         user.janun_groups.set(cleaned_data["janun_groups"])
         return user
@@ -54,9 +53,6 @@ class SignupForm(AllauthSignupForm):
         },
     )
     fax_number = forms.CharField(required=False)
-    address = forms.CharField(
-        label="Postadresse", required=False, widget=forms.Textarea(attrs={"rows": 3})
-    )
     data_protection_read = forms.BooleanField(
         label="Ich habe die Datenschutzbedingungen gelesen und verstanden.",
         required=True,
@@ -77,7 +73,6 @@ class SignupForm(AllauthSignupForm):
                     Field("fax_number", autocomplete="off", tabindex="-1"),
                     css_class="hidden",
                 ),
-                Field("address", css_class="w-full js-autogrow"),
             ),
             Fieldset(
                 "Anmeldung",
@@ -146,7 +141,6 @@ class ProfileForm(forms.ModelForm):
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
                 Field("telephone", css_class="w-full"),
-                Field("address", css_class="w-full js-autogrow"),
             ),
             Fieldset(
                 "Anmeldung",
@@ -178,8 +172,5 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("name", "email", "username", "telephone", "address")
-        widgets = {
-            "address": forms.Textarea(attrs={"rows": 3}),
-            "telephone": PhoneNumberInternationalFallbackWidget,
-        }
+        fields = ("name", "email", "username", "telephone")
+        widgets = {"telephone": PhoneNumberInternationalFallbackWidget}
