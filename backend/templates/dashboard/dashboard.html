@@ -21,7 +21,7 @@
 {% endif %}
 
 {% if janun_groups|length > 0 %}
-  <div class="mb-20">
+  <div class="mb-16">
     <h2 class="text-xl mb-4 border-b">Deine Gruppen</h2>
     <div class="flex flex-wrap items-stretch -m-4">
       {% for group in janun_groups.all %}
@@ -47,7 +47,7 @@
 
 
 {% if group_hats|length > 0 %}
-  <div class="mb-20">
+  <div class="mb-16">
     <h2 class="text-xl mb-4 border-b">Deine Gruppenhüte</h2>
     <div class="flex flex-wrap items-stretch -m-4">
       {% for group in group_hats.all %}
@@ -72,9 +72,17 @@
 {% endif %}
 
 
-<h2 class="text-xl mb-4 border-b">
-  Deine {% if show_more_link %}letzten{% endif %} Seminare
-</h2>
+<div class="sm:flex sm:flex-wrap items-center border-b mb-4">
+  <h2 class="text-xl">
+    Deine {% if show_more_link %}letzten{% endif %} Seminare
+  </h2>
+  {% if seminars %}
+    <a class="my-2 md:ml-auto button button-primary" href="{% url 'seminar_apply' %}">
+      <svg class="fill-current h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
+      Seminar Anmelden
+    </a>
+  {% endif %}
+</div>
 
 {% if seminars %}
   <div class="flex flex-wrap items-stretch -m-4">
@@ -83,12 +91,6 @@
         {% include "seminars/_seminar_card.html" %}
       </div>
     {% endfor %}
-    <div class="lg:w-1/3 sm:w-1/2 w-full p-4">
-      <a href="{% url 'seminar_apply' %}" class="block group rounded-lg border border-dashed flex flex-col items-center justify-center h-full" style="min-height: 140px;">
-        <svg class="fill-current text-gray-400 group-hover:text-gray-600 h-10 w-10 mb-2" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
-        <p class="text-gray-600 group-hover:text-gray-800">Weiteres Seminar Anmelden</p>
-      </a>
-    </div>
   </div>
 {% else %}
   <div class="flex justify-center mt-4">
