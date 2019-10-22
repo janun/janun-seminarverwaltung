@@ -7,10 +7,10 @@
 
 {% block content %}
 <div class="mx-auto max-w-xl">
-  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pb-8 md:pt-6">
+  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pb-8 md:pt-6 md:border-t-4 md:border-red-500">
 
     <div class="mb-5">
-      <h1 class="font-bold text-2xl text-red-500">Seminar {{ seminar.title }} wirklich löschen?</h1>
+      <h1 class="font-bold text-2xl text-red-600">Seminar {{ seminar.title }} wirklich löschen?</h1>
     </div>
 
     <p>Bist du sicher, dass du dass Seminar <strong>{{ seminar.title }}
@@ -20,7 +20,7 @@
       {% csrf_token %}
       <div class="flex items-center justify-end mt-5">
         <a id="cancel" class="button mx-4" href="{{ seminar.get_absolute_url }}">Abbrechen</a>
-        <button class="mx-4 button bg-red-500 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Löschen</button>
+        <button class="mx-4 button bg-red-600 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Löschen</button>
       </div>
     </form>
 
