@@ -42,12 +42,12 @@ class SeminarChangeForm(forms.ModelForm):
                 Div(
                     Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
                     Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
-                    css_class="md:flex -mx-2",
+                    css_class="flex -mx-2",
                 ),
                 Div(
                     Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
-                    css_class="md:flex -mx-2",
+                    css_class="flex -mx-2",
                 ),
                 Field("location", css_class="w-full"),
             ),
