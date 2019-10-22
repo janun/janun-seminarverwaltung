@@ -7,11 +7,11 @@
 
 
 {% if seminars %}
-  <div class="md:flex flex-wrap items-center mb-6">
-    <a class="md:order-1 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
+  <div class="md:flex flex-wrap items-center mb-8 md:mb-12">
+    <h1 class="font-bold text-2xl">Alle Deine Seminare</h1>
+    <a class="mt-6 md:mt-0 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
       Seminar anmelden
     </a>
-    <h1 class="font-bold text-2xl">Alle Deine Seminare</h1>
   </div>
 
   {% regroup seminars by year as year_list %}
