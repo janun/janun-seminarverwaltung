@@ -113,7 +113,7 @@ class FundingRate(models.Model):
     def limit(self, seminar, funding: Decimal) -> Decimal:
         upper_limit = self.group_limit if seminar.group else self.single_limit
         if upper_limit and funding > upper_limit:
-            return upper_limit
+            funding = upper_limit
 
         formula = (
             self.group_limit_formula if seminar.group else self.single_limit_formula
@@ -125,7 +125,7 @@ class FundingRate(models.Model):
                 .compile()(B=seminar.planned_training_days)
             )
             if lower_limit and funding > lower_limit:
-                return lower_limit
+                funding = lower_limit
 
         return funding
 
@@ -206,10 +206,13 @@ class SeminarQuerySet(models.QuerySet):
                     default="actual_attendence_days_total",
                 ),
                 tnt_cost=Case(
-                    When(tnt__gt=Value(0),
-                    then=ExpressionWrapper(
-                        F("funding") / F("tnt"), output_field=models.DecimalField()
-                    )), default=Value(None)
+                    When(
+                        tnt__gt=Value(0),
+                        then=ExpressionWrapper(
+                            F("funding") / F("tnt"), output_field=models.DecimalField()
+                        ),
+                    ),
+                    default=Value(None),
                 ),
                 attendees=Case(
                     When(
