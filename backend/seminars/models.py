@@ -205,8 +205,11 @@ class SeminarQuerySet(models.QuerySet):
                     ),
                     default="actual_attendence_days_total",
                 ),
-                tnt_cost=ExpressionWrapper(
-                    F("funding") / F("tnt"), output_field=models.DecimalField()
+                tnt_cost=Case(
+                    When(tnt__gt=Value(0),
+                    then=ExpressionWrapper(
+                        F("funding") / F("tnt"), output_field=models.DecimalField()
+                    )), default=Value(None)
                 ),
                 attendees=Case(
                     When(
