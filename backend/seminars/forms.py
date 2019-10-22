@@ -239,7 +239,7 @@ class AttendeesSeminarForm(SeminarStepForm):
                 '<p class="mt-4">Seminare mit <strong>weniger als 10</strong> Teilnehmenden können nicht gefördert werden. '
                 "Die Förderung geht nur <strong>bis 40</strong> Teilnehmende, aber Ausnahmen sind manchmal möglich.</p>"
                 '<h4 class="mt-6 mb-1 font-bold">Mehr als die Hälfte der Teilnehmenden:</h4>'
-                '<ul class="list-disc">'
+                '<ul class="list-disc ml-4">'
                 "<li>müssen ihren Wohnsitz in Niedersachsen haben.</li>"
                 "<li>müssen mindestens 12 Jahre alt sein und maximal 27.</li>"
                 "</ul>"
