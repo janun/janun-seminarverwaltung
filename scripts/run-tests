@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+cd "${0%/*}/.."
+pipenv run python manage.py test
