@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
+    "djcelery_email",
     "preferences",
     "phonenumber_field",
     "formtools",
@@ -185,8 +186,9 @@ FIXTURE_DIRS = (str(APPS_DIR.path("fixtures")),)
 
 # EMAIL
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
+CELERY_EMAIL_BACKEND = env(
+    "CELERY_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
 )
 
 # ADMIN

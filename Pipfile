@@ -29,6 +29,7 @@ phonenumberslite = "*"
 django-preferences = "*"
 celery = "*"
 redis = "*"
+django-celery-email = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
