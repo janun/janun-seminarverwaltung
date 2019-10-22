@@ -141,8 +141,10 @@ class SeminarApplyView(SessionWizardView):
                 data=self.storage.get_step_data(form_key),
                 files=self.storage.get_step_files(form_key),
             )
-            # TODO: Get form valid status for wizard steps
-            # forms[form_key].is_valid() raises errors on wrong steps
+            try:
+                forms[form_key].is_valid()
+            except ValueError:
+                pass
         return forms
 
     def get_form_kwargs(self, *args, **kwargs):
