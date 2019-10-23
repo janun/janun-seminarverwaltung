@@ -17,6 +17,9 @@ class JANUNSeminarPreferences(Preferences):
     data_protection_policy_url = models.URLField(
         "Link Datenschutzrichtlinie", blank=True
     )
+    legal_url = models.URLField(
+        "Link zum Impressum", default="https://www.janun.de/impressum"
+    )
 
     class Meta:
         verbose_name = "Einstellung"
