@@ -46,6 +46,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.humanize",
+    "django.forms",
 ]
 THIRD_PARTY_APPS = [
     "djcelery_email",
@@ -178,7 +179,7 @@ TEMPLATES = [
     }
 ]
 
-# FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # FIXTURES
 # ------------------------------------------------------------------------------
