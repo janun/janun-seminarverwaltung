@@ -20,6 +20,9 @@ module.exports = {
         "checkbox, radio": {
           color: theme("colors.gray.700")
         },
+        radio: {
+          borderRadius: theme("borderRadius.full")
+        },
         select: {
           iconColor: theme('colors.gray.700'),
         },
