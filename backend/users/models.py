@@ -38,7 +38,7 @@ class User(AbstractUser):
     ROLES = Choices("Teamer_in", "Prüfer_in", "Verwalter_in")
     first_name = None  # type: ignore
     last_name = None  # type: ignore
-    name = models.CharField(max_length=255)
+    name = models.CharField("Voller Name", max_length=255)
     telephone = PhoneNumberField(
         "Telefonnummer",
         error_messages={
