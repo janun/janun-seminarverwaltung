@@ -57,7 +57,7 @@ class SeminarUpdateView(
     )
     template_name = "seminars/seminar_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
-    error_message = "Es gab Probleme beim Speichern. Schau in’s Formular."
+    error_message = "Es gab Probleme beim Speichern. Schau ins Formular."
 
     def test_func(self):
         return user_may_access_seminar(self.request.user, self.get_object())
