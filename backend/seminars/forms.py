@@ -129,7 +129,10 @@ class SeminarChangeForm(forms.ModelForm):
             "requested_funding",
             "group",
         )
-        widgets = {"status": forms.RadioSelect}
+        widgets = {
+            "status": forms.RadioSelect,
+            "description": forms.Textarea({"rows": 3}),
+        }
 
 
 class SeminarStepForm(forms.ModelForm):
@@ -168,6 +171,7 @@ class ContentSeminarForm(SeminarStepForm):
         title = "Seminarinhalte"
         short_title = "Inhalt"
         fields = ("title", "description")
+        widgets = {"description": forms.Textarea({"rows": 3})}
 
 
 class DateLocationSeminarForm(SeminarStepForm):
