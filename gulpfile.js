@@ -25,7 +25,7 @@ function watch() {
       "backend/templates/**/*.html",
       "backend/static_src/styles/*.css",
       "backend/**/*.py",
-      "tailwind.conf.js"
+      "tailwind.config.js"
     ],
     styles
   );
