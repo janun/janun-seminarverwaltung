@@ -213,9 +213,10 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_FORMS = {
     "signup": "backend.users.forms.SignupForm",
     "change_password": "backend.users.forms.ChangePasswordForm",
+    "login": "backend.users.forms.LoginForm",
 }
 ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
-ACCOUNT_SESSION_REMEMBER = False
+ACCOUNT_SESSION_REMEMBER = None
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 10
 ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600

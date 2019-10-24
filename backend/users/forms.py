@@ -4,6 +4,8 @@ from django.contrib.auth import password_validation
 
 from allauth.account.forms import SignupForm as AllauthSignupForm
 from allauth.account.forms import ChangePasswordForm as AllauthChangePasswordForm
+from allauth.account.forms import LoginForm as AllauthLoginForm
+
 from allauth_2fa.adapter import OTPAdapter
 
 from crispy_forms.helper import FormHelper
@@ -33,6 +35,29 @@ class AccountAdapter(OTPAdapter):
         user.save()
         user.janun_groups.set(cleaned_data["janun_groups"])
         return user
+
+
+class LoginForm(AllauthLoginForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            "login",
+            "password",
+            Link(
+                reverse("account_reset_password"),
+                "Passwort vergessen?",
+                "inline-block text-sm text-gray-600 hover:text-gray-800 mb-6",
+            ),
+            "remember",
+        )
+
+        # remove placeholders
+        for field in ("login", "password"):
+            del self.fields[field].widget.attrs["placeholder"]
+
+        self.fields["login"].label = "Benutzername oder E-Mail"
 
 
 class ChangePasswordForm(AllauthChangePasswordForm):

@@ -15,14 +15,10 @@
   </div>
 
   <form class="login form-control-w-full" method="POST" action="{% url 'account_login' %}">
-    {% csrf_token %}
-    {{ form|crispy }}
+    {% crispy form %}
     {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
-
-    <a class="inline-block -m-1 p-1 mb-6 text-gray-600 hover:text-gray-800 focus:text-gray-800 text-sm"
-       href="{% url 'account_reset_password' %}">Passwort vergessen?</a>
 
     <div class="flex">
       <button class="md:ml-auto button button-primary" type="submit">
