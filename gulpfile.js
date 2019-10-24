@@ -24,7 +24,8 @@ function watch() {
     [
       "backend/templates/**/*.html",
       "backend/static_src/styles/*.css",
-      "backend/**/*.py"
+      "backend/**/*.py",
+      "tailwind.conf.js"
     ],
     styles
   );
