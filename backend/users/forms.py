@@ -90,7 +90,7 @@ class SignupForm(AllauthSignupForm):
         required=False,
         widget=PhoneNumberInternationalFallbackWidget,
         error_messages={
-            "invalid": "Bitte gültige Telefonnummer eingeben, z.B. 0511 1241512"
+            "invalid": "Bitte eine gültige Telefonnummer eingeben, z.B. 0511 1241512."
         },
     )
     fax_number = forms.CharField(required=False)
