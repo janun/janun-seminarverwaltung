@@ -63,6 +63,14 @@ class LoginForm(AllauthLoginForm):
 class ChangePasswordForm(AllauthChangePasswordForm):
     password2 = None
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[
+            "password1"
+        ].help_text = "Mindestens 8 Zeichen, empfohlen 12 oder mehr."
+        for field in ("oldpassword", "password1"):
+            del self.fields[field].widget.attrs["placeholder"]
+
     def clean(self):
         return super(forms.Form, self).clean()
 
