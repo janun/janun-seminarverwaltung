@@ -20,9 +20,9 @@
       {% include "_navbar.html" %}
 
       {% for message in messages %}
-        <div class="max-w-3xl mx-auto py-3 rounded my-6 shadow bg-gray-200 text-gray-800
-                    {% if message.tags == "success" %}bg-green-100 text-green-800{% endif %}
-                    {% if message.tags == "error" %}bg-red-200 text-red-800{% endif %}
+        <div class="max-w-4xl mx-auto py-3 my-6 rounded-md bg-white shadow text-gray-800
+                    {% if message.tags == "success" %}text-green-800{% endif %}
+                    {% if message.tags == "error" %}text-red-800{% endif %}
           ">
           <div class="flex items-center justify-start mx-auto max-w-5xl px-4">
             {% if message.tags == "success" %}
