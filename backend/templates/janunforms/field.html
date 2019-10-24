@@ -29,7 +29,7 @@
                 <div>
                     <label for="{{ field.id_for_label }}" class="inline-flex items-baseline {% if field.field.required %}requiredField{% endif %}">
                         {% crispy_field field 'class' 'form-checkbox' %}
-                        <span class="ml-2 select-none">{{ field.label|safe }}{% if not field.field.required %} <small class="text-secondary optionalField">(optional)</small>{% endif %}</span>
+                        <span class="col-form-label ml-2 select-none">{{ field.label|safe }}{% if not field.field.required %} <small class="text-secondary optionalField">(optional)</small>{% endif %}</span>
                     </label>
                 </div>
                 {% include './layout/help_text_and_errors.html' %}
