@@ -163,11 +163,6 @@ class ContentSeminarForm(SeminarStepForm):
         )
         self.fields["title"].required = True
         self.fields["description"].required = True
-        self.fields[
-            "description"
-        ].help_text = (
-            "Um was genau geht es in dem Seminar? Welche Inhalte werden vermittelt?"
-        )
 
     class Meta(SeminarStepForm.Meta):
         title = "Seminarinhalte"

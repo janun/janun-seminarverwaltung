@@ -320,7 +320,11 @@ class Seminar(models.Model):
         related_name="seminars",
         verbose_name="JANUN-Gruppe",
     )
-    description = models.TextField("Beschreibung", blank=True)
+    description = models.TextField(
+        "Beschreibung",
+        help_text="Um was genau geht es in dem Seminar? Welche Inhalte werden vermittelt?",
+        blank=True,
+    )
     start_date = models.DateField("Start-Datum", db_index=True)
     start_time = models.TimeField("Start-Zeit", blank=True, null=True)
     end_date = models.DateField("End-Datum")
