@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import password_validation
 
 from allauth.account.forms import SignupForm as AllauthSignupForm
+from allauth.account.forms import ChangePasswordForm as AllauthChangePasswordForm
 from allauth_2fa.adapter import OTPAdapter
 
 from crispy_forms.helper import FormHelper
@@ -32,6 +33,13 @@ class AccountAdapter(OTPAdapter):
         user.save()
         user.janun_groups.set(cleaned_data["janun_groups"])
         return user
+
+
+class ChangePasswordForm(AllauthChangePasswordForm):
+    password2 = None
+
+    def clean(self):
+        return super(forms.Form, self).clean()
 
 
 class SignupForm(AllauthSignupForm):
@@ -106,8 +114,7 @@ class SignupForm(AllauthSignupForm):
         )
 
         self.fields[
-            "password2"
-        ].help_text = "Gib das gleiche Passwort nochmal ein (gegen Vertippen)"
+            "password1"
 
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
@@ -118,7 +125,7 @@ class SignupForm(AllauthSignupForm):
             )
 
         # remove placeholders
-        for field in ("email", "username", "password1", "password2"):
+        for field in ("email", "username", "password1"):
             del self.fields[field].widget.attrs["placeholder"]
 
     def clean(self):

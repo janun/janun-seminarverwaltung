@@ -55,7 +55,6 @@ class SingupTestCase(TestCase):
                 "telephone": "+495119897986",
                 "username": "max",
                 "password1": "sadgadhe56egaefasdf",
-                "password2": "sadgadhe56egaefasdf",
                 "janun_groups": "1",
                 "data_protection_read": "on",
             },
