@@ -9,7 +9,6 @@ module.exports = {
         "input, textarea, multiselect, select, checkbox, radio": {
           backgroundColor: theme("colors.gray.100"),
           borderColor: theme("colors.gray.300"),
-          borderRadius: theme('borderRadius.md'),
           "&:disabled": {
             cursor: "not-allowed",
             borderColor: theme("colors.gray.100")
@@ -18,11 +17,11 @@ module.exports = {
             borderColor: theme("colors.red.400")
           }
         },
+        "input, textarea, multiselect, select": {
+          borderRadius: theme('borderRadius.md'),
+        },
         "checkbox, radio": {
           color: theme("colors.gray.700")
-        },
-        radio: {
-          borderRadius: theme("borderRadius.full")
         },
         select: {
           iconColor: theme('colors.gray.700'),
