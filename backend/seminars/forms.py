@@ -3,11 +3,12 @@ from django.utils import timezone, formats
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Fieldset, Field, HTML
+from crispy_forms.layout import Layout, Div, Field, HTML
 from crispy_forms.bootstrap import AppendedText
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
+from backend.utils import Fieldset
 from .models import Seminar
 from .states import STATE_INFO, get_next_states
 
@@ -19,7 +20,7 @@ class SeminarChangeForm(forms.ModelForm):
             text = "Am {0} überwiesen.".format(
                 self.instance.transferred_at.strftime("%d.%m.%Y")
             )
-        html = '<p class="text-sm mb-2 -mt-2 text-gray-700">{0}</p>'.format(text)
+        html = '<p class="text-sm mb-2 -mt-2">{0}</p>'.format(text)
         if self.instance.status != "angemeldet":
             html += '<p class="text-sm mb-5">Seminardetails können jetzt nicht mehr geändert werden.</p>'
         return html
@@ -32,11 +33,17 @@ class SeminarChangeForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset("Status", "status", HTML(self.get_state_description())),
+            Fieldset(
+                "Status",
+                "status",
+                HTML(self.get_state_description()),
+                text="Wie weit wir Dein Seminar bearbeitet haben.",
+            ),
             Fieldset(
                 "Inhalt",
                 Field("title", css_class="w-full"),
                 Field("description", css_class="w-full js-autogrow"),
+                text="Hilft uns zu entscheiden, ob das Seminar gefördert werden kann.",
             ),
             Fieldset(
                 "Zeit & Ort",
@@ -68,6 +75,7 @@ class SeminarChangeForm(forms.ModelForm):
                 ),
                 "group",
                 AppendedText("requested_funding", "€", css_class="w-40"),
+                text="Angaben, die sich direkt auf die Förderung auswirken.",
             ),
             "comment",
         )

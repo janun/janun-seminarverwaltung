@@ -6,39 +6,36 @@
 
 
 {% block content %}
-<h1 class="font-bold text-2xl mb-6">{{ group.name }}</h1>
+<div class="mx-auto max-w-5xl">
+  <h1 class="font-bold text-2xl mb-6">{{ group.name }}</h1>
 
-{% if user.is_staff %}
-  <div class="mb-1">
-    <span class="font-bold">Gruppenhüte:</span>
-    {% if group.group_hats.all %}
-      {{ group.group_hats.all|join:", " }}
-    {% else %}
-      Keine
-    {% endif %}
+  {% if user.is_staff %}
+    <div class="mb-1">
+      <span class="font-bold">Gruppenhüte:</span>
+      {% if group.group_hats.all %}
+        {{ group.group_hats.all|join:", " }}
+      {% else %}
+        Keine
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="mb-10">
+    <span class="font-bold">Mitglieder:</span>
+    {% if group.members.all %}
+        {{ group.members.all|join:", " }}
+      {% else %}
+        Keine
+      {% endif %}
   </div>
-{% endif %}
+  
+  <h3 class="font-bold text-gray-700 mb-2">Seminare nächstes Jahr</h3>
+  {% include "seminars/_seminar_table.html" with seminars=seminars_next_year stats=stats_next_year %}
 
-<div class="mb-10">
-  <span class="font-bold">Mitglieder:</span>
-  {% if group.members.all %}
-      {{ group.members.all|join:", " }}
-    {% else %}
-      Keine
-    {% endif %}
+  <h3 class="font-bold text-gray-700 mb-2 mt-8">Seminare dieses Jahr</h3>
+  {% include "seminars/_seminar_table.html" with seminars=seminars_this_year stats=stats_this_year %}
+
+  <h3 class="font-bold text-gray-700 mb-2 mt-8">Seminare letztes Jahr</h3>
+  {% include "seminars/_seminar_table.html" with seminars=seminars_last_year stats=stats_last_year %}  
 </div>
-
- 
-<h3 class="font-bold text-gray-700 mb-2">Seminare nächstes Jahr</h3>
-{% include "seminars/_seminar_table.html" with seminars=seminars_next_year stats=stats_next_year %}
-
-
-<h3 class="font-bold text-gray-700 mb-2 mt-8">Seminare dieses Jahr</h3>
-{% include "seminars/_seminar_table.html" with seminars=seminars_this_year stats=stats_this_year %}
-
-
-<h3 class="font-bold text-gray-700 mb-2 mt-8">Seminare letztes Jahr</h3>
-{% include "seminars/_seminar_table.html" with seminars=seminars_last_year stats=stats_last_year %}
-      
-
 {% endblock content %}

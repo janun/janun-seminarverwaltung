@@ -9,7 +9,7 @@ from allauth.account.forms import LoginForm as AllauthLoginForm
 from allauth_2fa.adapter import OTPAdapter
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, HTML, Field, Div
+from crispy_forms.layout import Layout, HTML, Field, Div
 
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 from phonenumber_field.formfields import PhoneNumberField
@@ -17,13 +17,8 @@ from phonenumber_field.formfields import PhoneNumberField
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
+from backend.utils import Link, Fieldset
 from .models import User
-
-
-class Link(HTML):
-    def __init__(self, href, text, css_class=""):
-        html = '<a class="{2}" href="{0}">{1}</a>'.format(href, text, css_class)
-        super().__init__(html)
 
 
 class AccountAdapter(OTPAdapter):
@@ -109,51 +104,53 @@ class SignupForm(AllauthSignupForm):
                 "Kontakt",
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
-                Field("telephone", css_class="w-full"),
+                Div(Field("telephone", css_class="w-full"), css_class="show-optional"),
                 Div(
                     Field("fax_number", autocomplete="off", tabindex="-1"),
                     css_class="hidden",
                 ),
+                text="Wir müssen mit dir Kontakt aufnehmen können.",
             ),
             Fieldset(
                 "Anmeldung",
                 Field("username", css_class="w-full"),
                 Field("password1", css_class="w-full"),
-                Field("password2", css_class="w-full"),
+                text="Bitte wähle ein starkes Passwort, das du nirgends sonst verwendest. Wir empfehlen die Benutzung eines Passwortmanagers.",
             ),
-            Fieldset("Gruppen", "janun_groups"),
-            Fieldset(None, "data_protection_read"),
+            Fieldset(
+                "Gruppen",
+                "janun_groups",
+                text="Um zu ermitteln auf welche Seminare du Zugriff hast und für wen du Seminare anmelden kannst.",
+            ),
+            Fieldset(
+                "Datenschutz",
+                "data_protection_read",
+                HTML(
+                    '<p class="text-gray-600">Kurz: Wir nutzen deine Daten nur für die Verwaltung der Seminare und geben sie nicht unnötig an andere weiter, aber lies selbst.</p>'
+                ),
+            ),
         )
 
         # set autofocus
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
 
         # set some help_texts
+        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields["username"].label = "Benutzername"
+
         self.fields[
             "email"
-        ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
-
-        self.fields[
-            "username"
-        ].help_text = "Erlaubt: Buchstaben, Ziffern, @-Zeichen, Punkt, Plus, Minus und Unterstrich<br>Groß-/Kleinschreibung ist egal."
-
-        self.fields["password1"].help_text = (
-            '<ul class="list-disc pl-4">'
-            "<li>Mindestens 8 Zeichen, empfohlen 12 oder mehr</li>"
-            "<li>Nicht nur Zahlen. (Sonderzeichen und alles andere erwünscht)</li>"
-            "<li>Nicht zu ähnlich zu den anderen Feldern</li>"
-            "<li>Darf kein bekanntes gehacktes Passwort sein</li>"
-            "</ul>"
-        )
+        ].help_text = "Du erhältst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
 
         self.fields[
             "password1"
+        ].help_text = "Mindestens 8 Zeichen, empfohlen 12 oder mehr."
 
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
             self.fields[
                 "data_protection_read"
-            ].label = 'Ich habe die <a class="underline" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
+            ].label = 'Ich habe die <a class="underline text-gray-900" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
                 preferences.JANUNSeminarPreferences.data_protection_policy_url
             )
 
@@ -180,29 +177,30 @@ class ProfileForm(forms.ModelForm):
                 "Kontakt",
                 Field("name", css_class="w-full"),
                 Field("email", css_class="w-full"),
-                Field("telephone", css_class="w-full"),
+                Div(Field("telephone", css_class="w-full"), css_class="show-optional"),
+                text="Wir müssen mit dir Kontakt aufnehmen können.",
             ),
             Fieldset(
                 "Anmeldung",
-                "username",
+                Field("username", css_class="w-full"),
                 Link(
                     reverse("account_change_password"),
                     "Passwort ändern →",
-                    "block mb-6 mt-4 text-gray-700 hover:text-gray-800",
+                    "block my-6 text-gray-700 hover:text-gray-800",
                 ),
                 Link(
                     reverse("two-factor-setup"),
                     "Zwei-Faktor-Authentisierung →",
-                    "block text-gray-700 hover:text-gray-800",
+                    "block mb-6 text-gray-700 hover:text-gray-800",
                 ),
             ),
         )
 
-        self.fields["username"].help_text = ""
+        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
         self.fields["email"].required = True
         self.fields[
             "email"
-        ].help_text = "Du erhälst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
+        ].help_text = "Du erhältst Bestätigungen, wichtige Updates und Erinnerungen zu Deinen Seminaren."
         self.fields[
             "telephone"
         ].help_text = "Für dringende Rückfragen zu Deinen Seminaren"

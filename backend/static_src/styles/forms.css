@@ -3,7 +3,7 @@
 }
 
 .col-form-label {
-  @apply block mb-1 text-sm text-gray-700 font-bold;
+  @apply block mb-1 text-sm text-gray-700 font-semibold;
 }
 
 .form-control-w-full .form-input {
@@ -11,20 +11,23 @@
 }
 
 .optionalField {
-  display: none;
-  @apply font-normal;
+  @apply hidden font-normal;
 }
 
 .fieldset {
-  @apply flex flex-wrap py-5 mb-5 border-b;
+  @apply flex flex-wrap py-5 mb-5;
 }
 
 .fieldset-header {
-  @apply block w-full text-gray-800 mb-5 font-semibold;
+  @apply block w-full text-sm text-gray-600 pr-5 mb-2;
+}
+
+.fieldset-heading {
+  @apply text-gray-800 mb-2 text-xl;
 }
 
 .fieldset-content {
-  @apply block w-full;
+  @apply block w-full bg-white rounded-lg shadow-md px-6 py-5;
 }
 
 @screen md {
@@ -35,4 +38,9 @@
   .fieldset-content {
     @apply w-2/3;
   }
+}
+
+
+.show-optional .optionalField {
+  @apply inline-block !important;
 }

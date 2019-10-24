@@ -3,7 +3,8 @@
         {{ fieldset.flat_attrs|safe }}>
     <div class="fieldset">
         <div class="fieldset-header">
-            {% if legend %}<legend>{{ legend|safe }}</legend>{% endif %}
+            {% if legend %}<legend class="fieldset-heading">{{ legend|safe }}</legend>{% endif %}
+            <p>{{ fieldset.text }}</p>
         </div>
         <div class="fieldset-content">
             {{ fields|safe }}

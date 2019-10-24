@@ -4,7 +4,7 @@
 {% block head_title %}Zwei-Faktor-Authentisierung ausschalten?{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:border-t-4 md:border-red-500 md:px-8 pb-8 pt-4 rounded-lg">
+<div class="mx-auto max-w-xl md:card">
     <h1 class="text-red-600 font-bold text-2xl mb-5">Zwei-Faktor-Authentisierung ausschalten?</h1>
     
     <p class="mb-2">Bist Du sicher, dass Du die Zwei-Faktor-Authentisierung (2FA) wieder ausschalten willst?</p>
@@ -12,7 +12,7 @@
 
     <form method="post">
     {% csrf_token %}
-        <div class="mt-10 flex flex-wrap items-center justify-end md:-mb-8 md:-mx-8 md:px-8 py-4 md:bg-gray-100 md:rounded-b-lg">
+        <div class="mt-5 md:card-footer">
             <a class="mr-5 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'two-factor-setup' %}">Abbrechen</a>
             <button class="button button-primary bg-red-600" type="submit">Ja, 2FA ausschalten</button>
         </div>

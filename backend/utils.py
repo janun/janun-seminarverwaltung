@@ -8,6 +8,21 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
 
+from crispy_forms.layout import Fieldset as CrispyFieldset
+from crispy_forms.layout import HTML
+
+
+class Fieldset(CrispyFieldset):
+    def __init__(self, *args, **kwargs):
+        self.text = kwargs.pop("text", "")
+        super().__init__(*args, **kwargs)
+
+
+class Link(HTML):
+    def __init__(self, href, text, css_class=""):
+        html = '<a class="{2}" href="{0}">{1}</a>'.format(href, text, css_class)
+        super().__init__(html)
+
 
 def median_value(queryset, term):
     count = queryset.count()

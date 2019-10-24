@@ -1,0 +1,17 @@
+@responsive {
+  .card {
+    @apply bg-white shadow-md p-8 pt-6 rounded-lg
+  }
+
+  .card-footer {
+    @apply flex flex-wrap items-center justify-end -m-8 mt-8 px-8 py-4 bg-gray-200 rounded-b-lg;
+  }
+
+  .object-card {
+    @apply bg-white shadow p-4 rounded
+  }
+
+  .object-card:hover {
+    @apply shadow-md;
+  }
+}

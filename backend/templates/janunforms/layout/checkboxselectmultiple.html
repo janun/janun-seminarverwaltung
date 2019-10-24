@@ -5,18 +5,14 @@
     {% include './field_errors_block.html' %}
 
     {% include './help_text.html' %}
-    <div class="checkboxselectmultiple mt-2 overflow-y-scroll bg-gray-100 rounded py-1 px-2 border border-gray-400" style="max-height: 250px">
+    <div class="checkboxselectmultiple mt-2 overflow-y-scroll bg-gray-100 rounded-md py-1 px-2 border border-gray-300" style="max-height: 250px">
         {% for choice in field.field.choices %}
             {% if not inline_class %}<div class="form-check">{% endif %}
             <label id="id_{{ field.id_for_label }}_{{ forloop.counter }}" class="block mb-1 form-check-{% if inline_class %}{{ inline_class }}{% else %}label{% endif %}" for="id_{{ field.html_name }}_{{ forloop.counter }}">
-                <input type="checkbox" class="form-checkbox"{% if choice.0 in field.value or choice.0|stringformat:"s" in field.value or choice.0|stringformat:"s" == field.value|default_if_none:""|stringformat:"s" %} checked="checked"{% endif %} name="{{ field.html_name }}" id="id_{{ field.html_name }}_{{ forloop.counter }}" value="{{ choice.0|unlocalize }}" {{ field.field.widget.attrs|flatatt }}>
+                <input type="checkbox" class="bg-white form-checkbox"{% if choice.0 in field.value or choice.0|stringformat:"s" in field.value or choice.0|stringformat:"s" == field.value|default_if_none:""|stringformat:"s" %} checked="checked"{% endif %} name="{{ field.html_name }}" id="id_{{ field.html_name }}_{{ forloop.counter }}" value="{{ choice.0|unlocalize }}" {{ field.field.widget.attrs|flatatt }}>
                 <span class="ml-1 select-none">{{ choice.1|unlocalize }}</span>
             </label>
         {% if not inline_class %}</div>{% endif %}
         {% endfor %}
     </div>
-
-    <style>
-        .checkboxselectmultiple input {background-color: #fff;}
-    </style>
 </div>

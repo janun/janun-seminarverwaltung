@@ -5,39 +5,58 @@
 
 
 {% block content %}
-<div class="mx-auto max-w-xl md:bg-white md:shadow-lg md:px-8 md:py-4 rounded-lg md:border">
-    <h1 class="font-bold mb-5 text-2xl">Zwei-Faktor-Authentisierung einstellen</h1>
-    <p class="mb-8">
-        Durch die Zwei-Faktor-Authentisierung wird die Anmeldung deutlich sicherer.
-        Für die Anmeldung wird dann zusätzlich zum Passwort noch eine 6-stellige Zahl gebraucht,
-        die sich jedes Mal ändert.
+<div class="mx-auto max-w-3xl">
+    <h1 class="font-bold pb-4 text-2xl border-b mb-5">Zwei-Faktor-Authentisierung (2FA)</h1>
+    <p class="max-w-xl- mb-10">
+        Durch die Zwei-Faktor-Authentisierung wird die Anmeldung <strong>deutlich sicherer</strong>.
+        Für die Anmeldung wird dann zusätzlich zum Passwort noch eine <strong>6-stellige Zahl</strong> gebraucht,
+        die sich jedes Mal ändert. Dadurch kann nicht mehr einfach das Passwort ausprobiert werden.
     </p>
-    
-    <div class="mb-8">
-        <h2 class="font-bold text-lg">1. Authenticator App installieren</h4>
-        <p>Installier eine Authenticator App z.B. auf deinem Handy.</p>
-        <p>Beispiele: FreeOTP, Google Authenticator</p>
+
+    <div class="fieldset">
+        <div class="fieldset-header">
+            <h2 class="fieldset-heading">App installieren</h2>
+            <p>Du musst eine App auf Deinem Handy installieren.</p>
+        </div>
+        <div class="fieldset-content">
+            <p class="mb-4">Installier eine Authenticator App z.B. auf Deinem Handy:</p>
+            <ul class="list-disc ml-4">
+                <li><a class="underline" target="_blank" href="https://freeotp.github.io">FreeOTP</a>
+                <li><a class="underline" target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></li>
+                <li><a class="underline" target="_blank" href="https://www.microsoft.com/de-de/account/authenticator">Microsoft Authenticator</a></li>
+            </ul>
+        </div>
     </div>
 
-    <div class="mb-8">
-        <h2 class="font-bold text-lg">2. QR-Code scannen</h4>
-        <p>Scanne mit der App den QR-Code:</p>
-        <img src="{{ qr_code_url }}" />
+    <div class="fieldset">
+        <div class="fieldset-header">
+            <h2 class="fieldset-heading">QR-Code scannen</h2>
+            <p>Scanne mit der App den QR-Code.</p>
+        </div>
+        <div class="fieldset-content">
+            <img src="{{ qr_code_url }}" />
+        </div>
     </div>
 
-    <div>
-        <h2 class="font-bold text-lg">3. Bestätigen</h4>
-        <p>Generiere einen Token und gib ihn hier ein:
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-
-            <div class="mt-12 flex items-center justify-end md:-mx-8 md:px-4 py-4 md:-mb-4 md:bg-gray-100 md:rounded-b-lg">
-                <a class="mx-4 text-gray-700" href="{% url 'account_profile' %}">Abbrechen</a>
-                <button class="mx-4 button button-primary" type="submit">Bestätigen</button>
+    <form method="post">
+        <div class="fieldset">
+            <div class="fieldset-header">
+                <h2 class="fieldset-heading">Bestätigen</h2>
+                <p>Um zu überprüfen, dass es funktioniert.</p>
             </div>
-        </form>
-    </div>
+            <div class="fieldset-content">
+                <p class="mb-4">Generiere mit der App einen Token und gib ihn hier ein:</p>
+                {% csrf_token %}
+                {{ form|crispy }}
+            </div>
+        </div>
+    
+        <div class="mt-12 flex items-center justify-end">
+            <a class="mr-4 text-gray-700" href="{% url 'account_profile' %}">Abbrechen</a>
+            <button class="ml-4 button button-primary" type="submit">Bestätigen</button>
+        </div>
+    </form>
+
 </div>
 {% endblock %}
