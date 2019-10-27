@@ -8,7 +8,7 @@ module.exports = {
       default: {
         "input, textarea, multiselect, select, checkbox, radio": {
           backgroundColor: theme("colors.gray.100"),
-          borderColor: theme("colors.gray.300"),
+          borderColor: theme("colors.gray.400"),
           "&:disabled": {
             cursor: "not-allowed",
             borderColor: theme("colors.gray.100")
@@ -65,7 +65,8 @@ module.exports = {
   },
   variants: {
     boxShadow: ["responsive", "hover", "focus", "focus-within"],
-    textColor: ["responsive", "hover", "focus", "group-hover"],
+    textColor: ["responsive", "hover", "focus", "group-hover", "focus-within"],
+    border: ["responsive", "hover", "focus"],
   },
   plugins: [require("@tailwindcss/custom-forms")]
 };
