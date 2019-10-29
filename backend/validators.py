@@ -9,7 +9,7 @@ from django.utils.html import mark_safe
 PWNED_ENDPOINT = "https://api.pwnedpasswords.com/range/"
 
 
-class PwnedPasswordValidator(object):
+class PwnedPasswordValidator:
     """Checks pwnedpasswords.com, falls back to CommonPasswordValidator"""
 
     def _is_pwned(self, password):
