@@ -11,6 +11,8 @@
             </label>
         {% endif %}
 
+        {% include './help_text_and_errors.html' %}
+
         <div class="{{ field_class }}">
             {% if field|is_select %}
                 {% if crispy_prepended_text %}<span class="input-group{% if active %} active{% endif %}{% if input_size %} {{ input_size }}{% endif %}">{{ crispy_prepended_text|safe }}</span>{% endif %}
@@ -33,8 +35,6 @@
                     </div>
                 </div>
             {% endif %}
-
-            {% include './help_text_and_errors.html' %}
         </div>
 
     </div>
