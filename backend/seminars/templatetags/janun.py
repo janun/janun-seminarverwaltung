@@ -2,6 +2,7 @@ from django import template
 from django import forms
 
 from backend.utils import format_number
+import django_filters
 
 register = template.Library()
 
@@ -19,3 +20,8 @@ def is_selectmultiple(field):
 @register.filter
 def is_textarea(field):
     return isinstance(field.field.widget, forms.Textarea)
+
+
+@register.filter
+def is_linkwidget(field):
+    return isinstance(field.field.widget, django_filters.widgets.LinkWidget)

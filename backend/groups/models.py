@@ -66,7 +66,7 @@ class JANUNGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("group_detail", kwargs={"slug": self.slug})
+        return reverse("groups:detail", kwargs={"slug": self.slug})
 
     objects = JANUNGroupManager()
 

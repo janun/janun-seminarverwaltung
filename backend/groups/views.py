@@ -1,8 +1,26 @@
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView, CreateView
 from django.db.models import Sum
 from django.contrib.auth.mixins import UserPassesTestMixin
 
+from django_tables2.views import SingleTableMixin
+
 from .models import JANUNGroup
+from .tables import JANUNGroupTable
+
+
+class JANUNGroupAddView(CreateView):
+    model = JANUNGroup
+
+
+class JANUNGroupStaffListView(SingleTableMixin, UserPassesTestMixin, ListView):
+    model = JANUNGroup
+    template_name = "groups/groups_staff.html"
+    context_object_name = "group"
+    table_class = JANUNGroupTable
+
+    def test_func(self):
+        if self.request.user.is_staff:
+            return True
 
 
 class JANUNGroupDetailView(UserPassesTestMixin, DetailView):

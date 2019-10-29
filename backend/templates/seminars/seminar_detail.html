@@ -31,23 +31,21 @@
       </div>
     {% endif %}
 
-    {% if seminar.owner and seminar.owner != user %}
-      <div class="mb-1">
-        von
-        {% if user.is_staff %}
-          <a class="" href="{% url 'admin:users_user_change' seminar.owner.pk %}">{{ seminar.owner.name }}</a>
-        {% else %}
+    <div class="flex flex-wrap -mx-1">
+      {% if seminar.owner %}
+        <a class="flex items-center mx-1 mb-2" {% if user.is_staff %}href="{% url 'admin:users_user_change' seminar.owner.pk %}"{% endif %}>
+          <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M5 5a5 5 0 0 1 10 0v2A5 5 0 0 1 5 7V5zM0 16.68A19.9 19.9 0 0 1 10 14c3.64 0 7.06.97 10 2.68V20H0v-3.32z"/></svg>
           {{ seminar.owner.name }}
-        {% endif %}
-      </div>
-    {% endif %}
+        </a>
+      {% endif %}
 
-    {% if seminar.group %}
-      <a class="flex items-center mb-2" href="{{ seminar.group.get_absolute_url }}">
-        <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
-        {{ seminar.group.name }}
-      </a>
-    {% endif %}
+      {% if seminar.group %}
+        <a class="flex items-center mx-1 mb-2" href="{{ seminar.group.get_absolute_url }}">
+          <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
+          {{ seminar.group.name }}
+        </a>
+      {% endif %}
+    </div>
 
     {% if seminar.deadline_applicable %}
       <div>
@@ -93,11 +91,11 @@
   </div>
   
   {% if form.show_save_button %}
-    <div class="md:sticky bottom-0 md:bg-white-75 md:border-t-2 md:-mb-16 md:-mx-4">
+    <div class="md:sticky bottom-0 md:bg-white-75 md:border-t-2 md:-mb-16 md:-mx-8">
       <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4"> 
         <button class="order-10 button button-primary" type="submit">Speichern</button>
         {% if seminar.status == 'angemeldet' %}
-          <a class="mx-8 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminar_delete' seminar.start_date.year seminar.slug %}">Seminar löschen</a>
+          <a class="mx-8 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminars:delete' seminar.start_date.year seminar.slug %}">Seminar löschen</a>
         {% endif %}
       </div>
     </div>

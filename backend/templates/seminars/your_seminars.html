@@ -9,7 +9,7 @@
   {% if seminars %}
     <div class="md:flex flex-wrap items-center mb-8 md:mb-12">
       <h1 class="font-bold text-2xl">Alle Deine Seminare</h1>
-      <a class="mt-6 md:mt-0 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
+      <a class="mt-6 md:mt-0 ml-auto button button-primary" href="{% url 'seminars:apply' %}">
         <svg class="fill-current h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
         Seminar anmelden
       </a>
@@ -35,7 +35,7 @@
         <p class="font-bold text-2xl mb-2">Keine Seminare bis jetzt</p>
         <p>Entweder du hast noch keine Seminare angemeldet.</p>
         <p>Oder deine Seminare wurden noch nicht deinem Benutzerkonto zugeordnet.</p>
-        <a class="mt-10 md:order-1 ml-auto button button-primary" href="{% url 'seminar_apply' %}">
+        <a class="mt-10 md:order-1 ml-auto button button-primary" href="{% url 'seminars:apply' %}">
           Seminar anmelden
         </a>
       </div>

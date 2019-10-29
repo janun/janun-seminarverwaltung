@@ -114,6 +114,7 @@ STATES_CONFIRMED = (
     "überwiesen",
 )
 
+STATES_PROGRESS = STATES_CONFIRMED[:-1]
 
 STATES_REJECTED = ("abgelehnt", "abgesagt", "ohne Abrechnung", "Abrechnung unmöglich")
 

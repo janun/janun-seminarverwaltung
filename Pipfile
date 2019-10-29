@@ -30,6 +30,8 @@ django-preferences = "*"
 celery = "*"
 redis = "*"
 django-celery-email = "*"
+django-tables2 = "*"
+django-filter = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

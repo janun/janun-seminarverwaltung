@@ -1,11 +1,10 @@
-from django.urls import include, path
+from django.urls import path
+from backend.users import views
 
-from backend.users.views import ProfileView
-
+app_name = "users"
 
 urlpatterns = [
-    path("", include("allauth.urls")),
-    path("profile", ProfileView.as_view(), name="account_profile"),
-    path("", include("allauth_2fa.urls")),
-    path("", include("allauth.urls")),
+    path("", views.UserListView.as_view(), name="list"),
+    path("add", views.UserCreateView.as_view(), name="add"),
+    path("<int:pk>/", views.DetailView.as_view(), name="detail"),
 ]

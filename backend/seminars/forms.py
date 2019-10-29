@@ -1,6 +1,8 @@
 from django import forms
 from django.utils import timezone, formats
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
@@ -9,8 +11,61 @@ from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from backend.utils import Fieldset
-from .models import Seminar
+from .models import Seminar, FundingRate
 from .states import STATE_INFO, get_next_states
+
+
+class FundingRateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset(
+                "JANUN-Gruppen",
+                AppendedText("group_rate", "€"),
+                AppendedText("group_rate_one_day", "€"),
+                Field("group_limit_formula", css_class="w-full"),
+                AppendedText("group_limit", "€"),
+                text="Förderung für Seminare, die für JANUN-Gruppen angemeldet werden.",
+            ),
+            Fieldset(
+                "Einzelpersonen",
+                AppendedText("single_rate", "€"),
+                AppendedText("single_rate_one_day", "€"),
+                Field("single_limit_formula", css_class="w-full"),
+                AppendedText("single_limit", "€"),
+                text="Förderung für Seminare, die für Einzelpersonen angemeldet werden.",
+            ),
+        )
+
+    class Meta:
+        model = FundingRate
+        group_fields = (
+            "group_rate",
+            "group_rate_one_day",
+            "group_limit_formula",
+            "group_limit",
+        )
+        single_fields = (
+            "single_rate",
+            "single_rate_one_day",
+            "single_limit_formula",
+            "single_limit",
+        )
+        fields = group_fields + single_fields
+        widgets = {
+            "group_limit_formula": forms.Textarea(attrs={"rows": 2}),
+            "single_limit_formula": forms.Textarea(attrs={"rows": 2}),
+        }
+
+
+class SeminarImportForm(forms.Form):
+    file = forms.FileField(
+        label="CSV-Datei zum Importieren",
+        validators=[FileExtensionValidator(allowed_extensions=["csv"])],
+    )
 
 
 class SeminarChangeForm(forms.ModelForm):

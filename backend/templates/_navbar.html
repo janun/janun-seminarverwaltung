@@ -1,5 +1,5 @@
 <nav class="navbar bg-white shadow px-4 md:px-8">
-  <div class="flex justify-start items-stretch">
+  <div class="flex justify-start">
 
     <a href="/" class="flex items-center py-4">
       <svg viewbox="0 0 38 38" class="h-8 w-8 fill-current text-green-500">
@@ -11,22 +11,37 @@
     </a>
 
     {% if user.is_authenticated %}
-      <div class="sm:ml-10 hidden sm:flex">
-        <a class="mx-2 flex items-center" href="{% url 'dashboard' %}">Übersicht</a>
-        <a class="mx-2 flex items-center" href="{% url 'seminar_list' %}">Seminare</a>
-        {% if request.user.is_active and request.user.is_staff %}
-          <a class="mx-2 flex items-center" href="{% url 'admin:index' %}">Verwaltung</a>
+      <ul class="ml-5 hidden sm:flex">
+        <li>
+          <a class="flex items-center h-full mx-2 {% if request.path == "/" %}font-bold{% endif %}"
+             href="{% url 'dashboard' %}">Übersicht</a>
+        </li>
+        <li>
+          <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"
+             href="{% url 'seminars:list' %}">
+            Seminare</a>
+        </li>
+        {% if user.is_staff %}
+          <li>
+            <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "groups" %}font-bold{% endif %}"
+               href="{% url 'groups:staff_list' %}">Gruppen</a>
+          </li>
+          <li>
+            <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "users" %}font-bold{% endif %}"
+               href="{% url 'users:list' %}">
+              Konten</a>
+          </li>
         {% endif %}
-      </div>
+      </ul> 
+
       <div class="ml-auto flex">
-        <a title="Konto-Einstellungen" class="mx-2 flex items-center" href="{% url 'account_profile' %}">
+        <a title="Konto-Einstellungen" class="mx-2 flex items-center {% if request.resolver_match.url_name == "account_profile" %}font-bold{% endif %}"
+          href="{% url 'account_profile' %}">
           {{ user.username }}
         </a>
         <form class="flex items-center" method="post" action="{% url 'account_logout' %}">
           {% csrf_token %}
-          <button type="submit" class="mx-2 h-full flex items-center">
-            Logout
-          </button>
+          <button type="submit" class="mx-2 h-full flex items-center">Logout</button>
         </form>
       </div>
     {% endif %}

@@ -1,0 +1,38 @@
+{% extends "django_tables2/table.html" %}
+{% load django_tables2 %}
+
+{% block pagination %}
+{% if table.page and table.paginator.num_pages > 1 %}
+{% with table.page.paginator.count as total %}
+{% with table.page.object_list|length as count %}
+{% with table.page.paginator.num_pages as thelastone %}
+
+<div class="my-4 flex items-center justify-end text-sm">
+   <p class="mr-4">
+    {% if total != count %}{{ count }} / {{ total }}{% else %}{{ total }}{% endif %}
+  </p>
+
+  <ul class="inline-flex rounded shadow bg-white">
+    <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="{% querystring table.prefixed_page_field=1 %}">‹‹</a></li>
+    <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="{% if table.page.has_previous %}{% querystring table.prefixed_page_field=table.page.previous_page_number %}{% endif %}">‹</a></li>
+
+    {% for i in table.page.paginator.page_range %}
+      {% if  i|add:'-2' >= table.page.number|add:'-2' and i <= table.page.number|add:'2' or i|add:'2' <= table.page.number|add:'2' and i >= table.page.number|add:'-2' %}
+        {% ifequal i table.page.number %}
+          <li><a class="inline-block py-1 px-3 bg-gray-200"> {{ i }} </a></li>
+        {% else %}
+          <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="{% querystring table.prefixed_page_field=i %}">{{ i }}</a></li>
+        {% endifequal %}
+      {% endif %}
+    {% endfor%}
+
+    <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="{% if table.page.has_next %}{% querystring table.prefixed_page_field=table.page.next_page_number %}{% endif %}">›</a></li>
+    <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="{% querystring table.prefixed_page_field=thelastone %}">››</a></li>
+  </ul>
+</div>
+
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% endblock pagination %}

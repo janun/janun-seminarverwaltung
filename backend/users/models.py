@@ -71,6 +71,9 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("users:detail", kwargs={"pk": self.pk})
+
     def save(self, *args, **kwargs):
         # auto set is_staff and is_superuser
         if self.is_reviewed:

@@ -1,0 +1,66 @@
+.table-container table {
+  @apply w-full text-sm bg-white rounded-lg shadow-md;
+}
+
+.table-container th {
+  @apply sticky top-0 text-left px-2 py-2 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
+  box-shadow: 0 1px 0 0 rgba(0,0,0,.1);
+}
+
+.table-container th:first-child {
+  @apply rounded-tl-lg;
+}
+
+.table-container th:last-child {
+  @apply rounded-tr-lg;
+}
+
+.table-container td {
+  @apply px-2 py-4 border-b text-gray-800;
+}
+
+.table-container td a {
+  @apply inline-block -mx-2 -my-4 px-2 py-4;
+}
+
+.table-container td a:hover {
+  @apply underline;
+}
+
+.table-container .primary-column {
+  @apply font-bold;
+}
+
+.table-container th:first-child,
+.table-container td:first-child {
+  @apply pl-4;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  @apply pr-4;
+}
+
+.table-container .numeric {
+  @apply text-right whitespace-no-wrap;
+}
+
+.table-container tr:hover {
+  @apply bg-gray-150;
+}
+
+th.asc, th.desc {
+  @apply font-bold text-green-500;
+}
+
+th.asc a:after {
+  content: "↑";
+}
+
+th.desc a:after {
+  content: "↓";
+}
+
+.filters .form-select, .filters .col-form-label, .filters .form-input {
+  @apply text-xs py-1;
+}

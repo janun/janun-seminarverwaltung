@@ -59,6 +59,12 @@
                         {% else %}
                             {% crispy_field field 'class' 'form-textarea' %}
                         {% endif %}
+                    {% elif field|is_linkwidget %}
+                         {% if field.errors %}
+                            {% crispy_field field 'class' 'is-invalid' %}
+                        {% else %}
+                            {% crispy_field field %}
+                        {% endif %}
                     {% else %}
                         {% if field.errors %}
                             {% crispy_field field 'class' 'form-input is-invalid' %}

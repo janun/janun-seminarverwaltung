@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load django_tables2 janun crispy_forms_tags %}
+
+{% block head_title %}Benutzerkonten{% endblock %}
+
+{% block content %}
+
+<div class="mx-auto max-w-6xl">
+
+  <div class="md:flex flex-wrap items-center mb-12 pb-4 border-b">
+    <h1 class="font-bold text-xl">Benutzerkonten</h1>
+
+    <div class="ml-auto flex items-center text-gray-600">
+      <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'users:add' %}">
+        <svg class="fill-current h-4 w-4 mr-1" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
+        hinzufügen
+      </a>
+    </div>
+  </div>
+
+  {% render_table table %}
+
+</div>
+
+{% endblock content %}

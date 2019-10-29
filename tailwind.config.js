@@ -2,7 +2,8 @@ module.exports = {
   important: true,
   theme: {
     fontFamily: {
-      sans: ["Cabin", "sans-serif"]
+      sans: ["Cabin", "sans-serif"],
+      mono: "monospace"
     },
     customForms: theme => ({
       default: {
@@ -53,7 +54,8 @@ module.exports = {
         "white-75": "rgba(255, 255, 255, 0.75)"
       },
       maxWidth: {
-        xxs: "10rem"
+        xxs: "10rem",
+        "7xl": "90rem"
       },
       spacing: {
         "1.5": "0.375rem"
@@ -66,7 +68,7 @@ module.exports = {
   variants: {
     boxShadow: ["responsive", "hover", "focus", "focus-within"],
     textColor: ["responsive", "hover", "focus", "group-hover", "focus-within"],
-    border: ["responsive", "hover", "focus"],
+    borderColor: ["responsive", "hover", "focus"],
   },
   plugins: [require("@tailwindcss/custom-forms")]
 };

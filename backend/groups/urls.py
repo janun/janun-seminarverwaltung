@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 
+app_name = "groups"
+
 urlpatterns = [
-    path("<slug:slug>", views.JANUNGroupDetailView.as_view(), name="group_detail")
+    path("", views.JANUNGroupStaffListView.as_view(), name="staff_list"),
+    path("add", views.JANUNGroupAddView.as_view(), name="add"),
+    path("<slug:slug>", views.JANUNGroupDetailView.as_view(), name="detail"),
 ]

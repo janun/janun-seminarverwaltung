@@ -1,34 +1,195 @@
 from collections import OrderedDict
 
 from django.views.generic import (
+    View,
+    TemplateView,
     ListView,
+    FormView,
     DeleteView,
     UpdateView,
     CreateView,
-    TemplateView,
 )
+from django.views.generic.base import RedirectView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.urls import reverse
+from django.utils import timezone
+from django.http import HttpResponse
 
 from formtools.wizard.views import SessionWizardView
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+from tablib import Dataset
 
 from backend.mixins import ErrorMessageMixin
-from backend.seminars.models import Seminar, SeminarComment
+from backend.seminars.models import Seminar, SeminarComment, FundingRate
 from backend.seminars.forms import SeminarChangeForm
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
+from .templateddocs import fill_template, FileResponse
+from .tables import SeminarTable
+from .filters import SeminarStaffFilter
+from .admin import SeminarResource
+from .forms import SeminarImportForm, FundingRateForm
 
-class SeminarListView(ListView):
+
+class FundingRateUpdateView(
+    ErrorMessageMixin, SuccessMessageMixin, UserPassesTestMixin, UpdateView
+):
+    model = FundingRate
+    form_class = FundingRateForm
+
+    def get_success_message(self, request):
+        return "Förderungssätze {} gespeichert.".format(self.kwargs["year"])
+
+    def get_success_url(self):
+        year = self.kwargs["year"]
+        return reverse("seminars:list_staff", kwargs={"year": year})
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["year"] = self.kwargs["year"]
+        return context
+
+    def get_object(self):
+        year = self.kwargs["year"]
+        try:
+            return FundingRate.objects.get(year=year)
+        except FundingRate.DoesNotExist:
+            return FundingRate(year=year)
+
+
+class SeminarView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        if self.request.user.is_staff:
+            return reverse("seminars:list_staff", args=[timezone.now().year])
+        else:
+            return reverse("seminars:list_yours")
+
+
+class YourSeminarListView(ListView):
     model = Seminar
     context_object_name = "seminars"
-    template_name = "seminars/seminars.html"
+    template_name = "seminars/your_seminars.html"
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user)
+
+
+class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
+    model = Seminar
+    filterset_class = SeminarStaffFilter
+    context_object_name = "seminars"
+    template_name = "seminars/staff_seminars.html"
+    table_class = SeminarTable
+    paginate_by = 50
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year = self.kwargs["year"]
+        context["years"] = [
+            d.year for d in Seminar.objects.dates("start_date", "year", order="DESC")
+        ]
+        context["current_year"] = year
+        current_seminars = (
+            Seminar.objects.filter(start_date__year=year)
+            .is_confirmed()
+            .get_aggregates()
+        )
+        qs = context["filter"].qs.get_aggregates()
+        context["current_stats"] = {
+            "count": current_seminars["count"],
+            "funding": current_seminars["funding_sum"],
+            "tnt": current_seminars["tnt_sum"],
+        }
+        context["qs_stats"] = {
+            "count": qs["count"],
+            "funding": qs["funding_sum"],
+            "tnt": qs["tnt_sum"],
+        }
+        return context
+
+    def get_queryset(self):
+        year = self.kwargs["year"]
+        return (
+            super()
+            .get_queryset()
+            .filter(start_date__year=year)
+            .select_related("owner", "group")
+        )
+
+
+class SeminarExportView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, *args, **kwargs):
+        year = self.kwargs["year"]
+        qs = Seminar.objects.filter(start_date__year=year).order_by("start_date")
+        dataset = SeminarResource().export(qs)
+        filename = "seminare_{}.csv".format(year)
+        response = HttpResponse(dataset.csv, content_type="csv")
+        response["Content-Disposition"] = "attachment; filename={}".format(filename)
+        return response
+
+
+class SeminarProofOfUseView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, *args, **kwargs):
+        year = self.kwargs["year"]
+        qs = Seminar.objects.filter(
+            start_date__year=year, status="überwiesen"
+        ).order_by("start_date")
+        context = {"seminars": qs}
+        odt_filepath = fill_template("seminars/verwendungsnachweis.odt", context)
+        filename = "Verwendungsnachweis_{}.odt".format(year)
+        return FileResponse(odt_filepath, filename)
+
+
+# class SeminarImportView(ErrorMessageMixin, UserPassesTestMixin, FormView):
+#     template_name = "seminars/import.html"
+#     form_class = SeminarImportForm
+#     resource_class = SeminarResource
+#     success_url = "/seminars"
+
+#     def test_func(self):
+#         return self.request.user.is_staff
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["fields"] = [
+#             f.column_name for f in self.resource_class().get_user_visible_fields()
+#         ]
+#         context["possible_status"] = Seminar.STATE_CHOICES._db_values
+#         return context
+
+#     def form_valid(self, form):
+#         resource = self.resource_class()
+#         dataset = Dataset()
+#         dataset.load(self.request.FILES["file"].read().decode("utf-8"), format="csv")
+#         result = resource.import_data(
+#             dataset, dry_run=True, raise_errors=True, user=self.request.user
+#         )
+
+#         if not result.has_errors() and not result.has_validation_errors():
+#             resource.import_data(dataset, dry_run=False)
+#             messages.success(self.request, "Seminare erfolgreich importiert")
+#             return super().form_valid(form)
 
 
 def user_may_access_seminar(user, seminar):

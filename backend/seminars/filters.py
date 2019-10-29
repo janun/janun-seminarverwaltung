@@ -1,6 +1,13 @@
 import itertools
 
 from django.contrib import admin
+from django.db.models import Sum, Count
+from django import forms
+
+import django_filters
+
+from backend.groups.models import JANUNGroup
+from backend.users.models import User
 
 from .models import Seminar
 from .filter_multiple import MultipleListFilter
@@ -73,3 +80,48 @@ class YearListFilter(admin.SimpleListFilter):
         if self.value():
             return queryset.filter(start_date__year=int(self.value()))
         return queryset
+
+
+class SearchInput(forms.TextInput):
+    template_name = "widgets/search_input.html"
+
+
+class SeminarStaffFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(
+        label="",
+        lookup_expr="icontains",
+        widget=SearchInput(
+            attrs={"autofocus": True, "placeholder": "Filter nach Titel"}
+        ),
+    )
+    quarter = django_filters.ChoiceFilter(
+        label="Quartal",
+        field_name="start_date",
+        lookup_expr="quarter",
+        choices=[(i, "{0}".format(i)) for i in range(1, 5)],
+        widget=django_filters.widgets.LinkWidget(attrs={"class": "horizontal"}),
+    )
+    deadline = django_filters.ChoiceFilter(
+        label="Deadline",
+        field_name="deadline_status",
+        choices=(
+            ("expired", "abgelaufen"),
+            ("soon", "in 14 Tagen"),
+            ("not_soon", "länger hin"),
+            ("not_applicable", "n.z."),
+        ),
+        widget=django_filters.widgets.LinkWidget(),
+    )
+    status = django_filters.ChoiceFilter(
+        choices=Seminar.STATE_CHOICES, widget=django_filters.widgets.LinkWidget()
+    )
+    group = django_filters.ModelChoiceFilter(
+        null_label="keine", queryset=JANUNGroup.objects.order_by("name").all()
+    )
+    author = django_filters.ModelChoiceFilter(
+        label="Besitzer_in", queryset=User.objects.order_by("name").all()
+    )
+
+    class Meta:
+        model = Seminar
+        fields = ["title", "quarter", "deadline", "status", "group", "author"]

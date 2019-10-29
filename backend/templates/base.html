@@ -20,7 +20,7 @@
       {% include "_navbar.html" %}
 
       {% for message in messages %}
-        <div class="max-w-4xl mx-auto py-3 my-6 rounded-md bg-white shadow text-gray-800
+        <div class="{% block message_width %}max-w-4xl{% endblock %} mx-auto py-3 my-6 rounded-md bg-white shadow text-gray-800
                     {% if message.tags == "success" %}text-green-800{% endif %}
                     {% if message.tags == "error" %}text-red-800{% endif %}
           ">
@@ -36,7 +36,7 @@
         </div>
       {% endfor %}
 
-      <div class="px-4 mt-10">
+      <div class="px-4 xl:px-8 mt-10">
         {% block content %}{% endblock content %}
       </div>
     </div>

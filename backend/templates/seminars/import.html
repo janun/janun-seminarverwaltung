@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block head_title %}Seminare importieren{% endblock %}
+
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+
+  <div class="mb-5 pb-4 flex flex-wrap items-end justify-between border-b">
+    <h1 class="font-bold text-2xl">Seminare importieren</h1>
+  </div>
+
+  <div class="mb-10 text-gray-700">
+    <p class="mb">Du kannst eine CSV-Datei hochladen, um Seminare zu importieren.</p>
+    <p class="mb">Das Format muss dem Format der exportierten Dateien entsprechen,
+    Die erste Zeile muss die Spaltennamen beinhalten.</p>
+  </div>
+
+
+  <div class="fieldset">
+    <div class="fieldset-header">
+      <div class="fieldset-heading">Benötigte Spalten</div>
+      <p>Diese Spalten <i>müssen</i> angegeben werden.</p>
+    </div>
+    <div class="fieldset-content font-mono">
+      title, start_date
+    </div>
+  </div>
+
+  <div class="fieldset">
+    <div class="fieldset-header">
+      <div class="fieldset-heading">Mögliche Spalten</div>
+      <p>Diese Spalten <i>können</i> angegeben werden.</p>
+      <p class="mt-1">Andere Spalten werden ignoriert.</p>
+    </div>
+    <div class="fieldset-content">
+      <p class="font-mono">
+        {% for field in fields %} {{field}}, {% endfor %}
+      </p>
+    </div>
+  </div>
+
+  <div class="fieldset">
+    <div class="fieldset-header">
+      <div class="fieldset-heading">Spezielle Spalten</div>
+      <p>Bei Verwendung dieser Spalten muss etwas beachtet werden.</p>
+    </div>
+    <div class="fieldset-content">
+      <div class="mb-4">
+        <div class="font-bold text-lg"><code>id</code></div>
+        <p>Wird <code>id</code> angegeben und es existiert schon ein Seminar mit derselben <code>id</code>,
+        wird das Seminar <strong>überschrieben</strong>.
+        Sonst wird ein neues Seminar erstellt.</p>
+      </div>
+      <div class="mb-4">
+        <div class="font-bold text-lg"><code>owner</code> und <code>group</code></div>
+        <p>Müssen exakt so angegeben werden wie im Export, da sie andere Objekte referenzieren.
+        Die referenzierten Objekte müssen existieren.</p>
+      </div>
+      <div class="mb-4">
+        <div class="font-bold text-lg"><code>status</code></div>
+        <p>Erlaubte Werte:
+          {% for value in possible_status %} <code>{{ value }}</code>, {% endfor %}
+        </p>
+      </div>
+      <div class="mb-4">
+        <div class="font-bold text-lg"><code>slug</code></div>
+        <p>Wird für die URL des Seminars benutzt und normalerweise automatisch generiert. Am besten leer lassen.</p>
+      </div>
+    </div>
+  </div>
+
+  <form enctype="multipart/form-data" action="" method="POST">
+    {% csrf_token %}
+
+    <div class="fieldset">
+      <div class="fieldset-header">
+        <div class="fieldset-heading">Datei</div>
+      </div>
+      <div class="fieldset-content">
+        {{ form | crispy }}
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="button button-primary">Importieren</button>
+    </div>
+  </form>
+
+</div>
+{% endblock content %}

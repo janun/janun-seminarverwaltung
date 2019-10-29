@@ -26,7 +26,7 @@
           {% if user.janun_groups.all %}
             <ul>
               {% for group in user.janun_groups.all %}
-                <li><a class="underline" href="{% url 'group_detail' group.slug %}">{{ group.name }}</a></li>
+                <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
               {% endfor %}
             </ul>
             {% if not user.is_reviewed %}
@@ -43,7 +43,7 @@
             {% if user.group_hats.all %}
               <ul>
                 {% for group in user.group_hats.all %}
-                  <li><a class="underline" href="{% url 'group_detail' group.slug %}">{{ group.name }}</a></li>
+                  <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
                 {% endfor %}
               </ul>
               {% if not user.is_reviewed %}
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="md:sticky md:bottom-0 md:bg-white-75 md:border-t-2 md:-mx-4 md:-mb-16">
+  <div class="md:sticky md:bottom-0 md:bg-white-75 md:border-t-2 md:-mx-8 md:-mb-16">
     <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4">
       <button class="button button-primary" type="submit">Speichern</button>
     </div>

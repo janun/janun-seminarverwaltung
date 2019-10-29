@@ -7,9 +7,8 @@ import formulas
 from formulas.errors import FormulaError
 
 from django.db import models
-from django.db.models import Case, When, F, ExpressionWrapper, Value, Q
-from django.db.models.functions import ExtractYear, Concat, Cast
-from django.db.models.functions import Coalesce
+from django.db.models import Case, When, F, ExpressionWrapper, Value, Q, Sum, Count
+from django.db.models.functions import ExtractYear, Concat, Cast, Coalesce
 from django.utils import timezone
 from django.urls import reverse
 from django.core.exceptions import ValidationError
@@ -18,7 +17,7 @@ from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.utils import slugify_german
 
-from .states import STATES_CONFIRMED, STATES_REJECTED, STATES
+from .states import STATES_CONFIRMED, STATES_REJECTED, STATES, STATES_PROGRESS
 
 
 def get_quarter(date: datetime.date) -> int:
@@ -33,7 +32,7 @@ def add_none(*p) -> Optional[Decimal]:
 
 
 class FundingRate(models.Model):
-    year = models.IntegerField("Jahr")
+    year = models.IntegerField("Jahr", unique=True)
 
     group_rate = models.DecimalField(
         "Satz für Gruppen", max_digits=10, decimal_places=2
@@ -93,13 +92,13 @@ class FundingRate(models.Model):
             try:
                 self.test_formula(self.single_limit_formula)
             except FormulaError as error:
-                raise ValidationError({"single_limit_formula": error})
+                raise ValidationError({"single_limit_formula": str(error)})
 
         if self.group_limit_formula:
             try:
                 self.test_formula(self.group_limit_formula)
             except FormulaError as error:
-                raise ValidationError({"group_limit_formula": error})
+                raise ValidationError({"group_limit_formula": str(error)})
 
     def get_rate(self, has_group: bool, days: int) -> Decimal:
         if has_group:
@@ -270,6 +269,9 @@ class SeminarQuerySet(models.QuerySet):
     def is_not_rejected(self):
         return self.exclude(status__in=(STATES_REJECTED))
 
+    def is_in_progress(self):
+        return self.exclude(status__in=(STATES_PROGRESS))
+
     def last_year(self):
         return self.filter(start_date__year=timezone.now().year - 1)
 
@@ -278,6 +280,11 @@ class SeminarQuerySet(models.QuerySet):
 
     def next_year(self):
         return self.filter(start_date__year=timezone.now().year + 1)
+
+    def get_aggregates(self):
+        return self.aggregate(
+            count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
+        )
 
 
 class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
@@ -288,7 +295,7 @@ class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
 class Seminar(models.Model):
     STATE_CHOICES = Choices(*STATES)
 
-    title = models.CharField("Titel", max_length=255)
+    title = models.CharField("Titel", max_length=255, db_index=True)
     slug = AutoSlugField(
         "URL-Titel",
         populate_from="title",
@@ -458,7 +465,7 @@ class Seminar(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            "seminar_detail", kwargs={"slug": self.slug, "year": self.start_date.year}
+            "seminars:detail", kwargs={"slug": self.slug, "year": self.start_date.year}
         )
 
     def get_admin_change_url(self):

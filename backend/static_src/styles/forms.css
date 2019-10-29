@@ -44,3 +44,27 @@
 .show-optional .optionalField {
   @apply inline-block !important;
 }
+
+.linkwidget {
+  @apply text-sm;
+}
+
+.linkwidget.horizontal {
+  @apply flex flex-wrap -mx-1;
+}
+
+.linkwidget.horizontal a {
+  @apply px-1;
+}
+
+.linkwidget a {
+  @apply my-1 px-1;
+}
+
+.linkwidget .selected {
+  @apply font-bold border-l-4 border-green-500;
+}
+
+.linkwidget.horizontal .selected {
+  @apply font-bold border-l-0 border-b-2 border-green-500;
+}

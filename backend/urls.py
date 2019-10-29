@@ -3,12 +3,17 @@ from django.urls import include, path
 from django.contrib import admin
 from django.views.generic import TemplateView
 
+from backend.users import views as user_views
+
 
 urlpatterns = [
     path("", include("backend.dashboard.urls")),
     path("seminars/", include("backend.seminars.urls")),
     path("groups/", include("backend.groups.urls")),
-    path("accounts/", include("backend.users.urls")),
+    path("users/", include("backend.users.urls")),
+    path("accounts/profile", user_views.ProfileView.as_view(), name="account_profile"),
+    path("accounts/", include("allauth.urls")),
+    path("accounts/", include("allauth_2fa.urls")),
     path("admin/", admin.site.urls),
 ]
 
