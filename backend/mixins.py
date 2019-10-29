@@ -2,7 +2,7 @@ from django.contrib import messages
 
 
 class ErrorMessageMixin:
-    error_message = ""
+    error_message = "Es gab Probleme beim Speichern, schau ins Formular."
 
     def form_invalid(self, form):
         response = super().form_invalid(form)
