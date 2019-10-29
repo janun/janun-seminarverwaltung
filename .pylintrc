@@ -1,6 +1,6 @@
 [MASTER]
 load-plugins=pylint_django,pylint_quotes
-ignore=.git
+ignore=.git, migrations
 max-line-length=88
 string-quote=double-avoid-escape
 
