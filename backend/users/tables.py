@@ -10,6 +10,7 @@ class UserTable(tables.Table):
     group_hats = tables.ManyToManyColumn(
         verbose_name="Gruppen-Hüte", linkify_item=True, default=""
     )
+    has_totp = tables.BooleanColumn(verbose_name="2FA", orderable=False)
 
     class Meta:
         model = User
@@ -22,6 +23,7 @@ class UserTable(tables.Table):
             "group_hats",
             "is_active",
             "is_reviewed",
+            "has_totp",
             "last_visit",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}

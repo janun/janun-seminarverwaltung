@@ -7,6 +7,10 @@
   box-shadow: 0 1px 0 0 rgba(0,0,0,.1);
 }
 
+.table-container th a {
+  @apply inline-block -mx-2 -my-4 px-2 py-4;
+}
+
 .table-container th:first-child {
   @apply rounded-tl-lg;
 }

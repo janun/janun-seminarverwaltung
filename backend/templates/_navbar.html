@@ -10,7 +10,7 @@
       <span class="ml-2 text-green-500 font-bold">Seminare</span>
     </a>
 
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
       <ul class="ml-5 hidden sm:flex">
         <li>
           <a class="flex items-center h-full mx-2 {% if request.path == "/" %}font-bold{% endif %}"
@@ -21,7 +21,7 @@
              href="{% url 'seminars:list' %}">
             Seminare</a>
         </li>
-        {% if user.is_staff %}
+        {% if request.user.is_staff %}
           <li>
             <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "groups" %}font-bold{% endif %}"
                href="{% url 'groups:staff_list' %}">Gruppen</a>
@@ -37,7 +37,7 @@
       <div class="ml-auto flex">
         <a title="Konto-Einstellungen" class="mx-2 flex items-center {% if request.resolver_match.url_name == "account_profile" %}font-bold{% endif %}"
           href="{% url 'account_profile' %}">
-          {{ user.username }}
+          {{ request.user.username }}
         </a>
         <form class="flex items-center" method="post" action="{% url 'account_logout' %}">
           {% csrf_token %}

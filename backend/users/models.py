@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 
+from allauth_2fa.utils import user_has_valid_totp_device
 from model_utils import Choices
 from phonenumber_field.modelfields import PhoneNumberField
 from preferences.models import Preferences
@@ -72,7 +73,7 @@ class User(AbstractUser):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("users:detail", kwargs={"pk": self.pk})
+        return reverse("users:detail", kwargs={"username": self.username})
 
     def save(self, *args, **kwargs):
         # auto set is_staff and is_superuser
@@ -90,3 +91,7 @@ class User(AbstractUser):
             "admin:%s_%s_change" % (content_type.app_label, content_type.model),
             args=(self.id,),
         )
+
+    @property
+    def has_totp(self):
+        return user_has_valid_totp_device(self)

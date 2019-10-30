@@ -1,0 +1,25 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{{ block.super }} Neues Konto{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl mb-5 md:mb-10">
+  <h1 class="mb-4 font-bold text-2xl pb-4 border-b">
+    Neues Konto
+  </h1>
+</div>
+
+<form method="POST" action="">
+  <div class="max-w-4xl mx-auto">
+    {% crispy form %}
+  </div>
+
+  <div class="md:bg-white-75 md:border-t-2 md:-mx-8 md:-mb-16">
+    <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4">
+      <button class="button button-primary" type="submit">Konto erstellen</button>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

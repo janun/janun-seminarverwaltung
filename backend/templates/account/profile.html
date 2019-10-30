@@ -1,11 +1,11 @@
 {% extends "account/base.html" %}
 {% load crispy_forms_tags %}
 
-{% block head_title %}{{ block.super }} Dein Profil{% endblock %}
+{% block head_title %}{{ block.super }} Dein Konto{% endblock %}
 
 {% block content %}
 <div class="mx-auto max-w-4xl mb-5 md:mb-10">
-  <h1 class="mb-4 font-bold text-2xl pb-4 border-b">Konto-Einstellungen</h1>
+  <h1 class="mb-4 font-bold text-2xl pb-4 border-b">Dein Konto</h1>
   <div class="text-sm text-gray-600">Konto erstellt: {{ user.created_at }}</div>
   <div class="text-sm text-gray-600">Letzter Besuch: {{ user.last_visit }}</div>
 </div>

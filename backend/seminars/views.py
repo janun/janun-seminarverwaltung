@@ -223,7 +223,9 @@ class SeminarUpdateView(
         return user_may_access_seminar(self.request.user, self.get_object())
 
     def form_valid(self, form):
-        if not self.request.user == self.get_object().owner:
+        if not (
+            self.request.user == self.get_object().owner or self.request.user.is_staff
+        ):
             raise PermissionDenied()
         return super().form_valid(form)
 
@@ -240,7 +242,6 @@ class SeminarUpdateView(
 
 class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Seminar
-    template_name = "seminars/seminar_delete.html"
     success_url = "/"
     success_message = "Das Seminar {} wurde gelöscht."
 

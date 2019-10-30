@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block head_title %}{{ user.username }} löschen{% endblock %}
+
+
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pb-8 md:pt-6 md:border-t-4 md:border-red-500">
+
+    <div class="mb-5">
+      <h1 class="font-bold text-2xl text-red-600">Konto {{ user.username }} wirklich löschen?</h1>
+    </div>
+
+    <p>Bist du sicher, dass du dass Konto <strong>{{ user.username }}</strong> löschen möchtest?</p>
+
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="flex items-center justify-end mt-5">
+        <a class="js-focus button mx-4" href="{{ user.get_absolute_url }}">Abbrechen</a>
+        <button class="mx-4 button bg-red-600 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Konto löschen</button>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+{% endblock content %}

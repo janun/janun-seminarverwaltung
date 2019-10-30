@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Zwei-Faktor-Authentisierung einstellen{% endblock %}
+
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+    <h1 class="font-bold pb-4 text-2xl border-b mb-5">2FA für {{ user.name }}</h1>
+
+    <div class="fieldset">
+        <div class="fieldset-header">
+            <h2 class="fieldset-heading">QR-Code scannen</h2>
+            <p>Scanne mit der App den QR-Code.</p>
+        </div>
+        <div class="fieldset-content">
+            <img src="{{ qr_code_url }}" />
+        </div>
+    </div>
+
+
+    <form method="post">
+        <div class="fieldset">
+            <div class="fieldset-header">
+                <h2 class="fieldset-heading">Bestätigen</h2>
+                <p>Um zu überprüfen, dass es funktioniert.</p>
+            </div>
+            <div class="fieldset-content">
+                <p class="mb-4">Generiere mit der App einen Token und gib ihn hier ein:</p>
+                {% csrf_token %}
+                {{ form|crispy }}
+            </div>
+        </div>
+    
+        <div class="mt-12 flex items-center justify-end">
+            <a class="mr-4 text-gray-700" href="{% url 'users:detail' user.username %}">Abbrechen</a>
+            <button class="ml-4 button button-primary" type="submit">Bestätigen</button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

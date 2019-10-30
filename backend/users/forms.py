@@ -1,12 +1,17 @@
 from django import forms
 from django.urls import reverse
 from django.contrib.auth import password_validation
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 
 from allauth.account.forms import SignupForm as AllauthSignupForm
 from allauth.account.forms import ChangePasswordForm as AllauthChangePasswordForm
 from allauth.account.forms import LoginForm as AllauthLoginForm
 
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
 from allauth_2fa.adapter import OTPAdapter
+from allauth_2fa.utils import user_has_valid_totp_device
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div
@@ -169,6 +174,10 @@ class SignupForm(AllauthSignupForm):
 class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
+        if user_has_valid_totp_device(self.request.user):
+            totp_message = '<p class="text-green-600">2FA ist aktiviert.</p>'
+        else:
+            totp_message = '<p class="text-gray-600">2FA ist nicht aktiviert.</p>'
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -186,13 +195,14 @@ class ProfileForm(forms.ModelForm):
                 Link(
                     reverse("account_change_password"),
                     "Passwort ändern →",
-                    "block my-6 text-gray-700 hover:text-gray-800",
+                    "block font-semibold mt-8 mb-6 text-gray-700 hover:text-gray-800 hover:underline",
                 ),
                 Link(
                     reverse("two-factor-setup"),
                     "Zwei-Faktor-Authentisierung →",
-                    "block mb-6 text-gray-700 hover:text-gray-800",
+                    "block font-semibold mb-1 text-gray-700 hover:text-gray-800 hover:underline",
                 ),
+                HTML(totp_message),
             ),
         )
 
@@ -212,3 +222,198 @@ class ProfileForm(forms.ModelForm):
         model = User
         fields = ("name", "email", "username", "telephone")
         widgets = {"telephone": PhoneNumberInternationalFallbackWidget}
+
+
+class UserCreateForm(forms.ModelForm):
+    password = forms.CharField(
+        label="Passwort",
+        strip=False,
+        widget=forms.PasswordInput(render_value=True),
+        required=False,
+        help_text="Mindestens 8 Zeichen, empfohlen 12 oder mehr.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset(
+                "Kontakt",
+                Field("name", css_class="w-full"),
+                Field("email", css_class="w-full"),
+                Div(Field("telephone", css_class="w-full"), css_class="show-optional"),
+            ),
+            Fieldset(
+                "Anmeldung",
+                Field("username", css_class="w-full"),
+                Field("password", css_class="w-full"),
+            ),
+            Fieldset("Berechtigungen", "is_active", "is_reviewed", "role"),
+            Fieldset("Gruppen", "janun_groups", "group_hats"),
+        )
+
+        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields["email"].required = True
+
+        # set autofocus
+        self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
+    def _post_clean(self):
+        super()._post_clean()
+        password = self.cleaned_data.get("password")
+        if password:
+            try:
+                password_validation.validate_password(password, self.instance)
+            except forms.ValidationError as error:
+                self.add_error("password", error)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data["password"]
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
+
+    class Meta:
+        model = User
+        fields = (
+            "name",
+            "email",
+            "username",
+            "telephone",
+            "is_active",
+            "role",
+            "is_reviewed",
+            "janun_groups",
+            "group_hats",
+        )
+        widgets = {
+            "telephone": PhoneNumberInternationalFallbackWidget,
+            "janun_groups": forms.CheckboxSelectMultiple,
+            "group_hats": forms.CheckboxSelectMultiple,
+        }
+
+
+class UserDetailForm(forms.ModelForm):
+    password = forms.CharField(
+        label="Passwort ändern",
+        strip=False,
+        widget=forms.PasswordInput(render_value=True),
+        required=False,
+        help_text="Leer lassen lässt es unverändert. Mindestens 8 Zeichen, empfohlen 12 oder mehr.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        has_totp = user_has_valid_totp_device(self.request.user)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset(
+                "Kontakt",
+                Field("name", css_class="w-full"),
+                Field("email", css_class="w-full"),
+                Div(Field("telephone", css_class="w-full"), css_class="show-optional"),
+            ),
+            Fieldset(
+                "Anmeldung",
+                Field("username", css_class="w-full"),
+                Field("password", css_class="w-full"),
+                Link(
+                    reverse(
+                        "users:2fa_remove",
+                        kwargs={"username": self.request.user.username},
+                    ),
+                    "2FA ausschalten",
+                    "inline-block mb-1 mt-2 font-semibold text-gray-700 hover:text-gray-800 hover:underline",
+                )
+                if has_totp
+                else Link(
+                    reverse(
+                        "users:2fa", kwargs={"username": self.request.user.username}
+                    ),
+                    "2FA einrichten",
+                    "inline-block mb-1 mt-2 font-semibold text-gray-700 hover:text-gray-800 hover:underline",
+                ),
+                HTML('<p class="text-green-600">2FA ist aktiviert.</p>')
+                if has_totp
+                else HTML('<p class="text-gray-600">2FA ist nicht aktiviert.</p>'),
+            ),
+            Fieldset("Berechtigungen", "is_active", "is_reviewed", "role"),
+            Fieldset("Gruppen", "janun_groups", "group_hats"),
+        )
+
+        # TODO:
+        # if self.instance.role == "Teamer_in":
+        #     del self.fields["group_hats"]
+
+        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields["email"].required = True
+
+        # set autofocus
+        self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
+
+    def _post_clean(self):
+        super()._post_clean()
+        password = self.cleaned_data.get("password")
+        if password:
+            try:
+                password_validation.validate_password(password, self.instance)
+            except forms.ValidationError as error:
+                self.add_error("password", error)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data["password"]
+        if password:
+            user.set_password(password)
+            if user.pk and self.request:
+                messages.success(self.request, "Passwort wurde geändert.")
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
+
+    class Meta:
+        model = User
+        fields = (
+            "name",
+            "email",
+            "username",
+            "telephone",
+            "is_active",
+            "role",
+            "is_reviewed",
+            "janun_groups",
+            "group_hats",
+        )
+        widgets = {
+            "telephone": PhoneNumberInternationalFallbackWidget,
+            "janun_groups": forms.CheckboxSelectMultiple,
+            "group_hats": forms.CheckboxSelectMultiple,
+        }
+
+
+class UserTOTPDeviceRemoveForm(forms.Form):
+    def __init__(self, user, **kwargs):
+        super().__init__(**kwargs)
+        self.user = user
+
+    def save(self):
+        # Delete any backup tokens.
+        try:
+            static_device = self.user.staticdevice_set.get(name="backup")
+            static_device.token_set.all().delete()
+            static_device.delete()
+        except ObjectDoesNotExist:
+            pass
+
+        # Delete TOTP device.
+        device = TOTPDevice.objects.get(user=self.user)
+        device.delete()
