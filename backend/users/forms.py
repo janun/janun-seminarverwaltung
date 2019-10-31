@@ -327,17 +327,14 @@ class UserDetailForm(forms.ModelForm):
                 Field("password", css_class="w-full"),
                 Link(
                     reverse(
-                        "users:2fa_remove",
-                        kwargs={"username": self.request.user.username},
+                        "users:2fa_remove", kwargs={"username": self.instance.username}
                     ),
                     "2FA ausschalten",
                     "inline-block mb-1 mt-2 font-semibold text-gray-700 hover:text-gray-800 hover:underline",
                 )
                 if has_totp
                 else Link(
-                    reverse(
-                        "users:2fa", kwargs={"username": self.request.user.username}
-                    ),
+                    reverse("users:2fa", kwargs={"username": self.instance.username}),
                     "2FA einrichten",
                     "inline-block mb-1 mt-2 font-semibold text-gray-700 hover:text-gray-800 hover:underline",
                 ),
