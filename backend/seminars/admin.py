@@ -16,8 +16,6 @@ import reversion
 
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
-from import_export import fields, resources
-from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportMixin
 
 from backend.users.models import User
@@ -27,21 +25,7 @@ from backend.utils import format_currency, format_with, admin_link, median_value
 from .templateddocs import fill_template, FileResponse
 from .models import Seminar, SeminarComment, FundingRate
 from .filters import QuarterListFilter, YearListFilter, DeadlineFilter, StatusListFilter
-
-
-class SeminarResource(resources.ModelResource):
-    owner = fields.Field(
-        column_name="owner", attribute="owner", widget=ForeignKeyWidget(User, "name")
-    )
-
-    group = fields.Field(
-        column_name="group",
-        attribute="group",
-        widget=ForeignKeyWidget(JANUNGroup, "name"),
-    )
-
-    class Meta:
-        model = Seminar
+from .resources import SeminarResource
 
 
 class CommentInlineFormset(forms.BaseInlineFormSet):

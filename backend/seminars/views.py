@@ -33,7 +33,7 @@ from backend.seminars import forms as seminar_forms
 from .templateddocs import fill_template, FileResponse
 from .tables import SeminarTable
 from .filters import SeminarStaffFilter
-from .admin import SeminarResource
+from .resources import SeminarResource
 from .forms import SeminarImportForm, FundingRateForm
 
 

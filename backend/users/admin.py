@@ -9,13 +9,12 @@ from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from allauth.account.models import EmailAddress
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
-from import_export import fields, resources
-from import_export.widgets import ManyToManyWidget
 from import_export.admin import ImportExportMixin
 from preferences.admin import PreferencesAdmin
 
 from backend.groups.models import JANUNGroup
 from .models import User, JANUNSeminarPreferences
+from .resources import UserResource
 
 # remove unused apps from admin
 admin.site.unregister(Group)
@@ -36,23 +35,6 @@ admin.site.site_url = None
 
 
 admin.site.register(JANUNSeminarPreferences, PreferencesAdmin)
-
-
-class UserResource(resources.ModelResource):
-    janun_groups = fields.Field(
-        column_name="janun_groups",
-        attribute="janun_groups",
-        widget=ManyToManyWidget(JANUNGroup, field="name"),
-    )
-
-    group_hats = fields.Field(
-        column_name="group_hats",
-        attribute="group_hats",
-        widget=ManyToManyWidget(JANUNGroup, field="name"),
-    )
-
-    class Meta:
-        model = User
 
 
 class UserAdmin(ImportExportMixin, BaseUserAdmin):
