@@ -11,6 +11,8 @@ from django.utils.text import slugify
 from crispy_forms.layout import Fieldset as CrispyFieldset
 from crispy_forms.layout import HTML
 
+import django_tables2 as tables
+
 
 class Fieldset(CrispyFieldset):
     def __init__(self, *args, **kwargs):
@@ -97,3 +99,27 @@ class AjaxableResponseMixin:
             data = {"pk": self.object.pk}
             return JsonResponse(data)
         return response
+
+
+class NumericColumn(tables.Column):
+    attrs = {"cell": {"class": "numeric"}}
+
+
+class EuroColumn(tables.TemplateColumn):
+    template = "{{ value|default:0|default_if_none:'?'|floatformat:2 }} €"
+    attrs = {"cell": {"class": "numeric"}}
+
+    def __init__(self, *args, **kwargs):
+        kwargs["template_code"] = self.template
+        super().__init__(*args, **kwargs)
+
+
+class ColoredBooleanColumn(tables.BooleanColumn):
+    def render(self, value):
+        if value:
+            return format_html(
+                '<div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-200"><svg class="fill-current text-green-900 h-2 w-2" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg></div>'
+            )
+        return format_html(
+            '<div class="flex items-center justify-center h-5 w-5 rounded-full bg-red-200"><svg class="fill-current text-red-900 h-2 w-2" viewBox="0 0 20 20"><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/></svg></div>'
+        )

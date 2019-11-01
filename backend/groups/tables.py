@@ -2,20 +2,9 @@ import django_tables2 as tables
 from django.utils.html import format_html
 from django.utils import timezone
 
+from backend.utils import NumericColumn, EuroColumn
+
 from .models import JANUNGroup
-
-
-class NumericColumn(tables.Column):
-    attrs = {"cell": {"class": "numeric"}}
-
-
-class EuroColumn(tables.TemplateColumn):
-    template = "{{ record.tnt_cost_simple_this_year|default:0|default_if_none:'?'|floatformat:2 }} €"
-    attrs = {"cell": {"class": "numeric"}}
-
-    def __init__(self, *args, **kwargs):
-        kwargs["template_code"] = self.template
-        super().__init__(*args, **kwargs)
 
 
 class JANUNGroupTable(tables.Table):
