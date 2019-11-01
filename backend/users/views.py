@@ -1,11 +1,11 @@
-from django.views.generic import ListView
+from django.views.generic import View, ListView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 
 from allauth_2fa.views import TwoFactorSetup, TwoFactorRemove
@@ -18,6 +18,7 @@ from backend.mixins import ErrorMessageMixin
 from .models import User
 from .forms import ProfileForm, UserDetailForm, UserCreateForm, UserTOTPDeviceRemoveForm
 from .tables import UserTable
+from .resources import UserResource
 
 
 class UserListView(SingleTableMixin, UserPassesTestMixin, ListView):
@@ -170,3 +171,16 @@ class UserTwoFactorRemoveView(UserPassesTestMixin, TwoFactorRemove):
             self.request, "2FA für {} ausgeschaltet.".format(self.get_object().username)
         )
         return result
+
+
+class UserExportView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, *args, **kwargs):
+        qs = User.objects.all()
+        dataset = UserResource().export(qs)
+        filename = "users.csv"
+        response = HttpResponse(dataset.csv, content_type="csv")
+        response["Content-Disposition"] = "attachment; filename={}".format(filename)
+        return response

@@ -11,6 +11,12 @@
     <h1 class="font-bold text-xl">Benutzerkonten</h1>
 
     <div class="ml-auto flex items-center text-gray-600">
+      {% if request.user.is_superuser %}
+        <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'users:export' %}">
+          <svg class="fill-current h-4 w-4 mr-1" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+          CSV-Export
+        </a>
+      {% endif %}
       <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'users:add' %}">
         <svg class="fill-current h-4 w-4 mr-1" viewBox="0 0 20 20"><path d="M11.746 8.254h6.983v3.492h-6.983v6.983H8.254v-6.983H1.271V8.254h6.983V1.271h3.492z"/></svg>
         hinzufügen

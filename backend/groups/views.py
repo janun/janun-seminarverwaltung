@@ -1,11 +1,13 @@
-from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic import View, DetailView, ListView, CreateView
 from django.db.models import Sum
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
 
 from django_tables2.views import SingleTableMixin
 
 from .models import JANUNGroup
 from .tables import JANUNGroupTable
+from .resources import JANUNGroupResource
 
 
 class JANUNGroupAddView(CreateView):
@@ -65,3 +67,16 @@ class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
             .aggregate(tnt_sum=Sum("tnt"), funding_sum=Sum("funding"))
         )
         return context
+
+
+class JANUNGroupExportView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, *args, **kwargs):
+        qs = JANUNGroup.objects.all()
+        dataset = JANUNGroupResource().export(qs)
+        filename = "janun_groups.csv"
+        response = HttpResponse(dataset.csv, content_type="csv")
+        response["Content-Disposition"] = "attachment; filename={}".format(filename)
+        return response

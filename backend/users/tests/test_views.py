@@ -189,4 +189,40 @@ class UserDetailViewTestCase(TestCase):
         self.assertEqual(user.janun_groups.get(), self.testgroup)
 
 
+class UserExportTestCase(TestCase):
+    url = reverse("users:export")
+
+    @classmethod
+    def setUpTestData(cls):
+        # user:
+        cls.testuser = User(name="Max Mustermann", username="testuser")
+        cls.testuser.set_password("secret")
+        cls.testuser.save()
+        # staff:
+        cls.testuser = User(name="Staff Mustermann", username="teststaff")
+        cls.testuser.set_password("secret")
+        cls.testuser.is_staff = True
+        cls.testuser.save()
+        # admin:
+        cls.testadmin = User(name="Admin Mustermann", username="testadmin")
+        cls.testadmin.set_password("secret")
+        cls.testadmin.is_superuser = True
+        cls.testadmin.is_staff = True
+        cls.testadmin.save()
+        # group:
+        cls.testgroup = JANUNGroup(name="Test-Gruppe")
+        cls.testgroup.save()
+
+    def test_teamer_denied(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get(self):
+        self.client.login(username="testadmin", password="secret")
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.content.split(b"\n")), 5)
+        self.assertContains(response, "Max Mustermann")
+
+
 # TODO: Test 2FA views
