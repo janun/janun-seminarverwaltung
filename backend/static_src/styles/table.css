@@ -3,12 +3,13 @@
 }
 
 .table-container th {
-  @apply sticky top-0 text-left px-2 py-2 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
-  box-shadow: 0 1px 0 0 rgba(0,0,0,.1);
+  @apply sticky top-0 text-left px-5 py-3 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
+  box-shadow: 0 2px 0 0 #edf2f7;
+  z-index: 10;
 }
 
 .table-container th a {
-  @apply inline-block -mx-2 -my-4 px-2 py-4;
+  @apply inline-block -my-3 py-3 w-full;
 }
 
 .table-container th:first-child {
@@ -20,11 +21,11 @@
 }
 
 .table-container td {
-  @apply px-2 py-4 border-b text-gray-800;
+  @apply p-5 border-b border-gray-200 text-gray-800;
 }
 
 .table-container td a {
-  @apply inline-block -mx-2 -my-4 px-2 py-4;
+  @apply inline-block -m-5 p-5;
 }
 
 .table-container td a:hover {
@@ -35,16 +36,6 @@
   @apply font-bold;
 }
 
-.table-container th:first-child,
-.table-container td:first-child {
-  @apply pl-4;
-}
-
-.table-container th:last-child,
-.table-container td:last-child {
-  @apply pr-4;
-}
-
 .table-container .numeric {
   @apply text-right whitespace-no-wrap;
 }
@@ -53,18 +44,30 @@
   @apply bg-gray-150;
 }
 
+th.orderable a:after {
+   content: "↑";
+   opacity: 0;
+}
+
+th.orderable:hover a:after {
+  opacity: 1;
+}
+
 th.asc, th.desc {
-  @apply font-bold text-green-500;
+  @apply font-bold text-gray-900;
 }
 
 th.asc a:after {
   content: "↑";
+  opacity: 1;
 }
 
 th.desc a:after {
   content: "↓";
+  opacity: 1;
 }
 
-.filters .form-select, .filters .col-form-label, .filters .form-input {
-  @apply text-xs py-1;
+
+.filters .form-group {
+  @apply mr-4
 }

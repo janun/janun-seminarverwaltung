@@ -99,7 +99,6 @@ class SeminarStaffFilter(django_filters.FilterSet):
         field_name="start_date",
         lookup_expr="quarter",
         choices=[(i, "{0}".format(i)) for i in range(1, 5)],
-        widget=django_filters.widgets.LinkWidget(attrs={"class": "horizontal"}),
     )
     deadline = django_filters.ChoiceFilter(
         label="Deadline",
@@ -110,11 +109,8 @@ class SeminarStaffFilter(django_filters.FilterSet):
             ("not_soon", "länger hin"),
             ("not_applicable", "n.z."),
         ),
-        widget=django_filters.widgets.LinkWidget(),
     )
-    status = django_filters.ChoiceFilter(
-        choices=Seminar.STATE_CHOICES, widget=django_filters.widgets.LinkWidget()
-    )
+    status = django_filters.ChoiceFilter(choices=Seminar.STATE_CHOICES)
     group = django_filters.ModelChoiceFilter(
         null_label="keine", queryset=JANUNGroup.objects.order_by("name").all()
     )

@@ -1,23 +1,38 @@
+from django.utils.html import format_html
+
 import django_tables2 as tables
+
+from backend.utils import ColoredBooleanColumn
 from .models import User
 
 
 class UserTable(tables.Table):
-    name = tables.Column(linkify=True, attrs={"td": {"class": "primary-column"}})
+    name = tables.Column(
+        verbose_name="Name", linkify=True, attrs={"td": {"class": "primary-column"}}
+    )
     janun_groups = tables.ManyToManyColumn(
         verbose_name="Mitgliedschaften", linkify_item=True, default=""
     )
     group_hats = tables.ManyToManyColumn(
         verbose_name="Gruppen-Hüte", linkify_item=True, default=""
     )
-    has_totp = tables.BooleanColumn(verbose_name="2FA", orderable=False)
+    is_active = ColoredBooleanColumn()
+    is_reviewed = ColoredBooleanColumn()
+    has_totp = ColoredBooleanColumn(verbose_name="2FA", orderable=False)
+
+    def render_name(self, record):
+        return format_html(
+            '<p class="whitespace-no-wrap">{}</p>'
+            '<p class="whitespace-no-wrap text-xs text-gray-600 font-normal">{}</p>',
+            record.name,
+            record.username,
+        )
 
     class Meta:
         model = User
         template_name = "table.html"
         fields = [
             "name",
-            "username",
             "role",
             "janun_groups",
             "group_hats",

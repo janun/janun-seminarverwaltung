@@ -49,27 +49,21 @@
   </div>
 </div>
 
-<div class="flex justify-stretch items-start">
 
-  <form action="" class="xl:sticky xl:top-0 w-64 mr-4 xl:pt-2 xl:mr-10 filters text-xs js-submit-on-input">
-    <div class="mb-4">
-      <span class="uppercase font-semibold text-gray-700">Filter</span>
-      <a class="ml-2 text-gray-600 hover:text-gray-800" href="?">Reset</a>
-    </div>
-    {{ filter.form | crispy }}
-  </form>
+<form action="" class="filters mb-5 flex flex-wrap items-end js-submit-on-input">
+  {{ filter.form | crispy }}
+</form>
 
-  <div class="w-full ml-auto">
-    <div class="flex justify-end">
-      <div class="text-sm mb-4 text-gray-700">
-        <span class="mr-2">{{ qs_stats.count }} <span class="text-xs">#</span></span>
-        <span class="mr-2"><span class="">{{ qs_stats.funding|default:0|number:2 }}</span> <span class="text-xs">€</span></span>
-        <span class="mr-2"><span class="">{{ qs_stats.tnt|default:0|number:0 }}</span> <span class="text-xs">TNT</span>
-        <span class="text-sm ml-2">gefunden</span>
-      </div>
+<div class="w-full ml-auto">
+  <div class="flex">
+    <div class="text-sm mb-4 text-gray-700">
+      <span class="mr-2">{{ qs_stats.count }} <span class="text-xs">#</span></span>
+      <span class="mr-2"><span class="">{{ qs_stats.funding|default:0|number:2 }}</span> <span class="text-xs">€</span></span>
+      <span class="mr-2"><span class="">{{ qs_stats.tnt|default:0|number:0 }}</span> <span class="text-xs">TNT</span>
+      <span class="text-sm ml-2">gefunden</span>
     </div>
-    {% render_table table %}
   </div>
+  {% render_table table %}
 </div>
 
 </div>
