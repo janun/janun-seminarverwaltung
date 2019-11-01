@@ -81,5 +81,6 @@ class SeminarTable(tables.Table):
             "deadline",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
+        attrs = {"class": "js-data-link"}
         order_by = "-start_date"
         empty_text = "Keine Seminare gefunden."
