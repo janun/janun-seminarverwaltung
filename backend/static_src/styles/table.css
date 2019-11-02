@@ -1,15 +1,15 @@
 .table-container table {
-  @apply w-full text-xs bg-white rounded-lg shadow-md;
+  @apply w-full text-sm bg-white rounded-lg shadow-md;
 }
 
 .table-container th {
-  @apply sticky top-0 text-left px-2 py-1 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
+  @apply sticky top-0 text-left px-2 py-3 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
   box-shadow: 0 2px 0 0 #edf2f7;
   z-index: 10;
 }
 
 .table-container th a {
-  @apply inline-block -my-1 py-1 w-full;
+  @apply inline-block -my-3 py-3 w-full;
 }
 
 .table-container th:first-child {
@@ -21,11 +21,11 @@
 }
 
 .table-container td {
-  @apply p-2 border-b border-gray-200 text-gray-800;
+  @apply px-2 py-5 border-b border-gray-200 text-gray-800;
 }
 
 .table-container td a {
-  @apply inline-block -m-2 p-2;
+  @apply inline-block py-5 -my-5;
 }
 
 @screen xl {
@@ -46,7 +46,7 @@
   }
 
   .table-container td a {
-    @apply -m-5 p-5
+    @apply -my-5 py-5
   }
 }
 
