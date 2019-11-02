@@ -1,4 +1,8 @@
 from django.utils.html import format_html
+from django.contrib.humanize.templatetags.humanize import NaturalTimeFormatter
+from django.template import defaultfilters
+from django.utils import timezone
+
 
 import django_tables2 as tables
 
@@ -26,6 +30,14 @@ class UserTable(tables.Table):
             '<p class="whitespace-no-wrap text-xs text-gray-600 font-normal">{}</p>',
             record.name,
             record.username,
+        )
+
+    def render_last_visit(self, record, value):
+        return format_html(
+            '<p class="whitespace-no-wrap">{}</p>'
+            '<p class="whitespace-no-wrap text-xs text-gray-600 font-normal">{}</p>',
+            NaturalTimeFormatter.string_for(value),
+            defaultfilters.date(timezone.localtime(value), "d.m.Y H:i"),
         )
 
     class Meta:
