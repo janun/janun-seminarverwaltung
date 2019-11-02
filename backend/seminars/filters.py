@@ -114,10 +114,10 @@ class SeminarStaffFilter(django_filters.FilterSet):
     group = django_filters.ModelChoiceFilter(
         null_label="keine", queryset=JANUNGroup.objects.order_by("name").all()
     )
-    author = django_filters.ModelChoiceFilter(
+    owner = django_filters.ModelChoiceFilter(
         label="Besitzer_in", queryset=User.objects.order_by("name").all()
     )
 
     class Meta:
         model = Seminar
-        fields = ["title", "quarter", "deadline", "status", "group", "author"]
+        fields = ["title", "quarter", "deadline", "status", "group", "owner"]
