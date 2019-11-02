@@ -13,7 +13,7 @@ class JANUNGroupTable(tables.Table):
         verbose_name="Mitglieder", linkify_item=True, default=""
     )
     group_hats = tables.ManyToManyColumn(
-        verbose_name="Hüte", linkify_item=True, default=""
+        verbose_name="Gruppenhut", linkify_item=True, default=""
     )
     seminars_this_year = NumericColumn(
         verbose_name="Seminare {}".format(timezone.now().year)

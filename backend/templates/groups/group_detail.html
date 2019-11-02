@@ -7,17 +7,27 @@
 
 {% block content %}
 <div class="mx-auto max-w-5xl">
-  <h1 class="font-bold text-2xl mb-6">{{ group.name }}</h1>
+  <div class="mb-5 pb-4 flex flex-wrap items-end border-b">
+    <h1 class="font-bold text-2xl">{{ group.name }}</h1>
+    {% if user.is_superuser %}
+      <div class="ml-auto flex items-center text-gray-600">
+        <a class="inline-flex items-center hover:text-gray-800 mx-4"
+          href="{% url 'groups:delete' group.slug %}">
+          löschen
+        </a>
+        <a class="inline-flex items-center hover:text-gray-800 mx-4"
+          href="{% url 'groups:edit' group.slug %}">
+          bearbeiten
+        </a>
+      </div>
+    {% endif %}
+  </div>
 
-  {% if user.is_staff %}
-    <div class="mb-1">
-      <span class="font-bold">Gruppenhüte:</span>
-      {% if group.group_hats.all %}
-        {{ group.group_hats.all|join:", " }}
-      {% else %}
-        Keine
-      {% endif %}
-    </div>
+  {% if group.group_hats.all %}
+  <div class="mb-1">
+    <span class="font-bold">Gruppenhut:</span>  
+    {{ group.group_hats.all|join:", " }}
+  </div>
   {% endif %}
 
   <div class="mb-10">

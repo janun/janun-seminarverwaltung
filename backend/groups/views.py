@@ -1,17 +1,63 @@
-from django.views.generic import View, DetailView, ListView, CreateView
+from django.views.generic import (
+    View,
+    DetailView,
+    ListView,
+    CreateView,
+    DeleteView,
+    UpdateView,
+)
 from django.db.models import Sum
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.urls import reverse_lazy
 
 from django_tables2.views import SingleTableMixin
 
 from .models import JANUNGroup
 from .tables import JANUNGroupTable
 from .resources import JANUNGroupResource
+from .forms import GroupCreateForm
 
 
-class JANUNGroupAddView(CreateView):
+class JANUNGroupUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView):
     model = JANUNGroup
+    success_message = "Änderung gespeichert."
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+    context_object_name = "group"
+    form_class = GroupCreateForm
+    template_name = "groups/group_update.html"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class JANUNGroupDeleteView(SuccessMessageMixin, UserPassesTestMixin, DeleteView):
+    model = JANUNGroup
+    success_url = reverse_lazy("groups:staff_list")
+    success_message = "{} wurde gelöscht."
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+    context_object_name = "group"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def delete(self, request, *args, **kwargs):
+        name = self.get_object().name
+        result = super().delete(request, *args, **kwargs)
+        messages.success(self.request, self.success_message.format(name))
+        return result
+
+
+class JANUNGroupCreateView(UserPassesTestMixin, CreateView):
+    form_class = GroupCreateForm
+    template_name = "groups/group_create.html"
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class JANUNGroupStaffListView(SingleTableMixin, UserPassesTestMixin, ListView):
@@ -21,8 +67,7 @@ class JANUNGroupStaffListView(SingleTableMixin, UserPassesTestMixin, ListView):
     table_class = JANUNGroupTable
 
     def test_func(self):
-        if self.request.user.is_staff:
-            return True
+        return self.request.user.is_staff
 
 
 class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
