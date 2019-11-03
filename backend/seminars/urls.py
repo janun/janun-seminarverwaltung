@@ -21,13 +21,27 @@ urlpatterns = [
         name="proof_of_use",
     ),
     path("your", views.YourSeminarListView.as_view(), name="list_yours"),
+    # edit:
     path("<int:year>/<slug:slug>", views.SeminarUpdateView.as_view(), name="detail"),
+    path(
+        "<int:year>/<slug:slug>/teamer",
+        views.SeminarTeamerUpdateView.as_view(),
+        name="detail_teamer",
+    ),
+    path(
+        "<int:year>/<slug:slug>/staff",
+        views.SeminarStaffUpdateView.as_view(),
+        name="detail_staff",
+    ),
+    # delete:
     path(
         "<int:year>/<slug:slug>/delete",
         views.SeminarDeleteView.as_view(),
         name="delete",
     ),
+    # create:
     path("apply", views.SeminarApplyView.as_view(), name="apply"),
+    # comments:
     path(
         "<int:year>/<slug:slug>/comments",
         views.CommentListView.as_view(),

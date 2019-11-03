@@ -25,16 +25,20 @@ from django_tables2.views import SingleTableMixin
 from tablib import Dataset
 
 from backend.mixins import ErrorMessageMixin
-from backend.seminars.models import Seminar, SeminarComment, FundingRate
-from backend.seminars.forms import SeminarChangeForm
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
+from .models import Seminar, SeminarComment, FundingRate
 from .templateddocs import fill_template, FileResponse
 from .tables import SeminarTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
-from .forms import SeminarImportForm, FundingRateForm
+from .forms import (
+    SeminarImportForm,
+    FundingRateForm,
+    SeminarTeamerChangeForm,
+    SeminarStaffChangeForm,
+)
 
 
 class FundingRateUpdateView(
@@ -214,23 +218,33 @@ def user_may_access_seminar(user, seminar):
     return False
 
 
-class SeminarUpdateView(
+class SeminarUpdateView(RedirectView):
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        year = kwargs["year"]
+        slug = kwargs["slug"]
+        if self.request.user.is_staff:
+            return reverse("seminars:detail_staff", kwargs={"year": year, "slug": slug})
+        else:
+            return reverse("seminars:detail_teamer", kwargs={"year": year, "slug": slug})
+
+
+class SeminarTeamerUpdateView(
     UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
 ):
-    form_class = SeminarChangeForm
-    queryset = Seminar.objects.select_related("owner", "group").prefetch_related(
-        "comments"
-    )
-    template_name = "seminars/seminar_detail.html"
+    form_class = SeminarTeamerChangeForm
+    queryset = Seminar.objects.select_related("owner", "group")
+    template_name = "seminars/seminar_teamer_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
 
     def test_func(self):
         return user_may_access_seminar(self.request.user, self.get_object())
 
     def form_valid(self, form):
-        if not (
-            self.request.user == self.get_object().owner or self.request.user.is_staff
-        ):
+        # only owner may save
+        if self.request.user != self.get_object().owner:
             raise PermissionDenied()
         return super().form_valid(form)
 
@@ -239,10 +253,22 @@ class SeminarUpdateView(
         kwargs["request"] = self.request
         return kwargs
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["comments"] = self.object.comments.filter(is_internal=False)
-        return context
+
+class SeminarStaffUpdateView(
+    UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
+):
+    form_class = SeminarStaffChangeForm
+    queryset = Seminar.objects.select_related("owner", "group")
+    template_name = "seminars/seminar_staff_detail.html"
+    success_message = "Deine Änderungen wurden gespeichert."
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
 
 
 class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):

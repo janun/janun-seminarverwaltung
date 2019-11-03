@@ -10,46 +10,36 @@
 
   <div class="mb-5 pb-4 flex flex-wrap items-end justify-between border-b">
     <h1 class="font-bold text-2xl">{{ seminar.title }}</h1>
-    {% if user.is_staff %}
-      <a class="text-sm flex items-center text-gray-500 hover:text-gray-800 focus:text-gray-800"
-        href="{% url 'admin:seminars_seminar_change' seminar.pk %}">
-        Verwaltungsansicht
-      </a>
-    {% endif %}
+    <div>
+      {% if user.is_staff %}
+        <a class="text-gray-500 hover:text-gray-800" href="{% url 'seminars:detail_staff' seminar.year seminar.slug %}">Verwaltungsansicht</a>
+      {% endif %}
+    </div>
   </div>
 
-  <div class="text-gray-700">
-    <div class="inline-flex items-center mb-2">
-      <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
+  <div class="text-gray-600">
+    <div class="inline-flex items-center mb-4">
+      <svg class="fill-current text-gray-600 h-3 w-3 mr-2" viewBox="0 0 20 20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
       {{ seminar.start_date | date }}
     </div>
 
     {% if seminar.location %}
-      <div class="ml-2 inline-flex items-center mb-2">
-        <svg class="fill-current text-gray-600 h-4 w-4 mr-1" viewBox="0 0 20 20"><path d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+      <div class="ml-2 inline-flex items-center mb-4">
+        <svg class="fill-current text-gray-600 h-3 w-3 mr-1" viewBox="0 0 20 20"><path d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
         {{ seminar.location }}
       </div>
     {% endif %}
 
-    <div class="flex flex-wrap -mx-1">
-      {% if seminar.owner %}
-        <a class="flex items-center mx-1 mb-2" {% if user.is_staff %}href="{% url 'admin:users_user_change' seminar.owner.pk %}"{% endif %}>
-          <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M5 5a5 5 0 0 1 10 0v2A5 5 0 0 1 5 7V5zM0 16.68A19.9 19.9 0 0 1 10 14c3.64 0 7.06.97 10 2.68V20H0v-3.32z"/></svg>
-          {{ seminar.owner.name }}
-        </a>
-      {% endif %}
-
-      {% if seminar.group %}
-        <a class="flex items-center mx-1 mb-2" href="{{ seminar.group.get_absolute_url }}">
-          <svg class="fill-current text-gray-600 h-4 w-4 mr-2" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
-          {{ seminar.group.name }}
-        </a>
-      {% endif %}
-    </div>
+    {% if seminar.group %}
+      <a class="inline-flex items-center mx-1 mb-4 hover:text-gray-900" href="{{ seminar.group.get_absolute_url }}">
+        <svg class="fill-current text-gray-600 h-3 w-3 mr-2" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
+        {{ seminar.group.name }}
+      </a>
+    {% endif %}
 
     {% if seminar.deadline_applicable %}
       <div>
-        Deadline: {{ seminar.deadline | date }}
+        Abrechnungsfrist: {{ seminar.deadline | date }}
         {% if seminar.deadline_status == 'expired' %}
           <span class="text-red-600 ml-1">
             <svg class="inline-block h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 5v6h2V5H9zm0 8v2h2v-2H9z"/></svg>
@@ -62,7 +52,6 @@
 
 <form method="post" class="md:mt-10 relative js-focus-invalid">
   <div class="mx-auto max-w-4xl">
-    {% csrf_token %}
     {% crispy form %}
 
     {% if seminar.has_accounting %}

@@ -317,7 +317,7 @@ class Seminar(models.Model):
         null=True,
         blank=True,
         related_name="seminars",
-        verbose_name="Eigentümer_in",
+        verbose_name="Besitzer_in",
     )
     group = models.ForeignKey(
         JANUNGroup,
@@ -332,8 +332,12 @@ class Seminar(models.Model):
         help_text="Um was genau geht es in dem Seminar? Welche Inhalte werden vermittelt?",
         blank=True,
     )
-    start_date = models.DateField("Start-Datum", db_index=True)
-    start_time = models.TimeField("Start-Zeit", blank=True, null=True)
+    start_date = models.DateField(
+        "Start-Datum", help_text="z.B. 2.5.2019", db_index=True
+    )
+    start_time = models.TimeField(
+        "Start-Zeit", help_text="z.B. 15:00", blank=True, null=True
+    )
     end_date = models.DateField("End-Datum")
     end_time = models.TimeField("End-Zeit", blank=True, null=True)
     location = models.CharField(
@@ -372,21 +376,25 @@ class Seminar(models.Model):
         "Vorschuss", max_digits=10, decimal_places=2, blank=True, null=True
     )
     actual_training_days = models.PositiveSmallIntegerField(
-        "Bildungstage", blank=True, null=True
+        "tatsächliche Bildungstage", blank=True, null=True
     )
     actual_funding = models.DecimalField(
-        "Förderbedarf", max_digits=10, decimal_places=2, blank=True, null=True
+        "tatsächlicher Förderbedarf",
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
     )
     transferred_at = models.DateField("überwiesen am", blank=True, null=True)
     expense_catering = models.DecimalField(
-        "Ausgaben für Verpflegung",
+        "Verpflegung",
         max_digits=10,
         decimal_places=2,
         blank=True,
         null=True,
     )
     expense_accomodation = models.DecimalField(
-        "Ausgaben für Unterkunft",
+        "Unterkunft",
         max_digits=10,
         decimal_places=2,
         blank=True,
@@ -402,7 +410,7 @@ class Seminar(models.Model):
     expense_accomodation_and_catering = property(get_expense_accomodation_and_catering)
 
     expense_referent = models.DecimalField(
-        "Ausgaben für Referent_innen",
+        "Referent_innen",
         max_digits=10,
         decimal_places=2,
         blank=True,

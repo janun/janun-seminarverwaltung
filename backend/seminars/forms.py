@@ -10,7 +10,7 @@ from crispy_forms.bootstrap import AppendedText
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
-from backend.utils import Fieldset
+from backend.utils import Fieldset, Link
 from .models import Seminar, FundingRate
 from .states import STATE_INFO, get_next_states
 
@@ -68,7 +68,7 @@ class SeminarImportForm(forms.Form):
     )
 
 
-class SeminarChangeForm(forms.ModelForm):
+class SeminarTeamerChangeForm(forms.ModelForm):
     def get_state_description(self):
         text = STATE_INFO[self.instance.status]["description"]
         if self.instance.status == "überwiesen" and self.instance.transferred_at:
@@ -77,7 +77,7 @@ class SeminarChangeForm(forms.ModelForm):
             )
         html = '<p class="text-sm mb-2 -mt-2">{0}</p>'.format(text)
         if self.instance.status != "angemeldet":
-            html += '<p class="text-sm mb-5">Seminardetails können jetzt nicht mehr geändert werden.</p>'
+            html += '<p class="text-sm mb-5">Seminardetails können von Teamern jetzt nicht mehr geändert werden.</p>'
         return html
 
     def __init__(self, *args, **kwargs):
@@ -92,13 +92,13 @@ class SeminarChangeForm(forms.ModelForm):
                 "Status",
                 "status",
                 HTML(self.get_state_description()),
-                text="Wie weit wir Dein Seminar bearbeitet haben.",
+                text="Wie weit das Seminar bearbeitet ist.",
             ),
             Fieldset(
                 "Inhalt",
                 Field("title", css_class="w-full"),
                 Field("description", css_class="w-full js-autogrow"),
-                text="Hilft uns zu entscheiden, ob das Seminar gefördert werden kann.",
+                text="Um zu entscheiden, ob das Seminar gefördert werden kann.",
             ),
             Fieldset(
                 "Zeit & Ort",
@@ -113,6 +113,7 @@ class SeminarChangeForm(forms.ModelForm):
                     css_class="flex -mx-2",
                 ),
                 Field("location", css_class="w-full"),
+                text="Wann und wo das Seminar stattfindet.",
             ),
             Fieldset(
                 "Förderung",
@@ -132,13 +133,7 @@ class SeminarChangeForm(forms.ModelForm):
                 AppendedText("requested_funding", "€", css_class="w-40"),
                 text="Angaben, die sich direkt auf die Förderung auswirken.",
             ),
-            "comment",
         )
-
-        self.fields["start_date"].help_text = "z.B. {}".format(
-            timezone.now().today().strftime("%d.%m.%Y")
-        )
-        self.fields["start_time"].help_text = "z.B. 15:00"
 
         # validate funding:
         max_funding = self.instance.get_max_funding()
@@ -151,6 +146,7 @@ class SeminarChangeForm(forms.ModelForm):
         next_states = get_next_states(self.instance.status)
         possible_states = [self.instance.status] + next_states
         self.fields["status"].choices = [(status, status) for status in possible_states]
+        self.fields["status"].widget = forms.RadioSelect()
 
         # set possible group choices:
         group_pks = [group.pk for group in self.request.user.janun_groups.all()]
@@ -177,7 +173,7 @@ class SeminarChangeForm(forms.ModelForm):
 
     class Meta:
         model = Seminar
-        fields = (
+        fields = [
             "status",
             "title",
             "description",
@@ -191,11 +187,180 @@ class SeminarChangeForm(forms.ModelForm):
             "planned_attendees_max",
             "requested_funding",
             "group",
+        ]
+        widgets = {"description": forms.Textarea({"rows": 3})}
+
+
+class SeminarStaffChangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        contact_details = Div()
+        if self.instance.owner:
+            contact_details = Div(
+                HTML('<div class="col-form-label">Kontakt</div>'),
+                Link(
+                    "mailto:{}".format(self.instance.owner.email),
+                    self.instance.owner.email,
+                    css_class="block hover:underline mb-1",
+                ),
+                css_class="ml-10 text-sm",
+            )
+            if self.instance.owner.telephone:
+                contact_details.append(
+                    Link(
+                        "tel:{}".format(self.instance.owner.telephone),
+                        self.instance.owner.telephone.as_national,
+                        css_class="block hover:underline",
+                    )
+                )
+
+        self.helper.layout = Layout(
+            Fieldset("Status", "status", text="Wie weit das Seminar bearbeitet ist."),
+            Fieldset(
+                "Besitz / Gruppe",
+                Div(
+                    Field("owner"),
+                    contact_details,
+                    css_class="flex flex-wrap items-start",
+                ),
+                "group",
+                text="Wer das Seminar besitzt und dadurch bearbeiten kann.",
+            ),
+            Fieldset(
+                "Inhalt",
+                Field("title", css_class="w-full"),
+                Field("description", css_class="w-full js-autogrow"),
+                text="Um zu entscheiden, ob das Seminar gefördert werden kann.",
+            ),
+            Fieldset(
+                "Zeit & Ort",
+                Div(
+                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Div(
+                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Field("location", css_class="w-full"),
+                text="Wann und wo das Seminar stattfindet.",
+            ),
+            Fieldset(
+                "Geplante TNT / Förderung",
+                Field("planned_training_days", css_class="w-24"),
+                Div(
+                    Div(
+                        Field("planned_attendees_min", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("planned_attendees_max", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                AppendedText("requested_funding", "€", css_class="w-40"),
+            ),
+            Fieldset(
+                "Abrechnung: TNT",
+                Field("actual_training_days", css_class="w-24"),
+                Div(
+                    Div(
+                        Field("actual_attendees_total", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("actual_attendees_jfg", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                Div(
+                    Div(
+                        Field("actual_attendence_days_total", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("actual_attendence_days_jfg", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+            ),
+            Fieldset(
+                "Ausgaben",
+                AppendedText("expense_catering", "€", css_class="w-40"),
+                AppendedText("expense_accomodation", "€", css_class="w-40"),
+                AppendedText("expense_referent", "€", css_class="w-40"),
+                AppendedText("expense_travel", "€", css_class="w-40"),
+                AppendedText("expense_other", "€", css_class="w-40"),
+                HTML(
+                    '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-minuend"></span></div>'
+                ),
+                css_class="js-sum",
+            ),
+            Fieldset(
+                "Einnahmen",
+                AppendedText("income_fees", "€", css_class="w-40"),
+                AppendedText("income_public", "€", css_class="w-40"),
+                AppendedText("income_other", "€", css_class="w-40"),
+                HTML(
+                    '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-subtrahend"></span></div>'
+                ),
+                css_class="js-sum",
+            ),
+            Fieldset(
+                "Abrechnung: Bilanz",
+                HTML(
+                    '<div class="mb-4">Ausgaben - Einnahmen: <span class="mx-1 js-substraction-difference"></span></div>'
+                ),
+                AppendedText("advance", "€", css_class="w-40"),
+                AppendedText("actual_funding", "€", css_class="w-40"),
+                "transferred_at",
+            ),
         )
-        widgets = {
-            "status": forms.RadioSelect,
-            "description": forms.Textarea({"rows": 3}),
-        }
+
+    class Meta:
+        model = Seminar
+        fields = [
+            "status",
+            "owner",
+            "group",
+            "title",
+            "description",
+            "start_date",
+            "start_time",
+            "end_date",
+            "end_time",
+            "location",
+            "planned_training_days",
+            "planned_attendees_min",
+            "planned_attendees_max",
+            "requested_funding",
+            "actual_training_days",
+            "actual_attendees_total",
+            "actual_attendees_jfg",
+            "actual_attendence_days_total",
+            "actual_attendence_days_jfg",
+            "expense_catering",
+            "expense_accomodation",
+            "expense_referent",
+            "expense_travel",
+            "expense_other",
+            "income_fees",
+            "income_public",
+            "income_other",
+            "advance",
+            "actual_funding",
+            "transferred_at",
+        ]
+        widgets = {"description": forms.Textarea({"rows": 3})}
 
 
 class SeminarStepForm(forms.ModelForm):

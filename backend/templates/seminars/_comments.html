@@ -4,7 +4,7 @@
   </div>
   <div class="w-full md:w-2/3">
     <form id="createCommentForm" class="bg-white p-4 shadow-md rounded-lg"
-          action="{% url 'comment_create' seminar.start_date.year seminar.slug %}" method="POST">
+          action="{% url 'seminars:comment_create' seminar.start_date.year seminar.slug %}" method="POST">
       {% csrf_token %}
       <textarea class="js-autogrow form-textarea w-full" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
       <div class="flex mt-2">
@@ -20,7 +20,7 @@
 
 
 <script>
-var getUrl = "{% url 'comment_list' seminar.start_date.year seminar.slug %}";
+var getUrl = "{% url 'seminars:comment_list' seminar.start_date.year seminar.slug %}";
 var container = document.getElementById("commentContainer");
 var createForm = document.getElementById("createCommentForm");
 var textarea = document.getElementById("id_text");
