@@ -248,10 +248,10 @@ class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     def test_func(self):
         user = self.request.user
         seminar = self.get_object()
-
-        if user == seminar.owner:
+        if user.is_superuser:
             return True
-        return False
+        if user == seminar.owner and seminar.status == "angemeldet":
+            return True
 
     def delete(self, request, *args, **kwargs):
         seminar_title = self.get_object().title
