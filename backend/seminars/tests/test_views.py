@@ -5,7 +5,7 @@ from backend.users.models import User
 from backend.seminars.models import Seminar
 
 
-class JANUNGroupExportTestCase(TestCase):
+class SeminarsExportTestCase(TestCase):
     url = reverse("seminars:export", kwargs={"year": 2019})
 
     @classmethod

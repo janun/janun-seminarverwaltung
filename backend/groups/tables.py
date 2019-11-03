@@ -1,6 +1,6 @@
-import django_tables2 as tables
-from django.utils.html import format_html
 from django.utils import timezone
+
+import django_tables2 as tables
 
 from backend.utils import NumericColumn, EuroColumn
 

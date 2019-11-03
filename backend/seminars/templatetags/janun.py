@@ -1,8 +1,9 @@
 from django import template
 from django import forms
 
-from backend.utils import format_number
 import django_filters
+
+from backend.utils import format_number
 
 register = template.Library()
 

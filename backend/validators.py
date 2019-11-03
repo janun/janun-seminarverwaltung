@@ -38,4 +38,7 @@ class PwnedPasswordValidator:
             )
 
     def get_help_text(self):
-        return "Es wird überprüft, ob das Passwort in einer Datenbank von gehackten Passwörtern enthalten ist."
+        return (
+            "Es wird überprüft, ob das Passwort in einer Datenbank "
+            "von gehackten Passwörtern enthalten ist."
+        )
