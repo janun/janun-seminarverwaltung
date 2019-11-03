@@ -87,11 +87,9 @@ class SearchInput(forms.TextInput):
 
 class SeminarStaffFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(
-        label="",
+        label="Filter nach Titel",
         lookup_expr="icontains",
-        widget=SearchInput(
-            attrs={"autofocus": True, "placeholder": "Filter nach Titel"}
-        ),
+        widget=SearchInput(attrs={"autofocus": True}),
     )
     quarter = django_filters.ChoiceFilter(
         label="Quartal",
@@ -106,7 +104,7 @@ class SeminarStaffFilter(django_filters.FilterSet):
             ("expired", "abgelaufen"),
             ("soon", "in 14 Tagen"),
             ("not_soon", "länger hin"),
-            ("not_applicable", "n.z."),
+            ("not_applicable", "nicht zutreffend"),
         ),
     )
     status = django_filters.ChoiceFilter(choices=Seminar.STATE_CHOICES)
