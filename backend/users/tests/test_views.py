@@ -189,6 +189,42 @@ class UserDetailViewTestCase(TestCase):
         self.assertEqual(user.janun_groups.get(), self.testgroup)
 
 
+class UserProfileViewTestCase(TestCase):
+    url = reverse("account_profile")
+
+    @classmethod
+    def setUpTestData(cls):
+        # user:
+        cls.testuser = User(name="Max Mustermann", username="testuser")
+        cls.testuser.set_password("secret")
+        cls.testuser.save()
+
+    def test_detail_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertContains(response, "Max Mustermann", status_code=200)
+
+    def test_detail_post(self):
+        self.client.login(username="testuser", password="secret")
+        post_response = self.client.post(
+            self.url,
+            {
+                "name": "Max Mustermann",
+                "email": "max@mustermann.com",
+                "telephone": "+495119897986",
+                "username": "testuser",
+                "password": "sadgadhe56egaefasdf",
+            },
+            follow=True,
+        )
+        self.assertRedirects(post_response, reverse("account_profile"))
+        self.assertContains(post_response, "Max Mustermann")
+        self.assertContains(post_response, "gespeichert")
+        user = post_response.context["user"]
+        self.assertEqual(user.name, "Max Mustermann")
+        self.assertEqual(user.telephone, "+495119897986")
+
+
 class UserExportTestCase(TestCase):
     url = reverse("users:export")
 
@@ -224,5 +260,7 @@ class UserExportTestCase(TestCase):
         self.assertEqual(len(response.content.split(b"\n")), 5)
         self.assertContains(response, "Max Mustermann")
 
+
+# TODO: DeleteView
 
 # TODO: Test 2FA views
