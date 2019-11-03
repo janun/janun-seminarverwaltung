@@ -6,7 +6,7 @@ from . import views
 app_name = "seminars"
 
 urlpatterns = [
-    path("", views.SeminarView.as_view(), name="list"),
+    path("", views.SeminarListView.as_view(), name="list"),
     # path("import", views.SeminarImportView.as_view(), name="import"),
     path("<int:year>", views.StaffSeminarListView.as_view(), name="list_staff"),
     path("<int:year>/export", views.SeminarExportView.as_view(), name="export"),

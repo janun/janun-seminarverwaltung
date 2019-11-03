@@ -66,7 +66,7 @@ class FundingRateUpdateView(
             return FundingRate(year=year)
 
 
-class SeminarView(RedirectView):
+class SeminarListView(RedirectView):
     permanent = False
     query_string = True
 
