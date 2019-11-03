@@ -83,7 +83,12 @@ class YourSeminarListView(ListView):
     template_name = "seminars/your_seminars.html"
 
     def get_queryset(self):
-        return super().get_queryset().filter(owner=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(owner=self.request.user)
+            .select_related("owner", "group")
+        )
 
 
 class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
