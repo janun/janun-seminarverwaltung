@@ -219,7 +219,13 @@ class SeminarStaffChangeForm(forms.ModelForm):
                 )
 
         self.helper.layout = Layout(
-            Fieldset("Status", "status", text="Wie weit das Seminar bearbeitet ist."),
+            Fieldset(
+                "Status",
+                "status",
+                text="Wie weit das Seminar bearbeitet ist.",
+                css_class="js-scroll-spy-section",
+                css_id="general",
+            ),
             Fieldset(
                 "Besitz / Gruppe",
                 Div(
@@ -292,6 +298,8 @@ class SeminarStaffChangeForm(forms.ModelForm):
                     ),
                     css_class="md:flex -mx-2",
                 ),
+                css_id="accounting",
+                css_class="js-scroll-spy-section",
             ),
             Fieldset(
                 "Ausgaben",

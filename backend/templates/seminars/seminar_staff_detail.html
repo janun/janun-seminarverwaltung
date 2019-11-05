@@ -15,22 +15,22 @@
     </div>
   </div>
 
-  <div class="text-gray-600">
-    <div class="inline-flex items-center mb-4">
+  <div class="text-gray-600 text-sm">
+    <div class="inline-flex items-center mb-2">
       <svg class="fill-current text-gray-600 h-3 w-3 mr-2" viewBox="0 0 20 20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
       {{ seminar.start_date | date }}
     </div>
 
     {% if seminar.location %}
-      <div class="ml-2 inline-flex items-center mb-4">
+      <div class="ml-2 inline-flex items-center mb-2">
         <svg class="fill-current text-gray-600 h-3 w-3 mr-1" viewBox="0 0 20 20"><path d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
         {{ seminar.location }}
       </div>
     {% endif %}
 
     {% if seminar.group %}
-      <a class="inline-flex items-center mx-1 mb-4 hover:text-gray-900" href="{{ seminar.group.get_absolute_url }}">
-        <svg class="fill-current text-gray-600 h-3 w-3 mr-2" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
+      <a class="inline-flex items-center mx-2 mb-2 hover:text-gray-900" href="{{ seminar.group.get_absolute_url }}">
+        <svg class="fill-current text-gray-600 h-3 w-3 mr-1" viewBox="0 0 20 20"><path d="M7 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1c2.15 0 4.2.4 6.1 1.09L12 16h-1.25L10 20H4l-.75-4H2L.9 10.09A17.93 17.93 0 0 1 7 9zm8.31.17c1.32.18 2.59.48 3.8.92L18 16h-1.25L16 20h-3.96l.37-2h1.25l1.65-8.83zM13 0a4 4 0 1 1-1.33 7.76 5.96 5.96 0 0 0 0-7.52C12.1.1 12.53 0 13 0z"/></svg>
         {{ seminar.group.name }}
       </a>
     {% endif %}
@@ -46,24 +46,41 @@
       </div>
     {% endif %}
   </div>
+
 </div>
 
-<form method="post" class="md:mt-10 relative js-focus-invalid">
-  <div class="mx-auto max-w-4xl">
-    {% crispy form %}
-
-  </div>
-
-  
-  <div class="fixed bottom-0 md:bg-white-75 md:border-t-2 w-full">
-    <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4"> 
-      <button class="order-10 button button-primary" type="submit">Speichern</button>
-      <a class="mx-8 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminars:delete' seminar.start_date.year seminar.slug %}">Seminar löschen</a>
+<div class="js-scroll-spy">
+  <div class="hidden md:block md:sticky md:top-0 md:w-full mt-8 md:bg-gray-200 z-50">
+    <div class="md:mx-auto md:max-w-4xl">
+      <ul class="js-scroll-spy-menu flex flex-wrap text-gray-600 border-b py-2" data-js-scroll-spy-class="text-gray-700 border-gray-600">
+        <li class="mr-3"><a class="inline-block -mb-3 pb-2 border-b hover:border-gray-500" href="#general">Allgemeines</a></li>
+        <li class="mx-3"><a class="inline-block -mb-3 pb-2 border-b hover:border-gray-500" href="#accounting">Abrechnung</a></li>
+        <li class="ml-3"><a class="inline-block -mb-3 pb-2 border-b hover:border-gray-500" href="#comments">
+          Kommentare
+          {% if seminar.comments.all %}
+            <span class="text-xs inline-flex items-center justify-center h-4 w-4 rounded-full bg-blue-200">{{ seminar.comments.all|length }}</span>
+          {% endif %}
+        </a></li>
+      </ul>
     </div>
   </div>
-  
-</form>
+
+  <form method="post" class="md:mt-10 relative js-focus-invalid">
+    <div class="mx-auto max-w-4xl">
+      {% crispy form %}
+    </div>
+    
+    <div class="md:fixed md:bottom-0 md:bg-white-75 md:border-t-2 md:w-full">
+      <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:px-8 md:py-4"> 
+        <button class="order-10 button button-primary" type="submit">Speichern</button>
+        <a class="mx-8 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminars:delete' seminar.start_date.year seminar.slug %}">Seminar löschen</a>
+      </div>
+    </div>
+  </form>
+
   <div class="mx-auto max-w-4xl">
-    {% include "seminars/_comments.html" %}
+    {% include "seminars/_comments.html" with comments=seminar.comments.all %}
   </div>
+
+</div>
 {% endblock content %}
