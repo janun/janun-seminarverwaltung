@@ -34,7 +34,7 @@ function watch() {
     [
       "backend/static_src/scripts/*.js",
     ],
-    styles
+    scripts
   );
 }
 
