@@ -249,6 +249,11 @@ class UserCreateForm(forms.ModelForm):
                 "Anmeldung",
                 Field("username", css_class="w-full"),
                 Field("password", css_class="w-full"),
+                HTML(
+                    '<div class="flex justify-end">'
+                    '<button type="button" data-password-field="#id_password" class="js-generate-password button text-sm font-normal bg-gray-300">Passwort generieren</button>'
+                    "</div>"
+                ),
             ),
             Fieldset("Berechtigungen", "is_active", "is_reviewed", "role"),
             Fieldset("Gruppen", "janun_groups", "group_hats"),
@@ -325,6 +330,11 @@ class UserDetailForm(forms.ModelForm):
                 "Anmeldung",
                 Field("username", css_class="w-full"),
                 Field("password", css_class="w-full"),
+                HTML(
+                    '<div class="flex justify-end mb-4">'
+                    '<button type="button" data-password-field="#id_password" class="js-generate-password button text-sm font-normal bg-gray-300">Passwort generieren</button>'
+                    "</div>"
+                ),
                 Link(
                     reverse(
                         "users:2fa_remove", kwargs={"username": self.instance.username}

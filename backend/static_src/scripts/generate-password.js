@@ -1,0 +1,30 @@
+function generateRandomString() {
+  return String.fromCharCode(window.crypto.getRandomValues(new Uint8Array(1))[0]);
+}
+
+function generatePassword(length) {
+  var pattern = /[a-zA-Z0-9_\-\+\.]/;
+  return Array.apply(null, { 'length': length })
+    .map(function () {
+      var result;
+      while (true) {
+        result = generateRandomString();
+        if (pattern.test(result)) {
+          return result;
+        }
+      }
+    })
+    .join('');
+}
+
+document.querySelectorAll('.js-generate-password').forEach(function (button) {
+  var fieldSelector = button.getAttribute('data-password-field');
+  if (!fieldSelector) return;
+  var field = document.querySelector(fieldSelector);
+  if (!field) return;
+
+  button.addEventListener('click', function (event) {
+    event.preventDefault();
+    field.value = generatePassword(12);
+  })
+})
