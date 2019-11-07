@@ -49,6 +49,7 @@ DJANGO_APPS = [
     "django.forms",
 ]
 THIRD_PARTY_APPS = [
+    "simple_history",
     "django_filters",
     "django_tables2",
     "djcelery_email",
@@ -57,7 +58,6 @@ THIRD_PARTY_APPS = [
     "formtools",
     "crispy_forms",
     "import_export",
-    "reversion",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -90,7 +90,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "dashboard:dashboard"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -131,7 +131,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "backend.users.middleware.SetLastVisitMiddleware",
     "backend.users.middleware.RequireLoginMiddleware",
-    "reversion.middleware.RevisionMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 # STATIC

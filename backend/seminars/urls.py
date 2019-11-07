@@ -24,6 +24,11 @@ urlpatterns = [
     # edit:
     path("<int:year>/<slug:slug>", views.SeminarUpdateView.as_view(), name="detail"),
     path(
+        "<int:year>/<slug:slug>/history",
+        views.SeminarHistoryView.as_view(),
+        name="history",
+    ),
+    path(
         "<int:year>/<slug:slug>/teamer",
         views.SeminarTeamerUpdateView.as_view(),
         name="detail_teamer",

@@ -7,6 +7,7 @@ from allauth_2fa.utils import user_has_valid_totp_device
 from model_utils import Choices
 from phonenumber_field.modelfields import PhoneNumberField
 from preferences.models import Preferences
+from simple_history.models import HistoricalRecords
 
 from backend.groups.models import JANUNGroup
 
@@ -21,6 +22,13 @@ class JANUNSeminarPreferences(Preferences):
     legal_url = models.URLField(
         "Link zum Impressum", default="https://www.janun.de/impressum"
     )
+    history = HistoricalRecords()
+
+    def __str__(self) -> str:
+        return "Einstellungen"
+
+    def get_absolute_url(self) -> str:
+        return ""
 
     class Meta:
         verbose_name = "Einstellung"
@@ -62,6 +70,9 @@ class User(AbstractUser):
     last_visit = models.DateTimeField("Letzter Besuch", null=True)
 
     objects = CaseInsensitiveUserManager()
+    history = HistoricalRecords(
+        excluded_fields=["last_visit", "last_login", "updated_at"]
+    )
     EMAIL_FIELD = "email"
 
     class Meta:

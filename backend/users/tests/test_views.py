@@ -22,7 +22,7 @@ class LoginTestCase(TestCase):
         post_response = self.client.post(
             self.url, {"login": "testuser", "password": "secret"}, follow=True
         )
-        self.assertRedirects(post_response, reverse("dashboard"))
+        self.assertRedirects(post_response, reverse("dashboard:dashboard"))
         self.assertContains(post_response, "Willkommen, Max Mustermann")
 
     def test_login_post_failure(self):

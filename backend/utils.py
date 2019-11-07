@@ -10,7 +10,6 @@ from django.utils.text import slugify
 
 from crispy_forms.layout import Fieldset as CrispyFieldset
 from crispy_forms.layout import HTML
-
 import django_tables2 as tables
 
 

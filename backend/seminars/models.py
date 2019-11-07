@@ -13,6 +13,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 
+from simple_history.models import HistoricalRecords
+
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.utils import slugify_german
@@ -141,11 +143,16 @@ class FundingRate(models.Model):
             funding = rate * tnt
             return self.limit(seminar, funding)
 
-    def __str__(self):
-        return "%s" % self.year
+    def __str__(self) -> str:
+        return "Förderungssätze %s" % self.year
+
+    history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse("seminars:funding_rates", kwargs={"year": self.year})
 
     class Meta:
-        verbose_name = "Förderungssatz"
+        verbose_name = "Förderungssätze"
         verbose_name_plural = "Förderungssätze"
 
 
@@ -396,18 +403,10 @@ class Seminar(models.Model):
     )
     transferred_at = models.DateField("überwiesen am", blank=True, null=True)
     expense_catering = models.DecimalField(
-        "Verpflegung",
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
+        "Verpflegung", max_digits=10, decimal_places=2, blank=True, null=True
     )
     expense_accomodation = models.DecimalField(
-        "Unterkunft",
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
+        "Unterkunft", max_digits=10, decimal_places=2, blank=True, null=True
     )
 
     def get_expense_accomodation_and_catering(self) -> Optional[Decimal]:
@@ -419,11 +418,7 @@ class Seminar(models.Model):
     expense_accomodation_and_catering = property(get_expense_accomodation_and_catering)
 
     expense_referent = models.DecimalField(
-        "Referent_innen",
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
+        "Referent_innen", max_digits=10, decimal_places=2, blank=True, null=True
     )
     expense_travel = models.DecimalField(
         "Fahrtkosten", max_digits=10, decimal_places=2, blank=True, null=True
@@ -454,6 +449,7 @@ class Seminar(models.Model):
         verbose_name_plural = "Seminare"
 
     objects = SeminarManager()
+    history = HistoricalRecords(excluded_fields=["updated_at", "slug"])
 
     def clean(self):
         if self.end_date and self.start_date:
@@ -543,10 +539,15 @@ class SeminarComment(models.Model):
     def was_edited(self):
         return self.updated_at - self.created_at > datetime.timedelta(seconds=1)
 
+    def get_absolute_url(self):
+        return "{}#comments".format(self.seminar.get_absolute_url())
+
+    history = HistoricalRecords(excluded_fields=["updated_at"])
+
     class Meta:
         ordering = ("-created_at",)
         verbose_name = "Kommentar"
         verbose_name_plural = "Kommentare"
 
     def __str__(self) -> str:
-        return self.text
+        return "Kommentar an {}".format(self.seminar)

@@ -23,7 +23,7 @@
 }
 
 .fieldset-heading {
-  @apply text-gray-800 mb-2 text-xl;
+  @apply text-gray-800 mb-2 text-lg;
 }
 
 .fieldset-content {

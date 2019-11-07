@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import itertools
+from operator import attrgetter
 
 from django.views.generic import (
     View,
@@ -30,7 +32,7 @@ from backend.seminars import forms as seminar_forms
 
 from .models import Seminar, SeminarComment, FundingRate
 from .templateddocs import fill_template, FileResponse
-from .tables import SeminarTable
+from .tables import SeminarTable, SeminarHistoryTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
 from .forms import (
@@ -226,7 +228,9 @@ class SeminarUpdateView(RedirectView):
         if self.request.user.is_staff:
             return reverse("seminars:detail_staff", kwargs={"year": year, "slug": slug})
         else:
-            return reverse("seminars:detail_teamer", kwargs={"year": year, "slug": slug})
+            return reverse(
+                "seminars:detail_teamer", kwargs={"year": year, "slug": slug}
+            )
 
 
 class SeminarTeamerUpdateView(
@@ -250,6 +254,24 @@ class SeminarTeamerUpdateView(
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         return kwargs
+
+
+class SeminarHistoryView(UserPassesTestMixin, TemplateView):
+    template_name = "seminars/seminar_history.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        seminar = get_object_or_404(
+            Seminar, slug=self.kwargs["slug"], year=self.kwargs["year"]
+        )
+        seminar_history = seminar.history.all()
+        history = sorted(seminar_history, key=attrgetter("history_date"), reverse=True)
+        context["seminar"] = seminar
+        context["history_table"] = SeminarHistoryTable(history)
+        return context
 
 
 class SeminarStaffUpdateView(
@@ -385,9 +407,8 @@ class CommentCreateView(AjaxableResponseMixin, CreateView):
         if not user_may_access_seminar(self.request.user, seminar):
             raise PermissionDenied()
         form.instance.seminar = seminar
+        form.instance.owner = self.request.user
         result = super().form_valid(form)
-        self.object.owner = self.request.user
-        self.object.save()
         return result
 
 

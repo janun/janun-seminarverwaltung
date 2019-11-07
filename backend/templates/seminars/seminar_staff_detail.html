@@ -9,9 +9,10 @@
 <div class="mx-auto max-w-4xl">
 
   <div class="mb-5 pb-4 flex flex-wrap items-end justify-between border-b">
-    <h1 class="font-bold text-2xl">{{ seminar.title }}</h1>
+    <h1 class="font-bold text-xl">{{ seminar.title }}</h1>
     <div>
-      <a class="text-gray-500 hover:text-gray-800" href="{% url 'seminars:detail_teamer' seminar.year seminar.slug %}">Teamenden-Ansicht</a>
+      <a class="mx-2 text-gray-500 hover:text-gray-800" href="{% url 'seminars:history' seminar.year seminar.slug %}">Historie</a>
+      <a class="mx-2 text-gray-500 hover:text-gray-800" href="{% url 'seminars:detail_teamer' seminar.year seminar.slug %}">Teamenden-Ansicht</a>
     </div>
   </div>
 

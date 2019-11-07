@@ -12,10 +12,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.urls import reverse
 
-import reversion
-
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
-
 from import_export.admin import ImportExportMixin
 
 from backend.users.models import User
@@ -86,7 +83,7 @@ class FundingRateAdmin(admin.ModelAdmin):
 
 
 @admin.register(Seminar)
-class SeminarAdmin(ImportExportMixin, reversion.admin.VersionAdmin):
+class SeminarAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = SeminarResource
     history_latest_first = True
     search_fields = [

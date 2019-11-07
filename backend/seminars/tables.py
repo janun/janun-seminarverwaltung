@@ -4,6 +4,7 @@ from django.template import defaultfilters
 import django_tables2 as tables
 
 from backend.utils import NumericColumn, EuroColumn
+from backend.dashboard.tables import HistoryTable
 
 from .models import Seminar
 from .states import STATE_INFO
@@ -22,6 +23,11 @@ def render_pill(value, color="green"):
         css_text,
         value,
     )
+
+
+class SeminarHistoryTable(HistoryTable):
+    class Meta:
+        exclude = ["history_object"]
 
 
 class SeminarTable(tables.Table):
@@ -73,6 +79,6 @@ class SeminarTable(tables.Table):
             "deadline",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link"}
+        attrs = {"class": "js-data-link table-hover"}
         order_by = "-start_date"
         empty_text = "Keine Seminare gefunden."

@@ -14,7 +14,7 @@
       <ul class="ml-5 hidden sm:flex">
         <li>
           <a class="flex items-center h-full mx-2 {% if request.path == "/" %}font-bold{% endif %}"
-             href="{% url 'dashboard' %}">Übersicht</a>
+             href="{% url 'dashboard:dashboard' %}">Übersicht</a>
         </li>
         <li>
           <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"

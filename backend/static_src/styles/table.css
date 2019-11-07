@@ -29,25 +29,59 @@
 }
 
 @screen xl {
-  .table-container table {
-    @apply text-sm;
-  }
-
   .table-container th {
-    @apply px-5 py-3
+    @apply px-5 py-3;
   }
 
   .table-container th a {
-    @apply -my-3 py-3
+    @apply -my-3 py-3;
   }
 
   .table-container td {
-    @apply p-5
+    @apply p-5;
   }
 
   .table-container td a {
-    @apply -my-5 py-5
+    @apply -my-5 py-5;
   }
+}
+
+/* table-condensed */
+.table-condensed td {
+  @apply p-2;
+}
+
+.table-condensed td:first-child {
+  @apply pl-4;
+}
+
+.table-condensed td:last-child {
+  @apply pr-4;
+}
+
+.table-condensed th {
+  @apply p-2;
+}
+
+.table-condensed th:first-child {
+  @apply pl-4;
+}
+
+.table-condensed th:last-child {
+  @apply pr-4;
+}
+
+.table-condensed td a {
+  @apply -my-2 py-2;
+}
+
+/* hover */
+.table-hover tr:hover {
+  @apply bg-gray-150;
+}
+
+.js-data-link tr {
+  @apply cursor-pointer;
 }
 
 .table-container td a:hover {
@@ -62,10 +96,7 @@
   @apply text-right whitespace-no-wrap;
 }
 
-.table-container tr:hover {
-  @apply bg-gray-150;
-}
-
+/* orderable */
 th.orderable a:after {
    content: "↑";
    opacity: 0;
@@ -89,11 +120,11 @@ th.desc a:after {
   opacity: 1;
 }
 
-
+/* filters */
 .filters .form-group {
-  @apply mr-4
+  @apply mr-4;
 }
 
 .filters input, .filters select {
-  @apply text-sm;
+  @apply text-sm bg-white;
 }
