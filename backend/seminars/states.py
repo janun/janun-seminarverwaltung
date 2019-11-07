@@ -116,6 +116,15 @@ STATES_CONFIRMED = (
 
 STATES_PROGRESS = STATES_CONFIRMED[:-1]
 
+STATES_BILLS_PRESENT = (
+    "Abrechnung angekommen",
+    "rechnerische Prüfung",
+    "inhaltliche Prüfung",
+    "Zweitprüfung",
+    "fertig geprüft",
+    "überwiesen",
+)
+
 STATES_REJECTED = ("abgelehnt", "abgesagt", "ohne Abrechnung", "Abrechnung unmöglich")
 
 STATES = STATES_APPLIED + STATES_CONFIRMED + STATES_REJECTED

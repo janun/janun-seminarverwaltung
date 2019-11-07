@@ -109,26 +109,24 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         year = self.kwargs["year"]
+        context["current_year"] = year
         context["years"] = [
             d.year for d in Seminar.objects.dates("start_date", "year", order="DESC")
         ]
-        context["current_year"] = year
-        current_seminars = (
+        context["confirmed_aggregates"] = (
             Seminar.objects.filter(start_date__year=year)
             .is_confirmed()
             .get_aggregates()
         )
-        qs = context["filter"].qs.get_aggregates()
-        context["current_stats"] = {
-            "count": current_seminars["count"],
-            "funding": current_seminars["funding_sum"],
-            "tnt": current_seminars["tnt_sum"],
-        }
-        context["qs_stats"] = {
-            "count": qs["count"],
-            "funding": qs["funding_sum"],
-            "tnt": qs["tnt_sum"],
-        }
+        context["transferred_aggregates"] = Seminar.objects.filter(
+            start_date__year=year, status="überwiesen"
+        ).get_aggregates()
+        context["bills_present_aggregates"] = (
+            Seminar.objects.filter(start_date__year=year)
+            .is_bills_present()
+            .get_aggregates()
+        )
+        context["qs_aggregates"] = context["filter"].qs.get_aggregates()
         return context
 
     def get_queryset(self):

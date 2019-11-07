@@ -17,7 +17,13 @@ from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.utils import slugify_german
 
-from .states import STATES_CONFIRMED, STATES_REJECTED, STATES, STATES_PROGRESS
+from .states import (
+    STATES_CONFIRMED,
+    STATES_REJECTED,
+    STATES,
+    STATES_PROGRESS,
+    STATES_BILLS_PRESENT,
+)
 
 
 def get_quarter(date: datetime.date) -> int:
@@ -270,7 +276,10 @@ class SeminarQuerySet(models.QuerySet):
         return self.exclude(status__in=(STATES_REJECTED))
 
     def is_in_progress(self):
-        return self.exclude(status__in=(STATES_PROGRESS))
+        return self.filter(status__in=(STATES_PROGRESS))
+
+    def is_bills_present(self):
+        return self.filter(status__in=(STATES_BILLS_PRESENT))
 
     def last_year(self):
         return self.filter(start_date__year=timezone.now().year - 1)

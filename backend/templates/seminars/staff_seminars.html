@@ -6,6 +6,7 @@
 {% block content %}
 <div class="mx-auto max-w-7xl">
 
+{% comment %} Year Navigation {% endcomment %}
 <ul class="flex pt-2 -mt-8 mb-8 text-sm -mx-2">
   {% for year in years %}
     <li>
@@ -16,14 +17,8 @@
   {% endfor %}
 </ul>
 
-<div class="md:flex flex-wrap items-baseline mb-12 border-b pb-4">
-  <h1 class="font-bold text-2xl">Seminare {{ current_year }}</h1>
-  <div class="ml-4">
-    <span class="mr-2"><span class="font-bold">{{ current_stats.count }}</span> <span class="text-xs">#</span></span>
-    <span class="mr-2"><span class="font-bold">{{ current_stats.funding|default:0|number:2 }}</span> <span class="text-xs">€</span></span>
-    <span class="mr-2"><span class="font-bold">{{ current_stats.tnt|default:0|number:0 }}</span> <span class="text-xs">TNT</span>
-    <span class="text-xs ml-2 text-gray-700">zugesagt</span>
-  </div>
+<div class="md:flex flex-wrap items-baseline mb-10 border-b pb-4">
+  <h1 class="font-bold text-xl">Seminare {{ current_year }}</h1>
 
   <div class="ml-auto flex items-center text-gray-600">
     <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'seminars:funding_rates' current_year %}">
@@ -49,6 +44,83 @@
   </div>
 </div>
 
+{% comment %} Stats {% endcomment %}
+<div class="flex flex-wrap mb-12 -mx-4">
+
+  <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
+    <div class="text-xs text-gray-600 mb-2">zugesagt:</div>
+    <div class="flex flex-col items-end">
+      <div class="mb-2">
+        <span class="font-bold text-xl">{{ confirmed_aggregates.funding_sum|default:0|number:2 }}</span>
+        <span class="text-sm">€</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ confirmed_aggregates.tnt_sum|default:0|number:0 }}</span>
+        <span class="text-xs">TNT</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ confirmed_aggregates.count }}</span>
+        <span class="text-xs">Stück</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
+    <div class="text-xs text-gray-600 mb-2">Abrechnung da:</div>
+    <div class="flex flex-col items-end">
+      <div class="mb-2">
+        <span class="font-bold text-xl">{% widthratio bills_present_aggregates.count confirmed_aggregates.count 100 %}</span>
+        <span class="">%</span>
+        /
+        <span class="font-bold text-sm">{{ bills_present_aggregates.count }}</span>
+        <span class="text-xs">Stück</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ bills_present_aggregates.funding_sum|default:0|number:2 }}</span>
+        <span class="text-sm">€</span>
+        /
+        <span class="font-bold text-sm">{% widthratio bills_present_aggregates.funding_sum confirmed_aggregates.funding_sum 100 %}</span>
+        <span class="text-sm">%</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ bills_present_aggregates.tnt_sum|default:0|number:0 }}</span>
+        <span class="text-xs">TNT</span>
+         /
+        <span class="font-bold text-sm">{% widthratio bills_present_aggregates.tnt_sum confirmed_aggregates.tnt_sum 100 %}</span>
+        <span class="text-sm">%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
+    <div class="text-xs text-gray-600 mb-2">überwiesen:</div>
+    <div class="flex flex-col items-end">
+      <div class="mb-2">
+        <span class="font-bold text-xl">{% widthratio transferred_aggregates.count confirmed_aggregates.count 100 %}</span>
+        <span class="">%</span>
+        /
+        <span class="font-bold text-sm">{{ transferred_aggregates.count }}</span>
+        <span class="text-xs">Stück</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ transferred_aggregates.funding_sum|default:0|number:2 }}</span>
+        <span class="text-sm">€</span>
+        /
+        <span class="font-bold text-sm">{% widthratio transferred_aggregates.funding_sum confirmed_aggregates.funding_sum 100 %}</span>
+        <span class="text-sm">%</span>
+      </div>
+      <div class="">
+        <span class="font-bold text-sm">{{ transferred_aggregates.tnt_sum|default:0|number:0 }}</span>
+        <span class="text-xs">TNT</span>
+         /
+        <span class="font-bold text-sm">{% widthratio transferred_aggregates.tnt_sum confirmed_aggregates.tnt_sum 100 %}</span>
+        <span class="text-sm">%</span>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
 
 <form action="" class="filters mb-5 flex flex-wrap items-end js-submit-on-input">
   {{ filter.form | crispy }}
@@ -57,9 +129,9 @@
 <div class="w-full ml-auto">
   <div class="flex">
     <div class="text-sm mb-4 text-gray-700">
-      <span class="mr-2">{{ qs_stats.count }} <span class="text-xs">#</span></span>
-      <span class="mr-2"><span class="">{{ qs_stats.funding|default:0|number:2 }}</span> <span class="text-xs">€</span></span>
-      <span class="mr-2"><span class="">{{ qs_stats.tnt|default:0|number:0 }}</span> <span class="text-xs">TNT</span>
+      <span class="mr-2">{{ qs_aggregates.count }} <span class="text-xs">Stück</span></span>
+      <span class="mr-2"><span class="">{{ qs_aggregates.funding_sum|default:0|number:2 }}</span> <span class="text-xs">€</span></span>
+      <span class="mr-2"><span class="">{{ qs_aggregates.tnt_sum|default:0|number:0 }}</span> <span class="text-xs">TNT</span>
       <span class="text-sm ml-2">gefunden</span>
     </div>
   </div>
