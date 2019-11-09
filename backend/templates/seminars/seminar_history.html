@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 {% load humanize janun django_tables2 %}
 
-{% block head_title %}{{ block.super }} Änderungen an {{ seminar }}{% endblock %}
+{% block head_title %}{{ block.super }} {{ seminar }} – Änderungshistorie{% endblock %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto">
 
-  <div class="mb-10 pb-4 flex flex-wrap items-end justify-between border-b">
-    <h1 class="font-bold text-xl">Änderungen an {{ seminar }}</h1>
+  <div class="mb-8 pb-4 flex flex-wrap items-end justify-between border-b">
+    <h1 class="font-bold text-2xl">
+      <a class="flex items-center" href="{% url 'seminars:detail_staff' seminar.year seminar.slug %}">
+        {{ seminar }}
+      </a>
+    </h1>
   </div>
 
   {% render_table history_table %}
