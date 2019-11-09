@@ -54,6 +54,6 @@ class UserTable(tables.Table):
             "last_visit",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link table-hover"}
+        attrs = {"class": "js-data-link table-hover table-sticky"}
         order_by = "name"
         empty_text = "Keine Konten gefunden."

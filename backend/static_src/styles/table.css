@@ -3,9 +3,13 @@
 }
 
 .table-container th {
-  @apply sticky top-0 text-left px-2 py-3 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
+  @apply text-left px-2 py-3 text-gray-700 bg-gray-100 font-semibold text-xs uppercase tracking-wider whitespace-no-wrap;
   box-shadow: 0 2px 0 0 #edf2f7;
   z-index: 10;
+}
+
+.table-sticky th {
+  @apply sticky top-0;
 }
 
 .table-container th a {
