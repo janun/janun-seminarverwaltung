@@ -65,6 +65,19 @@ class ChangePasswordForm(AllauthChangePasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            HTML(
+                '<p class="mb-6 text-gray-700">Aus Sicherheitsgründen musst Du Dein '
+                '<b class="whitespace-no-wrap">aktuelles Passwort</b> mit angeben.</p>'
+            ),
+            Field("oldpassword"),
+            HTML('<hr class="my-8 -mx-8">'),
+            Field("password1"),
+        )
+
         self.fields[
             "password1"
         ].help_text = "Mindestens 8 Zeichen, empfohlen 12 oder mehr."
