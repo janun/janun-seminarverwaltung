@@ -356,9 +356,8 @@ class UserDetailForm(forms.ModelForm):
             Fieldset("Gruppen", "janun_groups", "group_hats"),
         )
 
-        # TODO:
-        # if self.instance.role == "Teamer_in":
-        #     del self.fields["group_hats"]
+        if self.instance.role == "Teamer_in":
+            del self.fields["group_hats"]
 
         self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
         self.fields["email"].required = True
