@@ -79,6 +79,10 @@
   @apply -my-2 py-2;
 }
 
+.table-condensed .table-condensed-hidden {
+  @apply hidden;
+}
+
 /* hover */
 .table-hover tr:hover {
   @apply bg-gray-150;

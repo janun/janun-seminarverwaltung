@@ -31,9 +31,7 @@ class Dashboard(TemplateView):
         )
         if self.request.user.is_staff:
             context["history_table"] = HistoryTable(
-                get_global_history(5)[:5],
-                attrs={"class": "table-condensed"},
-                show_header=False,
+                get_global_history(5)[:5], attrs={"class": "table-condensed"}
             )
         return context
 

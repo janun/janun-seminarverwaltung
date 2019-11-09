@@ -10,8 +10,8 @@ import django_tables2 as tables
 
 def render_two_values(primary, secondary):
     return format_html(
-        '<p class="whitespace-no-wrap">{}</p>'
-        '<p class="whitespace-no-wrap text-xs text-gray-600">{}</p>',
+        '<p class="whitespace-no-wrap">{}</p> '
+        '<p class="whitespace-no-wrap text-xs text-gray-600 table-condensed-hidden">{}</p>',
         primary,
         secondary,
     )
@@ -32,14 +32,12 @@ def get_history_url(record):
     try:
         return record.instance.get_absolute_url()
     except ObjectDoesNotExist:
-        return ""
+        return None
 
 
 class HistoryTable(tables.Table):
 
-    history_date = tables.Column(
-        verbose_name="Zeitpunkt", orderable=False, attrs={"cell": {"class": "numeric"}}
-    )
+    history_date = tables.Column(verbose_name="Wann", orderable=False)
 
     def render_history_date(self, record):
         value = record.history_date
@@ -48,16 +46,13 @@ class HistoryTable(tables.Table):
             defaultfilters.date(timezone.localtime(value), "d.m.Y H:i"),
         )
 
-    history_user = tables.Column(
-        verbose_name="Konto / Rolle", orderable=False, linkify=True
-    )
+    history_user = tables.Column(verbose_name="Wer", orderable=False, linkify=True)
 
     def render_history_user(self, record):
-        value = record.history_user
-        return render_two_values(value, value.role)
+        return record.history_user
 
     history_object = tables.Column(
-        verbose_name="Objekt / Objekttyp", orderable=False, linkify=get_history_url
+        verbose_name="Was", orderable=False, linkify=get_history_url
     )
 
     def render_history_object(self, record):
@@ -65,9 +60,8 @@ class HistoryTable(tables.Table):
             value = record.instance
         except ObjectDoesNotExist:
             value = record.history_object
-        return render_two_values(
-            defaultfilters.truncatechars(value, 70), value._meta.verbose_name.title()
-        )
+
+        return defaultfilters.truncatechars(value, 70)
 
     changes = tables.Column(verbose_name="Details", orderable=False, empty_values=())
 
@@ -77,7 +71,7 @@ class HistoryTable(tables.Table):
                 return "Kommentar: {}".format(
                     defaultfilters.truncatechars(record.text, 150)
                 )
-            return "hinzugefügt"
+            return "erstellt"
 
         if record.history_type == "-":
             return "gelöscht"
@@ -87,7 +81,7 @@ class HistoryTable(tables.Table):
             """
         {% for change in changes %}
             <span class="mr-2 whitespace-no-wrap">
-                <span class="text-gray-600 text-xs">{{ change.field }}</span>:
+                <span class="text-gray-600">{{ change.field }}</span>:
                 {% if not change.new %}
                     <span class="line-through">{{ change.old|truncatechars:20 }}</span>
                 {% elif not change.old %}
