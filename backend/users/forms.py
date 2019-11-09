@@ -251,7 +251,7 @@ class UserCreateForm(forms.ModelForm):
                 Field("password", css_class="w-full"),
                 HTML(
                     '<div class="flex justify-end">'
-                    '<button type="button" data-password-field="#id_password" class="js-generate-password button text-sm font-normal bg-gray-300">Passwort generieren</button>'
+                    '<button type="button" data-password-field="#id_password" class="js-generate-password button">Passwort generieren</button>'
                     "</div>"
                 ),
             ),
@@ -332,7 +332,7 @@ class UserDetailForm(forms.ModelForm):
                 Field("password", css_class="w-full"),
                 HTML(
                     '<div class="flex justify-end mb-4">'
-                    '<button type="button" data-password-field="#id_password" class="js-generate-password button text-sm font-normal bg-gray-300">Passwort generieren</button>'
+                    '<button type="button" data-password-field="#id_password" class="js-generate-password button">Passwort generieren</button>'
                     "</div>"
                 ),
                 Link(
