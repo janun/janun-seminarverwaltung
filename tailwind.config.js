@@ -62,7 +62,25 @@ module.exports = {
       },
       screens: {
         xxl: "1600px"
-      }
+      },
+      stroke: theme => ({
+        'gray-300': theme('colors.gray.300'),
+        'gray-400': theme('colors.gray.400'),
+        'gray-500': theme('colors.gray.500'),
+        'green-300': theme('colors.green.300'),
+        'green-400': theme('colors.green.400'),
+        'green-500': theme('colors.green.500'),
+        'green-600': theme('colors.green.600'),
+      }),
+      fill: theme => ({
+        'gray-300': theme('colors.gray.300'),
+        'gray-400': theme('colors.gray.400'),
+        'gray-500': theme('colors.gray.500'),
+        'green-300': theme('colors.green.300'),
+        'green-400': theme('colors.green.400'),
+        'green-500': theme('colors.green.500'),
+        'green-600': theme('colors.green.600'),
+      })
     }
   },
   variants: {
