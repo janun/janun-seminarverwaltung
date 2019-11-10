@@ -389,6 +389,10 @@ class SeminarSearchView(UserPassesTestMixin, ListView):
     model = Seminar
     context_object_name = "seminars"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.count = 0
+
     def get_template_names(self):
         if self.request.is_ajax():
             return ["seminars/ajax_search.html"]

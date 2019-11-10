@@ -65,14 +65,11 @@ class SeminarTable(tables.Table):
         model = Seminar
         template_name = "table.html"
         fields = [
-            # "checkbox",
             "title",
             "start_date",
             "status",
             "owner",
             "group",
-            # "training_days",
-            # "attendees",
             "tnt",
             "funding",
             "tnt_cost",
@@ -92,4 +89,9 @@ class SeminarSearchTable(SeminarTable):
         return record.year
 
     class Meta:
+        model = Seminar
+        template_name = "table.html"
         fields = ["title", "year", "start_date", "status", "owner", "group"]
+        row_attrs = {"data-link": lambda record: record.get_absolute_url()}
+        attrs = {"class": "js-data-link table-hover table-sticky"}
+        empty_text = "Keine Seminare gefunden."
