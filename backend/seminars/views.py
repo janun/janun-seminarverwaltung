@@ -32,7 +32,7 @@ from backend.seminars import forms as seminar_forms
 
 from .models import Seminar, SeminarComment, FundingRate
 from .templateddocs import fill_template, FileResponse
-from .tables import SeminarTable, SeminarHistoryTable
+from .tables import SeminarTable, SeminarHistoryTable, SeminarSearchTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
 from .forms import (
@@ -385,7 +385,41 @@ class SeminarApplyDoneTestView(TemplateView):
     template_name = "seminars/seminar_apply_done.html"
 
 
-class CommentListView(AjaxableResponseMixin, ListView):
+class SeminarSearchView(UserPassesTestMixin, ListView):
+    model = Seminar
+    context_object_name = "seminars"
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return ["seminars/ajax_search.html"]
+        return ["seminars/search.html"]
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["count"] = self.count
+        context["q"] = self.request.GET.get("q", None)
+        if not self.request.is_ajax():
+            context["results_table"] = SeminarSearchTable(
+                self.get_queryset(), orderable=False
+            )
+        return context
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        q = self.request.GET.get("q", None)
+        if q:
+            qs = qs.filter(title__icontains=q)
+            self.count = qs.count()
+            if self.request.is_ajax():
+                qs = qs[:5]
+            return qs
+        return qs.none()
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class CommentListView(ListView):
     model = SeminarComment
     template_name = "seminars/_comment_list.html"
     context_object_name = "comments"

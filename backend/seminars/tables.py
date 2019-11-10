@@ -82,3 +82,14 @@ class SeminarTable(tables.Table):
         attrs = {"class": "js-data-link table-hover table-sticky"}
         order_by = "-start_date"
         empty_text = "Keine Seminare gefunden."
+
+
+class SeminarSearchTable(SeminarTable):
+
+    year = tables.Column(verbose_name="Jahr")
+
+    def render_year(self, record):
+        return record.year
+
+    class Meta:
+        fields = ["title", "year", "start_date", "status", "owner", "group"]
