@@ -1,6 +1,6 @@
 function updateDifference() {
-  var minuend = document.querySelector(".js-substraction-minuend").innerHTML.replace(',', '.');
-  var subtrahend = document.querySelector(".js-substraction-subtrahend").innerHTML.replace(',', '.');
+  var minuend = document.querySelector(".js-substraction-minuend").innerHTML.replace('.', '').replace(',', '.');
+  var subtrahend = document.querySelector(".js-substraction-subtrahend").innerHTML.replace('.', '').replace(',', '.');
   var difference = document.querySelector(".js-substraction-difference");
   minuend = Number.isNaN(minuend) ? 0 : parseFloat(minuend);
   subtrahend = Number.isNaN(subtrahend) ? 0 : parseFloat(subtrahend);
