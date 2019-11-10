@@ -30,6 +30,7 @@ from tablib import Dataset
 from backend.mixins import ErrorMessageMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
+from backend.dashboard.views import get_history_changes
 
 from .models import Seminar, SeminarComment, FundingRate
 from .templateddocs import fill_template, FileResponse
@@ -268,8 +269,11 @@ class SeminarHistoryView(UserPassesTestMixin, TemplateView):
         seminar = get_object_or_404(
             Seminar, slug=self.kwargs["slug"], year=self.kwargs["year"]
         )
-        seminar_history = seminar.history.all()
-        history = sorted(seminar_history, key=attrgetter("history_date"), reverse=True)
+        history = seminar.history.all()
+        for entry in history:
+            entry.changes = get_history_changes(entry)
+        history = filter(lambda e: e.history_type != "~" or e.changes, history)
+        history = sorted(history, key=attrgetter("history_date"), reverse=True)
         context["seminar"] = seminar
         context["history_table"] = SeminarHistoryTable(history)
         return context
