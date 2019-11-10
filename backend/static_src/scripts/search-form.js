@@ -39,5 +39,6 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
       XHR.open('GET', target);
       XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
       XHR.send();
-    })
+    });
   });
+});
