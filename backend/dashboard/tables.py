@@ -91,4 +91,4 @@ class HistoryTable(tables.Table):
     class Meta:
         template_name = "table.html"
         fields = ["history_date", "history_user", "history_object", "changes"]
-        attrs = {"class": "table-hover table-sticky"}
+        attrs = {"class": "table-sticky"}

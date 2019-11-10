@@ -83,13 +83,13 @@
   @apply hidden;
 }
 
-/* hover */
-.table-hover tr:hover {
-  @apply bg-gray-150;
-}
-
+/* data-link */
 .js-data-link tr {
   @apply cursor-pointer;
+}
+
+.js-data-link tr:hover {
+  @apply bg-gray-150;
 }
 
 .table-container td a:hover {

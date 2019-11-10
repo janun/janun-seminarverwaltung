@@ -35,6 +35,6 @@ class JANUNGroupTable(tables.Table):
             "tnt_cost_simple_this_year",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link table-hover table-sticky"}
+        attrs = {"class": "js-data-link table-sticky"}
         order_by = "name"
         empty_text = "Keine Gruppen gefunden."
