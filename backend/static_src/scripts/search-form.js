@@ -2,6 +2,12 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
   var input = form.querySelector('input');
   var results = form.querySelector('.js-search-form-results');
 
+  document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.shiftKey && event.code === 'KeyF') {
+      input.focus();
+    }
+  })
+
   input.addEventListener('focus', function (event) {
     results.classList.remove('hidden');
   })
@@ -23,7 +29,6 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
     var prevSibling = document.activeElement.previousElementSibling;
     if (prevSibling) prevSibling.focus();
     else input.focus();
-
   })
 
   form.addEventListener('focusout', function (event) {
