@@ -7,11 +7,25 @@ from operator import attrgetter
 from .tables import HistoryTable
 
 
+def get_history_changes(entry):
+    changes = []
+    if entry.history_type == "~":
+        for change in entry.diff_against(entry.prev_record).changes:
+            field = entry.instance._meta.get_field(change.field).verbose_name
+            if change.field == "password":
+                changes.append({"field": field, "old": "", "new": "geändert"})
+            else:
+                changes.append({"field": field, "old": change.old, "new": change.new})
+    return changes
+
+
 def get_global_history(self, length=10):
     history = []
     for model in registered_models.values():
         for entry in model.history.all()[:length]:
+            entry.changes = get_history_changes(entry)
             history.append(entry)
+    history = filter(lambda e: e.history_type != "~" or e.changes, history)
     return sorted(history, key=attrgetter("history_date"), reverse=True)
 
 

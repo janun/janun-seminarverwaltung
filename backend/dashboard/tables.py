@@ -17,17 +17,6 @@ def render_two_values(primary, secondary):
     )
 
 
-def get_history_changes(entry):
-    changes = []
-    for change in entry.diff_against(entry.prev_record).changes:
-        field = entry.instance._meta.get_field(change.field).verbose_name
-        if change.field == "password":
-            changes.append({"field": field, "old": "", "new": "geändert"})
-        else:
-            changes.append({"field": field, "old": change.old, "new": change.new})
-    return changes
-
-
 def get_history_url(record):
     try:
         return record.instance.get_absolute_url()
@@ -76,9 +65,9 @@ class HistoryTable(tables.Table):
         if record.history_type == "-":
             return format_html("<em>gelöscht</em>")
 
-        changes = get_history_changes(record)
-        if not changes:
+        if not record.changes:
             return format_html("<em>nichts geändert</em>")
+
         return Template(
             """<ul class="{% if changes|length > 1 %}list-disc{% endif %}">
         {% for change in changes %}
@@ -97,7 +86,7 @@ class HistoryTable(tables.Table):
         {% endfor %}
         </ul>
         """
-        ).render(Context({"changes": changes}))
+        ).render(Context({"changes": record.changes}))
 
     class Meta:
         template_name = "table.html"
