@@ -52,7 +52,7 @@ class HistoryTable(tables.Table):
 
         return defaultfilters.truncatechars(value, 70)
 
-    changes = tables.Column(verbose_name="Details", orderable=False, empty_values=())
+    changes = tables.Column(verbose_name="Änderungen", orderable=False, empty_values=())
 
     def render_changes(self, record):
         if record.history_type == "+":
