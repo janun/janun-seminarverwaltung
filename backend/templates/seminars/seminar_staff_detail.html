@@ -8,9 +8,14 @@
 {% block content %}
 <div class="mx-auto max-w-4xl">
 
+  <a class="inline-flex items-center text-gray-500 hover:text-gray-800 text-xs mb-4" href="{% url 'seminars:list_staff' seminar.year %}">
+    <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20"><polygon points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9"/></svg>
+    Seminare {{ seminar.year }}
+  </a>
+
   <div class="mb-8 pb-4 flex flex-wrap items-end justify-between border-b">
     <h1 class="font-bold text-2xl">{{ seminar.title }}</h1>
-    <div>
+    <div class="text-sm">
       <a class="mx-2 text-gray-500 hover:text-gray-800" href="{% url 'seminars:history' seminar.year seminar.slug %}">Historie</a>
       <a class="mx-2 text-gray-500 hover:text-gray-800" href="{% url 'seminars:detail_teamer' seminar.year seminar.slug %}">Teamenden-Ansicht</a>
     </div>
@@ -51,7 +56,7 @@
 </div>
 
 <div class="js-scroll-spy">
-  <div class="hidden md:block md:sticky md:top-0 md:w-full mt-8 md:bg-gray-200 z-50">
+  <div class="hidden md:block md:sticky md:top-0 md:w-full mt-8 md:bg-gray-200 z-10">
     <div class="md:mx-auto md:max-w-4xl">
       <ul class="js-scroll-spy-menu flex flex-wrap text-gray-600 border-b py-2" data-js-scroll-spy-class="text-gray-700 border-gray-600">
         <li class="mr-3"><a class="inline-block -mb-3 pb-2 border-b hover:border-gray-500" href="#general">Allgemeines</a></li>
