@@ -71,27 +71,31 @@ class HistoryTable(tables.Table):
                 return "Kommentar: {}".format(
                     defaultfilters.truncatechars(record.text, 150)
                 )
-            return "erstellt"
+            return format_html("<em>erstellt</em>")
 
         if record.history_type == "-":
-            return "gelöscht"
+            return format_html("<em>gelöscht</em>")
 
         changes = get_history_changes(record)
+        if not changes:
+            return format_html("<em>nichts geändert</em>")
         return Template(
-            """
+            """<ul class="{% if changes|length > 1 %}list-disc{% endif %}">
         {% for change in changes %}
-            <span class="mr-2 whitespace-no-wrap">
-                <span class="text-gray-600">{{ change.field }}</span>:
+            <li class="mr-2 whitespace-no-wrap">
+                <span>{{ change.field }}</span>:
                 {% if not change.new %}
-                    <span class="line-through">{{ change.old|truncatechars:20 }}</span>
+                    <em>gelöscht</em>
                 {% elif not change.old %}
                     <span>{{ change.new|truncatechars:20 }}</span>
                 {% else %}
                     <span class="line-through">{{ change.old|truncatechars:10 }}</span>
+                    →
                     <span>{{ change.new|truncatechars:20 }}</span>
                 {% endif %}
-            </span>
+            </li>
         {% endfor %}
+        </ul>
         """
         ).render(Context({"changes": changes}))
 
