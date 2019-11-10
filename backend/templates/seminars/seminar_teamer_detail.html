@@ -50,7 +50,7 @@
   </div>
 </div>
 
-<form method="post" class="md:mt-10 relative js-focus-invalid">
+<form method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid">
   <div class="mx-auto max-w-4xl">
     {% crispy form %}
 
