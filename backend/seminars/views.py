@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import itertools
 from operator import attrgetter
+import re
 
 from django.views.generic import (
     View,
@@ -408,16 +409,24 @@ class SeminarSearchView(UserPassesTestMixin, ListView):
             )
         return context
 
+    def filter_qs(self, qs, q):
+        # year found:
+        if re.match(r".*\d{4}$", q):
+            year = q[-4:]
+            qs = qs.filter(year=year)
+            q = q[0:-4]
+        return qs.filter(title__icontains=q.strip())
+
     def get_queryset(self):
         qs = super().get_queryset()
         q = self.request.GET.get("q", None)
-        if q:
-            qs = qs.filter(title__icontains=q)
-            self.count = qs.count()
-            if self.request.is_ajax():
-                qs = qs[:5]
-            return qs
-        return qs.none()
+        if not q:
+            return qs.none()
+        qs = self.filter_qs(qs, q)
+        self.count = qs.count()
+        if self.request.is_ajax():
+            qs = qs[:6]
+        return qs
 
     def test_func(self):
         return self.request.user.is_staff
