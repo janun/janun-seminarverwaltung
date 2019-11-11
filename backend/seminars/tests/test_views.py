@@ -293,3 +293,37 @@ class HistoryTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, "Änderungshistorie")
         self.assertContains(response, "Test-Seminar")
+
+
+class SearchTestCase(TestCase):
+    url = reverse("seminars:search")
+
+    def setUp(self):
+        # testuser:
+        self.testuser = User(name="Max Mustermann", username="testuser")
+        self.testuser.set_password("secret")
+        self.testuser.is_staff = True
+        self.testuser.save()
+        # seminar:
+        self.testseminar = Seminar(
+            title="Test-Seminar", start_date="2019-05-05", end_date="2019-05-06"
+        )
+        self.testseminar.save()
+        self.testseminar2 = Seminar(
+            title="Test-2Seminar", start_date="2018-05-05", end_date="2018-05-06"
+        )
+        self.testseminar2.save()
+
+    def test_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url + "?q=test")
+        self.assertContains(response, "Suche")
+        self.assertContains(response, "Test-Seminar")
+        self.assertContains(response, "Test-2Seminar")
+
+    def test_search_by_year(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url + "?q=test 2019")
+        self.assertContains(response, "Suche")
+        self.assertContains(response, "Test-Seminar")
+        self.assertNotContains(response, "Test-2Seminar")
