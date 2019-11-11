@@ -76,8 +76,8 @@
       {% crispy form %}
     </div>
     
-    <div class="md:fixed md:bottom-0 md:bg-white-75 md:border-t-2 md:w-full md:-mx-8">
-      <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:px-8 md:py-4"> 
+    <div class="md:sticky md:bottom-0 md:bg-white-75 md:border-t-2 md:mb-20 md:mt-8 md:-mx-8 z-20">
+      <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4"> 
         <button class="order-10 button button-primary" type="submit">Speichern</button>
         <a class="mx-8 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'seminars:delete' seminar.start_date.year seminar.slug %}">Seminar löschen</a>
       </div>
