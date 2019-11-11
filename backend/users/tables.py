@@ -23,7 +23,7 @@ class UserTable(tables.Table):
     is_active = ColoredBooleanColumn()
     is_reviewed = ColoredBooleanColumn()
     has_totp = ColoredBooleanColumn(verbose_name="2FA", orderable=False)
-    action = tables.Column(verbose_name="", orderable="False", empty_values=())
+    action = tables.Column(verbose_name="", orderable=False, empty_values=())
 
     def render_action(self, record):
         html = (
