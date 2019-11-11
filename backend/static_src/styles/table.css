@@ -84,7 +84,7 @@
 }
 
 /* data-link */
-.js-data-link tr {
+.js-data-link tbody tr {
   @apply cursor-pointer;
 }
 
