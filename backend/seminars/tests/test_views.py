@@ -272,3 +272,24 @@ class SeminarTeamerUpdateViewTestCase(TestCase):
         )
         self.assertEqual(response.context["seminar"].title, "Test-Seminar")
 
+
+class HistoryTestCase(TestCase):
+    url = reverse("seminars:history", kwargs={"year": 2019, "slug": "test-seminar"})
+
+    def setUp(self):
+        # testuser:
+        self.testuser = User(name="Max Mustermann", username="testuser")
+        self.testuser.set_password("secret")
+        self.testuser.is_staff = True
+        self.testuser.save()
+        # seminar:
+        self.testseminar = Seminar(
+            title="Test-Seminar", start_date="2019-05-05", end_date="2019-05-06"
+        )
+        self.testseminar.save()
+
+    def test_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertContains(response, "Änderungshistorie")
+        self.assertContains(response, "Test-Seminar")
