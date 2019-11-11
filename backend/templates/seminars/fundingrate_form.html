@@ -7,6 +7,11 @@
 
 {% block content %}
 <div class="mx-auto max-w-5xl">
+  <a class="inline-flex items-center text-gray-500 hover:text-gray-800 text-xs mb-4" href="{% url 'seminars:list_staff' year %}">
+    <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20"><polygon points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9"/></svg>
+    Seminare {{ year }}
+  </a>
+
   <div class="md:flex flex-wrap items-baseline mb-5 border-b pb-4">
     <h1 class="font-bold text-2xl">Förderungssätze {{ year }}</h1>
   </div>
