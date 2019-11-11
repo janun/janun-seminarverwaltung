@@ -102,6 +102,7 @@
 
 <form action="" class="filters mb-5 flex flex-wrap items-end js-submit-on-input">
   {{ filter.form | crispy }}
+  <input type="hidden" name="sort" value={{ request.GET.sort }}>
 </form>
 
 <div class="w-full ml-auto">
