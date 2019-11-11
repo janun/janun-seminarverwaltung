@@ -223,7 +223,7 @@ class SeminarStaffChangeForm(forms.ModelForm):
                 "Status",
                 "status",
                 text="Wie weit das Seminar bearbeitet ist.",
-                css_class="js-scroll-spy-section",
+                css_class="js-scroll-spy-section pt-10 -mt-10",
                 css_id="general",
             ),
             Fieldset(
@@ -299,7 +299,7 @@ class SeminarStaffChangeForm(forms.ModelForm):
                     css_class="md:flex -mx-2",
                 ),
                 css_id="accounting",
-                css_class="js-scroll-spy-section",
+                css_class="js-scroll-spy-section pt-10 -mt-10",
             ),
             Fieldset(
                 "Ausgaben",

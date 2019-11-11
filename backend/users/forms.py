@@ -370,7 +370,7 @@ class UserDetailForm(forms.ModelForm):
         )
 
         if self.instance.role == "Teamer_in":
-            del self.fields["group_hats"]
+            self.fields["group_hats"].widget = forms.HiddenInput()
 
         self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
         self.fields["email"].required = True
