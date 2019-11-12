@@ -41,7 +41,7 @@ class SeminarTable(tables.Table):
     funding = EuroColumn(verbose_name="Förderung")
     tnt_cost = EuroColumn(verbose_name="€/TNT")
     deadline = tables.DateColumn(
-        verbose_name="Deadline", format="d.m.y", attrs={"cell": {"class": "numeric"}}
+        verbose_name="Frist", format="d.m.y", attrs={"cell": {"class": "numeric"}}
     )
 
     def render_status(self, record, value):

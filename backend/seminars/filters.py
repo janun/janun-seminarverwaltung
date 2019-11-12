@@ -98,7 +98,7 @@ class SeminarStaffFilter(django_filters.FilterSet):
         choices=[(i, "{0}".format(i)) for i in range(1, 5)],
     )
     deadline = django_filters.ChoiceFilter(
-        label="Deadline",
+        label="Abrechnungsfrist",
         field_name="deadline_status",
         choices=(
             ("expired", "abgelaufen"),
