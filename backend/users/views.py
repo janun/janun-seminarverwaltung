@@ -24,6 +24,7 @@ from .resources import UserResource
 class UserListView(SingleTableMixin, UserPassesTestMixin, ListView):
     model = User
     table_class = UserTable
+    queryset = User.objects.all().prefetch_related("janun_groups", "group_hats")
 
     def test_func(self):
         return self.request.user.is_staff
