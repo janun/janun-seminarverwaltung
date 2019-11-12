@@ -28,10 +28,6 @@
   @apply px-2 py-5 border-b border-gray-200 text-gray-800;
 }
 
-.table-container td a {
-  @apply inline-block py-5 -my-5;
-}
-
 @screen xl {
   .table-container th {
     @apply px-5 py-3;
@@ -45,9 +41,6 @@
     @apply p-5;
   }
 
-  .table-container td a {
-    @apply -my-5 py-5;
-  }
 }
 
 /* table-condensed */
@@ -73,10 +66,6 @@
 
 .table-condensed th:last-child {
   @apply pr-4;
-}
-
-.table-condensed td a {
-  @apply -my-2 py-2;
 }
 
 .table-condensed .table-condensed-hidden {
