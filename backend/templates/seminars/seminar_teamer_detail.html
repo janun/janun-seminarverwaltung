@@ -80,7 +80,7 @@
   </div>
   
   {% if form.show_save_button %}
-    <div class="md:sticky bottom-0 md:bg-white-75 md:border-t-2 md:-mb-16 md:-mx-8">
+    <div data-sticky-classes="md:bg-white-75 md:border-t-2" class="js-is-sticky-b md:sticky bottom-0 md:-mx-8">
       <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4"> 
         <button class="order-10 button button-primary" type="submit">Speichern</button>
         {% if seminar.status == 'angemeldet' %}
