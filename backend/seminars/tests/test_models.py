@@ -212,3 +212,12 @@ class SeminarModelTestCase(TestCase):
             Seminar(title="Test", start_date=datetime.date(2019, 11, 5)).get_deadline(),
             datetime.date(2020, 1, 15),
         )
+
+    def test_confirmed_at(self):
+        """Test that confirmed_at is populated when status is changed to zugesagt"""
+        seminar = Seminar(title="Test", start_date="2019-04-01", end_date="2019-04-01")
+        seminar.save()
+        self.assertIsNone(seminar.confirmed_at)
+        seminar.status = "zugesagt"
+        seminar.save()
+        self.assertIsNotNone(seminar.confirmed_at)

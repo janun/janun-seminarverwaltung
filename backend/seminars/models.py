@@ -442,6 +442,7 @@ class Seminar(models.Model):
 
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
+    confirmed_at = models.DateTimeField("Zugesagt am", null=True)
 
     class Meta:
         ordering = ("-start_date",)
@@ -450,6 +451,19 @@ class Seminar(models.Model):
 
     objects = SeminarManager()
     history = HistoricalRecords(excluded_fields=["updated_at", "slug"])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_status = self.status
+
+    def save(self, *args, **kwargs):
+        # in case of changed status:
+        if self.__original_status != self.status:
+            if self.status == "zugesagt":
+                self.confirmed_at = timezone.now()
+
+        super().save(*args, **kwargs)
+        self.__original_status = self.status
 
     def clean(self):
         if self.end_date and self.start_date:
