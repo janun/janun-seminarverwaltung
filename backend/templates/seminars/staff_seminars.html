@@ -81,6 +81,22 @@
     </div>
   </div>
 
+   <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
+    <div class="text-sm text-gray-700">
+      <div class="font-bold mb-1">Frist abgelaufen:</div>
+      <div>{{ deadline_expired_aggregates.count }} von {{ confirmed_aggregates.count }}</div>
+      <div>{{ deadline_expired_aggregates.funding_sum|default:0|number:2 }} €</div>
+      <div>{{ deadline_expired_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
+    </div>
+
+    <div class="flex flex-col items-center">
+      <svg viewbox="0 0 32 32" class="m-2 h-12 w-12 fill-current text-white rounded-full bg-white border border-red-300" style="transform: rotate(-90deg) scale(1, -1);">
+        <circle r="16" cx="16" cy="16" class="stroke-red-300" style="stroke-dasharray:{% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 %} 100; stroke-width:32;"/>
+      </svg>
+      <div class="font-bold">{% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 %} %</div>
+    </div>
+  </div>
+
   <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
     <div class="text-sm text-gray-700">
       <div class="mb-1 font-bold">überwiesen:</div>

@@ -125,6 +125,9 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
         context["transferred_aggregates"] = Seminar.objects.filter(
             start_date__year=year, status="überwiesen"
         ).get_aggregates()
+        context["deadline_expired_aggregates"] = Seminar.objects.filter(
+            start_date__year=year, deadline_status="expired"
+        ).get_aggregates()
         context["bills_present_aggregates"] = (
             Seminar.objects.filter(start_date__year=year)
             .is_bills_present()
