@@ -9,7 +9,7 @@ from .tables import HistoryTable
 
 def get_history_changes(entry):
     changes = []
-    if entry.history_type == "~":
+    if entry.history_type == "~" and entry.prev_record:
         for change in entry.diff_against(entry.prev_record).changes:
             field = entry.instance._meta.get_field(change.field).verbose_name
             if change.field == "password":
