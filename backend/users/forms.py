@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import password_validation
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.html import format_html
 
 from allauth.account.forms import SignupForm as AllauthSignupForm
 from allauth.account.forms import ChangePasswordForm as AllauthChangePasswordForm
@@ -216,6 +217,10 @@ class ProfileForm(forms.ModelForm):
                     "block font-semibold mb-1 text-gray-700 hover:text-gray-800 hover:underline",
                 ),
                 HTML(totp_message),
+                text=format_html(
+                    '<p class="mb-2">Bitte benutze ein langes/sicheres Passwort und evtl. einen Passwortmanager.</p>'
+                    "<p>Mit der Zwei-Faktor-Authentisierung kannst Du Dein Konto weiter absichern.</p>"
+                ),
             ),
         )
 

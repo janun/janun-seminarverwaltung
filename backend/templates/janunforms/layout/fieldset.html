@@ -4,7 +4,7 @@
     <div class="fieldset">
         <div class="fieldset-header">
             {% if legend %}<legend class="fieldset-heading">{{ legend|safe }}</legend>{% endif %}
-            <p>{{ fieldset.text }}</p>
+            {{ fieldset.text }}
         </div>
         <div class="fieldset-content">
             {{ fields|safe }}
