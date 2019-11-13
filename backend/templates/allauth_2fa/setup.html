@@ -6,6 +6,11 @@
 
 {% block content %}
 <div class="mx-auto max-w-3xl">
+     <a class="inline-flex items-center text-gray-500 hover:text-gray-800 text-xs mb-4" href="{% url 'account_profile' %}">
+        <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20"><polygon points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9"/></svg>
+        Dein Konto
+    </a>
+
     <h1 class="font-bold pb-4 text-2xl border-b mb-5">Zwei-Faktor-Authentisierung (2FA)</h1>
     <p class="max-w-xl- mb-10">
         Durch die Zwei-Faktor-Authentisierung wird die Anmeldung <strong>deutlich sicherer</strong>.
@@ -24,6 +29,7 @@
                 <li><a class="underline" target="_blank" href="https://freeotp.github.io">FreeOTP</a>
                 <li><a class="underline" target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></li>
                 <li><a class="underline" target="_blank" href="https://www.microsoft.com/de-de/account/authenticator">Microsoft Authenticator</a></li>
+                <li>Oder eine andere, die TOTP unterstützt.</li>
             </ul>
         </div>
     </div>

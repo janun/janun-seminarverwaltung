@@ -13,7 +13,7 @@
     <form method="post">
         {% csrf_token %}
         <div class="mt-5 md:card-footer">
-            <a class="mr-5 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{% url 'two-factor-setup' %}">Abbrechen</a>
+            <a class="mr-5 text-gray-600 hover:text-gray-800 focus:text-gray-800" href="{{ user.get_absolute_url }}">Abbrechen</a>
             <button class="button button-primary bg-red-600" type="submit">Ja, 2FA ausschalten</button>
         </div>
     </form>
