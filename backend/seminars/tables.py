@@ -76,7 +76,7 @@ class SeminarTable(tables.Table):
             "deadline",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link table-sticky"}
+        attrs = {"class": "js-row-link table-sticky"}
         order_by = "-start_date"
         empty_text = "Keine Seminare gefunden."
 
@@ -93,5 +93,5 @@ class SeminarSearchTable(SeminarTable):
         template_name = "table.html"
         fields = ["title", "year", "start_date", "status", "owner", "group"]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link table-sticky"}
+        attrs = {"class": "js-row-link table-sticky"}
         empty_text = "Keine Seminare gefunden."

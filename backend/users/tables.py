@@ -77,6 +77,6 @@ class UserTable(tables.Table):
             "action",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
-        attrs = {"class": "js-data-link table-sticky"}
+        attrs = {"class": "js-row-link table-sticky"}
         order_by = "name"
         empty_text = "Keine Konten gefunden."

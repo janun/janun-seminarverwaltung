@@ -72,13 +72,18 @@
   @apply hidden;
 }
 
-/* data-link */
-.js-data-link tbody tr {
+/* row-link */
+.js-row-link tbody tr {
   @apply cursor-pointer;
 }
 
-.js-data-link tr:hover {
+.js-row-link tr:hover {
   @apply bg-gray-150;
+}
+
+.js-row-link td * {
+  position: relative;
+  z-index: 1;
 }
 
 .table-container td a:hover {
