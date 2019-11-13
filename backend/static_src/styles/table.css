@@ -81,10 +81,23 @@
   @apply bg-gray-150;
 }
 
+.js-row-link td:first-child {
+  position: relative;
+}
+
 .js-row-link td * {
   position: relative;
   z-index: 1;
 }
+
+.js-row-link-link.js-row-link-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  height: 100%;
+}
+
 
 .table-container td a:hover {
   @apply underline;

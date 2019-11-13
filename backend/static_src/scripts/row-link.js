@@ -1,18 +1,33 @@
 document.querySelectorAll('.js-row-link').forEach(function (container) {
 
+  links = []
+
+  // insert a.js-row-link-link in first td
   container.querySelectorAll("[data-link]").forEach(function (row) {
-    var href = row.getAttribute('data-link')
+    var href = row.getAttribute('data-link');
     var firstCol = row.querySelector('td');
     var newLink = document.createElement("a");
     newLink.setAttribute('href', href)
-    firstCol.appendChild(newLink);
-    firstCol.style.position = 'relative';
-    newLink.style.cssText = "position: absolute; display: block; top: 0; left: 0; z-index: 0; height: 100%;"
-
-    function setWidth(event) {
-      newLink.style.width = row.clientWidth + 'px';
-    }
-    window.addEventListener('resize', setWidth, { passive: true });
-    setWidth();
+    newLink.classList.add('js-row-link-link');
+    firstCol.insertBefore(newLink, firstCol.firstChild);
+    links.push(newLink);
   })
+
+  var style = document.createElement('style');
+  container.appendChild(style);
+
+  // set width of those as
+  function setWidths(event) {
+    var width = container.clientWidth + 'px';
+    style.innerHTML = ".js-row-link-link.js-row-link-link { width: " + width + " }"
+  }
+
+  // debounced resize
+  var resizeTimer = false;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setWidths, 100);
+  });
+
+  setWidths();
 })
