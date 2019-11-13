@@ -15,10 +15,16 @@ class UserTable(tables.Table):
         verbose_name="Name", linkify=True, attrs={"td": {"class": "primary-column"}}
     )
     janun_groups = tables.ManyToManyColumn(
-        verbose_name="Mitgliedschaften", linkify_item=True, default=""
+        verbose_name="Mitgliedschaften",
+        linkify_item=True,
+        default="",
+        attrs={"a": {"class": "whitespace-no-wrap"}},
     )
     group_hats = tables.ManyToManyColumn(
-        verbose_name="Gruppen-Hüte", linkify_item=True, default=""
+        verbose_name="Gruppen-Hüte",
+        linkify_item=True,
+        default="",
+        attrs={"a": {"class": "whitespace-no-wrap"}},
     )
     is_active = ColoredBooleanColumn()
     is_reviewed = ColoredBooleanColumn()
