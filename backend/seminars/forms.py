@@ -560,7 +560,7 @@ class ConfirmSeminarForm(SeminarStepForm):
         super().__init__(*args, **kwargs)
         if preferences.JANUNSeminarPreferences.seminar_policy_url:
             self.fields["confirm_policy"].label = (
-                'Ich habe die <a class="underline" target="_blank" href="{}">'
+                'Ich habe die <a class="underline" rel="noreferrer" target="_blank" href="{}">'
                 "Seminarabrechnungsrichtlinie</a> gelesen."
             ).format(preferences.JANUNSeminarPreferences.seminar_policy_url)
 

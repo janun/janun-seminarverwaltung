@@ -19,16 +19,16 @@
 
     <div class="mt-3">
       {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
-        <a target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}">
+        <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}">
           Seminarrichtlinie
         </a>
       {% endif %}
       |
-      <a target="_blank" href="{{ preferences.JANUNSeminarPreferences.legal_url }}">
+      <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.legal_url }}">
         Impressum
       </a>
       |
-      <a target="_blank" href="{{ preferences.JANUNSeminarPreferences.data_protection_policy_url }}">
+      <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.data_protection_policy_url }}">
         Datenschutz
       </a>
     </div>

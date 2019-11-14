@@ -49,7 +49,7 @@ class LoginForm(AllauthLoginForm):
             Link(
                 reverse("account_reset_password"),
                 "Passwort vergessen?",
-                "inline-block text-sm text-gray-600 hover:text-gray-800 mb-6",
+                "inline-block text-sm text-gray-700 hover:text-gray-800 mb-6",
             ),
             "remember",
         )

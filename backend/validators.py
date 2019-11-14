@@ -30,7 +30,7 @@ class PwnedPasswordValidator:
             raise ValidationError(
                 mark_safe(
                     "Wurde in einer "
-                    '<a target="_blank" class="underline"'
+                    '<a target="_blank" rel="noreferrer" class="underline"'
                     'href="https://haveibeenpwned.com/Passwords">'
                     "Datenbank von gehackten Passwörtern</a> "
                     "gefunden."
