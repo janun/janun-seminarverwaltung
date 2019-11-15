@@ -7,7 +7,7 @@ document.querySelectorAll('.js-scroll-spy').forEach(function (container) {
   var offset = menu.getAttribute('data-offset') || 0;
 
   function onScroll(event) {
-    activeSections = [];
+    var activeSections = [];
     sections.forEach(function (section) {
       if (section.getBoundingClientRect().top < offset) {
         activeSections.push(section)

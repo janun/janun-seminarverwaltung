@@ -1,6 +1,6 @@
 document.querySelectorAll('.js-row-link').forEach(function (container) {
 
-  links = []
+  var links = [];
 
   // insert a.js-row-link-link in first td
   container.querySelectorAll("[data-link]").forEach(function (row) {
