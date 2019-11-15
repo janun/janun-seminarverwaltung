@@ -124,3 +124,4 @@ db.sqlite3
 .~lock.*
 celerybeat-schedule
 backend/static/scripts/scripts.js
+backend/static/scripts/scripts.js.map

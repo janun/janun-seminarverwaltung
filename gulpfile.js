@@ -1,8 +1,13 @@
 const gulp = require("gulp");
 const postcss = require("gulp-postcss");
-const concat = require("gulp-concat");
-const uglify = require('gulp-uglify');
+const terser = require('gulp-terser');
+const browserify = require("browserify");
+const source = require("vinyl-source-stream");
+const buffer = require("vinyl-buffer");
+const sourcemaps = require("gulp-sourcemaps");
+const glob = require('glob');
 
+const production = (process.env.NODE_ENV || "").trim() === 'production'
 
 function styles() {
   return gulp
@@ -12,10 +17,15 @@ function styles() {
 }
 
 function scripts() {
-  return gulp
-    .src("backend/static_src/scripts/*.js")
-    .pipe(concat("scripts.js"))
-    .pipe(uglify())
+  const files = glob.sync("backend/static_src/scripts/*.js");
+  return browserify(files, { debug: !production })
+    .transform("babelify")
+    .bundle()
+    .pipe(source("scripts.js"))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({ loadMaps: !production }))
+    .pipe(terser())
+    .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest("backend/static/scripts"));
 }
 
