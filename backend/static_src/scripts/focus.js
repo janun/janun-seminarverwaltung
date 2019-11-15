@@ -1,4 +1,4 @@
-focusElements = document.querySelectorAll('.js-focus');
-if (focusElements.length > 0) {
-  focusElements[0].focus();
+var focusElement = document.querySelector('.js-focus');
+if (document.querySelector('.js-focus')) {
+  focusElement.focus();
 }
