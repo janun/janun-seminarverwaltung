@@ -1,8 +1,7 @@
-document.querySelectorAll('.js-focus-invalid').forEach(function (form) {
-  var invalidInputs = document.querySelectorAll('.is-invalid')
-  if (invalidInputs.length > 0) {
-    setTimeout(function () {
-      invalidInputs[0].focus();
-    }, 10);
-  }
-})
+var invalidField = document.querySelector('.js-focus-invalid .is-invalid');
+if (invalidField) {
+  // setTimeout to work around autofocus on other form fields
+  setTimeout(function () {
+    invalidField.focus();
+  }, 10);
+}
