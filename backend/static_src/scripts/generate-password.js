@@ -1,5 +1,11 @@
-function generateRandomString() {
-  return String.fromCharCode(window.crypto.getRandomValues(new Uint8Array(1))[0]);
+function generateRandomByte() {
+  if (window.hasOwnProperty('crypto')) {
+    return window.crypto.getRandomValues(new Uint8Array(1))[0];
+  }
+  if (window.hasOwnProperty('mscrypto')) {
+    return window.msCrypto.getRandomValues(new Uint8Array(1))[0];
+  }
+  return Math.floor(Math.random() * 256);
 }
 
 function generatePassword(length) {
@@ -8,7 +14,7 @@ function generatePassword(length) {
     .map(function () {
       var result;
       while (true) {
-        result = generateRandomString();
+        result = String.fromCharCode(generateRandomByte());
         if (pattern.test(result)) {
           return result;
         }
