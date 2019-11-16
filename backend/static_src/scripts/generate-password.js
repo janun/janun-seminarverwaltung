@@ -1,9 +1,7 @@
 function generateRandomByte() {
-  if (window.hasOwnProperty('crypto')) {
-    return window.crypto.getRandomValues(new Uint8Array(1))[0];
-  }
-  if (window.hasOwnProperty('mscrypto')) {
-    return window.msCrypto.getRandomValues(new Uint8Array(1))[0];
+  var crypto = window.crypto || window.msCrypto;
+  if (crypto) {
+    return crypto.getRandomValues(new Uint8Array(1))[0];
   }
   return Math.floor(Math.random() * 256);
 }
