@@ -8,6 +8,7 @@ from django.db.models.functions import ExtractYear, Now
 from simple_history.models import HistoricalRecords
 
 from backend.utils import slugify_german
+from backend.dashboard.history import BaseHistoricalModel
 
 
 class JANUNGroupQuerySet(models.QuerySet):
@@ -70,7 +71,7 @@ class JANUNGroup(models.Model):
         return reverse("groups:detail", kwargs={"slug": self.slug})
 
     objects = JANUNGroupManager()
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[BaseHistoricalModel])
 
     class Meta:
         ordering = ("name",)

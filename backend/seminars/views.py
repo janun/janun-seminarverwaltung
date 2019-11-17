@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import itertools
 from operator import attrgetter
 import re
 
@@ -22,15 +21,14 @@ from django.urls import reverse
 from django.utils import timezone
 from django.http import HttpResponse
 
+from tablib import Dataset
 from formtools.wizard.views import SessionWizardView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from tablib import Dataset
 
 from backend.mixins import ErrorMessageMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
-from backend.dashboard.views import get_history_changes
 
 from .models import Seminar, SeminarComment, FundingRate
 from .templateddocs import fill_template, FileResponse
@@ -272,11 +270,7 @@ class SeminarHistoryView(UserPassesTestMixin, TemplateView):
         seminar = get_object_or_404(
             Seminar, slug=self.kwargs["slug"], year=self.kwargs["year"]
         )
-        history = seminar.history.all()
-        for entry in history:
-            entry.changes = get_history_changes(entry)
-        history = filter(lambda e: e.history_type != "~" or e.changes, history)
-        history = sorted(history, key=attrgetter("history_date"), reverse=True)
+        history = seminar.history.all().select_related("history_user")
         context["seminar"] = seminar
         context["history_table"] = SeminarHistoryTable(history)
         return context

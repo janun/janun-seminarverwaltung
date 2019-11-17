@@ -10,6 +10,7 @@ from preferences.models import Preferences
 from simple_history.models import HistoricalRecords
 
 from backend.groups.models import JANUNGroup
+from backend.dashboard.history import BaseHistoricalModel
 
 
 class JANUNSeminarPreferences(Preferences):
@@ -22,7 +23,7 @@ class JANUNSeminarPreferences(Preferences):
     legal_url = models.URLField(
         "Link zum Impressum", default="https://www.janun.de/impressum"
     )
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[BaseHistoricalModel])
 
     def __str__(self) -> str:
         return "Einstellungen"
@@ -71,7 +72,8 @@ class User(AbstractUser):
 
     objects = CaseInsensitiveUserManager()
     history = HistoricalRecords(
-        excluded_fields=["last_visit", "last_login", "updated_at"]
+        excluded_fields=["last_visit", "last_login", "updated_at"],
+        bases=[BaseHistoricalModel],
     )
     EMAIL_FIELD = "email"
 

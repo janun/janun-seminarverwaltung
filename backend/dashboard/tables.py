@@ -1,3 +1,5 @@
+import json
+
 from django.utils.html import format_html
 from django.contrib.humanize.templatetags.humanize import NaturalTimeFormatter
 from django.template import defaultfilters
@@ -52,9 +54,11 @@ class HistoryTable(tables.Table):
 
         return defaultfilters.truncatechars(value, 70)
 
-    changes = tables.Column(verbose_name="Änderungen", orderable=False, empty_values=())
+    history_change_reason = tables.Column(
+        verbose_name="Änderungen", orderable=False, empty_values=()
+    )
 
-    def render_changes(self, record):
+    def render_history_change_reason(self, record):
         if record.history_type == "+":
             if record._meta.model_name == "historicalseminarcomment":
                 return "Kommentar: {}".format(
@@ -65,30 +69,36 @@ class HistoryTable(tables.Table):
         if record.history_type == "-":
             return format_html("<em>gelöscht</em>")
 
-        if not record.changes:
+        if not record.history_change_reason:
             return format_html("<em>nichts geändert</em>")
 
-        return Template(
-            """<ul class="{% if changes|length > 1 %}list-disc{% endif %}">
-        {% for change in changes %}
-            <li class="mr-2 whitespace-no-wrap">
-                <span>{{ change.field }}</span>:
-                {% if not change.new %}
-                    <em>gelöscht</em>
-                {% elif not change.old %}
-                    <span>{{ change.new|truncatechars:20 }}</span>
-                {% else %}
-                    <span class="line-through">{{ change.old|truncatechars:10 }}</span>
-                    →
-                    <span>{{ change.new|truncatechars:20 }}</span>
-                {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
-        """
-        ).render(Context({"changes": record.changes}))
+        def format_change(change):
+            field = change["field"]  # TODO try to get field verbose name
+            if not change["new"]:
+                string = "{} gelöscht".format(field)
+            elif not change["old"]:
+                string = "{}: {}".format(
+                    field, defaultfilters.truncatechars(change["new"], 20)
+                )
+            else:
+                string = "{}: {} → {}".format(
+                    field,
+                    defaultfilters.truncatechars(change["old"], 15),
+                    defaultfilters.truncatechars(change["new"], 15),
+                )
+            return format_html(
+                '<li class="mr-2 whitespace-no-wrap">{}</li>'.format(string)
+            )
+
+        changes = map(format_change, json.loads(record.history_change_reason))
+        return format_html("<ul>{}</ul>".format("".join(changes)))
 
     class Meta:
         template_name = "table.html"
-        fields = ["history_date", "history_user", "history_object", "changes"]
+        fields = [
+            "history_date",
+            "history_user",
+            "history_object",
+            "history_change_reason",
+        ]
         attrs = {"class": "table-sticky"}

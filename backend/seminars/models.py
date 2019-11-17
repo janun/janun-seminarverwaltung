@@ -18,6 +18,7 @@ from simple_history.models import HistoricalRecords
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.utils import slugify_german
+from backend.dashboard.history import BaseHistoricalModel
 
 from .states import (
     STATES_CONFIRMED,
@@ -146,7 +147,7 @@ class FundingRate(models.Model):
     def __str__(self) -> str:
         return "Förderungssätze %s" % self.year
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[BaseHistoricalModel])
 
     def get_absolute_url(self):
         return reverse("seminars:funding_rates", kwargs={"year": self.year})
@@ -450,7 +451,7 @@ class Seminar(models.Model):
         verbose_name_plural = "Seminare"
 
     objects = SeminarManager()
-    history = HistoricalRecords(excluded_fields=["updated_at", "slug"])
+    history = HistoricalRecords(excluded_fields=["updated_at", "slug"], bases=[BaseHistoricalModel])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -556,7 +557,7 @@ class SeminarComment(models.Model):
     def get_absolute_url(self):
         return "{}#comments".format(self.seminar.get_absolute_url())
 
-    history = HistoricalRecords(excluded_fields=["updated_at"])
+    history = HistoricalRecords(excluded_fields=["updated_at"], bases=[BaseHistoricalModel])
 
     class Meta:
         ordering = ("-created_at",)
