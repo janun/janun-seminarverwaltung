@@ -54,7 +54,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
 
   // start the search on input
   input.addEventListener('input', function () {
-    if (input.value.length < 3) {
+    if (input.value.length === 0) {
       results.innerHTML = "";
       return;
     }
