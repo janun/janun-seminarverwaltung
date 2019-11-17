@@ -4,8 +4,7 @@ from django.utils.html import format_html
 from django.contrib.humanize.templatetags.humanize import NaturalTimeFormatter
 from django.template import defaultfilters
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
-from django.template import Template, Context
+from django.core.exceptions import ObjectDoesNotExist, FieldDoesNotExist
 
 import django_tables2 as tables
 
@@ -73,7 +72,11 @@ class HistoryTable(tables.Table):
             return format_html("<em>nichts geändert</em>")
 
         def format_change(change):
-            field = change["field"]  # TODO try to get field verbose name
+            try:
+                field = record.instance._meta.get_field(change["field"]).verbose_name
+            except FieldDoesNotExist:
+                field = change["field"]
+
             if not change["new"]:
                 string = "{} gelöscht".format(field)
             elif not change["old"]:
