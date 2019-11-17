@@ -65,7 +65,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
         results.innerHTML = loadEvent.target.response;
       }
     });
-    XHR.open('GET', form.action + "?q=" + input.value);
+    XHR.open('GET', form.action + "?q=" + encodeURIComponent(input.value));
     XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     XHR.send();
   });
