@@ -10,7 +10,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
   })
 
   // show results when focus
-  input.addEventListener('focus', function (event) {
+  input.addEventListener('focus', function () {
     results.classList.remove('hidden');
   })
 
@@ -53,7 +53,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
   })
 
   // start the search on input
-  input.addEventListener('input', function (event) {
+  input.addEventListener('input', function () {
     if (input.value.length < 3) {
       results.innerHTML = "";
       return;
@@ -65,9 +65,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
         results.innerHTML = loadEvent.target.response;
       }
     });
-    var target = new URL(form.action);
-    target.search = new URLSearchParams({ q: input.value }).toString();
-    XHR.open('GET', target);
+    XHR.open('GET', form.action + "?q=" + input.value);
     XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     XHR.send();
   });

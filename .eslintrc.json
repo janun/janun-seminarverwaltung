@@ -1,0 +1,23 @@
+{
+    "extends": [
+        "plugin:compat/recommended",
+        "eslint:recommended"
+    ],
+    "env": {
+        "browser": true
+    },
+    "overrides": [
+        {
+            "files": [
+                "gulpfile.js"
+            ],
+            "parserOptions": {
+                "ecmaVersion": 6
+            },
+            "env": {
+                "node": true,
+                "browser": false
+            }
+        }
+    ]
+}

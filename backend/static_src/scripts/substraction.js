@@ -2,8 +2,8 @@ function updateDifference() {
   var minuend = document.querySelector(".js-substraction-minuend").innerHTML.replace('.', '').replace(',', '.');
   var subtrahend = document.querySelector(".js-substraction-subtrahend").innerHTML.replace('.', '').replace(',', '.');
   var difference = document.querySelector(".js-substraction-difference");
-  minuend = Number.isNaN(minuend) ? 0 : parseFloat(minuend);
-  subtrahend = Number.isNaN(subtrahend) ? 0 : parseFloat(subtrahend);
+  minuend = isNaN(minuend) ? 0 : parseFloat(minuend);
+  subtrahend = isNaN(subtrahend) ? 0 : parseFloat(subtrahend);
   var result = minuend - subtrahend;
   difference.innerHTML = result.toLocaleString("de", { style: "currency", currency: "EUR" })
 }

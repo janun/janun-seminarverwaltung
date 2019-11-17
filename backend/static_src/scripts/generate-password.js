@@ -7,16 +7,14 @@ function generateRandomByte() {
 }
 
 function generatePassword(length) {
-  var pattern = /[a-zA-Z0-9_\-\+\.]/;
+  var pattern = /[a-zA-Z0-9_\-+.]/;
   return Array.apply(null, { 'length': length })
     .map(function () {
       var result;
-      while (true) {
+      while (!pattern.test(result)) {
         result = String.fromCharCode(generateRandomByte());
-        if (pattern.test(result)) {
-          return result;
-        }
       }
+      return result;
     })
     .join('');
 }

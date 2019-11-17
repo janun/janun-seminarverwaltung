@@ -17,7 +17,7 @@ document.querySelectorAll('.js-row-link').forEach(function (container) {
   container.appendChild(style);
 
   // set width of those as
-  function setWidths(event) {
+  function setWidths() {
     var width = container.clientWidth + 'px';
     style.innerHTML = ".js-row-link-link.js-row-link-link { width: " + width + " }"
   }

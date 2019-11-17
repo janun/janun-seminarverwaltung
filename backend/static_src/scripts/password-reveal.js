@@ -16,4 +16,4 @@ document.querySelectorAll('.js-password-reveal').forEach(function (div) {
       hide.classList.add('hidden');
     }
   })
-})
+});

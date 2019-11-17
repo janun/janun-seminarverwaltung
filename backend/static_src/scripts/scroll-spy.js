@@ -6,7 +6,7 @@ document.querySelectorAll('.js-scroll-spy').forEach(function (container) {
   var classlist = menu.getAttribute('data-js-scroll-spy-class').split(' ');
   var offset = menu.getAttribute('data-offset') || 0;
 
-  function onScroll(event) {
+  function onScroll() {
     var activeSections = [];
     sections.forEach(function (section) {
       if (section.getBoundingClientRect().top < offset) {
