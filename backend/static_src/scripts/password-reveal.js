@@ -1,19 +1,19 @@
 document.querySelectorAll('.js-password-reveal').forEach(function (div) {
   var input = div.querySelector('input');
-  var button = div.querySelector('button');
-  var show = button.querySelector('.js-password-reveal-show');
-  var hide = button.querySelector('.js-password-reveal-hide');
+  var showButton = div.querySelector('.js-show-button');
+  var hideButton = div.querySelector('.js-hide-button');
 
-  button.addEventListener('click', function (event) {
-    event.preventDefault();
-    if (input.type === 'password') {
-      input.type = 'text';
-      show.classList.add('hidden');
-      hide.classList.remove('hidden');
-    } else {
-      input.type = 'password'
-      show.classList.remove('hidden');
-      hide.classList.add('hidden');
-    }
-  })
+  showButton.addEventListener('click', function (event) {
+    input.type = 'text';
+    showButton.classList.add('hidden');
+    hideButton.classList.remove('hidden');
+    input.focus();
+  });
+
+  hideButton.addEventListener('click', function (event) {
+    input.type = 'password';
+    showButton.classList.remove('hidden');
+    hideButton.classList.add('hidden');
+    input.focus();
+  });
 });
