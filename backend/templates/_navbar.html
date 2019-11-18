@@ -1,3 +1,4 @@
+{% load janun %}
 <nav class="navbar bg-white shadow px-4 md:px-8">
   <div class="flex justify-between">
 
@@ -20,7 +21,16 @@
           <li>
             <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"
               href="{% url 'seminars:list' %}">
-              Seminare</a>
+              Seminare
+              {% if request.user.is_staff %}
+                {% get_new_seminars as new_seminars %}
+                {% if new_seminars %}
+                  <span title="{{ new_seminars }} neu angemeldete Seminare" class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                    {{ new_seminars }}
+                  </span>
+                {% endif %}
+              {% endif %}
+            </a>
           </li>
           {% if request.user.is_staff %}
             <li>
@@ -30,7 +40,14 @@
             <li>
               <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "users" %}font-bold{% endif %}"
                 href="{% url 'users:list' %}">
-                Konten</a>
+                Konten
+                {% get_unreviewed_users as unreviewed_users %}
+                {% if unreviewed_users %}
+                  <span title="{{ unreviewed_users }} ungeprüfte Konten" class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                    {{ unreviewed_users }}
+                  </span>
+                {% endif %}
+              </a>
             </li>
           {% endif %}
         </ul>
