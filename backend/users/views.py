@@ -1,4 +1,4 @@
-from django.views.generic import View, ListView
+from django.views.generic import View
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from allauth_2fa.views import TwoFactorSetup, TwoFactorRemove
 from allauth_2fa.utils import user_has_valid_totp_device
 from django_otp.plugins.otp_totp.models import TOTPDevice
-
+from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 from backend.mixins import ErrorMessageMixin
@@ -19,12 +19,15 @@ from .models import User
 from .forms import ProfileForm, UserDetailForm, UserCreateForm, UserTOTPDeviceRemoveForm
 from .tables import UserTable
 from .resources import UserResource
+from .filters import UserFilter
 
 
-class UserListView(SingleTableMixin, UserPassesTestMixin, ListView):
+class UserListView(SingleTableMixin, UserPassesTestMixin, FilterView):
     model = User
     table_class = UserTable
+    filterset_class = UserFilter
     queryset = User.objects.all().prefetch_related("janun_groups", "group_hats")
+    template_name = "users/user_list.html"
 
     def test_func(self):
         return self.request.user.is_staff
