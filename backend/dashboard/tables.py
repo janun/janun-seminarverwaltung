@@ -51,7 +51,10 @@ class HistoryTable(tables.Table):
         except ObjectDoesNotExist:
             value = record.history_object
 
-        return defaultfilters.truncatechars(value, 70)
+        return render_two_values(
+            defaultfilters.truncatechars(value, 70),
+            record.history_object._meta.verbose_name,
+        )
 
     history_change_reason = tables.Column(
         verbose_name="Änderungen", orderable=False, empty_values=()
