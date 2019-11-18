@@ -10,8 +10,8 @@ function generatePassword(length) {
   var pattern = /[a-zA-Z0-9_\-+.]/;
   return Array.apply(null, { 'length': length })
     .map(function () {
-      var result;
-      while (!pattern.test(result)) {
+      var result = "";
+      while (!result || !pattern.test(result)) {
         result = String.fromCharCode(generateRandomByte());
       }
       return result;
