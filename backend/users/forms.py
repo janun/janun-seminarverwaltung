@@ -51,7 +51,10 @@ class LoginForm(AllauthLoginForm):
                 "Passwort vergessen?",
                 "inline-block text-sm text-gray-700 hover:text-gray-800 mb-6",
             ),
-            "remember",
+            Div(
+                Field("remember"),
+                title="Du bleibst angemeldet, auch wenn Du Deinen Webbrowser schließt.",
+            ),
         )
 
         # remove placeholders
