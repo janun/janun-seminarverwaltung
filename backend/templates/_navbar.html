@@ -25,7 +25,8 @@
               {% if request.user.is_staff %}
                 {% get_new_seminars as new_seminars %}
                 {% if new_seminars %}
-                  <span title="{{ new_seminars }} neu angemeldete Seminare" class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                  <span title="{{ new_seminars }} neu angemeldete{{ new_seminars|pluralize:"s," }} Seminar{{ new_seminars|pluralize:",e" }}"
+                  class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
                     {{ new_seminars }}
                   </span>
                 {% endif %}
@@ -43,7 +44,8 @@
                 Konten
                 {% get_unreviewed_users as unreviewed_users %}
                 {% if unreviewed_users %}
-                  <span title="{{ unreviewed_users }} ungeprüfte Konten" class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                  <span title="{{ unreviewed_users }} ungeprüfte{{ unreviewed_users|pluralize:"s," }} Kont{{ unreviewed_users|pluralize:"o,en" }}"
+                  class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
                     {{ unreviewed_users }}
                   </span>
                 {% endif %}
