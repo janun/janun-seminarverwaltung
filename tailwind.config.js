@@ -49,42 +49,14 @@ module.exports = {
           800: "#236707",
           900: "#1a4614"
         },
-        "gray-20": "#fdfdfd",
-        "gray-150": "#f4f8fa",
         "white-75": "rgba(255, 255, 255, 0.75)"
       },
       maxWidth: {
-        xxs: "10rem",
         "7xl": "80rem"
       },
       spacing: {
         "1.5": "0.375rem"
       },
-      screens: {
-        xxl: "1600px"
-      },
-      stroke: theme => ({
-        'gray-300': theme('colors.gray.300'),
-        'gray-400': theme('colors.gray.400'),
-        'gray-500': theme('colors.gray.500'),
-        'green-300': theme('colors.green.300'),
-        'green-400': theme('colors.green.400'),
-        'green-500': theme('colors.green.500'),
-        'green-600': theme('colors.green.600'),
-        'red-300': theme('colors.red.300'),
-        'red-400': theme('colors.red.400'),
-      }),
-      fill: theme => ({
-        'gray-300': theme('colors.gray.300'),
-        'gray-400': theme('colors.gray.400'),
-        'gray-500': theme('colors.gray.500'),
-        'green-300': theme('colors.green.300'),
-        'green-400': theme('colors.green.400'),
-        'green-500': theme('colors.green.500'),
-        'green-600': theme('colors.green.600'),
-        'red-300': theme('colors.red.300'),
-        'red-400': theme('colors.red.400'),
-      })
     }
   },
   variants: {

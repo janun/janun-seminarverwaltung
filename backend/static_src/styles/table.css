@@ -78,7 +78,7 @@
 }
 
 .js-row-link tr:hover {
-  @apply bg-gray-150;
+  @apply bg-gray-100;
 }
 
 .js-row-link td:first-child {
