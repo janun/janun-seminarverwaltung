@@ -49,7 +49,9 @@ class HistoryTable(tables.Table):
         try:
             value = record.instance
         except ObjectDoesNotExist:
-            value = record.history_object
+            value = str(record.history_object)
+            if not value:
+                value = record.name  # workaround for strange User.__str__ behaviour
 
         return render_two_values(
             defaultfilters.truncatechars(value, 70),
