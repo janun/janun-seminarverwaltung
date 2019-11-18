@@ -72,6 +72,7 @@ module.exports = {
         'green-500': theme('colors.green.500'),
         'green-600': theme('colors.green.600'),
         'red-300': theme('colors.red.300'),
+        'red-400': theme('colors.red.400'),
       }),
       fill: theme => ({
         'gray-300': theme('colors.gray.300'),
@@ -82,6 +83,7 @@ module.exports = {
         'green-500': theme('colors.green.500'),
         'green-600': theme('colors.green.600'),
         'red-300': theme('colors.red.300'),
+        'red-400': theme('colors.red.400'),
       })
     }
   },

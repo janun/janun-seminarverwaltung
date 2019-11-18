@@ -73,12 +73,8 @@
       <div>{{ bills_present_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
     </div>
 
-    <div class="flex flex-col items-center">
-      <svg viewbox="0 0 32 32" class="m-2 h-12 w-12 fill-current text-white rounded-full bg-white border border-green-300" style="transform: rotate(-90deg) scale(1, -1);">
-        <circle r="16" cx="16" cy="16" class="stroke-green-300" style="stroke-dasharray:{% widthratio bills_present_aggregates.count confirmed_aggregates.count 100 %} 100; stroke-width:32;"/>
-      </svg>
-      <div class="font-bold">{% widthratio bills_present_aggregates.count confirmed_aggregates.count 100 %} %</div>
-    </div>
+    {% widthratio bills_present_aggregates.count confirmed_aggregates.count 100 as percent %}
+    {% include "./_percent_diagram.html" %}
   </div>
 
    <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
@@ -89,12 +85,8 @@
       <div>{{ deadline_expired_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
     </div>
 
-    <div class="flex flex-col items-center">
-      <svg viewbox="0 0 32 32" class="m-2 h-12 w-12 fill-current text-white rounded-full bg-white border border-red-300" style="transform: rotate(-90deg) scale(1, -1);">
-        <circle r="16" cx="16" cy="16" class="stroke-red-300" style="stroke-dasharray:{% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 %} 100; stroke-width:32;"/>
-      </svg>
-      <div class="font-bold">{% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 %} %</div>
-    </div>
+    {% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 as percent %}
+    {% include "./_percent_diagram.html" with color="stroke-red-400" %}
   </div>
 
   <div class="card shadow px-4 py-3 w-64 flex justify-between my-2 mx-4">
@@ -105,12 +97,8 @@
       <div>{{ transferred_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
     </div>
 
-    <div class="flex flex-col items-center">
-      <svg viewbox="0 0 32 32" class="m-2 h-12 w-12 fill-current text-white rounded-full bg-white border border-green-300" style="transform: rotate(-90deg) scale(1, -1);">
-        <circle r="16" cx="16" cy="16" class="stroke-green-300" style="stroke-dasharray:{% widthratio transferred_aggregates.count confirmed_aggregates.count 100 %} 100; stroke-width:32;"/>
-      </svg>
-      <div class="font-bold">{% widthratio transferred_aggregates.count confirmed_aggregates.count 100 %} %</div>
-    </div>
+    {% widthratio transferred_aggregates.count confirmed_aggregates.count 100 as percent %}
+    {% include "./_percent_diagram.html" %}
   </div>
   
 </div>
