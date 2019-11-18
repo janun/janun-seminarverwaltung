@@ -28,7 +28,6 @@ class UserTable(tables.Table):
     )
     is_active = ColoredBooleanColumn()
     is_reviewed = ColoredBooleanColumn()
-    has_totp = ColoredBooleanColumn(verbose_name="2FA", orderable=False)
     action = tables.Column(verbose_name="", orderable=False, empty_values=())
     last_visit = tables.Column(default="nie")
 
@@ -72,7 +71,6 @@ class UserTable(tables.Table):
             "group_hats",
             "is_active",
             "is_reviewed",
-            "has_totp",
             "last_visit",
             "action",
         ]
