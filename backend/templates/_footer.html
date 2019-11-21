@@ -1,36 +1,40 @@
-<footer class="mt-16 w-full text-center py-8 text-sm bg-gray-300 text-gray-700 shadow-inner">
-  <h3 class="font-semibold mb-3">JANUN-Seminarverwaltung</h3>
-  
-  <div class="flex flex-col flex-wrap items-center justify-center">
-    <div>
-      {% if preferences.JANUNSeminarPreferences.help_phone %}
-        <a class="flex items-center justify-center mb-1 hover:text-gray-800" href="tel:{{ preferences.JANUNSeminarPreferences.help_phone }}">
-          <svg class="mr-1 fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M20 18.35V19a1 1 0 0 1-1 1h-2A17 17 0 0 1 0 3V1a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4c0 .56-.31 1.31-.7 1.7L3.16 8.84c1.52 3.6 4.4 6.48 8 8l2.12-2.12c.4-.4 1.15-.71 1.7-.71H19a1 1 0 0 1 .99 1v3.35z"/></svg>
-          {{ preferences.JANUNSeminarPreferences.help_phone.as_national }}
-        </a>
-      {% endif %}
-      {% if preferences.JANUNSeminarPreferences.help_email %}
-        <a class="flex items-center justify-center hover:text-gray-800" href="mailto:{{ preferences.JANUNSeminarPreferences.help_email }}">
-          <svg class="mr-1 fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M18 2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2h16zm-4.37 9.1L20 16v-2l-5.12-3.9L20 6V4l-10 8L0 4v2l5.12 4.1L0 14v2l6.37-4.9L10 14l3.63-2.9z"/></svg>
-          {{ preferences.JANUNSeminarPreferences.help_email }}
-        </a>
-      {% endif %}
-    </div>
+{% load cache %}
 
-    <div class="mt-3">
-      {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
-        <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}">
-          Seminarrichtlinie
+{% cache 600 footer %}
+  <footer class="mt-16 w-full text-center py-8 text-sm bg-gray-300 text-gray-700 shadow-inner">
+    <h3 class="font-semibold mb-3">JANUN-Seminarverwaltung</h3>
+    
+    <div class="flex flex-col flex-wrap items-center justify-center">
+      <div>
+        {% if preferences.JANUNSeminarPreferences.help_phone %}
+          <a class="flex items-center justify-center mb-1 hover:text-gray-800" href="tel:{{ preferences.JANUNSeminarPreferences.help_phone }}">
+            <svg class="mr-1 fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M20 18.35V19a1 1 0 0 1-1 1h-2A17 17 0 0 1 0 3V1a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4c0 .56-.31 1.31-.7 1.7L3.16 8.84c1.52 3.6 4.4 6.48 8 8l2.12-2.12c.4-.4 1.15-.71 1.7-.71H19a1 1 0 0 1 .99 1v3.35z"/></svg>
+            {{ preferences.JANUNSeminarPreferences.help_phone.as_national }}
+          </a>
+        {% endif %}
+        {% if preferences.JANUNSeminarPreferences.help_email %}
+          <a class="flex items-center justify-center hover:text-gray-800" href="mailto:{{ preferences.JANUNSeminarPreferences.help_email }}">
+            <svg class="mr-1 fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M18 2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2h16zm-4.37 9.1L20 16v-2l-5.12-3.9L20 6V4l-10 8L0 4v2l5.12 4.1L0 14v2l6.37-4.9L10 14l3.63-2.9z"/></svg>
+            {{ preferences.JANUNSeminarPreferences.help_email }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="mt-3">
+        {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
+          <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}">
+            Seminarrichtlinie
+          </a>
+        {% endif %}
+        |
+        <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.legal_url }}">
+          Impressum
         </a>
-      {% endif %}
-      |
-      <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.legal_url }}">
-        Impressum
-      </a>
-      |
-      <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.data_protection_policy_url }}">
-        Datenschutz
-      </a>
+        |
+        <a rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.data_protection_policy_url }}">
+          Datenschutz
+        </a>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+{% endcache %}
