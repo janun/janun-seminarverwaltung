@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from operator import attrgetter
 import re
 
 from django.views.generic import (
@@ -10,6 +9,7 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
     CreateView,
+    DetailView
 )
 from django.views.generic.base import RedirectView
 from django.core.exceptions import PermissionDenied
@@ -20,6 +20,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse
 from django.utils import timezone
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 from tablib import Dataset
 from formtools.wizard.views import SessionWizardView
@@ -30,7 +31,7 @@ from backend.mixins import ErrorMessageMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
-from .models import Seminar, SeminarComment, FundingRate
+from .models import Seminar, SeminarComment, FundingRate, get_max_funding
 from .templateddocs import fill_template, FileResponse
 from .tables import SeminarTable, SeminarHistoryTable, SeminarSearchTable
 from .filters import SeminarStaffFilter
@@ -40,6 +41,7 @@ from .forms import (
     FundingRateForm,
     SeminarTeamerChangeForm,
     SeminarStaffChangeForm,
+    SeminarTeamerApplyForm,
 )
 
 
@@ -70,6 +72,18 @@ class FundingRateUpdateView(
             return FundingRate.objects.get(year=year)
         except FundingRate.DoesNotExist:
             return FundingRate(year=year)
+
+
+class CalcMaxFundingView(View):
+    def get(self, request):
+        year = int(request.GET.get("year", None))
+        group = bool(request.GET.get("group", None))
+        planned_training_days = int(request.GET.get("days", None))
+        planned_attendees_max = int(request.GET.get("attendees", None))
+        max_funding = get_max_funding(
+            year, group, planned_training_days, planned_attendees_max
+        )
+        return HttpResponse(str(max_funding))
 
 
 class SeminarListView(RedirectView):
@@ -173,35 +187,35 @@ class SeminarProofOfUseView(UserPassesTestMixin, View):
         return FileResponse(odt_filepath, filename)
 
 
-# class SeminarImportView(ErrorMessageMixin, UserPassesTestMixin, FormView):
-#     template_name = "seminars/import.html"
-#     form_class = SeminarImportForm
-#     resource_class = SeminarResource
-#     success_url = "/seminars"
+class SeminarImportView(ErrorMessageMixin, UserPassesTestMixin, FormView):
+    template_name = "seminars/import.html"
+    form_class = SeminarImportForm
+    resource_class = SeminarResource
+    success_url = "/seminars"
 
-#     def test_func(self):
-#         return self.request.user.is_staff
+    def test_func(self):
+        return self.request.user.is_staff
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["fields"] = [
-#             f.column_name for f in self.resource_class().get_user_visible_fields()
-#         ]
-#         context["possible_status"] = Seminar.STATE_CHOICES._db_values
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["fields"] = [
+            f.column_name for f in self.resource_class().get_user_visible_fields()
+        ]
+        context["possible_status"] = Seminar.STATE_CHOICES._db_values
+        return context
 
-#     def form_valid(self, form):
-#         resource = self.resource_class()
-#         dataset = Dataset()
-#         dataset.load(self.request.FILES["file"].read().decode("utf-8"), format="csv")
-#         result = resource.import_data(
-#             dataset, dry_run=True, raise_errors=True, user=self.request.user
-#         )
+    def form_valid(self, form):
+        resource = self.resource_class()
+        dataset = Dataset()
+        dataset.load(self.request.FILES["file"].read().decode("utf-8"), format="csv")
+        result = resource.import_data(
+            dataset, dry_run=True, raise_errors=True, user=self.request.user
+        )
 
-#         if not result.has_errors() and not result.has_validation_errors():
-#             resource.import_data(dataset, dry_run=False)
-#             messages.success(self.request, "Seminare erfolgreich importiert")
-#             return super().form_valid(form)
+        if not result.has_errors() and not result.has_validation_errors():
+            resource.import_data(dataset, dry_run=False)
+            messages.success(self.request, "Seminare erfolgreich importiert")
+            return super().form_valid(form)
 
 
 def user_may_access_seminar(user, seminar):
@@ -313,7 +327,33 @@ class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
         return result
 
 
-class SeminarApplyView(SessionWizardView):
+
+class SeminarApplyDoneView(DetailView):
+    template_name = "seminars/seminar_apply_done.html"
+
+    def get_object(self):
+        year = self.kwargs.get("year")
+        slug = self.kwargs.get("slug")
+        return get_object_or_404(Seminar, year=year, slug=slug)
+
+
+class SeminarApplyView(ErrorMessageMixin, CreateView):
+    form_class = SeminarTeamerApplyForm
+    queryset = Seminar.objects.select_related("owner", "group")
+    template_name = "seminars/seminar_teamer_create.html"
+    # success_message = "Deine Änderungen wurden gespeichert."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_success_url(self):
+        seminar = self.object
+        return reverse("seminars:apply_done", kwargs={"year": seminar.start_date.year, "slug": seminar.slug})
+
+
+class SeminarApplyWizardView(SessionWizardView):
     template_name = "seminars/seminar_apply.html"
     form_list = [
         seminar_forms.ContentSeminarForm,
@@ -381,10 +421,6 @@ class SeminarApplyView(SessionWizardView):
             "seminars/seminar_apply_done.html",
             {"seminar": self.instance, "email": email},
         )
-
-
-class SeminarApplyDoneTestView(TemplateView):
-    template_name = "seminars/seminar_apply_done.html"
 
 
 class SeminarSearchView(UserPassesTestMixin, ListView):

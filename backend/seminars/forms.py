@@ -1,8 +1,8 @@
 from django import forms
 from django.utils import timezone, formats
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from django.template import defaultfilters
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
@@ -11,8 +11,11 @@ from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from backend.utils import Fieldset, Link
-from .models import Seminar, FundingRate
+from .models import Seminar, FundingRate, get_max_funding
 from .states import STATE_INFO, get_next_states
+
+
+seminar_policy_url = preferences.JANUNSeminarPreferences.seminar_policy_url # pylint: disable=no-member
 
 
 class FundingRateForm(forms.ModelForm):
@@ -175,6 +178,190 @@ class SeminarTeamerChangeForm(forms.ModelForm):
         model = Seminar
         fields = [
             "status",
+            "title",
+            "description",
+            "start_date",
+            "start_time",
+            "end_date",
+            "end_time",
+            "location",
+            "planned_training_days",
+            "planned_attendees_min",
+            "planned_attendees_max",
+            "requested_funding",
+            "group",
+        ]
+        widgets = {"description": forms.Textarea({"rows": 3})}
+
+
+class SeminarTeamerApplyForm(forms.ModelForm):
+
+    confirm_policy = forms.BooleanField(
+        label=(
+            'Ich habe die <a class="underline" rel="noreferrer" target="_blank"'
+            'href="{}">Seminarabrechnungsrichtlinie</a> gelesen.').format(seminar_policy_url),
+        required=True
+    )
+
+    confirm_funding = forms.BooleanField(
+        label='Ich möchte die Förderung <span id="funding"></span> beantragen.',
+        required=True,
+    )
+
+    confirm_deadline = forms.BooleanField(
+        label='Ich reiche alle Unterlagen bis zur Abrechnungsfrist <span id="deadline"></span> ein.',
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        user = self.request.user
+
+        # set initial group:
+        if user.janun_groups.count() == 1:
+            kwargs["initial"]["group"] = user.janun_groups.get()
+
+        super().__init__(*args, **kwargs)
+
+        # set possible groups
+        self.fields["group"].label = "JANUN-Gruppe"
+        self.fields["group"].queryset = user.janun_groups
+        self.fields["group"].empty_label = "- Als Einzelperson -"
+
+        self.fields["planned_attendees_min"].label = "Mindestens"
+        self.fields["planned_attendees_max"].label = "Maximal"
+        self.fields["planned_attendees_min"].validators = [MinValueValidator(10)]
+
+        max_funding = self.instance.get_max_funding()
+        if max_funding:
+            self.fields["requested_funding"].validators = [MaxValueValidator(max_funding)]
+
+        self.fields["title"].widget.attrs["autofocus"] = True
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset(
+                "Inhalt",
+                Field("title", css_class="w-full"),
+                Field("description", css_class="w-full js-autogrow"),
+                text="Um zu entscheiden, ob das Seminar gefördert werden kann, müssen wir wissen, um was es geht.",
+            ),
+            Fieldset(
+                "Zeit & Ort",
+                Div(
+                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Div(
+                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Field("location", css_class="w-full"),
+                text="Wann und wo das Seminar stattfindet.",
+            ),
+            Fieldset(
+                "JANUN-Gruppe",
+                Field("group"),
+                text="Meldest Du das Seminar für eine Gruppe an?"
+            ),
+            Fieldset(
+                "Bildungstage",
+                Field("planned_training_days", css_class="w-24"),
+                Div(HTML('''
+                    <h4 class="mt-4 mb-1 font-bold">Besonderheit für 2-tägige Seminare am Wochenende:</h4>
+                    <p>sind schon 2 Bildungstage, wenn insg. 8 Stunden Bildungsarbeit stattfinden.</p>
+                    <h4 class="mt-4 mb-1 font-bold">Besonderheiten für An- und Abreisetage:</h4>
+                    <ul class="list-disc pl-4">
+                    <li>sind zusammen 1 Bildungstag, wenn an beiden zusammen min. 6 Zeitstunden Bildungsarbeit stattfinden.</li>
+                    <li>sind je 1 Bildungstag, wenn außerdem am Anreisetag vor 12 Uhr begonnen wird und am Abreisetag nach 15.30 Uhr geendet wird.</li>
+                    <ul>
+                    '''
+                ), css_class="text-sm text-gray-700"),
+                text="An wievielen Tagen finden min. 6 Zeitstunden Bildungsarbeit statt?"
+            ),
+            Fieldset(
+                "Anzahl Teilnehmende",
+                HTML('<span class="col-form-label">Geplante Anzahl Teilnehmende</span>'),
+                Div(
+                    Div(
+                        Field("planned_attendees_min", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("planned_attendees_max", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                Div(HTML('''
+                    <p class="mt-4">Seminare mit <strong>weniger als 10</strong>
+                    Teilnehmenden können nicht gefördert werden.
+                    Die Förderung geht nur <strong>bis 40</strong> Teilnehmende,
+                    aber Ausnahmen sind manchmal möglich.
+                    </p>
+                    <h4 class="mt-6 mb-1 font-bold">Quoten:</h4>
+                    <p>Mehr als die Hälfte müssen:</p>
+                    <ul class="list-disc pl-4">
+                    <li>ihren Wohnsitz in Niedersachsen haben.</li>
+                    <li>mindestens 12 Jahre alt sein und maximal 27.</li>
+                    </ul>
+                '''), css_class="text-sm text-gray-700"),
+                text="Wieviele Teilnehmende hat das Seminar vorraussichtlich?",
+            ),
+            Fieldset(
+                "Förderung",
+                Div(
+                    HTML('''
+                        <p class="mb-2">
+                        Maximal mögliche Förderung: <span class="font-bold" id="max_funding"></span></strong>
+                        </p>
+                        <p class="text-sm">
+                        Wenn Du aber mit weniger auskommst, können evtl. mehr Seminare von JANUN gefördert werden.
+                        </p>
+                    '''),
+                css_id="max_funding_text", css_class="hidden mb-4 text-gray-700"),
+                AppendedText("requested_funding", "€", css_class="w-40"),
+                HTML('''
+                    <h4 class="text-gray-700 mt-6 mb-1 text-sm font-bold">Teilnahmebeitrag:</h4>
+                    <p class="text-gray-700 text-sm">JANUN fördert Seminare, finanziert sie aber nicht komplett.
+                    Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.).
+                    Der Richtwert für Teilnahmebeiträge ist 3,50 € pro Person und Tag.
+                    Ausgenommen sind eintägige Seminare.</p>
+                '''),
+                text="Wieviel Förderung benötigst Du?"
+            ),
+            Fieldset(
+                "Bestätigung",
+                "confirm_policy",
+                "confirm_funding",
+                "confirm_deadline",
+                text=""
+            ),
+        )
+
+    def save(self, commit=True):
+        self.instance.owner = self.request.user
+        return super().save(commit=commit)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        max_funding = get_max_funding(
+            cleaned_data["start_date"].year,
+            cleaned_data["group"],
+            cleaned_data["planned_training_days"],
+            cleaned_data["planned_attendees_max"]
+        )
+        if cleaned_data["requested_funding"] > max_funding:
+            self.add_error("requested_funding", "Maximal {} €".format(
+                defaultfilters.floatformat(max_funding, 2)
+            ))
+
+    class Meta:
+        model = Seminar
+        fields = [
             "title",
             "description",
             "start_date",
@@ -558,11 +745,11 @@ class ConfirmSeminarForm(SeminarStepForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if preferences.JANUNSeminarPreferences.seminar_policy_url:
+        if seminar_policy_url:
             self.fields["confirm_policy"].label = (
                 'Ich habe die <a class="underline" rel="noreferrer" target="_blank" href="{}">'
                 "Seminarabrechnungsrichtlinie</a> gelesen."
-            ).format(preferences.JANUNSeminarPreferences.seminar_policy_url)
+            ).format(seminar_policy_url)
 
         if self.instance.requested_funding:
             self.fields["confirm_funding"] = forms.BooleanField(

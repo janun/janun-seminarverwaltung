@@ -7,6 +7,9 @@ app_name = "seminars"
 
 urlpatterns = [
     path("", views.SeminarListView.as_view(), name="list"),
+    path(
+        "calc_max_funding", views.CalcMaxFundingView.as_view(), name="calc_max_funding"
+    ),
     path("search", views.SeminarSearchView.as_view(), name="search"),
     # path("import", views.SeminarImportView.as_view(), name="import"),
     path("<int:year>", views.StaffSeminarListView.as_view(), name="list_staff"),
@@ -22,6 +25,11 @@ urlpatterns = [
         name="proof_of_use",
     ),
     path("your", views.YourSeminarListView.as_view(), name="list_yours"),
+    path(
+        "<int:year>/<slug:slug>/apply_done",
+        views.SeminarApplyDoneView.as_view(),
+        name="apply_done",
+    ),
     # edit:
     path("<int:year>/<slug:slug>", views.SeminarUpdateView.as_view(), name="detail"),
     path(
@@ -64,6 +72,3 @@ urlpatterns = [
         name="comment_delete",
     ),
 ]
-
-if settings.DEBUG:
-    urlpatterns += [path("apply_done_test", views.SeminarApplyDoneTestView.as_view())]

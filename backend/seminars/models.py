@@ -118,31 +118,27 @@ class FundingRate(models.Model):
             return self.single_rate_one_day
         return self.single_rate
 
-    def limit(self, seminar, funding: Decimal) -> Decimal:
-        upper_limit = self.group_limit if seminar.group else self.single_limit
+    def limit(self, group, planned_training_days, planned_attendees_max, funding: Decimal) -> Decimal:
+        upper_limit = self.group_limit if group else self.single_limit
         if upper_limit and funding > upper_limit:
             funding = upper_limit
 
         formula = (
-            self.group_limit_formula if seminar.group else self.single_limit_formula
+            self.group_limit_formula if group else self.single_limit_formula
         )
         if formula:
-            lower_limit = (
-                formulas.Parser()
-                .ast(formula)[1]
-                .compile()(B=seminar.planned_training_days)
-            )
+            lower_limit = float(formulas.Parser().ast(formula)[1].compile()(B=planned_training_days))
             if lower_limit and funding > lower_limit:
                 funding = lower_limit
 
         return funding
 
-    def get_max_funding(self, seminar) -> Decimal:
-        if seminar.planned_training_days and seminar.planned_attendees_max:
-            rate = self.get_rate(seminar.group, seminar.planned_training_days)
-            tnt = seminar.planned_training_days * seminar.planned_attendees_max
+    def get_max_funding(self, group, planned_training_days, planned_attendees_max) -> Decimal:
+        if planned_training_days and planned_attendees_max:
+            rate = self.get_rate(group, planned_training_days)
+            tnt = planned_training_days * planned_attendees_max
             funding = rate * tnt
-            return self.limit(seminar, funding)
+            return self.limit(group, planned_training_days, planned_attendees_max, funding)
 
     def __str__(self) -> str:
         return "Förderungssätze %s" % self.year
@@ -523,14 +519,18 @@ class Seminar(models.Model):
     def get_max_funding(self):
         if self.start_date:
             year = self.start_date.year
-            try:
-                fr = FundingRate.objects.get(year=year)
-            except FundingRate.DoesNotExist:
-                try:
-                    fr = FundingRate.objects.get(year=year - 1)
-                except FundingRate.DoesNotExist:
-                    return None
-            return fr.get_max_funding(self)
+            return get_max_funding(year, self.group, self.planned_training_days, self.planned_attendees_max)
+
+
+def get_max_funding(year, group, planned_training_days, planned_attendees_max):
+    try:
+        fr = FundingRate.objects.get(year=year)
+    except FundingRate.DoesNotExist:
+        try:
+            fr = FundingRate.objects.get(year=year - 1)
+        except FundingRate.DoesNotExist:
+            return None
+    return fr.get_max_funding(group, planned_training_days, planned_attendees_max)
 
 
 class SeminarComment(models.Model):

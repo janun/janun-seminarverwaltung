@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
-from backend.seminars.models import Seminar
+from backend.seminars.models import Seminar, FundingRate
 
 
 class SeminarsExportTestCase(TestCase):
@@ -327,3 +327,75 @@ class SearchTestCase(TestCase):
         self.assertContains(response, "Suche")
         self.assertContains(response, "Test-Seminar")
         self.assertNotContains(response, "Test-2Seminar")
+
+
+class CalcMaxFundingViewTestCase(TestCase):
+    url = reverse("seminars:calc_max_funding")
+
+    def setUp(self):
+        # testuser:
+        self.testuser = User(name="Max Mustermann", username="testuser")
+        self.testuser.set_password("secret")
+        self.testuser.save()
+        # funding_rate:
+        self.funding_rate = FundingRate(year=2019, group_rate=10, single_rate=8)
+        self.funding_rate.save()
+
+    def test_single_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url + "?year=2019&group=&days=2&attendees=20")
+        self.assertContains(response, "320.00")
+
+    def test_group_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url + "?year=2019&group=5&days=2&attendees=20")
+        self.assertContains(response, "400.00")
+
+
+class SeminarApplyViewTestCase(TestCase):
+    url = reverse("seminars:apply")
+
+    def setUp(self):
+        # testuser:
+        self.testuser = User(name="Max Mustermann", username="testuser")
+        self.testuser.set_password("secret")
+        self.testuser.save()
+        # funding_rate:
+        self.funding_rate = FundingRate(year=2019, group_rate=10, single_rate=8)
+        self.funding_rate.save()
+        # form date
+        self.form_data = {
+            "title": "Foobar",
+            "start_date": "2019-05-06",
+            "end_date": "2019-05-06",
+            "planned_training_days": "1",
+            "planned_attendees_min": "10",
+            "planned_attendees_max": "20",
+            "requested_funding": "100",
+            "confirm_policy": True,
+            "confirm_funding": True,
+            "confirm_deadline": True,
+        }
+
+    def test_get(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertContains(response, "anmelden")
+
+    def test_post_success(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.post(self.url, self.form_data, follow=True)
+        self.assertContains(response, "Foobar")
+        self.assertContains(response, "Seminar erfolgreich angemeldet")
+        seminar = response.context["seminar"]
+        self.assertEqual(seminar.start_date, datetime.date(2019, 5, 6))
+        self.assertEqual(seminar.title, "Foobar")
+        self.assertEqual(seminar.owner, self.testuser)
+
+    def test_funding_too_high(self):
+        self.client.login(username="testuser", password="secret")
+        form_data = self.form_data
+        form_data["requested_funding"] = 1000
+        response = self.client.post(self.url, form_data, follow=True)
+        self.assertNotContains(response, "Seminar erfolgreich angemeldet")
+        self.assertFormError(response, "form", "requested_funding", "Maximal 160,00 €")
