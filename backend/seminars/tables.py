@@ -86,7 +86,7 @@ class SeminarSearchTable(SeminarTable):
     year = tables.Column(verbose_name="Jahr")
 
     def render_year(self, record):
-        return record.year
+        return record.start_date.year
 
     class Meta:
         model = Seminar

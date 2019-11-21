@@ -110,3 +110,28 @@ class HistoryTable(tables.Table):
             "history_change_reason",
         ]
         attrs = {"class": "table-sticky"}
+
+
+class SearchResultsTable(tables.Table):
+
+    name = tables.Column(
+        verbose_name="Bezeichnung", orderable=False, linkify=False, empty_values=()
+    )
+    type = tables.Column(
+        verbose_name="Typ", orderable=False, linkify=False, empty_values=()
+    )
+
+    def render_name(self, record):
+        return str(record)
+
+    def render_type(self, record):
+        if record._meta.verbose_name == "Seminar":
+            return "Seminar {}".format(record.year)
+        return record._meta.verbose_name
+
+    class Meta:
+        template_name = "table.html"
+        fields = ["name", "type"]
+        attrs = {"class": "table-sticky js-row-link"}
+        empty_text = "Keine Suchergebnisse."
+        row_attrs = {"data-link": lambda record: record.get_absolute_url()}

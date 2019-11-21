@@ -57,7 +57,7 @@
     </div>
 
     {% if request.user.is_staff %}
-      <form class="mx-5 relative js-search-form flex items-center w-full max-w-md ml-auto" action="{% url 'seminars:search' %}" method="GET">
+      <form class="mx-5 relative js-search-form flex items-center w-full max-w-md ml-auto" action="{% url 'dashboard:search' %}" method="GET">
         <div class="inline-flex items-center relative w-full">
           <input autocomplete="off" type="text" name="q" class="text-sm pl-10 w-full py-2 bg-white border-gray-300 form-input" placeholder="Suchen… (Strg+Shift+F)">
           <div class="absolute left-0 inset-y-0 flex items-center">

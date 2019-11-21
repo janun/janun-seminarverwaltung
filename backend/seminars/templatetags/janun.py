@@ -38,3 +38,8 @@ def is_textarea(field):
 @register.filter
 def is_linkwidget(field):
     return isinstance(field.field.widget, django_filters.widgets.LinkWidget)
+
+
+@register.filter
+def get_modelname(instance):
+    return instance._meta.verbose_name

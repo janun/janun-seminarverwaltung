@@ -10,7 +10,6 @@ urlpatterns = [
     path(
         "calc_max_funding", views.CalcMaxFundingView.as_view(), name="calc_max_funding"
     ),
-    path("search", views.SeminarSearchView.as_view(), name="search"),
     # path("import", views.SeminarImportView.as_view(), name="import"),
     path("<int:year>", views.StaffSeminarListView.as_view(), name="list_staff"),
     path("<int:year>/export", views.SeminarExportView.as_view(), name="export"),

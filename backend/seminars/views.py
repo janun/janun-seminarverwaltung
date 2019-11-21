@@ -423,52 +423,6 @@ class SeminarApplyWizardView(SessionWizardView):
         )
 
 
-class SeminarSearchView(UserPassesTestMixin, ListView):
-    model = Seminar
-    context_object_name = "seminars"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.count = 0
-
-    def get_template_names(self):
-        if self.request.is_ajax():
-            return ["seminars/ajax_search.html"]
-        return ["seminars/search.html"]
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["count"] = self.count
-        context["q"] = self.request.GET.get("q", None)
-        if not self.request.is_ajax():
-            context["results_table"] = SeminarSearchTable(
-                self.get_queryset(), orderable=False
-            )
-        return context
-
-    def filter_qs(self, qs, q):
-        # year found:
-        if re.match(r".*\d{4}$", q):
-            year = q[-4:]
-            qs = qs.filter(year=year)
-            q = q[0:-4]
-        return qs.filter(title__icontains=q.strip())
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        q = self.request.GET.get("q", None)
-        if not q:
-            return qs.none()
-        qs = self.filter_qs(qs, q)
-        self.count = qs.count()
-        if self.request.is_ajax():
-            qs = qs[:6]
-        return qs
-
-    def test_func(self):
-        return self.request.user.is_staff
-
-
 class CommentListView(ListView):
     model = SeminarComment
     template_name = "seminars/_comment_list.html"
