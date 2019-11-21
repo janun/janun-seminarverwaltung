@@ -3,7 +3,7 @@
 }
 
 .col-form-label {
-  @apply block mb-1 text-sm text-gray-900;
+  @apply block mb-1 text-sm text-gray-800;
 }
 
 .form-control-w-full .form-input {
@@ -19,7 +19,7 @@
 }
 
 .fieldset-header {
-  @apply block w-full text-sm text-gray-600 pr-5 mb-2;
+  @apply block w-full text-sm text-gray-700 pr-5 mb-2;
 }
 
 .fieldset-heading {
