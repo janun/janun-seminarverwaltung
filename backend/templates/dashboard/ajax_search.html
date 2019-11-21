@@ -3,8 +3,8 @@
 {% for result in results %}
   <a class="flex px-4 py-2 hover:bg-gray-200 focus:bg-gray-200 w-full" 
      href="{{ result.get_absolute_url }}">
-    <span>{{ result }}</span>
-    <span class="text-xs ml-auto text-gray-600">
+    <span>{{ result | highlight:q }}</span>
+    <span class="text-xs ml-auto text-gray-600 whitespace-no-wrap">
       {{ result|get_modelname }}
       {% if result|get_modelname == "Seminar" %}
         {{ result.start_date.year }}

@@ -1,5 +1,7 @@
+import re
 from django import template
 from django import forms
+from django.utils.html import conditional_escape, mark_safe
 
 import django_filters
 
@@ -43,3 +45,15 @@ def is_linkwidget(field):
 @register.filter
 def get_modelname(instance):
     return instance._meta.verbose_name
+
+
+@register.filter(needs_autoescape=True)
+def highlight(text, sterm, autoescape=None):
+    text = str(text)
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda x: x
+    pattern = re.compile("(%s)" % esc(sterm), re.IGNORECASE)
+    result = pattern.sub(r"<strong>\1</strong>", text)
+    return mark_safe(result)
