@@ -34,6 +34,9 @@
                 </div>
                 {% include './layout/help_text_and_errors.html' %}
             {% elif field|is_select %}
+                {% if not field.field.widget.attrs.help_below %}
+                  {% include './layout/help_text.html' %}
+                {% endif %}
                 {% if field|is_selectmultiple %}
                     {% if field.errors %}
                         {% crispy_field field 'class' 'form-multiselect block is-invalid' %}
@@ -47,7 +50,10 @@
                         {% crispy_field field 'class' 'form-select block' %}
                     {% endif %}
                 {% endif %}
-                {% include './layout/help_text_and_errors.html' %}
+                  {% if field.field.widget.attrs.help_below %}
+                    {% include './layout/help_text.html' %}
+                  {% endif %}
+                  {% include './layout/field_errors_block.html' %}
             {% else %}
                 {% if not field.field.widget.attrs.help_below %}
                   {% include './layout/help_text.html' %}
