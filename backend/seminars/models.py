@@ -111,10 +111,10 @@ class FundingRate(models.Model):
 
     def get_rate(self, has_group: bool, days: int) -> Decimal:
         if has_group:
-            if days == 1:
+            if days == 1 and self.group_rate_one_day:
                 return self.group_rate_one_day
             return self.group_rate
-        if days == 1:
+        if days == 1 and self.single_rate_one_day:
             return self.single_rate_one_day
         return self.single_rate
 
