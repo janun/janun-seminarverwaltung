@@ -178,6 +178,18 @@ class SeminarModelTestCase(TestCase):
                 end_time="14:00",
             ).clean()
 
+    def test_validation_planned_attendees_max(self):
+        with self.assertRaisesMessage(
+            ValidationError, "Muss größer/gleich Minimal-Wert sein"
+        ):
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 4, 1),
+                end_date=datetime.date(2019, 4, 1),
+                planned_attendees_min=20,
+                planned_attendees_max=10,
+            ).clean()
+
     def test_validation_planned_training_days(self):
         with self.assertRaisesMessage(
             ValidationError, "Muss kleiner gleich 2 (Dauer des Seminars) sein"
@@ -194,6 +206,20 @@ class SeminarModelTestCase(TestCase):
             end_date=datetime.date(2019, 4, 2),
             planned_training_days=2,
         ).clean()
+
+    def test_multiple_validation_errors(self):
+        with self.assertRaisesMessage(
+            ValidationError, "Muss größer/gleich Minimal-Wert sein"
+        ) and self.assertRaisesMessage(
+            ValidationError, "Muss größer/gleich Start-Datum sein"
+        ):
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 5, 1),
+                end_date=datetime.date(2019, 4, 1),
+                planned_attendees_min=20,
+                planned_attendees_max=10,
+            ).clean()
 
     def test_get_deadline(self):
         self.assertEqual(
