@@ -142,6 +142,9 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
             .is_confirmed()
             .get_aggregates()
         )
+        context["confirmed_aggregates"]["tnt_cost"] = 0.0
+        if context["confirmed_aggregates"]["tnt_sum"] > 0:
+            context["confirmed_aggregates"]["tnt_cost"] = context["confirmed_aggregates"]["funding_sum"] / context["confirmed_aggregates"]["tnt_sum"]
         context["transferred_aggregates"] = Seminar.objects.filter(
             start_date__year=year, status="überwiesen"
         ).get_aggregates()
