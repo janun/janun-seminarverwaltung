@@ -5,11 +5,11 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
 
-from .tables import HistoryTable, SearchResultsTable
-from .history import get_global_history
 from backend.seminars.models import Seminar
 from backend.groups.models import JANUNGroup
 from backend.users.models import User
+from .tables import HistoryTable, SearchResultsTable
+from .history import get_global_history
 
 
 class Dashboard(TemplateView):

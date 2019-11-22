@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import re
 
 from django.views.generic import (
     View,
@@ -9,7 +8,7 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
     CreateView,
-    DetailView
+    DetailView,
 )
 from django.views.generic.base import RedirectView
 from django.core.exceptions import PermissionDenied
@@ -20,7 +19,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse
 from django.utils import timezone
 from django.http import HttpResponse
-from django.http import JsonResponse
 
 from tablib import Dataset
 from formtools.wizard.views import SessionWizardView
@@ -33,7 +31,7 @@ from backend.seminars import forms as seminar_forms
 
 from .models import Seminar, SeminarComment, FundingRate, get_max_funding
 from .templateddocs import fill_template, FileResponse
-from .tables import SeminarTable, SeminarHistoryTable, SeminarSearchTable
+from .tables import SeminarTable, SeminarHistoryTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
 from .forms import (
@@ -327,7 +325,6 @@ class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
         return result
 
 
-
 class SeminarApplyDoneView(DetailView):
     template_name = "seminars/seminar_apply_done.html"
 
@@ -350,7 +347,10 @@ class SeminarApplyView(ErrorMessageMixin, CreateView):
 
     def get_success_url(self):
         seminar = self.object
-        return reverse("seminars:apply_done", kwargs={"year": seminar.start_date.year, "slug": seminar.slug})
+        return reverse(
+            "seminars:apply_done",
+            kwargs={"year": seminar.start_date.year, "slug": seminar.slug},
+        )
 
 
 class SeminarApplyWizardView(SessionWizardView):
