@@ -43,6 +43,9 @@ class SeminarTable(tables.Table):
     deadline = tables.DateColumn(
         verbose_name="Frist", format="d.m.y", attrs={"cell": {"class": "numeric"}}
     )
+    created_at = tables.DateColumn(
+        verbose_name="Erstellt", format="d.m.y", attrs={"cell": {"class": "numeric"}}
+    )
 
     def render_status(self, record, value):
         color = STATE_INFO[value]["color"]
@@ -50,7 +53,7 @@ class SeminarTable(tables.Table):
 
     def render_deadline(self, record, value):
         status = record.deadline_status
-        formatted = defaultfilters.date(value, "d.m.Y")
+        formatted = defaultfilters.date(value, "d.m.y")
         if status == "not_applicable":
             return "—"
         if status == "not_soon":
@@ -74,6 +77,7 @@ class SeminarTable(tables.Table):
             "funding",
             "tnt_cost",
             "deadline",
+            "created_at",
         ]
         row_attrs = {"data-link": lambda record: record.get_absolute_url()}
         attrs = {"class": "js-row-link table-sticky"}
