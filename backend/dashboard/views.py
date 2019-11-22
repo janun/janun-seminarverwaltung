@@ -20,9 +20,14 @@ class Dashboard(TemplateView):
         context = super().get_context_data(**kwargs)
         context["janun_groups"] = self.request.user.janun_groups.all()
         context["group_hats"] = self.request.user.group_hats.all()
-        context["seminars"] = self.request.user.seminars.all().order_by("created_at")[
-            : self.seminar_limit
-        ]
+        context["seminars"] = (
+            self.request.user.seminars.annotate_tnt()
+            .all()
+            .annotate_funding()
+            .annotate_deadline_status()
+            .select_related("owner", "group")
+            .order_by("created_at")[: self.seminar_limit]
+        )
         context["show_more_link"] = (
             self.request.user.seminars.count() > self.seminar_limit
         )
@@ -82,9 +87,9 @@ class SearchView(UserPassesTestMixin, TemplateView):
 
         users = User.objects.filter(
             Q(name__icontains=q.strip()) | Q(username__icontains=q)
-        )
+        ).only("name", "username")
 
-        groups = JANUNGroup.objects.filter(name__icontains=q)
+        groups = JANUNGroup.objects.filter(name__icontains=q).only("name")
 
         self.count = seminars.count() + users.count() + groups.count()
 

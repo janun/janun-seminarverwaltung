@@ -154,48 +154,52 @@ class FundingRate(models.Model):
 
 
 class SeminarQuerySet(models.QuerySet):
-    def add_annotations(self):
-        return (
-            self.annotate(year=ExtractYear("start_date"))
-            .annotate(
-                planned_attendence_days=F("planned_attendees_max")
-                * F("planned_training_days"),
-                deadline=Case(
-                    When(
-                        start_date__quarter=1,
-                        then=Cast(
-                            Concat(Cast("year", models.TextField()), Value("-04-15")),
-                            models.DateField(),
-                        ),
+    def annotate_planned_attendence_days(self):
+        return self.annotate(planned_attendence_days=F("planned_attendees_max") * F("planned_training_days"))
+
+    def annotate_year(self):
+        return self.annotate(year=ExtractYear("start_date"))
+
+    def annotate_deadline(self):
+        return self.annotate_year().annotate(
+            deadline=Case(
+                When(
+                    start_date__quarter=1,
+                    then=Cast(
+                        Concat(Cast("year", models.TextField()), Value("-04-15")),
+                        models.DateField(),
                     ),
-                    When(
-                        start_date__quarter=2,
-                        then=Cast(
-                            Concat(Cast("year", models.TextField()), Value("-07-15")),
-                            models.DateField(),
-                        ),
-                    ),
-                    When(
-                        start_date__quarter=3,
-                        then=Cast(
-                            Concat(Cast("year", models.TextField()), Value("-10-15")),
-                            models.DateField(),
-                        ),
-                    ),
-                    When(
-                        start_date__quarter=4,
-                        then=Cast(
-                            Concat(
-                                Cast(F("year") + 1, models.TextField()), Value("-01-15")
-                            ),
-                            models.DateField(),
-                        ),
-                    ),
-                    output_field=models.DateField(),
                 ),
+                When(
+                    start_date__quarter=2,
+                    then=Cast(
+                        Concat(Cast("year", models.TextField()), Value("-07-15")),
+                        models.DateField(),
+                    ),
+                ),
+                When(
+                    start_date__quarter=3,
+                    then=Cast(
+                        Concat(Cast("year", models.TextField()), Value("-10-15")),
+                        models.DateField(),
+                    ),
+                ),
+                When(
+                    start_date__quarter=4,
+                    then=Cast(
+                        Concat(
+                            Cast(F("year") + 1, models.TextField()), Value("-01-15")
+                        ),
+                        models.DateField(),
+                    ),
+                ),
+                output_field=models.DateField(),
             )
-            .annotate(
-                deadline_applicable=Case(
+        )
+
+    def annotate_deadline_applicable(self):
+        return self.annotate(
+            deadline_applicable=Case(
                     When(
                         status__in=("angemeldet", "zugesagt", "stattgefunden"),
                         then=True,
@@ -203,70 +207,102 @@ class SeminarQuerySet(models.QuerySet):
                     default=False,
                     output_field=models.BooleanField(),
                 ),
-                funding=Case(
-                    When(actual_funding__isnull=True, then="requested_funding"),
-                    default="actual_funding",
+        )
+
+    def annotate_funding(self):
+        return self.annotate(
+            funding=Case(
+                When(actual_funding__isnull=True, then="requested_funding"),
+                default="actual_funding",
+            )
+        )
+
+    def annotate_tnt(self):
+        return self.annotate_planned_attendence_days().annotate(
+            tnt=Case(
+                When(
+                    actual_attendence_days_total__isnull=True,
+                    then="planned_attendence_days",
                 ),
-                tnt=Case(
-                    When(
-                        actual_attendence_days_total__isnull=True,
-                        then="planned_attendence_days",
+                default="actual_attendence_days_total",
+            )
+        )
+
+    def annotate_tnt_cost(self):
+        return self.annotate_tnt().annotate_funding().annotate(
+            tnt_cost=Case(
+                When(
+                    tnt__gt=Value(0),
+                    then=ExpressionWrapper(
+                        F("funding") / F("tnt"), output_field=models.DecimalField()
                     ),
-                    default="actual_attendence_days_total",
                 ),
-                tnt_cost=Case(
-                    When(
-                        tnt__gt=Value(0),
-                        then=ExpressionWrapper(
-                            F("funding") / F("tnt"), output_field=models.DecimalField()
-                        ),
-                    ),
-                    default=Value(None),
-                ),
-                attendees=Case(
+                default=Value(None),
+            ),
+        )
+
+    def annotate_attendees(self):
+        return self.annotate(
+            attendees=Case(
                     When(
                         actual_attendees_total__isnull=True,
                         then="planned_attendees_max",
                     ),
                     default="actual_attendees_total",
-                ),
-                training_days=Case(
+                )
+        )
+
+    def annotate_training_days(self):
+        return self.annotate(
+            training_days=Case(
                     When(
                         actual_training_days__isnull=True, then="planned_training_days"
                     ),
                     default="actual_training_days",
-                ),
-                income_total=Coalesce("income_fees", 0)
+                )
+        )
+
+    def annotate_income_total(self):
+        return self.annotate(
+            income_total=Coalesce("income_fees", 0)
                 + Coalesce("income_public", 0)
-                + Coalesce("income_other", 0),
-                expense_total=Coalesce("expense_accomodation", 0)
+                + Coalesce("income_other", 0)
+        )
+
+    def annotate_expense_total(self):
+        return self.annotate(
+            expense_total=Coalesce("expense_accomodation", 0)
                 + Coalesce("expense_catering", 0)
                 + Coalesce("expense_other", 0)
                 + Coalesce("expense_referent", 0)
-                + Coalesce("expense_travel", 0),
-            )
-            .annotate(
-                deadline_status=Case(
-                    When(
-                        Q(deadline_applicable=True) & Q(deadline__lte=timezone.now()),
-                        then=Value("expired"),
-                    ),
-                    When(
-                        Q(deadline_applicable=True)
-                        & Q(deadline__lte=timezone.now() - datetime.timedelta(days=14)),
-                        then=Value("soon"),
-                    ),
-                    When(
-                        Q(deadline_applicable=True)
-                        & Q(deadline__gt=timezone.now() - datetime.timedelta(days=14)),
-                        then=Value("not_soon"),
-                    ),
-                    When(deadline_applicable=False, then=Value("not_applicable")),
-                    default=Value("unknown"),
-                    output_field=models.CharField(),
+                + Coalesce("expense_travel", 0)
+        )
+
+    def annotate_expense_minus_income(self):
+        return self.annotate_income_total().annotate_expense_total.annotate(
+            expense_minus_income=Coalesce("expense_total", 0) - Coalesce("income_total", 0)
+        )
+
+    def annotate_deadline_status(self):
+        return self.annotate_deadline_applicable().annotate_deadline().annotate(
+            deadline_status=Case(
+                When(
+                    Q(deadline_applicable=True) & Q(deadline__lte=timezone.now()),
+                    then=Value("expired"),
                 ),
-                expense_minus_income=Coalesce("expense_total", 0)
-                - Coalesce("income_total", 0),
+                When(
+                    Q(deadline_applicable=True)
+                    & Q(deadline__lte=timezone.now() - datetime.timedelta(days=14)),
+                    then=Value("soon"),
+                ),
+                When(
+                    Q(deadline_applicable=True)
+                    & Q(deadline__gt=timezone.now() - datetime.timedelta(days=14)),
+                    then=Value("not_soon"),
+                ),
+                When(deadline_applicable=False, then=Value("not_applicable")),
+                default=Value("unknown"),
+                output_field=models.CharField(),
             )
         )
 
@@ -295,14 +331,13 @@ class SeminarQuerySet(models.QuerySet):
         return self.filter(start_date__year=timezone.now().year + 1)
 
     def get_aggregates(self):
-        return self.aggregate(
+        return self.annotate_funding().annotate_tnt().aggregate(
             count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
         )
 
 
 class SeminarManager(models.Manager.from_queryset(SeminarQuerySet)):
-    def get_queryset(self):
-        return super().get_queryset().add_annotations()
+    pass
 
 
 class Seminar(models.Model):

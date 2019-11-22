@@ -97,20 +97,30 @@ class SeminarListView(RedirectView):
 
 class YourSeminarListView(ListView):
     model = Seminar
+    queryset = (
+        Seminar.objects.all()
+        .annotate_tnt()
+        .annotate_funding()
+        .annotate_deadline_status()
+        .select_related("owner", "group")
+    )
     context_object_name = "seminars"
     template_name = "seminars/your_seminars.html"
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(owner=self.request.user)
-            .select_related("owner", "group")
-        )
+        return super().get_queryset().filter(owner=self.request.user)
 
 
 class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
     model = Seminar
+    queryset = (
+        Seminar.objects.all()
+        .annotate_tnt()
+        .annotate_funding()
+        .annotate_tnt_cost()
+        .annotate_deadline_status()
+        .select_related("owner", "group")
+    )
     filterset_class = SeminarStaffFilter
     context_object_name = "seminars"
     template_name = "seminars/staff_seminars.html"
@@ -135,9 +145,11 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
         context["transferred_aggregates"] = Seminar.objects.filter(
             start_date__year=year, status="überwiesen"
         ).get_aggregates()
-        context["deadline_expired_aggregates"] = Seminar.objects.filter(
-            start_date__year=year, deadline_status="expired"
-        ).get_aggregates()
+        context["deadline_expired_aggregates"] = (
+            Seminar.objects.annotate_deadline_status()
+            .filter(start_date__year=year, deadline_status="expired")
+            .get_aggregates()
+        )
         context["bills_present_aggregates"] = (
             Seminar.objects.filter(start_date__year=year)
             .is_bills_present()
@@ -148,12 +160,7 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
 
     def get_queryset(self):
         year = self.kwargs["year"]
-        return (
-            super()
-            .get_queryset()
-            .filter(start_date__year=year)
-            .select_related("owner", "group")
-        )
+        return super().get_queryset().filter(start_date__year=year)
 
 
 class SeminarExportView(UserPassesTestMixin, View):
@@ -176,9 +183,12 @@ class SeminarProofOfUseView(UserPassesTestMixin, View):
 
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
-        qs = Seminar.objects.filter(
-            start_date__year=year, status="überwiesen"
-        ).order_by("start_date")
+        qs = (
+            Seminar.objects.filter(start_date__year=year, status="überwiesen")
+            .annotate_expense_total()
+            .annotate_income_total()
+            .order_by("start_date")
+        )
         context = {"seminars": qs}
         odt_filepath = fill_template("seminars/verwendungsnachweis.odt", context)
         filename = "Verwendungsnachweis_{}.odt".format(year)
@@ -199,7 +209,9 @@ class SeminarImportView(ErrorMessageMixin, UserPassesTestMixin, FormView):
         context["fields"] = [
             f.column_name for f in self.resource_class().get_user_visible_fields()
         ]
-        context["possible_status"] = Seminar.STATE_CHOICES._db_values
+        context[
+            "possible_status"
+        ] = Seminar.STATE_CHOICES._db_values  # pylint: disable=protected-access
         return context
 
     def form_valid(self, form):
@@ -252,7 +264,9 @@ class SeminarTeamerUpdateView(
     UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
 ):
     form_class = SeminarTeamerChangeForm
-    queryset = Seminar.objects.select_related("owner", "group")
+    queryset = Seminar.objects.annotate_deadline_status().select_related(
+        "owner", "group"
+    )
     template_name = "seminars/seminar_teamer_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
 
@@ -280,7 +294,7 @@ class SeminarHistoryView(UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         seminar = get_object_or_404(
-            Seminar, slug=self.kwargs["slug"], year=self.kwargs["year"]
+            Seminar, slug=self.kwargs["slug"], start_date__year=self.kwargs["year"]
         )
         history = seminar.history.all().select_related("history_user")
         context["seminar"] = seminar
@@ -292,7 +306,9 @@ class SeminarStaffUpdateView(
     UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
 ):
     form_class = SeminarStaffChangeForm
-    queryset = Seminar.objects.select_related("owner", "group")
+    queryset = Seminar.objects.annotate_deadline_status().select_related(
+        "owner", "group"
+    )
     template_name = "seminars/seminar_staff_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
 
@@ -331,14 +347,13 @@ class SeminarApplyDoneView(DetailView):
     def get_object(self):
         year = self.kwargs.get("year")
         slug = self.kwargs.get("slug")
-        return get_object_or_404(Seminar, year=year, slug=slug)
+        return get_object_or_404(Seminar, start_date__year=year, slug=slug)
 
 
 class SeminarApplyView(ErrorMessageMixin, CreateView):
     form_class = SeminarTeamerApplyForm
     queryset = Seminar.objects.select_related("owner", "group")
     template_name = "seminars/seminar_teamer_create.html"
-    # success_message = "Deine Änderungen wurden gespeichert."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -429,7 +444,9 @@ class CommentListView(ListView):
     context_object_name = "comments"
 
     def get_queryset(self):
-        seminar = get_object_or_404(Seminar, slug=self.kwargs["slug"])
+        seminar = get_object_or_404(
+            Seminar.objects.select_related("owner"), slug=self.kwargs["slug"]
+        )
         if user_may_access_seminar(self.request.user, seminar):
             return seminar.comments.all()
         return SeminarComment.objects.none()

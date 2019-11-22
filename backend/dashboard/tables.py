@@ -126,7 +126,7 @@ class SearchResultsTable(tables.Table):
 
     def render_type(self, record):
         if record._meta.verbose_name == "Seminar":
-            return "Seminar {}".format(record.year)
+            return "Seminar {}".format(record.start_date.year)
         return record._meta.verbose_name
 
     class Meta:
