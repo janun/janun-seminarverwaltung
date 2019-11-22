@@ -316,7 +316,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                 Div(
                     HTML('''
                         <p class="mb-2">
-                        Maximal mögliche Förderung: <span class="font-bold" id="max_funding"></span></strong>
+                        Förderhöchstbetrag: <span class="font-bold" id="max_funding"></span></strong>
                         </p>
                         <p class="text-sm">
                         Wenn Du aber mit weniger auskommst, können evtl. mehr Seminare von JANUN gefördert werden.
