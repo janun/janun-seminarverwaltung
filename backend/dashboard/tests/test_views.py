@@ -64,9 +64,9 @@ class SearchTestCase(TestCase):
 
     def test_get(self):
         self.client.login(username="teststaff", password="secret")
-        response = self.client.get(self.url + "?q=Muster")
+        response = self.client.get(self.url + "?q=Mustermann")
         self.assertContains(response, "Suche")
-        self.assertContains(response, "Staff Mustermann")
+        self.assertContains(response, "Mustermann")
 
     def test_search_by_year(self):
         self.client.login(username="teststaff", password="secret")

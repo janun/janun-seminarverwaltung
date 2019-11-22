@@ -8,6 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist, FieldDoesNotExist
 
 import django_tables2 as tables
 
+from backend.seminars.templatetags.janun import highlight
+
 
 def render_two_values(primary, secondary):
     return format_html(
@@ -113,6 +115,9 @@ class HistoryTable(tables.Table):
 
 
 class SearchResultsTable(tables.Table):
+    def __init__(self, *args, q="", **kwargs):
+        self.q = q
+        super().__init__(*args, **kwargs)
 
     name = tables.Column(
         verbose_name="Bezeichnung", orderable=False, linkify=False, empty_values=()
@@ -122,7 +127,7 @@ class SearchResultsTable(tables.Table):
     )
 
     def render_name(self, record):
-        return str(record)
+        return highlight(str(record), self.q)
 
     def render_type(self, record):
         if record._meta.verbose_name == "Seminar":

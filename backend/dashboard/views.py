@@ -70,7 +70,7 @@ class SearchView(UserPassesTestMixin, TemplateView):
         context["q"] = q
         context["results"] = results
         if not self.request.is_ajax():
-            context["results_table"] = SearchResultsTable(results, orderable=False)
+            context["results_table"] = SearchResultsTable(results, orderable=False, q=q)
         return context
 
     def get_results(self, q):
@@ -98,7 +98,7 @@ class SearchView(UserPassesTestMixin, TemplateView):
             users = users[:6]
             groups = groups[:6]
 
-        return chain(seminars, users, groups)
+        return chain(users, groups, seminars)
 
     def test_func(self):
         return self.request.user.is_staff
