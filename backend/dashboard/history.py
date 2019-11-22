@@ -12,10 +12,12 @@ class BaseHistoricalModel(models.Model):
     """
 
     def get_history_changes(self) -> str:
-        if self.history_type == "~":
-            prev_record = self.prev_record
+        if self.history_type == "~":  # pylint: disable=no-member
+            prev_record = self.prev_record  # pylint: disable=no-member
             if prev_record:
-                changes = self.diff_against(prev_record).changes
+                changes = self.diff_against(  # pylint: disable=no-member
+                    prev_record
+                ).changes
                 if changes:
                     return json.dumps(list(map(lambda c: c.__dict__, changes)))
 
