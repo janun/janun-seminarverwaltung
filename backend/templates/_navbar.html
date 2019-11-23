@@ -18,38 +18,38 @@
             <a class="flex items-center h-full mx-2 {% if request.path == "/" %}font-bold{% endif %}"
               href="{% url 'dashboard:dashboard' %}">Übersicht</a>
           </li>
-          <li>
-            <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"
+          <li class="mx-2 flex items-center">
+            <a class="flex items-center h-full {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"
               href="{% url 'seminars:list' %}">
               Seminare
-              {% if request.user.is_staff %}
-                {% get_new_seminars as new_seminars %}
-                {% if new_seminars %}
-                  <span title="{{ new_seminars }} neu angemeldete{{ new_seminars|pluralize:"s," }} Seminar{{ new_seminars|pluralize:",e" }}"
-                  class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
-                    {{ new_seminars }}
-                  </span>
-                {% endif %}
-              {% endif %}
             </a>
+            {% if request.user.is_staff %}
+              {% get_new_seminars as new_seminars %}
+              {% if new_seminars %}
+                <a href="{% url 'seminars:list_staff_all' %}?status=angemeldet" title="{{ new_seminars }} neu angemeldete{{ new_seminars|pluralize:"s," }} Seminar{{ new_seminars|pluralize:",e" }}"
+                class="ml-1 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                  {{ new_seminars }}
+                </a>
+              {% endif %}
+            {% endif %}
           </li>
           {% if request.user.is_staff %}
             <li>
               <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "groups" %}font-bold{% endif %}"
                 href="{% url 'groups:staff_list' %}">Gruppen</a>
             </li>
-            <li>
-              <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "users" %}font-bold{% endif %}"
+            <li class="mx-2 flex items-center">
+              <a class="flex items-center h-full {% if request.resolver_match.namespace == "users" %}font-bold{% endif %}"
                 href="{% url 'users:list' %}">
                 Konten
-                {% get_unreviewed_users as unreviewed_users %}
-                {% if unreviewed_users %}
-                  <span title="{{ unreviewed_users }} ungeprüfte{{ unreviewed_users|pluralize:"s," }} Kont{{ unreviewed_users|pluralize:"o,en" }}"
-                  class="ml-1 rounded-full bg-blue-200 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
-                    {{ unreviewed_users }}
-                  </span>
-                {% endif %}
               </a>
+              {% get_unreviewed_users as unreviewed_users %}
+              {% if unreviewed_users %}
+                <a href="{% url 'users:list' %}?is_reviewed=False" title="{{ unreviewed_users }} ungeprüfte{{ unreviewed_users|pluralize:"s," }} Kont{{ unreviewed_users|pluralize:"o,en" }}"
+                class="ml-1 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                  {{ unreviewed_users }}
+                </a>
+              {% endif %}
             </li>
           {% endif %}
         </ul>
