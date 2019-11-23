@@ -7,17 +7,15 @@
 
 {% block content %}
 <div class="mx-auto max-w-4xl">
-  <div class="mb-5 pb-4 flex flex-wrap items-end justify-between border-b">
+  <div class="mb-6 pb-4 flex flex-wrap items-end justify-between border-b">
     <h1 class="font-bold text-2xl">Neues Seminar anmelden</h1>
   </div>
 
- 
-        
       
   {% if request.user.seminars.all|length == 0%}
     {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
     <div class="text-gray-700">
-      <p>Dies scheint Dein erstes Seminar zu sein.    </p>
+      <p>Dies scheint Dein erstes Seminar zu sein.</p>
       <p>
         Bitte lies Dir vorher die
         <a class="underline hover:text-gray-900" rel="noreferrer" target="_blank" href="{{ preferences.JANUNSeminarPreferences.seminar_policy_url }}">
@@ -27,6 +25,18 @@
     </div>
     {% endif %}
   {% endif %}
+
+
+  <div class="text-gray-700">
+    <p class="mb-2">
+      Nach Deiner Anmeldung prüfen wir, ob wir das Seminar fördern können.<br>
+      Eine Rückmeldung (Zusage oder Absage) erfolgt meist in den nächsten 1–2 Wochen.
+    </p>
+    <p>
+      Nach Deinem Seminar musst Du bis zur Abrechnungsfrist eine Abrechnung einreichen.<br>
+      Erst nach erfolgreicher Prüfung der Abrechnung, erfolgt die Förderung.
+    </p>
+  </div>
 </div>
 
 <form method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid">
