@@ -132,38 +132,41 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        year = self.kwargs["year"]
+        year = self.kwargs.get("year", None)
         context["current_year"] = year
         context["years"] = [
             d.year for d in Seminar.objects.dates("start_date", "year", order="DESC")
         ]
-        context["confirmed_aggregates"] = (
-            Seminar.objects.filter(start_date__year=year)
-            .is_confirmed()
-            .get_aggregates()
-        )
-        context["confirmed_aggregates"]["tnt_cost"] = 0.0
-        if context["confirmed_aggregates"]["tnt_sum"] > 0:
-            context["confirmed_aggregates"]["tnt_cost"] = context["confirmed_aggregates"]["funding_sum"] / context["confirmed_aggregates"]["tnt_sum"]
-        context["transferred_aggregates"] = Seminar.objects.filter(
-            start_date__year=year, status="überwiesen"
-        ).get_aggregates()
-        context["deadline_expired_aggregates"] = (
-            Seminar.objects.annotate_deadline_status()
-            .filter(start_date__year=year, deadline_status="expired")
-            .get_aggregates()
-        )
-        context["bills_present_aggregates"] = (
-            Seminar.objects.filter(start_date__year=year)
-            .is_bills_present()
-            .get_aggregates()
-        )
+        if year:
+            context["confirmed_aggregates"] = (
+                Seminar.objects.filter(start_date__year=year)
+                .is_confirmed()
+                .get_aggregates()
+            )
+            context["confirmed_aggregates"]["tnt_cost"] = 0.0
+            if context["confirmed_aggregates"]["tnt_sum"] > 0:
+                context["confirmed_aggregates"]["tnt_cost"] = context["confirmed_aggregates"]["funding_sum"] / context["confirmed_aggregates"]["tnt_sum"]
+            context["transferred_aggregates"] = Seminar.objects.filter(
+                start_date__year=year, status="überwiesen"
+            ).get_aggregates()
+            context["deadline_expired_aggregates"] = (
+                Seminar.objects.annotate_deadline_status()
+                .filter(start_date__year=year, deadline_status="expired")
+                .get_aggregates()
+            )
+            context["bills_present_aggregates"] = (
+                Seminar.objects.filter(start_date__year=year)
+                .is_bills_present()
+                .get_aggregates()
+            )
         context["qs_aggregates"] = context["filter"].qs.get_aggregates()
         return context
 
     def get_queryset(self):
-        year = self.kwargs["year"]
-        return super().get_queryset().filter(start_date__year=year)
+        year = self.kwargs.get("year", None)
+        if year:
+            return super().get_queryset().filter(start_date__year=year)
+        return super().get_queryset()
 
 
 class SeminarExportView(UserPassesTestMixin, View):

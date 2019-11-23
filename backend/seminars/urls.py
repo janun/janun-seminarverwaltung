@@ -11,6 +11,7 @@ urlpatterns = [
     ),
     # path("import", views.SeminarImportView.as_view(), name="import"),
     path("<int:year>", views.StaffSeminarListView.as_view(), name="list_staff"),
+    path("all", views.StaffSeminarListView.as_view(), name="list_staff_all"),
     path("<int:year>/export", views.SeminarExportView.as_view(), name="export"),
     path(
         "<int:year>/funding_rates",

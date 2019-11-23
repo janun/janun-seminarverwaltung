@@ -365,3 +365,6 @@ class SeminarApplyViewTestCase(TestCase):
         response = self.client.post(self.url, form_data, follow=True)
         self.assertNotContains(response, "Seminar erfolgreich angemeldet")
         self.assertFormError(response, "form", "requested_funding", "Maximal 160,00 €")
+
+
+# TODO: StaffSeminarListView
