@@ -367,4 +367,59 @@ class SeminarApplyViewTestCase(TestCase):
         self.assertFormError(response, "form", "requested_funding", "Maximal 160,00 €")
 
 
-# TODO: StaffSeminarListView
+class StaffSeminarListViewTestCase(TestCase):
+
+    url_2019 = reverse("seminars:list_staff", kwargs={"year": 2019})
+    url_2020 = reverse("seminars:list_staff", kwargs={"year": 2020})
+    url_all = reverse("seminars:list_staff_all")
+
+    @classmethod
+    def setUpTestData(cls):
+        # admin:
+        cls.testuser = User(name="Staff Mustermann", username="teststaff")
+        cls.testuser.set_password("secret")
+        cls.testuser.is_staff = True
+        cls.testuser.save()
+        # seminar:
+        cls.testseminar1 = Seminar(
+            title="Test-Seminar 2019", start_date="2019-05-05", end_date="2019-05-06"
+        )
+        cls.testseminar1.save()
+        cls.testseminar2 = Seminar(
+            title="Test-Seminar 2020", start_date="2020-05-05", end_date="2019-05-06"
+        )
+        cls.testseminar2.save()
+
+    def test_get(self):
+        self.client.login(username="teststaff", password="secret")
+        response = self.client.get(self.url_2019)
+        self.assertContains(response, "Seminare 2019")
+        self.assertContains(response, "Test-Seminar 2019")
+        self.assertNotContains(response, "Test-Seminar 2020")
+
+    def test_get_all(self):
+        self.client.login(username="teststaff", password="secret")
+        response = self.client.get(self.url_all)
+        self.assertContains(response, "Seminare")
+        self.assertContains(response, "Test-Seminar 2019")
+        self.assertContains(response, "Test-Seminar 2020")
+
+    def test_confirmed_aggregates(self):
+        Seminar(
+            title="Test",
+            start_date="2019-05-05",
+            end_date="2019-05-06",
+            requested_funding=1000,
+            status="zugesagt"
+        ).save()
+        Seminar(
+            title="Test",
+            start_date="2019-06-05",
+            end_date="2019-06-06",
+            requested_funding=2000,
+            status="zugesagt"
+        ).save()
+        self.client.login(username="teststaff", password="secret")
+        response = self.client.get(self.url_2019)
+        self.assertEqual(response.context["confirmed_aggregates"]["funding_sum"], 3000)
+        self.assertContains(response, "3.000,00")
