@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load django_tables2 janun crispy_forms_tags %}
 
-{% block head_title %}Seminare {{ current_year }}{% endblock %}
+{% block head_title %}Seminare {{ current_year|default:"" }}{% endblock %}
 
 {% block content %}
 <div class="mx-auto max-w-7xl">
