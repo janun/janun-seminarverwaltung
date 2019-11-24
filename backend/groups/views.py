@@ -6,7 +6,6 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
-from django.db.models import Sum
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.contrib.messages.views import SuccessMessageMixin
