@@ -8,7 +8,9 @@
     "build:css": "postcss backend/static_src/styles/base.css -o backend/static/styles/base.css",
     "build:js": "terser backend/static_src/scripts/polyfills/*.js backend/static_src/scripts/*.js -o backend/static/scripts/scripts.js",
     "build": "yarn build:css && yarn build:js",
-    "watch": "onchange -i 'backend/**/*.*' tailwind.config.js -e 'backend/static' -- yarn build"
+    "watch:css": "onchange -i 'backend/**/*.*' tailwind.config.js -e 'backend/static' -- yarn build:css",
+    "watch:js": "onchange -i 'backend/static_src/scripts/**/*.js' -- yarn build:js",
+    "watch": "concurrently 'yarn watch:js' 'yarn watch:css'"
   },
   "dependencies": {
     "chart.js": "^2.8.0",
@@ -17,6 +19,7 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^1.3.0",
     "@tailwindcss/custom-forms": "^0.2.1",
+    "concurrently": "^5.0.0",
     "cssnano": "^4.1.10",
     "eslint": "^6.6.0",
     "eslint-plugin-compat": "^3.3.0",
