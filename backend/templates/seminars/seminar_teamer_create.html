@@ -14,7 +14,7 @@
       
   {% if request.user.seminars.all|length == 0%}
     {% if preferences.JANUNSeminarPreferences.seminar_policy_url %}
-    <div class="text-gray-700">
+    <div class="text-gray-700 mb-4">
       <p>Dies scheint Dein erstes Seminar zu sein.</p>
       <p>
         Bitte lies Dir vorher die
@@ -34,7 +34,7 @@
     </p>
     <p>
       Nach Deinem Seminar musst Du bis zur Abrechnungsfrist eine Abrechnung einreichen.<br>
-      Erst nach erfolgreicher Prüfung der Abrechnung, erfolgt die Förderung.
+      Erst nach erfolgreicher Prüfung der Abrechnung erfolgt die Förderung.
     </p>
   </div>
 </div>
