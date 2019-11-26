@@ -7,6 +7,7 @@ from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
+from django import forms
 
 from crispy_forms.layout import Fieldset as CrispyFieldset
 from crispy_forms.layout import HTML
@@ -130,3 +131,7 @@ class ColoredBooleanColumn(tables.BooleanColumn):
             "</svg>"
             "</div>"
         )
+
+
+class DateInput(forms.DateInput):
+    template_name = "widgets/date_input.html"

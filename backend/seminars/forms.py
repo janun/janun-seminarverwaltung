@@ -10,7 +10,7 @@ from crispy_forms.bootstrap import AppendedText
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
-from backend.utils import Fieldset, Link
+from backend.utils import Fieldset, Link, DateInput
 from .models import Seminar, FundingRate, get_max_funding
 from .states import STATE_INFO, get_next_states
 
@@ -138,6 +138,9 @@ class SeminarTeamerChangeForm(forms.ModelForm):
             ),
         )
 
+        self.fields["start_date"].widget = DateInput()
+        self.fields["end_date"].widget = DateInput()
+
         # validate funding:
         max_funding = self.instance.get_max_funding()
         if max_funding:
@@ -238,6 +241,9 @@ class SeminarTeamerApplyForm(forms.ModelForm):
 
         self.fields["title"].widget.attrs["autofocus"] = True
 
+        self.fields["start_date"].widget = DateInput()
+        self.fields["end_date"].widget = DateInput()
+
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -250,12 +256,12 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_date"), css_class="mx-2"),
                     Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_date"), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
@@ -384,6 +390,9 @@ class SeminarStaffChangeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+        self.fields["start_date"].widget = DateInput()
+        self.fields["end_date"].widget = DateInput()
 
         contact_details = Div()
         if self.instance.owner:
