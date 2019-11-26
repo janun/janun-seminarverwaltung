@@ -1,5 +1,6 @@
 from operator import attrgetter
 import json
+import itertools
 
 from django.db import models
 
@@ -31,10 +32,16 @@ class BaseHistoricalModel(models.Model):
         abstract = True
 
 
-# TODO: get a queryset instead of a list
-def get_global_history(length=10):
+def get_global_history(limit=10, offset=0):
     history = []
     for model in registered_models.values():
-        for entry in model.history.all().select_related("history_user")[:length]:
+        for entry in model.history.all().select_related("history_user")[
+            offset : limit + offset
+        ]:
             history.append(entry)
-    return sorted(history, key=attrgetter("history_date"), reverse=True)
+    history = sorted(history, key=attrgetter("history_date"), reverse=True)
+    # filter out empty changes:
+    history = filter(
+        lambda e: e.history_type != "~" or e.history_change_reason, history
+    )
+    return itertools.islice(history, limit)

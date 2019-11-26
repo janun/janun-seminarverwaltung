@@ -33,7 +33,7 @@ class Dashboard(TemplateView):
         )
         if self.request.user.is_staff:
             context["history_table"] = HistoryTable(
-                get_global_history(5)[:5], attrs={"class": "table-condensed"}
+                get_global_history(5), attrs={"class": "table-condensed"}
             )
         return context
 
@@ -46,7 +46,11 @@ class GlobalHistoryView(UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["table"] = HistoryTable(get_global_history(100)[:100])
+        page = int(self.request.GET.get("page", "1"))
+        context["page"] = page
+        context["table"] = HistoryTable(
+            get_global_history(limit=50, offset=(page - 1) * 50)
+        )
         return context
 
 

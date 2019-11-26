@@ -15,7 +15,23 @@
     <h1 class="font-bold text-xl">Letzte Änderungen</h1>
   </div>
 
+  <div class="my-4 flex items-center justify-end text-sm">
+    <ul class="inline-flex rounded shadow bg-white">
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page=1">‹‹</a></li>
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page={{ page|add:-1 }}">‹</a></li>
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page={{ page|add:+1 }}">›</a></li>
+    </ul>
+  </div>
+
   {% render_table table %}
+
+  <div class="my-4 flex items-center justify-end text-sm">
+    <ul class="inline-flex rounded shadow bg-white">
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page=1">‹‹</a></li>
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page={{ page|add:-1 }}">‹</a></li>
+      <li><a class="inline-block py-1 px-3 hover:bg-gray-200" href="?page={{ page|add:+1 }}">›</a></li>
+    </ul>
+  </div>
 
 </div>
 {% endblock content %}
