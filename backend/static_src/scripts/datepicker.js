@@ -13,18 +13,26 @@ function dateIsoString(date) {
 }
 
 function parseGermanDate(string) {
-  var parts = string.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);
+  var parts = string.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/)
   if (parts) {
-    var day = parseInt(parts[1]);
-    var month = parseInt(parts[2]);
-    var year = parseInt(parts[3].length == 2 ? "20" + parts[3] : parts[3]);
-    var date = new Date(year, month - 1, day);
+    var day = parseInt(parts[1])
+    var month = parseInt(parts[2])
+    var year = parseInt(parts[3].length == 2 ? "20" + parts[3] : parts[3])
+    var date = new Date(year, month - 1, day)
     if (date.getFullYear() == year && date.getMonth() == month - 1 && date.getDate() == day) {
-      return date;
+      return date
     }
   }
 }
 
+function formatGermanDate(date) {
+  var day = date.getDate()
+  day = day < 10 ? "0" + day : day
+  var month = date.getMonth() + 1
+  month = month < 10 ? "0" + month : month
+  var year = date.getFullYear()
+  return day + "." + month + "." + year
+}
 
 document.querySelectorAll('.js-datepicker').forEach(function (input) {
   var button = input.parentElement.querySelector('button')
@@ -95,29 +103,30 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
       // loop over weekdays
       for (var j = 0; j < 7; j++) {
         td = document.createElement("td")
-        td.className = "text-center"
+        td.className = "text-center p-1"
         tr.appendChild(td)
         if (offset === 0) {
           // add button (disabled by default)
           var dayButton = document.createElement('button')
           dayButton.innerHTML = currentDay
           dayButton.setAttribute('type', 'button')
-          dayButton.className = "w-8 h-8 rounded-full focus:outline-none focus:shadow-outline text-center text-gray-500 pointer-events-none"
+          dayButton.setAttribute('disabled', 'disabled')
+          dayButton.className = "w-8 h-8 rounded-full focus:outline-none focus:bg-blue-200 text-center text-gray-500 pointer-events-none"
           var date = new Date(year, month - 1, currentDay)
           date.setHours(0, 0, 0, 0)
-          dayButton.title = days[j] + ", " + date.toLocaleDateString()
+          dayButton.title = days[j] + ", " + formatGermanDate(date)
           dayButton.setAttribute('data-date', dateIsoString(date))
           td.appendChild(dayButton)
 
           // highlight today
           if (isSameDate(date, new Date())) {
-            dayButton.className += ' border-2 border-gray-500'
+            dayButton.className += ' font-bold'
             dayButton.title = "heute"
           }
 
           // highlight selected date
           if (selectedDate && isSameDate(date, selectedDate)) {
-            dayButton.className += ' bg-blue-200'
+            dayButton.className += ' bg-blue-300'
           }
 
           // highlight min date
@@ -127,19 +136,21 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
 
           // click handler and enable button if not disabled
           if ((!minDate || date >= minDate) && !maxDate || date <= maxDate) {
-            dayButton.className += " hover:bg-gray-200 text-gray-700 pointer-events-auto"
+            dayButton.className += " hover:bg-blue-200 text-gray-700 pointer-events-auto"
+            dayButton.removeAttribute('disabled')
             dayButton.classList.remove('cursor-not-allowed')
             dayButton.classList.remove('text-gray-500')
             dayButton.classList.remove('pointer-events-none')
             dayButton.onclick = function (event) {
               var date = new Date(event.target.getAttribute('data-date'))
               date.setHours(0, 0, 0, 0)
-              input.value = date.toLocaleDateString()
+              input.value = formatGermanDate(date)
               input.dispatchEvent(new Event('input', {
                 bubbles: true,
                 cancelable: true,
               }))
               popup.classList.add('hidden')
+              input.focus()
             }
           }
 
@@ -236,10 +247,10 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
       var date
       var selectedDate = parseGermanDate(input.value)
       var minDate = input.getAttribute('min') ? new Date(input.getAttribute('min')) : null
-      if (minDate) {
-        date = minDate
-      } else if (selectedDate) {
+      if (selectedDate) {
         date = selectedDate
+      } else if (minDate) {
+        date = minDate
       } else {
         date = new Date()
       }
