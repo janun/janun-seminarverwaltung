@@ -597,3 +597,27 @@ class SeminarComment(models.Model):
 
     def __str__(self) -> str:
         return "Kommentar an {}".format(self.seminar)
+
+
+class SeminarView(models.Model):
+    """save who viewed the seminar and when"""
+    when = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    seminar = models.ForeignKey(
+        Seminar,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="views",
+    )
+
+    def __str__(self):
+        return "{} besuchte {} am {}".format(
+            self.user, self.seminar, self.when
+        )

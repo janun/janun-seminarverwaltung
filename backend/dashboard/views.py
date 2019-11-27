@@ -1,9 +1,9 @@
 from itertools import chain
 import re
 
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models import Q
+from django.db.models import Q, Max
 
 from backend.seminars.models import Seminar
 from backend.groups.models import JANUNGroup
@@ -106,3 +106,20 @@ class SearchView(UserPassesTestMixin, TemplateView):
 
     def test_func(self):
         return self.request.user.is_staff
+
+
+class LastViewedSeminarsView(UserPassesTestMixin, ListView):
+    template_name = "dashboard/last_viewed_seminars.html"
+    context_object_name = "seminars"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        qs = (
+            Seminar.objects.all()
+            .annotate(view_time=Max("views__when"))
+            .order_by("-view_time")
+            .filter(view_time__isnull=False, views__user=self.request.user)
+        )
+        return qs[:6]

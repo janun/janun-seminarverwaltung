@@ -1,0 +1,19 @@
+{% load humanize %}
+
+<div class="flex items-center px-4 py-2 text-gray-600">
+  <p>von Dir zuletzt besuchte Seminare:</p>
+</div>
+
+{% if seminars %}
+  {% for seminar in seminars %}
+    <a class="flex items-center px-4 py-2 hover:bg-gray-200 focus:bg-gray-200 w-full" 
+      href="{{ seminar.get_absolute_url }}">
+      <span>{{ seminar }}</span>
+      <span class="text-xs ml-auto text-gray-600 whitespace-no-wrap">
+        {{ seminar.view_time|naturaltime }}
+      </span>
+    </a>
+  {% endfor %}
+{% else %}
+  <div class="flex items-center px-4 py-2">Noch keine.</div>
+{% endif %}

@@ -29,7 +29,7 @@ from backend.mixins import ErrorMessageMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
-from .models import Seminar, SeminarComment, FundingRate, get_max_funding
+from .models import Seminar, SeminarComment, FundingRate, get_max_funding, SeminarView
 from .templateddocs import fill_template, FileResponse
 from .tables import SeminarTable, SeminarHistoryTable
 from .filters import SeminarStaffFilter
@@ -320,6 +320,11 @@ class SeminarStaffUpdateView(
 
     def test_func(self):
         return self.request.user.is_staff
+
+    def get(self, *args, **kwargs):
+        response = super().get(*args, **kwargs)
+        SeminarView(user=self.request.user, seminar=self.object).save()
+        return response
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

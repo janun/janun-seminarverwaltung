@@ -12,6 +12,9 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
   // show results when focus
   input.addEventListener('focus', function () {
     results.classList.remove('hidden');
+    if (!input.value) {
+      getLastViews()
+    }
   })
 
   // select first result on ArrowDown
@@ -56,6 +59,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
   input.addEventListener('input', function () {
     if (input.value.length === 0) {
       results.innerHTML = "";
+      getLastViews()
       return;
     }
 
@@ -69,4 +73,17 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
     XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     XHR.send();
   });
+
+  // get last views
+  function getLastViews() {
+    var XHR = new XMLHttpRequest();
+    XHR.addEventListener('load', function (loadEvent) {
+      if (loadEvent.target.status === 200) {
+        results.innerHTML = loadEvent.target.response;
+      }
+    });
+    XHR.open('GET', '/last_viewed');
+    XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+    XHR.send();
+  }
 });
