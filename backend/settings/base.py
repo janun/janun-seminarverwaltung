@@ -257,3 +257,17 @@ CELERY_TIMEZONE = "Europe/Berlin"
 
 # Simple history
 SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD = True
+
+
+TIME_INPUT_FORMATS = [
+    "%H:%M",  # 14:30
+    "%H:%M:%S",  # 14:30:59
+    "%H:%M:%S.%f",  # 14:30:59.000200
+    "%H.%M",  # 14.30
+    "%H.%M Uhr",  # 14.30 Uhr
+    "%H.%M h",  # 14.30 h
+    "%H.%MUhr",  # 14.30Uhr
+    "%H.%Mh",  # 14.30h
+    "%H Uhr",  # 14Uhr
+    "%HUhr",  # 14Uhr
+]
