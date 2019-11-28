@@ -96,7 +96,7 @@ updateMaxFunding();
 startDateField.addEventListener('input', function () {
   var date = parseGermanDate(startDateField.value);
   if (date) {
-    endDateField.setAttribute('min', dateIsoString(date));
+    endDateField.setAttribute('min', date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
   } else if (endDateField.getAttribute('min')) {
     endDateField.removeAttribute('min');
   }
