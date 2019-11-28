@@ -46,8 +46,7 @@ class JANUNGroupQuerySet(models.QuerySet):
 
 
 class JANUNGroupManager(models.Manager.from_queryset(JANUNGroupQuerySet)):
-    def get_queryset(self):
-        return super().get_queryset().add_annotations()
+    pass
 
 
 class JANUNGroup(models.Model):

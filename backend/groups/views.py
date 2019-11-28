@@ -64,6 +64,7 @@ class JANUNGroupStaffListView(SingleTableMixin, UserPassesTestMixin, ListView):
     template_name = "groups/groups_staff.html"
     context_object_name = "group"
     table_class = JANUNGroupTable
+    queryset = JANUNGroup.objects.add_annotations()
 
     def test_func(self):
         return self.request.user.is_staff
