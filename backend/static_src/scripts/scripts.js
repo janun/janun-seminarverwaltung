@@ -1,4 +1,3 @@
-import './polyfills/Element.classList'
 import './polyfills/Nodelist.foreach'
 
 import './autogrow'
