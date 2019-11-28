@@ -332,6 +332,7 @@ class SeminarApplyViewTestCase(TestCase):
         # form date
         self.form_data = {
             "title": "Foobar",
+            "description": "Blabla",
             "start_date": "2019-05-06",
             "end_date": "2019-05-06",
             "planned_training_days": "1",
@@ -410,14 +411,14 @@ class StaffSeminarListViewTestCase(TestCase):
             start_date="2019-05-05",
             end_date="2019-05-06",
             requested_funding=1000,
-            status="zugesagt"
+            status="zugesagt",
         ).save()
         Seminar(
             title="Test",
             start_date="2019-06-05",
             end_date="2019-06-06",
             requested_funding=2000,
-            status="zugesagt"
+            status="zugesagt",
         ).save()
         self.client.login(username="teststaff", password="secret")
         response = self.client.get(self.url_2019)

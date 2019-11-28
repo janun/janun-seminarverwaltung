@@ -232,14 +232,20 @@ class SeminarTeamerApplyForm(forms.ModelForm):
         self.fields["group"].empty_label = "- Als Einzelperson -"
 
         self.fields["planned_attendees_min"].label = "Mindestens"
+        self.fields["planned_attendees_min"].required = True
         self.fields["planned_attendees_max"].label = "Maximal"
+        self.fields["planned_attendees_max"].required = True
         self.fields["planned_attendees_min"].validators = [MinValueValidator(10)]
 
         max_funding = self.instance.get_max_funding()
         if max_funding:
             self.fields["requested_funding"].validators = [MaxValueValidator(max_funding)]
+        self.fields["requested_funding"].required = True
+
+        self.fields["planned_training_days"].required = True
 
         self.fields["title"].widget.attrs["autofocus"] = True
+        self.fields["description"].required = True
 
         self.fields["start_date"].widget = DateInput()
         self.fields["end_date"].widget = DateInput()
@@ -258,12 +264,12 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                 Div(
                     Div(Field("start_date"), css_class="mx-2"),
                     Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
-                    css_class="flex -mx-2",
+                    css_class="flex -mx-2 show-optional",
                 ),
                 Div(
                     Div(Field("end_date"), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
-                    css_class="flex -mx-2",
+                    css_class="flex -mx-2 show-optional",
                 ),
                 Field("location", css_class="w-full"),
                 text="Wann und wo das Seminar stattfindet.",
@@ -360,7 +366,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             cleaned_data["planned_training_days"],
             cleaned_data["planned_attendees_max"]
         )
-        if cleaned_data["requested_funding"] > max_funding:
+        if cleaned_data["requested_funding"] and max_funding and cleaned_data["requested_funding"] > max_funding:
             self.add_error("requested_funding", "Maximal {} €".format(
                 defaultfilters.floatformat(max_funding, 2)
             ))
