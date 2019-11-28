@@ -292,12 +292,12 @@ class SeminarQuerySet(models.QuerySet):
                 ),
                 When(
                     Q(deadline_applicable=True)
-                    & Q(deadline__lte=timezone.now() - datetime.timedelta(days=14)),
+                    & Q(deadline__lte=timezone.now() + datetime.timedelta(days=14)),
                     then=Value("soon"),
                 ),
                 When(
                     Q(deadline_applicable=True)
-                    & Q(deadline__gt=timezone.now() - datetime.timedelta(days=14)),
+                    & Q(deadline__gt=timezone.now() + datetime.timedelta(days=14)),
                     then=Value("not_soon"),
                 ),
                 When(deadline_applicable=False, then=Value("not_applicable")),

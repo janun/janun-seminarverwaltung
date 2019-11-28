@@ -1,13 +1,129 @@
 import datetime
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 
 from backend.seminars.models import Seminar, FundingRate
 from backend.groups.models import JANUNGroup
 
 
 # TODO: Test annotations
+
+
+class DeadlineAnnotationsTestCase(TestCase):
+    def test_deadline(self):
+        test1 = Seminar.objects.create(
+            title="Test1",
+            start_date=datetime.date(2019, 3, 1),
+            end_date=datetime.date(2019, 3, 1),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline().filter(
+                deadline=datetime.date(2019, 4, 15)
+            ),
+            [repr(test1)],
+        )
+
+        test2 = Seminar.objects.create(
+            title="Test2",
+            start_date=datetime.date(2019, 6, 1),
+            end_date=datetime.date(2019, 6, 1),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline().filter(
+                deadline=datetime.date(2019, 7, 15)
+            ),
+            [repr(test2)],
+        )
+
+        test3 = Seminar.objects.create(
+            title="Test3",
+            start_date=datetime.date(2019, 8, 2),
+            end_date=datetime.date(2019, 8, 2),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline().filter(
+                deadline=datetime.date(2019, 10, 15)
+            ),
+            [repr(test3)],
+        )
+
+        test4 = Seminar.objects.create(
+            title="Test4",
+            start_date=datetime.date(2019, 11, 5),
+            end_date=datetime.date(2019, 11, 5),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline().filter(
+                deadline=datetime.date(2020, 1, 15)
+            ),
+            [repr(test4)],
+        )
+
+    def test_deadline_status_expired(self):
+        ago_150_days = (timezone.now() - datetime.timedelta(days=150)).date()
+        expired = Seminar.objects.create(
+            title="expired",
+            status="zugesagt",
+            start_date=ago_150_days,
+            end_date=ago_150_days,
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline_status().filter(
+                deadline_status="expired"
+            ),
+            [repr(expired)],
+        )
+
+    @patch("django.utils.timezone.now")
+    def test_deadline_status_soon(self, mock_timezone_now):
+        mock_timezone_now.return_value = datetime.datetime(
+            2019, 4, 5, tzinfo=datetime.timezone(datetime.timedelta(hours=2))
+        )
+        soon = Seminar.objects.create(
+            title="soon",
+            status="zugesagt",
+            start_date=datetime.date(2019, 3, 1),
+            end_date=datetime.date(2019, 3, 1),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline_status().filter(deadline_status="soon"),
+            [repr(soon)],
+        )
+
+    def test_deadline_status_not_soon(self):
+        in_150_days = (timezone.now() + datetime.timedelta(days=150)).date()
+        not_soon = Seminar.objects.create(
+            title="not_soon",
+            status="zugesagt",
+            start_date=in_150_days,
+            end_date=in_150_days,
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline_status().filter(
+                deadline_status="not_soon"
+            ),
+            [repr(not_soon)],
+        )
+
+    def test_deadline_status_not_applicable(self):
+        ago_150_days = (timezone.now() - datetime.timedelta(days=150)).date()
+        not_applicable = Seminar.objects.create(
+            title="not_applicable",
+            status="überwiesen",
+            start_date=ago_150_days,
+            end_date=ago_150_days,
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline_status().filter(
+                deadline_status="not_applicable"
+            ),
+            [repr(not_applicable)],
+        )
+
 
 # TODO: Test querysets
 
