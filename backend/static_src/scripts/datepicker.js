@@ -1,7 +1,7 @@
 function isSameDate(someDate, otherDate) {
-  return someDate.getDate() == otherDate.getDate() &&
-    someDate.getMonth() == otherDate.getMonth() &&
-    someDate.getFullYear() == otherDate.getFullYear()
+  return someDate.getDate() === otherDate.getDate() &&
+    someDate.getMonth() === otherDate.getMonth() &&
+    someDate.getFullYear() === otherDate.getFullYear()
 }
 
 function dateIsoString(date) {
@@ -17,9 +17,9 @@ function parseGermanDate(string) {
   if (parts) {
     var day = parseInt(parts[1])
     var month = parseInt(parts[2])
-    var year = parseInt(parts[3].length == 2 ? "20" + parts[3] : parts[3])
+    var year = parseInt(parts[3].length === 2 ? "20" + parts[3] : parts[3])
     var date = new Date(year, month - 1, day)
-    if (date.getFullYear() == year && date.getMonth() == month - 1 && date.getDate() == day) {
+    if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
       return date
     }
   }
@@ -182,7 +182,7 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
       var date = new Date(event.target.getAttribute('data-date'))
       date.setHours(0, 0, 0, 0)
       // focus next date on ArrowRight
-      if (event.key === 'ArrowRight' || event.key == 'Right') {
+      if (event.key === 'ArrowRight' || event.key === 'Right') {
         event.preventDefault()
         date.setDate(date.getDate() + 1)
         if (date.getMonth() + 1 !== month) {
@@ -192,7 +192,7 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
         }
       }
       // focus prev date on ArrowRight
-      if (event.key === 'ArrowLeft' || event.key == 'Left') {
+      if (event.key === 'ArrowLeft' || event.key === 'Left') {
         event.preventDefault()
         date.setDate(date.getDate() - 1)
         if (date.getMonth() + 1 !== month) {
@@ -206,7 +206,7 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
         }
       }
       // focus next week on ArrowDown
-      if (event.key === 'ArrowDown' || event.key == 'Down') {
+      if (event.key === 'ArrowDown' || event.key === 'Down') {
         event.preventDefault()
         date.setDate(date.getDate() + 7)
         if (date.getMonth() + 1 !== month) {
@@ -219,7 +219,7 @@ document.querySelectorAll('.js-datepicker').forEach(function (input) {
         }
       }
       // focus prev week on ArrowUp
-      if (event.key === 'ArrowUp' || event.key == 'Up') {
+      if (event.key === 'ArrowUp' || event.key === 'Up') {
         event.preventDefault()
         date.setDate(date.getDate() - 7)
         if (date.getMonth() + 1 !== month) {

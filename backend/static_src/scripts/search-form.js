@@ -19,7 +19,7 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
 
   // select first result on ArrowDown
   input.addEventListener('keydown', function (event) {
-    if (event.key === 'ArrowDown' || event.key == 'Down') {
+    if (event.key === 'ArrowDown' || event.key === 'Down') {
       event.preventDefault();
       results.querySelectorAll('a')[0].focus()
     }
@@ -27,14 +27,14 @@ document.querySelectorAll('.js-search-form').forEach(function (form) {
 
   // cycle results and inputs on ArrowDown / ArrowUp
   results.addEventListener('keydown', function (event) {
-    if (event.key === 'ArrowDown' || event.key == 'Down') {
+    if (event.key === 'ArrowDown' || event.key === 'Down') {
       event.preventDefault();
       var nextSibling = document.activeElement.nextElementSibling;
       if (nextSibling) nextSibling.focus();
     }
   })
   results.addEventListener('keydown', function (event) {
-    if (event.key === 'ArrowUp' || event.key == 'Up') {
+    if (event.key === 'ArrowUp' || event.key === 'Up') {
       event.preventDefault();
       var prevSibling = document.activeElement.previousElementSibling;
       if (prevSibling) prevSibling.focus();

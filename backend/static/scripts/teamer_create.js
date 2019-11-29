@@ -17,9 +17,9 @@ function parseGermanDate(string) {
   if (parts) {
     var day = parseInt(parts[1]);
     var month = parseInt(parts[2]);
-    var year = parseInt(parts[3].length == 2 ? "20" + parts[3] : parts[3]);
+    var year = parseInt(parts[3].length === 2 ? "20" + parts[3] : parts[3]);
     var date = new Date(year, month - 1, day);
-    if (date.getFullYear() == year && date.getMonth() == month - 1 && date.getDate() == day) {
+    if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
       return date;
     }
   }
@@ -29,7 +29,7 @@ function getDeadline(date) {
   var quarter = Math.floor((date.getMonth() / 3));
   var year = date.getFullYear();
   var month = [4, 7, 10, 1][quarter];
-  if (quarter == 3) year += 1;
+  if (quarter === 3) year += 1;
   return new Date(year, month - 1, 15);
 }
 
