@@ -106,12 +106,12 @@ class SeminarTeamerChangeForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_date"), css_class="mx-2"),
                     Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
@@ -268,7 +268,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     css_class="flex -mx-2 show-optional",
                 ),
                 Div(
-                    Div(Field("end_date"), css_class="mx-2"),
+                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2 show-optional",
                 ),
@@ -449,12 +449,12 @@ class SeminarStaffChangeForm(forms.ModelForm):
             Fieldset(
                 "Zeit & Ort",
                 Div(
-                    Div(Field("start_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("start_date"), css_class="mx-2"),
                     Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="w-32"), css_class="mx-2"),
+                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
