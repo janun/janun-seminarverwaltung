@@ -1,6 +1,5 @@
 var fundingField = document.querySelector('#id_requested_funding');
 var startDateField = document.querySelector('#id_start_date');
-var endDateField = document.querySelector('#id_end_date');
 
 // update funding in confirmation checkbox
 function updateFunding() {
@@ -90,14 +89,3 @@ groupField.addEventListener('change', updateMaxFunding);
 daysField.addEventListener('input', updateMaxFunding);
 attendeesField.addEventListener('input', updateMaxFunding);
 updateMaxFunding();
-
-
-// set enddate min value
-startDateField.addEventListener('input', function () {
-  var date = parseGermanDate(startDateField.value);
-  if (date) {
-    endDateField.setAttribute('min', date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
-  } else if (endDateField.getAttribute('min')) {
-    endDateField.removeAttribute('min');
-  }
-})

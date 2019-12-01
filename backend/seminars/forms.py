@@ -127,7 +127,7 @@ class SeminarTeamerChangeForm(forms.ModelForm):
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24"),
+                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
@@ -232,6 +232,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
         self.fields["group"].empty_label = "- Als Einzelperson -"
 
         self.fields["planned_attendees_min"].label = "Mindestens"
+        self.fields["planned_attendees_min"].widget.attrs["min"] = 10
         self.fields["planned_attendees_min"].required = True
         self.fields["planned_attendees_max"].label = "Maximal"
         self.fields["planned_attendees_max"].required = True
@@ -303,7 +304,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24"),
+                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
@@ -468,7 +469,7 @@ class SeminarStaffChangeForm(forms.ModelForm):
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24"),
+                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
