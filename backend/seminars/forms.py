@@ -400,6 +400,7 @@ class SeminarStaffChangeForm(forms.ModelForm):
 
         self.fields["start_date"].widget = DateInput()
         self.fields["end_date"].widget = DateInput()
+        self.fields["transferred_at"].widget = DateInput()
 
         contact_details = Div()
         if self.instance.owner:
