@@ -6,9 +6,9 @@
     <form id="createCommentForm" class="bg-white p-4 shadow-md rounded-lg"
           action="{% url 'seminars:comment_create' seminar.start_date.year seminar.slug %}" method="POST">
       {% csrf_token %}
-      <textarea class="js-autogrow form-textarea w-full" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
+      <textarea required class="js-autogrow form-textarea w-full" placeholder="Dein Kommentar" id="id_text" name="text"></textarea>
       <div class="flex mt-2">
-        <button id="commentSubmit" type="submit" class="ml-auto button button-primary">Kommentieren</button>
+        <button id="commentSubmit" type="submit" class="ml-auto button button-primary form-invalid:bg-gray-400">Kommentieren</button>
       </div>
     </form>
 
@@ -33,13 +33,6 @@ function onLoadError() {
 function onCreateError() {
   alert("Konnte Kommentar nicht schreiben.");
 }
-
-// disable button
-function disableButton() {
-  button.disabled = (textarea.value === "");
-}
-textarea.addEventListener("input", disableButton);
-disableButton();
 
 // load
 function loadComments() {
