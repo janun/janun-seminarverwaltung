@@ -28,5 +28,6 @@ document.querySelectorAll('.js-generate-password').forEach(function (button) {
   button.addEventListener('click', function (event) {
     event.preventDefault();
     field.value = generatePassword(12);
+    field.dispatchEvent(new Event('input', { bubbles: true }));
   })
 })
