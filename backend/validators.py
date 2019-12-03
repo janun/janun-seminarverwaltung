@@ -17,7 +17,7 @@ class PwnedPasswordValidator:
             pw_hash = hashlib.sha1(password.encode("utf8")).hexdigest().upper()
             head, rest = pw_hash[:5], pw_hash[5:]
             url = PWNED_ENDPOINT + head
-            req = requests.get(url)
+            req = requests.get(url, timeout=1)
             return rest in req.content.decode("utf-8")
         except RequestException:
             return None
