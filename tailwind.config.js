@@ -5,36 +5,45 @@ module.exports = {
       sans: ["Cabin", "sans-serif"],
       mono: "monospace"
     },
-    customForms: theme => ({
-      default: {
-        "input, textarea, multiselect, select, checkbox, radio": {
-          backgroundColor: theme("colors.gray.100"),
-          borderColor: theme("colors.gray.400"),
-          "&:disabled": {
-            cursor: "not-allowed",
-            borderColor: theme("colors.gray.100")
+    customForms: function (theme) {
+      return ({
+        default: {
+          "input, textarea, multiselect, select, checkbox, radio": {
+            backgroundColor: theme("colors.gray.100"),
+            borderColor: theme("colors.gray.400"),
+            "&:disabled": {
+              cursor: "not-allowed",
+              borderColor: theme("colors.gray.100")
+            },
+            "&.is-invalid, .submit-attempted &:invalid": {
+              borderColor: theme("colors.red.500"),
+              borderWidth: "2px"
+            },
+            "&.is-invalid:focus, .submit-attempted &:invalid:focus": {
+              boxShadow: theme("boxShadow.outline-error")
+            }
           },
-          "&.is-invalid": {
-            borderColor: theme("colors.red.400")
+          "input, textarea, multiselect, select": {
+            borderRadius: theme('borderRadius.md'),
+          },
+          "checkbox, radio": {
+            color: theme("colors.gray.700")
+          },
+          select: {
+            iconColor: theme('colors.gray.700'),
+          },
+          textarea: {
+            resize: "none"
           }
-        },
-        "input, textarea, multiselect, select": {
-          borderRadius: theme('borderRadius.md'),
-        },
-        "checkbox, radio": {
-          color: theme("colors.gray.700")
-        },
-        select: {
-          iconColor: theme('colors.gray.700'),
-        },
-        textarea: {
-          resize: "none"
         }
-      }
-    }),
+      })
+    },
     extend: {
       borderRadius: {
         md: "6px"
+      },
+      boxShadow: {
+        "outline-error": "0 0 0 3px rgba(194, 48, 48, 0.5);"
       },
       colors: {
         green: {
