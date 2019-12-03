@@ -84,6 +84,7 @@ class ChangePasswordForm(AllauthChangePasswordForm):
         self.fields[
             "password1"
         ].help_text = "Mindestens 8 Zeichen, empfohlen 12 oder mehr."
+        self.fields["password1"].widget.attrs["minlength"] = 8
         for field in ("oldpassword", "password1"):
             del self.fields[field].widget.attrs["placeholder"]
 
@@ -166,6 +167,7 @@ class SignupForm(AllauthSignupForm):
         self.fields[
             "password1"
         ].help_text = "Mindestens 8 Zeichen, empfohlen 12 oder mehr."
+        self.fields["password1"].widget.attrs["minlength"] = 8
 
         # add data_protection_read url if policy setting is set
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
@@ -248,7 +250,7 @@ class UserCreateForm(forms.ModelForm):
     password = forms.CharField(
         label="Passwort",
         strip=False,
-        widget=forms.PasswordInput(render_value=True),
+        widget=forms.PasswordInput(render_value=True, attrs={"minlength": 8}),
         required=False,
         help_text="Mindestens 8 Zeichen, empfohlen 12 oder mehr.",
     )
@@ -328,7 +330,7 @@ class UserDetailForm(forms.ModelForm):
     password = forms.CharField(
         label="Passwort ändern",
         strip=False,
-        widget=forms.PasswordInput(render_value=True),
+        widget=forms.PasswordInput(render_value=True, attrs={"minlength": 8}),
         required=False,
         help_text="Leer lassen lässt es unverändert. Mindestens 8 Zeichen, empfohlen 12 oder mehr.",
     )
