@@ -12,6 +12,7 @@ from django.db.models.functions import ExtractYear, Concat, Cast, Coalesce
 from django.utils import timezone
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from django.template import defaultfilters
 
 from simple_history.models import HistoricalRecords
 
@@ -516,7 +517,7 @@ class Seminar(models.Model):
             raise ValidationError(errors)
 
     def __str__(self) -> str:
-        return self.title
+        return "{}, {}".format(self.title, defaultfilters.date(self.start_date, "d.m.y"))
 
     def get_absolute_url(self):
         return reverse(
