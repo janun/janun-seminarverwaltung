@@ -95,7 +95,8 @@ class ChangePasswordForm(AllauthChangePasswordForm):
             del self.fields[field].widget.attrs["placeholder"]
 
     def clean(self):
-        return super(forms.Form, self).clean()
+        # use clean method from grand-parent
+        return super(forms.Form, self).clean()  # pylint: disable=bad-super-call
 
 
 class SignupForm(AllauthSignupForm):
