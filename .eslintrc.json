@@ -20,7 +20,8 @@
   "overrides": [
     {
       "files": [
-        "rollup.config.js"
+        "rollup.config.js",
+        "tailwind.config.js"
       ],
       "parserOptions": {
         "ecmaVersion": 6
