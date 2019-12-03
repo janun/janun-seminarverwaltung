@@ -26,6 +26,12 @@ from backend.utils import Link, Fieldset
 from .models import User
 
 
+class PhoneNumberInput(PhoneNumberInternationalFallbackWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs.update({"pattern": r"[0-9-+\s()/]+"})
+
+
 class AccountAdapter(OTPAdapter):
     def save_user(self, request, user, form, commit=False):
         user = super().save_user(request, user, form, commit=False)
@@ -105,7 +111,7 @@ class SignupForm(AllauthSignupForm):
         label="Telefonnummer",
         help_text="Für dringende Rückfragen zu Deinen Seminaren",
         required=False,
-        widget=PhoneNumberInternationalFallbackWidget,
+        widget=PhoneNumberInput,
         error_messages={
             "invalid": "Bitte eine gültige Telefonnummer eingeben, z.B. 0511 1241512."
         },
@@ -243,7 +249,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("name", "email", "username", "telephone")
-        widgets = {"telephone": PhoneNumberInternationalFallbackWidget}
+        widgets = {"telephone": PhoneNumberInput}
 
 
 class UserCreateForm(forms.ModelForm):
@@ -320,7 +326,7 @@ class UserCreateForm(forms.ModelForm):
             "group_hats",
         )
         widgets = {
-            "telephone": PhoneNumberInternationalFallbackWidget,
+            "telephone": PhoneNumberInput,
             "janun_groups": forms.CheckboxSelectMultiple,
             "group_hats": forms.CheckboxSelectMultiple,
         }
@@ -417,7 +423,7 @@ class UserDetailForm(forms.ModelForm):
             "group_hats",
         )
         widgets = {
-            "telephone": PhoneNumberInternationalFallbackWidget,
+            "telephone": PhoneNumberInput,
             "janun_groups": forms.CheckboxSelectMultiple,
             "group_hats": forms.CheckboxSelectMultiple,
         }
