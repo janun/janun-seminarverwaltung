@@ -69,6 +69,10 @@
   @apply font-bold border-l-0 border-b-2 border-green-500;
 }
 
+input[type="number"] {
+  @apply text-right;
+}
+
 form:invalid .form-invalid\:bg-gray-400,
 form:invalid .form-invalid\:bg-gray-400:hover,
 form:invalid .form-invalid\:bg-gray-400:focus,
