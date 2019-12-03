@@ -27,7 +27,7 @@
   <div data-sticky-classes="md:bg-white-75 md:border-t-2" class="js-is-sticky-b md:sticky md:bottom-0 md:-mx-8">
     <div class="flex items-center justify-end md:mx-auto md:max-w-4xl md:py-4">
       <a class="mr-6 text-gray-700 hover:text-gray-800" href="{% url 'users:delete' user.username %}">Konto löschen</a>
-      <button class="button button-primary" type="submit">Speichern</button>
+      <button class="button button-primary js-disable-if-unchanged" type="submit">Speichern</button>
     </div>
   </div>
 </form>
