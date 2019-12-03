@@ -308,10 +308,19 @@ class UserCreateForm(forms.ModelForm):
         password = self.cleaned_data["password"]
         if password:
             user.set_password(password)
+        else:
+            user.set_unusable_password()
         if commit:
             user.save()
             self.save_m2m()
         return user
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data["password"]
+        is_active = cleaned_data["is_active"]
+        if is_active and not password:
+            self.add_error("password", "Erforderlich, falls das Konto aktiv sein soll.")
 
     class Meta:
         model = User
