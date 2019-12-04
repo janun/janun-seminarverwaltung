@@ -57,7 +57,7 @@ class FundingRate(models.Model):
     group_limit_formula = models.CharField(
         "Formel für Gruppen-Limit",
         max_length=255,
-        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450)",
+        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450) mit B = Anzahl der Bildungstage",
         blank=True,
     )
     group_limit = models.DecimalField(
@@ -82,7 +82,7 @@ class FundingRate(models.Model):
     single_limit_formula = models.CharField(
         "Formel für Einzelpersonen-Limit",
         max_length=255,
-        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450)",
+        help_text="engl. Excel-Formel, z.B. =IF(B>=3,(B-3)*200+450,450) mit B = Anzahl der Bildungstage",
         blank=True,
     )
     single_limit = models.DecimalField(
