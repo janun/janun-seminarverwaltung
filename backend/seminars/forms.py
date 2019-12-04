@@ -72,7 +72,7 @@ class SeminarImportForm(forms.Form):
 
 
 class SeminarTeamerChangeForm(forms.ModelForm):
-    def get_state_description(self):
+    def get_state_description(self) -> str:
         text = STATE_INFO[self.instance.status]["description"]
         if self.instance.status == "überwiesen" and self.instance.transferred_at:
             text = "Am {0} überwiesen.".format(

@@ -12,7 +12,7 @@ from backend.dashboard.history import BaseHistoricalModel
 
 
 class JANUNGroupQuerySet(models.QuerySet):
-    def add_annotations(self):
+    def add_annotations(self) -> models.QuerySet:
         return self.annotate(
             seminars_this_year=Count(
                 "seminars", filter=Q(seminars__start_date__year=ExtractYear(Now()))
@@ -66,7 +66,7 @@ class JANUNGroup(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("groups:detail", kwargs={"slug": self.slug})
 
     objects = JANUNGroupManager()

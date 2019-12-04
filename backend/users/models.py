@@ -85,7 +85,7 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("users:detail", kwargs={"username": self.username})
 
     def save(self, *args, **kwargs):
@@ -106,5 +106,5 @@ class User(AbstractUser):
         )
 
     @property
-    def has_totp(self):
+    def has_totp(self) -> bool:
         return user_has_valid_totp_device(self)
