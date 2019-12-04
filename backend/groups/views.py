@@ -14,13 +14,14 @@ from django.urls import reverse_lazy
 
 from django_tables2.views import SingleTableMixin
 
+from backend.mixins import SuperuserOnlyMixin, StaffOnlyMixin
 from .models import JANUNGroup
 from .tables import JANUNGroupTable
 from .resources import JANUNGroupResource
 from .forms import GroupCreateForm
 
 
-class JANUNGroupUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView):
+class JANUNGroupUpdateView(SuccessMessageMixin, SuperuserOnlyMixin, UpdateView):
     model = JANUNGroup
     success_message = "Änderung gespeichert."
     slug_field = "slug"
@@ -29,20 +30,14 @@ class JANUNGroupUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView)
     form_class = GroupCreateForm
     template_name = "groups/group_update.html"
 
-    def test_func(self):
-        return self.request.user.is_superuser
 
-
-class JANUNGroupDeleteView(SuccessMessageMixin, UserPassesTestMixin, DeleteView):
+class JANUNGroupDeleteView(SuccessMessageMixin, SuperuserOnlyMixin, DeleteView):
     model = JANUNGroup
     success_url = reverse_lazy("groups:staff_list")
     success_message = "{} wurde gelöscht."
     slug_field = "slug"
     slug_url_kwarg = "slug"
     context_object_name = "group"
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def delete(self, request, *args, **kwargs):
         name = self.get_object().name
@@ -51,23 +46,17 @@ class JANUNGroupDeleteView(SuccessMessageMixin, UserPassesTestMixin, DeleteView)
         return result
 
 
-class JANUNGroupCreateView(UserPassesTestMixin, CreateView):
+class JANUNGroupCreateView(SuperuserOnlyMixin, CreateView):
     form_class = GroupCreateForm
     template_name = "groups/group_create.html"
 
-    def test_func(self):
-        return self.request.user.is_superuser
 
-
-class JANUNGroupStaffListView(SingleTableMixin, UserPassesTestMixin, ListView):
+class JANUNGroupStaffListView(SingleTableMixin, StaffOnlyMixin, ListView):
     model = JANUNGroup
     template_name = "groups/groups_staff.html"
     context_object_name = "group"
     table_class = JANUNGroupTable
     queryset = JANUNGroup.objects.add_annotations()
-
-    def test_func(self):
-        return self.request.user.is_staff
 
 
 class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
@@ -117,10 +106,7 @@ class JANUNGroupDetailView(UserPassesTestMixin, DetailView):
         return context
 
 
-class JANUNGroupExportView(UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_superuser
-
+class JANUNGroupExportView(SuperuserOnlyMixin, View):
     def get(self, *args, **kwargs):
         qs = JANUNGroup.objects.all()
         dataset = JANUNGroupResource().export(qs)

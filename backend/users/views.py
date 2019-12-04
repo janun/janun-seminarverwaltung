@@ -2,7 +2,6 @@ from django.views.generic import View
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -14,7 +13,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from backend.mixins import ErrorMessageMixin
+from backend.mixins import ErrorMessageMixin, StaffOnlyMixin, SuperuserOnlyMixin
 from .models import User
 from .forms import ProfileForm, UserDetailForm, UserCreateForm, UserTOTPDeviceRemoveForm
 from .tables import UserTable
@@ -22,36 +21,27 @@ from .resources import UserResource
 from .filters import UserFilter
 
 
-class UserListView(SingleTableMixin, UserPassesTestMixin, FilterView):
+class UserListView(SingleTableMixin, StaffOnlyMixin, FilterView):
     model = User
     table_class = UserTable
     filterset_class = UserFilter
     queryset = User.objects.all().prefetch_related("janun_groups", "group_hats")
     template_name = "users/user_list.html"
 
-    def test_func(self):
-        return self.request.user.is_staff
 
-
-class UserCreateView(UserPassesTestMixin, SuccessMessageMixin, CreateView):
+class UserCreateView(SuperuserOnlyMixin, SuccessMessageMixin, CreateView):
     model = User
     form_class = UserCreateForm
     template_name = "users/user_create.html"
     success_message = "Konto erstellt"
 
-    def test_func(self):
-        return self.request.user.is_superuser
 
-
-class UserDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
+class UserDeleteView(SuperuserOnlyMixin, SuccessMessageMixin, DeleteView):
     model = User
     success_url = reverse_lazy("users:list")
     success_message = "Das Konto {} wurde gelöscht."
     slug_field = "username"
     slug_url_kwarg = "username"
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def delete(self, request, *args, **kwargs):
         username = self.get_object().username
@@ -60,9 +50,7 @@ class UserDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
         return result
 
 
-class DetailView(
-    ErrorMessageMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView
-):
+class DetailView(ErrorMessageMixin, StaffOnlyMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = UserDetailForm
     template_name = "users/user_detail.html"
@@ -75,9 +63,6 @@ class DetailView(
 
     def get_success_url(self):
         return reverse("users:detail", kwargs={"username": self.get_object().username})
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_form_kwargs(self, *args, **kwargs):
         form_kwargs = super().get_form_kwargs(*args, **kwargs)
@@ -106,11 +91,8 @@ class ProfileView(ErrorMessageMixin, SuccessMessageMixin, UpdateView):
         return form_kwargs
 
 
-class UserTwoFactorSetupView(UserPassesTestMixin, TwoFactorSetup):
+class UserTwoFactorSetupView(SuperuserOnlyMixin, TwoFactorSetup):
     template_name = "users/user_2fa_setup.html"
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def get_success_url(self):
         return reverse("users:detail", kwargs={"username": self.get_object().username})
@@ -146,12 +128,9 @@ class UserTwoFactorSetupView(UserPassesTestMixin, TwoFactorSetup):
         return result
 
 
-class UserTwoFactorRemoveView(UserPassesTestMixin, TwoFactorRemove):
+class UserTwoFactorRemoveView(SuperuserOnlyMixin, TwoFactorRemove):
     template_name = "users/user_2fa_remove.html"
     form_class = UserTOTPDeviceRemoveForm
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def get_success_url(self):
         return reverse("users:detail", kwargs={"username": self.get_object().username})
@@ -177,10 +156,7 @@ class UserTwoFactorRemoveView(UserPassesTestMixin, TwoFactorRemove):
         return result
 
 
-class UserExportView(UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_superuser
-
+class UserExportView(SuperuserOnlyMixin, View):
     def get(self, *args, **kwargs):
         qs = User.objects.all()
         dataset = UserResource().export(qs)

@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 class ErrorMessageMixin:
@@ -13,3 +14,13 @@ class ErrorMessageMixin:
 
     def get_error_message(self):
         return self.error_message
+
+
+class StaffOnlyMixin(UserPassesTestMixin):
+    def test_func(self) -> bool:
+        return self.request.user.is_staff
+
+
+class SuperuserOnlyMixin(UserPassesTestMixin):
+    def test_func(self) -> bool:
+        return self.request.user.is_superuser

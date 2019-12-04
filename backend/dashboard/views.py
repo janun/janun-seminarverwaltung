@@ -2,12 +2,12 @@ from itertools import chain
 import re
 
 from django.views.generic import TemplateView, ListView
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q, Max
 
 from backend.seminars.models import Seminar
 from backend.groups.models import JANUNGroup
 from backend.users.models import User
+from backend.mixins import StaffOnlyMixin
 from .tables import HistoryTable, SearchResultsTable
 from .history import get_global_history
 
@@ -38,11 +38,8 @@ class Dashboard(TemplateView):
         return context
 
 
-class GlobalHistoryView(UserPassesTestMixin, TemplateView):
+class GlobalHistoryView(StaffOnlyMixin, TemplateView):
     template_name = "dashboard/global_history.html"
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,7 +51,7 @@ class GlobalHistoryView(UserPassesTestMixin, TemplateView):
         return context
 
 
-class SearchView(UserPassesTestMixin, TemplateView):
+class SearchView(StaffOnlyMixin, TemplateView):
     context_object_name = "results"
 
     def __init__(self, *args, **kwargs):
@@ -104,16 +101,10 @@ class SearchView(UserPassesTestMixin, TemplateView):
 
         return chain(users, groups, seminars)
 
-    def test_func(self):
-        return self.request.user.is_staff
 
-
-class LastViewedSeminarsView(UserPassesTestMixin, ListView):
+class LastViewedSeminarsView(StaffOnlyMixin, ListView):
     template_name = "dashboard/last_viewed_seminars.html"
     context_object_name = "seminars"
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_queryset(self):
         qs = (

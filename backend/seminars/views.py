@@ -25,7 +25,7 @@ from formtools.wizard.views import SessionWizardView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from backend.mixins import ErrorMessageMixin
+from backend.mixins import ErrorMessageMixin, StaffOnlyMixin, SuperuserOnlyMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
 
@@ -44,7 +44,7 @@ from .forms import (
 
 
 class FundingRateUpdateView(
-    ErrorMessageMixin, SuccessMessageMixin, UserPassesTestMixin, UpdateView
+    ErrorMessageMixin, SuccessMessageMixin, SuperuserOnlyMixin, UpdateView
 ):
     model = FundingRate
     form_class = FundingRateForm
@@ -55,9 +55,6 @@ class FundingRateUpdateView(
     def get_success_url(self):
         year = self.kwargs["year"]
         return reverse("seminars:list_staff", kwargs={"year": year})
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -111,7 +108,7 @@ class YourSeminarListView(ListView):
         return super().get_queryset().filter(owner=self.request.user)
 
 
-class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
+class StaffSeminarListView(SingleTableMixin, StaffOnlyMixin, FilterView):
     model = Seminar
     queryset = (
         Seminar.objects.all()
@@ -126,9 +123,6 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
     template_name = "seminars/staff_seminars.html"
     table_class = SeminarTable
     paginate_by = 50
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -172,10 +166,7 @@ class StaffSeminarListView(SingleTableMixin, UserPassesTestMixin, FilterView):
         return super().get_queryset()
 
 
-class SeminarExportView(UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_staff
-
+class SeminarExportView(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
         qs = Seminar.objects.filter(start_date__year=year).order_by("start_date")
@@ -186,10 +177,7 @@ class SeminarExportView(UserPassesTestMixin, View):
         return response
 
 
-class SeminarProofOfUseView(UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_staff
-
+class SeminarProofOfUseView(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
         qs = (
@@ -204,14 +192,11 @@ class SeminarProofOfUseView(UserPassesTestMixin, View):
         return FileResponse(odt_filepath, filename)
 
 
-class SeminarImportView(ErrorMessageMixin, UserPassesTestMixin, FormView):
+class SeminarImportView(ErrorMessageMixin, StaffOnlyMixin, FormView):
     template_name = "seminars/import.html"
     form_class = SeminarImportForm
     resource_class = SeminarResource
     success_url = "/seminars"
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -294,11 +279,8 @@ class SeminarTeamerUpdateView(
         return kwargs
 
 
-class SeminarHistoryView(UserPassesTestMixin, TemplateView):
+class SeminarHistoryView(StaffOnlyMixin, TemplateView):
     template_name = "seminars/seminar_history.html"
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -312,7 +294,7 @@ class SeminarHistoryView(UserPassesTestMixin, TemplateView):
 
 
 class SeminarStaffUpdateView(
-    UserPassesTestMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
+    StaffOnlyMixin, ErrorMessageMixin, SuccessMessageMixin, UpdateView
 ):
     form_class = SeminarStaffChangeForm
     queryset = Seminar.objects.annotate_deadline_status().select_related(
@@ -320,9 +302,6 @@ class SeminarStaffUpdateView(
     )
     template_name = "seminars/seminar_staff_detail.html"
     success_message = "Deine Änderungen wurden gespeichert."
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get(self, *args, **kwargs):
         response = super().get(*args, **kwargs)
