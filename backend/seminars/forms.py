@@ -43,6 +43,16 @@ class FundingRateForm(forms.ModelForm):
             ),
         )
 
+        for field in (
+            "group_rate",
+            "group_rate_one_day",
+            "group_limit",
+            "single_rate",
+            "single_rate_one_day",
+            "single_limit",
+        ):
+            self.fields[field].widget.attrs["min"] = 0
+
     class Meta:
         model = FundingRate
         group_fields = (
