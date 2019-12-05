@@ -1,10 +1,17 @@
 from operator import attrgetter
 import json
 import itertools
+import datetime
 
 from django.db import models
 
 from simple_history.models import registered_models
+
+
+def json_converter(value):
+    if isinstance(value, datetime.date):
+        return value.strftime("%d.%m.%Y")
+    return str(value)
 
 
 class BaseHistoricalModel(models.Model):
@@ -20,11 +27,11 @@ class BaseHistoricalModel(models.Model):
                     prev_record
                 ).changes
                 if changes:
-                    return json.dumps(list(map(lambda c: c.__dict__, changes)))
+                    return json.dumps(
+                        list(map(lambda c: c.__dict__, changes)), default=json_converter
+                    )
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.refresh_from_db()  # or else dates are strs and cant be serialized
         self.history_change_reason = self.get_history_changes()
         super().save(*args, **kwargs)
 
