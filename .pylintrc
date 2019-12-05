@@ -3,6 +3,8 @@ load-plugins=pylint_django,pylint_quotes
 ignore=.git, migrations
 max-line-length=88
 string-quote=double-avoid-escape
+triple-quote=double
+docstring-quote=double
 
 [MESSAGES CONTROL]
 disable=missing-docstring,

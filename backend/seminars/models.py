@@ -119,27 +119,33 @@ class FundingRate(models.Model):
             return self.single_rate_one_day
         return self.single_rate
 
-    def limit(self, group, planned_training_days, planned_attendees_max, funding: Decimal) -> Decimal:
+    def limit(
+        self, group, planned_training_days, planned_attendees_max, funding: Decimal
+    ) -> Decimal:
         upper_limit = self.group_limit if group else self.single_limit
         if upper_limit and funding > upper_limit:
             funding = upper_limit
 
-        formula = (
-            self.group_limit_formula if group else self.single_limit_formula
-        )
+        formula = self.group_limit_formula if group else self.single_limit_formula
         if formula:
-            lower_limit = float(formulas.Parser().ast(formula)[1].compile()(B=planned_training_days))
+            lower_limit = float(
+                formulas.Parser().ast(formula)[1].compile()(B=planned_training_days)
+            )
             if lower_limit and funding > lower_limit:
                 funding = lower_limit
 
         return funding
 
-    def get_max_funding(self, group, planned_training_days, planned_attendees_max) -> Decimal:
+    def get_max_funding(
+        self, group, planned_training_days, planned_attendees_max
+    ) -> Decimal:
         if planned_training_days and planned_attendees_max:
             rate = self.get_rate(group, planned_training_days)
             tnt = planned_training_days * planned_attendees_max
             funding = rate * tnt
-            return self.limit(group, planned_training_days, planned_attendees_max, funding)
+            return self.limit(
+                group, planned_training_days, planned_attendees_max, funding
+            )
 
     def __str__(self) -> str:
         return "Förderungssätze %s" % self.year
@@ -156,7 +162,10 @@ class FundingRate(models.Model):
 
 class SeminarQuerySet(models.QuerySet):
     def annotate_planned_attendence_days(self) -> models.QuerySet:
-        return self.annotate(planned_attendence_days=F("planned_attendees_max") * F("planned_training_days"))
+        return self.annotate(
+            planned_attendence_days=F("planned_attendees_max")
+            * F("planned_training_days")
+        )
 
     def annotate_year(self) -> models.QuerySet:
         return self.annotate(year=ExtractYear("start_date"))
@@ -201,13 +210,10 @@ class SeminarQuerySet(models.QuerySet):
     def annotate_deadline_applicable(self) -> models.QuerySet:
         return self.annotate(
             deadline_applicable=Case(
-                    When(
-                        status__in=("angemeldet", "zugesagt", "stattgefunden"),
-                        then=True,
-                    ),
-                    default=False,
-                    output_field=models.BooleanField(),
-                ),
+                When(status__in=("angemeldet", "zugesagt", "stattgefunden"), then=True),
+                default=False,
+                output_field=models.BooleanField(),
+            )
         )
 
     def annotate_funding(self) -> models.QuerySet:
@@ -230,80 +236,84 @@ class SeminarQuerySet(models.QuerySet):
         )
 
     def annotate_tnt_cost(self) -> models.QuerySet:
-        return self.annotate_tnt().annotate_funding().annotate(
-            tnt_cost=Case(
-                When(
-                    tnt__gt=Value(0),
-                    then=ExpressionWrapper(
-                        F("funding") / F("tnt"), output_field=models.DecimalField()
+        return (
+            self.annotate_tnt()
+            .annotate_funding()
+            .annotate(
+                tnt_cost=Case(
+                    When(
+                        tnt__gt=Value(0),
+                        then=ExpressionWrapper(
+                            F("funding") / F("tnt"), output_field=models.DecimalField()
+                        ),
                     ),
-                ),
-                default=Value(None),
-            ),
+                    default=Value(None),
+                )
+            )
         )
 
     def annotate_attendees(self) -> models.QuerySet:
         return self.annotate(
             attendees=Case(
-                    When(
-                        actual_attendees_total__isnull=True,
-                        then="planned_attendees_max",
-                    ),
-                    default="actual_attendees_total",
-                )
+                When(actual_attendees_total__isnull=True, then="planned_attendees_max"),
+                default="actual_attendees_total",
+            )
         )
 
     def annotate_training_days(self) -> models.QuerySet:
         return self.annotate(
             training_days=Case(
-                    When(
-                        actual_training_days__isnull=True, then="planned_training_days"
-                    ),
-                    default="actual_training_days",
-                )
+                When(actual_training_days__isnull=True, then="planned_training_days"),
+                default="actual_training_days",
+            )
         )
 
     def annotate_income_total(self) -> models.QuerySet:
         return self.annotate(
             income_total=Coalesce("income_fees", 0)
-                + Coalesce("income_public", 0)
-                + Coalesce("income_other", 0)
+            + Coalesce("income_public", 0)
+            + Coalesce("income_other", 0)
         )
 
     def annotate_expense_total(self) -> models.QuerySet:
         return self.annotate(
             expense_total=Coalesce("expense_accomodation", 0)
-                + Coalesce("expense_catering", 0)
-                + Coalesce("expense_other", 0)
-                + Coalesce("expense_referent", 0)
-                + Coalesce("expense_travel", 0)
+            + Coalesce("expense_catering", 0)
+            + Coalesce("expense_other", 0)
+            + Coalesce("expense_referent", 0)
+            + Coalesce("expense_travel", 0)
         )
 
     def annotate_expense_minus_income(self) -> models.QuerySet:
         return self.annotate_income_total().annotate_expense_total.annotate(
-            expense_minus_income=Coalesce("expense_total", 0) - Coalesce("income_total", 0)
+            expense_minus_income=Coalesce("expense_total", 0)
+            - Coalesce("income_total", 0)
         )
 
     def annotate_deadline_status(self) -> models.QuerySet:
-        return self.annotate_deadline_applicable().annotate_deadline().annotate(
-            deadline_status=Case(
-                When(
-                    Q(deadline_applicable=True) & Q(deadline__lte=timezone.now()),
-                    then=Value("expired"),
-                ),
-                When(
-                    Q(deadline_applicable=True)
-                    & Q(deadline__lte=timezone.now() + datetime.timedelta(days=14)),
-                    then=Value("soon"),
-                ),
-                When(
-                    Q(deadline_applicable=True)
-                    & Q(deadline__gt=timezone.now() + datetime.timedelta(days=14)),
-                    then=Value("not_soon"),
-                ),
-                When(deadline_applicable=False, then=Value("not_applicable")),
-                default=Value("unknown"),
-                output_field=models.CharField(),
+        return (
+            self.annotate_deadline_applicable()
+            .annotate_deadline()
+            .annotate(
+                deadline_status=Case(
+                    When(
+                        Q(deadline_applicable=True) & Q(deadline__lte=timezone.now()),
+                        then=Value("expired"),
+                    ),
+                    When(
+                        Q(deadline_applicable=True)
+                        & Q(deadline__lte=timezone.now() + datetime.timedelta(days=14)),
+                        then=Value("soon"),
+                    ),
+                    When(
+                        Q(deadline_applicable=True)
+                        & Q(deadline__gt=timezone.now() + datetime.timedelta(days=14)),
+                        then=Value("not_soon"),
+                    ),
+                    When(deadline_applicable=False, then=Value("not_applicable")),
+                    default=Value("unknown"),
+                    output_field=models.CharField(),
+                )
             )
         )
 
@@ -332,8 +342,12 @@ class SeminarQuerySet(models.QuerySet):
         return self.filter(start_date__year=timezone.now().year + 1)
 
     def get_aggregates(self) -> dict:
-        return self.annotate_funding().annotate_tnt().aggregate(
-            count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
+        return (
+            self.annotate_funding()
+            .annotate_tnt()
+            .aggregate(
+                count=Count("pk"), funding_sum=Sum("funding"), tnt_sum=Sum("tnt")
+            )
         )
 
 
@@ -483,7 +497,9 @@ class Seminar(models.Model):
         verbose_name_plural = "Seminare"
 
     objects = SeminarManager()
-    history = HistoricalRecords(excluded_fields=["updated_at", "slug"], bases=[BaseHistoricalModel])
+    history = HistoricalRecords(
+        excluded_fields=["updated_at", "slug"], bases=[BaseHistoricalModel]
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -512,12 +528,16 @@ class Seminar(models.Model):
             if self.planned_training_days:
                 days = (self.end_date - self.start_date).days + 1
                 if self.planned_training_days > days:
-                    errors["planned_training_days"] = "Muss kleiner gleich {} (Dauer des Seminars) sein".format(days)
+                    errors[
+                        "planned_training_days"
+                    ] = "Muss kleiner gleich {} (Dauer des Seminars) sein".format(days)
         if errors:
             raise ValidationError(errors)
 
     def __str__(self) -> str:
-        return "{}, {}".format(self.title, defaultfilters.date(self.start_date, "d.m.y"))
+        return "{}, {}".format(
+            self.title, defaultfilters.date(self.start_date, "d.m.y")
+        )
 
     def get_absolute_url(self) -> str:
         return reverse(
@@ -551,10 +571,14 @@ class Seminar(models.Model):
     def get_max_funding(self) -> Optional[Decimal]:
         if self.start_date:
             year = self.start_date.year
-            return get_max_funding(year, self.group, self.planned_training_days, self.planned_attendees_max)
+            return get_max_funding(
+                year, self.group, self.planned_training_days, self.planned_attendees_max
+            )
 
 
-def get_max_funding(year, group, planned_training_days, planned_attendees_max) -> Optional[Decimal]:
+def get_max_funding(
+    year, group, planned_training_days, planned_attendees_max
+) -> Optional[Decimal]:
     try:
         fr = FundingRate.objects.get(year=year)
     except FundingRate.DoesNotExist:
@@ -589,7 +613,9 @@ class SeminarComment(models.Model):
     def get_absolute_url(self) -> str:
         return "{}#comments".format(self.seminar.get_absolute_url())
 
-    history = HistoricalRecords(excluded_fields=["updated_at"], bases=[BaseHistoricalModel])
+    history = HistoricalRecords(
+        excluded_fields=["updated_at"], bases=[BaseHistoricalModel]
+    )
 
     class Meta:
         ordering = ("-created_at",)
@@ -602,23 +628,14 @@ class SeminarComment(models.Model):
 
 class SeminarView(models.Model):
     """save who viewed the seminar and when"""
+
     when = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="+",
+        User, on_delete=models.CASCADE, null=True, blank=True, related_name="+"
     )
     seminar = models.ForeignKey(
-        Seminar,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="views",
+        Seminar, on_delete=models.CASCADE, null=True, blank=True, related_name="views"
     )
 
     def __str__(self) -> str:
-        return "{} besuchte {} am {}".format(
-            self.user, self.seminar, self.when
-        )
+        return "{} besuchte {} am {}".format(self.user, self.seminar, self.when)

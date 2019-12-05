@@ -15,7 +15,9 @@ from .models import Seminar, FundingRate, get_max_funding
 from .states import STATE_INFO, get_next_states
 
 
-seminar_policy_url = preferences.JANUNSeminarPreferences.seminar_policy_url # pylint: disable=no-member
+seminar_policy_url = (
+    preferences.JANUNSeminarPreferences.seminar_policy_url # pylint: disable=no-member
+)
 
 
 class FundingRateForm(forms.ModelForm):
@@ -121,7 +123,15 @@ class SeminarTeamerChangeForm(forms.ModelForm):
                     css_class="flex -mx-2",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
+                    Div(
+                        Field(
+                            "end_date",
+                            css_class="js-update-min",
+                            data_min_field="#id_start_date",
+                            data_date_transform=True,
+                        ),
+                        css_class="mx-2",
+                    ),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
@@ -140,7 +150,11 @@ class SeminarTeamerChangeForm(forms.ModelForm):
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
+                        Field(
+                            "planned_attendees_max",
+                            css_class="w-24 js-update-min",
+                            data_min_field="#id_planned_attendees_min",
+                        ),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
@@ -215,8 +229,9 @@ class SeminarTeamerApplyForm(forms.ModelForm):
     confirm_policy = forms.BooleanField(
         label=(
             'Ich habe die <a class="underline" rel="noreferrer" target="_blank"'
-            'href="{}">Seminarabrechnungsrichtlinie</a> gelesen.').format(seminar_policy_url),
-        required=True
+            'href="{}">Seminarabrechnungsrichtlinie</a> gelesen.'
+        ).format(seminar_policy_url),
+        required=True,
     )
 
     confirm_funding = forms.BooleanField(
@@ -253,7 +268,9 @@ class SeminarTeamerApplyForm(forms.ModelForm):
 
         max_funding = self.instance.get_max_funding()
         if max_funding:
-            self.fields["requested_funding"].validators = [MaxValueValidator(max_funding)]
+            self.fields["requested_funding"].validators = [
+                MaxValueValidator(max_funding)
+            ]
         self.fields["requested_funding"].required = True
 
         self.fields["planned_training_days"].required = True
@@ -281,7 +298,15 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     css_class="flex -mx-2 show-optional",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
+                    Div(
+                        Field(
+                            "end_date",
+                            css_class="js-update-min",
+                            data_min_field="#id_start_date",
+                            data_date_transform=True,
+                        ),
+                        css_class="mx-2",
+                    ),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2 show-optional",
                 ),
@@ -291,7 +316,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             Fieldset(
                 "JANUN-Gruppe",
                 Field("group"),
-                text="Meldest Du das Seminar für eine Gruppe an?"
+                text="Meldest Du das Seminar für eine Gruppe an?",
             ),
             Fieldset(
                 "Bildungstage",
@@ -299,6 +324,9 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     "planned_training_days",
                     css_class="w-24 js-update-max-from-date-diff",
                 ),
+                Div(
+                    HTML(
+                        """
                     <h4 class="mt-4 mb-1 font-bold">Besonderheit für 2-tägige Seminare am Wochenende:</h4>
                     <p>sind schon 2 Bildungstage, wenn insg. 8 Stunden Bildungsarbeit stattfinden.</p>
                     <h4 class="mt-4 mb-1 font-bold">Besonderheiten für An- und Abreisetage:</h4>
@@ -306,25 +334,35 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     <li>sind zusammen 1 Bildungstag, wenn an beiden zusammen min. 6 Zeitstunden Bildungsarbeit stattfinden.</li>
                     <li>sind je 1 Bildungstag, wenn außerdem am Anreisetag vor 12 Uhr begonnen wird und am Abreisetag nach 15.30 Uhr geendet wird.</li>
                     <ul>
-                    '''
-                ), css_class="text-sm text-gray-700"),
-                text="An wievielen Tagen finden min. 6 Zeitstunden Bildungsarbeit statt?"
+                    """
+                    ),
+                    css_class="text-sm text-gray-700",
+                ),
+                text="An wievielen Tagen finden min. 6 Zeitstunden Bildungsarbeit statt?",
             ),
             Fieldset(
                 "Anzahl Teilnehmende",
-                HTML('<span class="col-form-label">Geplante Anzahl Teilnehmende</span>'),
+                HTML(
+                    '<span class="col-form-label">Geplante Anzahl Teilnehmende</span>'
+                ),
                 Div(
                     Div(
                         Field("planned_attendees_min", css_class="w-24"),
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
+                        Field(
+                            "planned_attendees_max",
+                            css_class="w-24 js-update-min",
+                            data_min_field="#id_planned_attendees_min",
+                        ),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
                 ),
-                Div(HTML('''
+                Div(
+                    HTML(
+                        """
                     <p class="mt-4">Seminare mit <strong>weniger als 10</strong>
                     Teilnehmenden können nicht gefördert werden.
                     Die Förderung geht nur <strong>bis 40</strong> Teilnehmende,
@@ -336,37 +374,46 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     <li>ihren Wohnsitz in Niedersachsen haben.</li>
                     <li>mindestens 12 Jahre alt sein und maximal 27.</li>
                     </ul>
-                '''), css_class="text-sm text-gray-700"),
+                """
+                    ),
+                    css_class="text-sm text-gray-700",
+                ),
                 text="Wieviele Teilnehmende hat das Seminar vorraussichtlich?",
             ),
             Fieldset(
                 "Förderung",
                 Div(
-                    HTML('''
+                    HTML(
+                        """
                         <p class="mb-2">
                         Förderhöchstbetrag: <span class="font-bold" id="max_funding"></span></strong>
                         </p>
                         <p class="text-sm">
                         Wenn Du aber mit weniger auskommst, können evtl. mehr Seminare von JANUN gefördert werden.
                         </p>
-                    '''),
-                css_id="max_funding_text", css_class="hidden mb-4 text-gray-700"),
+                    """
+                    ),
+                    css_id="max_funding_text",
+                    css_class="hidden mb-4 text-gray-700",
+                ),
                 AppendedText("requested_funding", "€", css_class="w-40"),
-                HTML('''
+                HTML(
+                    """
                     <h4 class="text-gray-700 mt-6 mb-1 text-sm font-bold">Teilnahmebeitrag:</h4>
                     <p class="text-gray-700 text-sm">JANUN fördert Seminare, finanziert sie aber nicht komplett.
                     Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.).
                     Der Richtwert für Teilnahmebeiträge ist 3,50 € pro Person und Tag.
                     Ausgenommen sind eintägige Seminare.</p>
-                '''),
-                text="Wieviel Förderung benötigst Du?"
+                """
+                ),
+                text="Wieviel Förderung benötigst Du?",
             ),
             Fieldset(
                 "Bestätigung",
                 "confirm_policy",
                 "confirm_funding",
                 "confirm_deadline",
-                text=""
+                text="",
             ),
         )
 
@@ -380,12 +427,17 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             cleaned_data["start_date"].year,
             cleaned_data["group"],
             cleaned_data["planned_training_days"],
-            cleaned_data["planned_attendees_max"]
+            cleaned_data["planned_attendees_max"],
         )
-        if cleaned_data["requested_funding"] and max_funding and cleaned_data["requested_funding"] > max_funding:
-            self.add_error("requested_funding", "Maximal {} €".format(
-                defaultfilters.floatformat(max_funding, 2)
-            ))
+        if (
+            cleaned_data["requested_funding"]
+            and max_funding
+            and cleaned_data["requested_funding"] > max_funding
+        ):
+            self.add_error(
+                "requested_funding",
+                "Maximal {} €".format(defaultfilters.floatformat(max_funding, 2)),
+            )
 
     class Meta:
         model = Seminar
@@ -469,7 +521,15 @@ class SeminarStaffChangeForm(forms.ModelForm):
                     css_class="flex -mx-2",
                 ),
                 Div(
-                    Div(Field("end_date", css_class="js-update-min", data_min_field="#id_start_date", data_date_transform=True), css_class="mx-2"),
+                    Div(
+                        Field(
+                            "end_date",
+                            css_class="js-update-min",
+                            data_min_field="#id_start_date",
+                            data_date_transform=True,
+                        ),
+                        css_class="mx-2",
+                    ),
                     Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
                     css_class="flex -mx-2",
                 ),
@@ -488,7 +548,11 @@ class SeminarStaffChangeForm(forms.ModelForm):
                         css_class="mx-2",
                     ),
                     Div(
-                        Field("planned_attendees_max", css_class="w-24 js-update-min", data_min_field="#id_planned_attendees_min"),
+                        Field(
+                            "planned_attendees_max",
+                            css_class="w-24 js-update-min",
+                            data_min_field="#id_planned_attendees_min",
+                        ),
                         css_class="mx-2",
                     ),
                     css_class="md:flex -mx-2",
