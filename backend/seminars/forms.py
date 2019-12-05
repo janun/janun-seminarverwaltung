@@ -130,7 +130,10 @@ class SeminarTeamerChangeForm(forms.ModelForm):
             ),
             Fieldset(
                 "Förderung",
-                Field("planned_training_days", css_class="w-24"),
+                Field(
+                    "planned_training_days",
+                    css_class="w-24 js-update-max-from-date-diff",
+                ),
                 Div(
                     Div(
                         Field("planned_attendees_min", css_class="w-24"),
@@ -292,8 +295,10 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             ),
             Fieldset(
                 "Bildungstage",
-                Field("planned_training_days", css_class="w-24"),
-                Div(HTML('''
+                Field(
+                    "planned_training_days",
+                    css_class="w-24 js-update-max-from-date-diff",
+                ),
                     <h4 class="mt-4 mb-1 font-bold">Besonderheit für 2-tägige Seminare am Wochenende:</h4>
                     <p>sind schon 2 Bildungstage, wenn insg. 8 Stunden Bildungsarbeit stattfinden.</p>
                     <h4 class="mt-4 mb-1 font-bold">Besonderheiten für An- und Abreisetage:</h4>
@@ -473,7 +478,10 @@ class SeminarStaffChangeForm(forms.ModelForm):
             ),
             Fieldset(
                 "Geplante TNT / Förderung",
-                Field("planned_training_days", css_class="w-24"),
+                Field(
+                    "planned_training_days",
+                    css_class="w-24 js-update-max-from-date-diff",
+                ),
                 Div(
                     Div(
                         Field("planned_attendees_min", css_class="w-24"),
