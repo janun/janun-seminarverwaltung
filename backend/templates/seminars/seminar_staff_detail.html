@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <form method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid">
+  <form method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid js-warn-if-unsaved">
     <div class="mx-auto max-w-4xl">
       {% crispy form %}
     </div>

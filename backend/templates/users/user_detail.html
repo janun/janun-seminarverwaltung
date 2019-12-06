@@ -19,7 +19,7 @@
   <div class="text-sm text-gray-600">Letzter Besuch: {{ user.last_visit }}</div>
 </div>
 
-<form method="POST" action="">
+<form method="POST" action="" class="js-warn-if-unsaved">
   <div class="max-w-4xl mx-auto">
     {% crispy form %}
   </div>

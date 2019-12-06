@@ -12,7 +12,7 @@
   </a>
   <h1 class="mb-5 md:mb-10 font-bold text-2xl border-b pb-4">Neues Konto Anlegen</h1>
 
-  <form class="signup js-focus-invalid" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  <form class="signup js-focus-invalid js-warn-if-unsaved" id="signup_form" method="post" action="{% url 'account_signup' %}">
     {% crispy form %}
     <div class="mt-10 flex flex-wrap items-center justify-center md:justify-end">
       <button class="button button-primary form-invalid:bg-gray-400 js-list-invalid-in-title" type="submit">
