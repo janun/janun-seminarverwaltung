@@ -13,7 +13,6 @@
     "watch": "concurrently 'yarn watch:js' 'yarn watch:css'"
   },
   "dependencies": {
-    "chart.js": "^2.8.0",
     "typeface-cabin": "^0.0.72"
   },
   "devDependencies": {
