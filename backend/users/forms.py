@@ -353,8 +353,8 @@ class UserDetailForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
-        has_totp = user_has_valid_totp_device(self.request.user)
         super().__init__(*args, **kwargs)
+        has_totp = user_has_valid_totp_device(self.instance)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
