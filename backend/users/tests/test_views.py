@@ -34,7 +34,7 @@ class LoginTestCase(TestCase):
         )
 
 
-class SingupTestCase(TestCase):
+class SignupTestCase(TestCase):
     url = reverse("account_signup")
 
     @classmethod
