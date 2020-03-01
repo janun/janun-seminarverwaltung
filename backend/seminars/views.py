@@ -177,6 +177,40 @@ class SeminarExportView(StaffOnlyMixin, View):
         return response
 
 
+class L(list):
+    pass
+
+
+def batch_seminars(qs, n):
+    l = len(qs)
+    tnt_sum = 0
+    tnt_sum_jfg = 0
+    funding_sum = 0
+    expense_sum = 0
+    income_sum = 0
+    offset = 0
+    for ndx in range(0, l, n):
+        batch = L(qs[ndx : min(ndx + n, l)])
+        batch.offset = offset
+        offset += n
+
+        tnt_sum += sum(s.actual_attendence_days_total for s in batch)
+        batch.tnt_sum = tnt_sum
+
+        tnt_sum_jfg += sum(s.actual_attendence_days_jfg for s in batch)
+        batch.tnt_sum_jfg = tnt_sum_jfg
+
+        expense_sum += sum(s.expense_total for s in batch)
+        batch.expense_sum = expense_sum
+
+        income_sum += sum(s.income_total for s in batch)
+        batch.income_sum = income_sum
+
+        funding_sum += sum(s.actual_funding for s in batch)
+        batch.funding_sum = funding_sum
+        yield batch
+
+
 class SeminarProofOfUseView(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
@@ -186,7 +220,8 @@ class SeminarProofOfUseView(StaffOnlyMixin, View):
             .annotate_income_total()
             .order_by("start_date")
         )
-        context = {"seminars": qs}
+        batched_seminars = list(batch_seminars(qs, 15))
+        context = {"seminars": qs, "batched_seminars": batched_seminars}
         odt_filepath = fill_template("seminars/verwendungsnachweis.odt", context)
         filename = "Verwendungsnachweis_{}.odt".format(year)
         return FileResponse(odt_filepath, filename)
