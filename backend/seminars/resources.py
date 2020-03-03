@@ -19,3 +19,5 @@ class SeminarResource(resources.ModelResource):
 
     class Meta:
         model = Seminar
+        skip_unchanged = True
+        clean_model_instances = True

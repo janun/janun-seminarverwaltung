@@ -48,7 +48,10 @@ class SeminarTable(tables.Table):
     )
 
     def render_status(self, record, value):
-        color = STATE_INFO[value]["color"]
+        try:
+            color = STATE_INFO[value]["color"]
+        except KeyError:
+            color = "green"
         return render_pill(value, color)
 
     def render_deadline(self, record, value):

@@ -197,6 +197,8 @@ class SignupForm(AllauthSignupForm):
 
 
 class ProfileForm(forms.ModelForm):
+    """Form, where the user can edit their own profile"""
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         if user_has_valid_totp_device(self.request.user):
@@ -254,6 +256,8 @@ class ProfileForm(forms.ModelForm):
 
 
 class UserCreateForm(forms.ModelForm):
+    """Form, where an admin user can create a new user"""
+
     password = forms.CharField(
         label="Passwort",
         strip=False,
@@ -343,6 +347,8 @@ class UserCreateForm(forms.ModelForm):
 
 
 class UserDetailForm(forms.ModelForm):
+    """Form where an admin user can edit a user"""
+
     password = forms.CharField(
         label="Passwort ändern",
         strip=False,

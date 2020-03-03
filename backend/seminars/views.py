@@ -247,14 +247,28 @@ class SeminarImportView(ErrorMessageMixin, StaffOnlyMixin, FormView):
         resource = self.resource_class()
         dataset = Dataset()
         dataset.load(self.request.FILES["file"].read().decode("utf-8"), format="csv")
+        # dry run first
         result = resource.import_data(
-            dataset, dry_run=True, raise_errors=True, user=self.request.user
+            dataset,
+            dry_run=True,
+            raise_errors=False,
+            user=self.request.user,
+            use_transactions=True,
         )
-
+        # success
         if not result.has_errors() and not result.has_validation_errors():
-            resource.import_data(dataset, dry_run=False)
+            resource.import_data(dataset, dry_run=False, use_transactions=True)
             messages.success(self.request, "Seminare erfolgreich importiert")
             return super().form_valid(form)
+        # error handling
+        else:
+            messages.error(
+                self.request, "Fehler beim Importieren, schau unten nach Details."
+            )
+            context = self.get_context_data()
+            context["invalid_rows"] = result.invalid_rows
+            context["row_errors"] = result.row_errors
+            return render(self.request, self.template_name, context=context)
 
 
 def user_may_access_seminar(user, seminar):

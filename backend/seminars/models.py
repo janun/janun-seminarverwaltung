@@ -489,7 +489,7 @@ class Seminar(models.Model):
 
     created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
     updated_at = models.DateTimeField("Geändert am", auto_now=True)
-    confirmed_at = models.DateTimeField("Zugesagt am", null=True)
+    confirmed_at = models.DateTimeField("Zugesagt am", null=True, blank=True)
 
     class Meta:
         ordering = ("-start_date",)
@@ -516,15 +516,19 @@ class Seminar(models.Model):
 
     def clean(self):
         errors = {}
+        # validate planned_attendees_min/max
         if self.planned_attendees_min and self.planned_attendees_max:
             if self.planned_attendees_min > self.planned_attendees_max:
                 errors["planned_attendees_max"] = "Muss größer/gleich Minimal-Wert sein"
         if self.end_date and self.start_date:
+            # validate end_date, start_date
             if self.end_date < self.start_date:
                 errors["end_date"] = "Muss größer/gleich Start-Datum sein"
+            # validate end_time, start_time
             if self.end_date == self.start_date and self.start_time and self.end_time:
                 if self.end_time < self.start_time:
                     errors["end_time"] = "Muss größer/gleich Start-Zeit sein"
+            # validate planned_training_days
             if self.planned_training_days:
                 days = (self.end_date - self.start_date).days + 1
                 if self.planned_training_days > days:

@@ -25,7 +25,7 @@
       <p>Diese Spalten <i>müssen</i> angegeben werden.</p>
     </div>
     <div class="fieldset-content font-mono">
-      title, start_date
+      title, start_date, end_date
     </div>
   </div>
 
@@ -81,6 +81,37 @@
       </div>
       <div class="fieldset-content">
         {{ form | crispy }}
+
+        {% if invalid_rows or row_errors %}
+          <h2 class="text-red-700 font-bold text-lg">Fehler beim Importieren</h2>
+          <ul class="list-disc ml-4">
+
+            {% for row in invalid_rows %}
+              <li>Zeile {{ row.number|add:1 }}
+                <ul class="list-disc ml-4">
+                  {% for field, errors in row.error_dict.items %}
+                  <li><b>{{ field }}:</b> 
+                    {% for error in errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+
+            {% for row, errors in row_errors %}
+              <li>Zeile {{ row|add:1 }}
+                <ul class="list-disc ml-4">
+                  {% for error in errors %}
+                    <li>{{ error.error }}</li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+
+          </ul>
+        {% endif %}
       </div>
     </div>
 
