@@ -1,0 +1,26 @@
+{% extends 'config/base.html' %}
+{% load janun crispy_forms_tags %}
+
+{% block head_title %}Neue E-Mail-Vorlage anlegen<{% endblock %}
+
+{% block config_content %}
+
+<a class="inline-flex items-center text-gray-500 hover:text-gray-800 text-xs mb-4" href="{% url 'emails:list' %}">
+  <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20"><polygon points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9"/></svg>
+  E-Mail-Vorlagen
+</a>
+
+<div class="md:flex flex-wrap items-center mb-12 pb-4 border-b">
+  <h1 class="font-bold text-xl">Neue E-Mail-Vorlage anlegen</h1>
+</div>
+
+<form enctype="multipart/form-data" method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid js-warn-if-unsaved">
+  {% crispy form %}
+
+  <div class="flex justify-end items-center mt-5 pt-5 border-t">
+    <a class="text-gray-700 hover:text-gray-900 focus:text-gray-900 mr-4" href="{% url 'emails:list' %}">Abbrechen</a>
+    <button class="button button-primary form-invalid:bg-gray-400" type="submit">Speichern</button>
+  </div>
+</form>
+  
+{% endblock %}

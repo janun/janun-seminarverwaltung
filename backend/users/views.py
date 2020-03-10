@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
+from django.dispatch import receiver
 
+from allauth.account import signals
 from allauth_2fa.views import TwoFactorSetup, TwoFactorRemove
 from allauth_2fa.utils import user_has_valid_totp_device
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -14,11 +16,20 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 from backend.mixins import ErrorMessageMixin, StaffOnlyMixin, SuperuserOnlyMixin
+from backend.emails.models import EmailTemplate
+
 from .models import User
 from .forms import ProfileForm, UserDetailForm, UserCreateForm, UserTOTPDeviceRemoveForm
 from .tables import UserTable
 from .resources import UserResource
 from .filters import UserFilter
+
+
+def send_mail_on_signup(sender, **kwargs):
+    EmailTemplate.send("user_signup", {"user": kwargs["user"]})
+
+
+signals.user_signed_up.connect(send_mail_on_signup, weak=False)
 
 
 class UserListView(SingleTableMixin, StaffOnlyMixin, FilterView):

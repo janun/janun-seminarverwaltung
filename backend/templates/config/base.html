@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load django_tables2 janun crispy_forms_tags %}
+
+{% block head_title %}Einstellungen{% endblock %}
+
+{% block sidebar %}
+<nav class="w-64 border-t bg-white shadow-md py-4 -mb-32">
+  <div class="ml-5 font-bold mb-5">Einstellungen</div>
+  <ul>
+    <li><a class="inline-block py-3 px-5 hover:bg-gray-200 w-full {% if request.path == '/config/' %}font-bold{% endif %}" href="{% url 'config:general' %}">Allgemeines</a></li>
+    <li><a class="inline-block py-3 px-5 hover:bg-gray-200 w-full {% if request.resolver_match.namespace == "emails" %}font-bold{% endif %}" href="{% url 'emails:list' %}">E-Mail-Vorlagen</a></li>
+    <li><a class="inline-block py-3 px-5 hover:bg-gray-200 w-full {% if request.path|slice:':15' == '/config/funding' %}font-bold{% endif %}" href="{% url 'config:funding_list' %}">Förderungssätze</a></li>
+  </ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+  <div class="ml-20 mt-6 max-w-7xl">
+    {% block config_content %}{% endblock %}
+  </div>
+{% endblock content %}

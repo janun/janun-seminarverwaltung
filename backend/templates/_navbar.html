@@ -1,5 +1,5 @@
 {% load janun %}
-<nav class="navbar bg-white shadow px-4 md:px-8">
+<nav class="navbar bg-white z-50 shadow px-4 md:px-8">
   <div class="flex justify-between">
 
     <div class="flex">
@@ -15,10 +15,10 @@
       {% if request.user.is_authenticated %}
         <ul class="ml-5 hidden sm:flex">
           <li>
-            <a class="flex items-center h-full mx-2 {% if request.path == "/" %}font-bold{% endif %}"
+            <a class="flex items-center h-full mx-3 {% if request.path == "/" %}font-bold{% endif %}"
               href="{% url 'dashboard:dashboard' %}">Übersicht</a>
           </li>
-          <li class="mx-2 flex items-center">
+          <li class="mx-3 flex items-center">
             <a class="flex items-center h-full {% if request.resolver_match.namespace == "seminars" %}font-bold{% endif %}"
               href="{% url 'seminars:list' %}">
               Seminare
@@ -27,7 +27,7 @@
               {% get_new_seminars as new_seminars %}
               {% if new_seminars %}
                 <a href="{% url 'seminars:list_staff_all' %}?status=angemeldet" title="{{ new_seminars }} neu angemeldete{{ new_seminars|pluralize:"s," }} Seminar{{ new_seminars|pluralize:",e" }}"
-                class="ml-1 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                class="mb-3 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
                   {{ new_seminars }}
                 </a>
               {% endif %}
@@ -35,10 +35,10 @@
           </li>
           {% if request.user.is_staff %}
             <li>
-              <a class="flex items-center h-full mx-2 {% if request.resolver_match.namespace == "groups" %}font-bold{% endif %}"
+              <a class="flex items-center h-full mx-3 {% if request.resolver_match.namespace == "groups" %}font-bold{% endif %}"
                 href="{% url 'groups:staff_list' %}">Gruppen</a>
             </li>
-            <li class="mx-2 flex items-center">
+            <li class="mx-3 flex items-center">
               <a class="flex items-center h-full {% if request.resolver_match.namespace == "users" %}font-bold{% endif %}"
                 href="{% url 'users:list' %}">
                 Konten
@@ -46,10 +46,14 @@
               {% get_unreviewed_users as unreviewed_users %}
               {% if unreviewed_users %}
                 <a href="{% url 'users:list' %}?is_reviewed=False" title="{{ unreviewed_users }} ungeprüfte{{ unreviewed_users|pluralize:"s," }} Kont{{ unreviewed_users|pluralize:"o,en" }}"
-                class="ml-1 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
+                class="mb-3 rounded-full bg-blue-200 hover:bg-blue-300 h-4 w-4 text-xs text-blue-900 font-normal flex items-center justify-center">
                   {{ unreviewed_users }}
                 </a>
               {% endif %}
+            </li>
+            <li>
+              <a class="flex items-center h-full mx-3 {% if request.path|slice:':7' == '/config' %}font-bold{% endif %}"
+                href="{% url 'config:general' %}">Einstellungen</a>
             </li>
           {% endif %}
         </ul>
@@ -72,11 +76,14 @@
       <div class="flex">
         <a title="Konto-Einstellungen" class="mx-2 flex items-center {% if request.resolver_match.url_name == "account_profile" %}font-bold{% endif %}"
           href="{% url 'account_profile' %}">
+          <svg class="mr-2 h-4 w-4 fill-current text-gray-700" viewBox="0 0 20 20"><path d="M3.94 6.5L2.22 3.64l1.42-1.42L6.5 3.94c.52-.3 1.1-.54 1.7-.7L9 0h2l.8 3.24c.6.16 1.18.4 1.7.7l2.86-1.72 1.42 1.42-1.72 2.86c.3.52.54 1.1.7 1.7L20 9v2l-3.24.8c-.16.6-.4 1.18-.7 1.7l1.72 2.86-1.42 1.42-2.86-1.72c-.52.3-1.1.54-1.7.7L11 20H9l-.8-3.24c-.6-.16-1.18-.4-1.7-.7l-2.86 1.72-1.42-1.42 1.72-2.86c-.3-.52-.54-1.1-.7-1.7L0 11V9l3.24-.8c.16-.6.4-1.18.7-1.7zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
           {{ request.user.username }}
         </a>
         <form class="flex items-center" method="post" action="{% url 'account_logout' %}">
           {% csrf_token %}
-          <button type="submit" class="mx-2 h-full flex items-center">Logout</button>
+          <button type="submit" title="Abmelden" class="ml-2 h-full flex items-center">
+            Logout
+          </button>
         </form>
       </div>
     {% endif %}

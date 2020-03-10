@@ -1,8 +1,10 @@
 from django.urls import reverse
 from django.test import TestCase
+from django.core import mail
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
+from backend.emails.models import EmailTemplate
 
 
 class LoginTestCase(TestCase):
@@ -41,6 +43,11 @@ class SignupTestCase(TestCase):
     def setUpTestData(cls):
         cls.testgroup = JANUNGroup(name="Test-Gruppe")
         cls.testgroup.save()
+        EmailTemplate.objects.create(
+            template_key="user_signup",
+            subject_template="Neuer Benutzer",
+            text_template="{{ user.name }} hat sich registriert.",
+        )
 
     def test_signup_get(self):
         response = self.client.get(self.url)
@@ -66,6 +73,10 @@ class SignupTestCase(TestCase):
         self.assertEqual(user.name, "Max Mustermann")
         self.assertEqual(user.telephone, "+495119897986")
         self.assertEqual(user.janun_groups.get(), self.testgroup)
+
+        # mail sent
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Max Mustermann", mail.outbox[0].body)
 
 
 class UserCreateViewTestCase(TestCase):

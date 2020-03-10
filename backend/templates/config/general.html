@@ -1,0 +1,20 @@
+{% extends 'config/base.html' %}
+{% load django_tables2 janun crispy_forms_tags %}
+
+{% block head_title %}Einstellungen{% endblock %}
+
+{% block config_content %}
+
+<div class="border-b pb-2 mb-5">
+  <h2 class="font-bold text-xl">Allgemeines</h1>
+</div>
+
+<form method="POST" action="" class="js-focus-invalid js-warn-if-unsaved">
+  {% crispy form %}
+
+  <div class="mt-5 flex justify-end items-center">
+    <button type="submit" class="button button-primary js-disable-if-unchanged">Speichern</button>
+  </div>
+</form>
+    
+{% endblock %}

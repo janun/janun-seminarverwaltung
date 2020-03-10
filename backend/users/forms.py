@@ -23,6 +23,7 @@ from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from backend.utils import Link, Fieldset
+
 from .models import User
 
 

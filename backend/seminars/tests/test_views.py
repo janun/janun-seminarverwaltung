@@ -1,11 +1,13 @@
 import datetime
 
+from django.core import mail
 from django.urls import reverse
 from django.test import TestCase
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
 from backend.seminars.models import Seminar, FundingRate
+from backend.emails.models import EmailTemplate
 
 
 class SeminarsExportTestCase(TestCase):
@@ -323,7 +325,9 @@ class SeminarApplyViewTestCase(TestCase):
 
     def setUp(self):
         # testuser:
-        self.testuser = User(name="Max Mustermann", username="testuser")
+        self.testuser = User(
+            name="Max Mustermann", username="testuser", email="testuser@example.com"
+        )
         self.testuser.set_password("secret")
         self.testuser.save()
         # funding_rate:
@@ -343,6 +347,14 @@ class SeminarApplyViewTestCase(TestCase):
             "confirm_funding": True,
             "confirm_deadline": True,
         }
+        # email template
+        EmailTemplate(
+            template_key="seminar_applied",
+            from_template="seminare@janun.de",
+            to_template=self.testuser.email,
+            subject_template="Anmeldebestätigung",
+            text_template="Hallo {{ user.name }}, {{ seminar.title }} wurde angemeldet",
+        ).save()
 
     def test_get(self):
         self.client.login(username="testuser", password="secret")
@@ -358,6 +370,15 @@ class SeminarApplyViewTestCase(TestCase):
         self.assertEqual(seminar.start_date, datetime.date(2019, 5, 6))
         self.assertEqual(seminar.title, "Foobar")
         self.assertEqual(seminar.owner, self.testuser)
+
+    def test_mail_sent(self):
+        self.client.login(username="testuser", password="secret")
+        self.client.post(self.url, self.form_data, follow=True)
+        # mail is sent to testuser:
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], self.testuser.email)
+        self.assertIn(self.testuser.name, mail.outbox[0].body)
+        self.assertIn(self.form_data["title"], mail.outbox[0].body)
 
     def test_funding_too_high(self):
         self.client.login(username="testuser", password="secret")

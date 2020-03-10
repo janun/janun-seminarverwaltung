@@ -1,0 +1,27 @@
+{% extends "config/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Förderungssatz {{ object.year }} löschen{% endblock %}
+
+
+{% block config_content %}
+<div class="max-w-xl">
+  <div class="md:bg-white md:shadow-lg md:rounded-lg md:px-8 md:pb-8 md:pt-6 md:border-t-4 md:border-red-500">
+
+    <div class="mb-5">
+      <h1 class="font-bold text-2xl text-red-600">Förderungssatz {{ object.year }} löschen?</h1>
+    </div>
+
+    <p>Bist du sicher, dass du den Förderungssatz {{ object.year }} löschen möchtest?</p>
+
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="flex items-center justify-end mt-5">
+        <a class="js-focus button mx-4" href="{{ object.get_absolute_url }}">Abbrechen</a>
+        <button class="mx-4 button bg-red-600 hover:bg-red-700 focus:bg-red-700 text-white" type="submit">Förderungssatz {{ object.year }} löschen</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

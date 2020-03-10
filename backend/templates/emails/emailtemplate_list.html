@@ -1,0 +1,29 @@
+{% extends 'config/base.html' %}
+{% load django_tables2 janun crispy_forms_tags %}
+
+{% block head_title %}E-Mail-Vorlagen{% endblock %}
+
+{% block config_content %}
+
+<div class="md:flex flex-wrap items-center mb-12 pb-4 border-b">
+  <h1 class="font-bold text-xl">E-Mail-Vorlagen</h1>
+
+  <div class="ml-auto flex items-center text-gray-600 text-sm">
+    <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'emails:create' %}">
+    <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M12 4V20M20 12L4 12"/></svg>
+      Neu
+    </a>
+  </div>
+</div>
+
+<form action="" class="filters mb-5 flex flex-wrap items-center js-submit-on-input">
+  {{ filter.form | crispy }}
+  <input type="hidden" name="sort" value={{ request.GET.sort }}>
+  <a class="text-gray-600 hover:text-gray-800 px-1 py-1" href="{{ request.path }}?sort={{ request.GET.sort }}" title="Filter Zurücksetzen">
+    <svg class="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/></svg>
+  </a>
+</form>
+
+{% render_table table %}
+
+{% endblock %}

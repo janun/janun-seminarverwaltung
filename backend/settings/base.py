@@ -72,6 +72,8 @@ LOCAL_APPS = [
     "backend.users.apps.UsersConfig",
     "backend.groups.apps.GroupsConfig",
     "backend.dashboard.apps.DashboardConfig",
+    "backend.emails.apps.EmailsConfig",
+    "backend.config.apps.ConfigConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

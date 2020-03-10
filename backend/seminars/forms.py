@@ -11,69 +11,13 @@ from preferences import preferences
 
 from backend.groups.models import JANUNGroup
 from backend.utils import Fieldset, Link, DateInput
-from .models import Seminar, FundingRate, get_max_funding
+from .models import Seminar, get_max_funding
 from .states import STATE_INFO, get_next_states
 
 
 seminar_policy_url = (
-    preferences.JANUNSeminarPreferences.seminar_policy_url # pylint: disable=no-member
+    preferences.JANUNSeminarPreferences.seminar_policy_url  # pylint: disable=no-member
 )
-
-
-class FundingRateForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request", None)
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            Fieldset(
-                "JANUN-Gruppen",
-                AppendedText("group_rate", "€"),
-                AppendedText("group_rate_one_day", "€"),
-                Field("group_limit_formula", css_class="w-full"),
-                AppendedText("group_limit", "€"),
-                text="Förderung für Seminare, die für JANUN-Gruppen angemeldet werden.",
-            ),
-            Fieldset(
-                "Einzelpersonen",
-                AppendedText("single_rate", "€"),
-                AppendedText("single_rate_one_day", "€"),
-                Field("single_limit_formula", css_class="w-full"),
-                AppendedText("single_limit", "€"),
-                text="Förderung für Seminare, die für Einzelpersonen angemeldet werden.",
-            ),
-        )
-
-        for field in (
-            "group_rate",
-            "group_rate_one_day",
-            "group_limit",
-            "single_rate",
-            "single_rate_one_day",
-            "single_limit",
-        ):
-            self.fields[field].widget.attrs["min"] = 0
-
-    class Meta:
-        model = FundingRate
-        group_fields = (
-            "group_rate",
-            "group_rate_one_day",
-            "group_limit_formula",
-            "group_limit",
-        )
-        single_fields = (
-            "single_rate",
-            "single_rate_one_day",
-            "single_limit_formula",
-            "single_limit",
-        )
-        fields = group_fields + single_fields
-        widgets = {
-            "group_limit_formula": forms.Textarea(attrs={"rows": 2}),
-            "single_limit_formula": forms.Textarea(attrs={"rows": 2}),
-        }
 
 
 class SeminarImportForm(forms.Form):

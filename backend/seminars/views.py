@@ -25,51 +25,27 @@ from formtools.wizard.views import SessionWizardView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from backend.mixins import ErrorMessageMixin, StaffOnlyMixin, SuperuserOnlyMixin
+from backend.mixins import ErrorMessageMixin, StaffOnlyMixin
 from backend.utils import AjaxableResponseMixin
 from backend.seminars import forms as seminar_forms
+from backend.emails.models import EmailTemplate
 
-from .models import Seminar, SeminarComment, FundingRate, get_max_funding, SeminarView
+from .models import Seminar, SeminarComment, get_max_funding, SeminarView
 from .templateddocs import fill_template, FileResponse
 from .tables import SeminarTable, SeminarHistoryTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
 from .forms import (
     SeminarImportForm,
-    FundingRateForm,
     SeminarTeamerChangeForm,
     SeminarStaffChangeForm,
     SeminarTeamerApplyForm,
 )
 
 
-class FundingRateUpdateView(
-    ErrorMessageMixin, SuccessMessageMixin, SuperuserOnlyMixin, UpdateView
-):
-    model = FundingRate
-    form_class = FundingRateForm
-
-    def get_success_message(self, request):
-        return "Förderungssätze {} gespeichert.".format(self.kwargs["year"])
-
-    def get_success_url(self):
-        year = self.kwargs["year"]
-        return reverse("seminars:list_staff", kwargs={"year": year})
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["year"] = self.kwargs["year"]
-        return context
-
-    def get_object(self):
-        year = self.kwargs["year"]
-        try:
-            return FundingRate.objects.get(year=year)
-        except FundingRate.DoesNotExist:
-            return FundingRate(year=year)
-
-
 class CalcMaxFundingView(View):
+    """Helper ajax view for seminar application"""
+
     def get(self, request):
         year = int(request.GET.get("year", None))
         group = bool(request.GET.get("group", None))
@@ -167,6 +143,8 @@ class StaffSeminarListView(SingleTableMixin, StaffOnlyMixin, FilterView):
 
 
 class SeminarExportView(StaffOnlyMixin, View):
+    """Export all seminars of a certain year as a CSV file"""
+
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
         qs = Seminar.objects.filter(start_date__year=year).order_by("start_date")
@@ -177,41 +155,53 @@ class SeminarExportView(StaffOnlyMixin, View):
         return response
 
 
-class L(list):
-    pass
-
-
-def batch_seminars(qs, n):
-    l = len(qs)
-    tnt_sum = 0
-    tnt_sum_jfg = 0
-    funding_sum = 0
-    expense_sum = 0
-    income_sum = 0
-    offset = 0
-    for ndx in range(0, l, n):
-        batch = L(qs[ndx : min(ndx + n, l)])
-        batch.offset = offset
-        offset += n
-
-        tnt_sum += sum(s.actual_attendence_days_total for s in batch)
-        batch.tnt_sum = tnt_sum
-
-        tnt_sum_jfg += sum(s.actual_attendence_days_jfg for s in batch)
-        batch.tnt_sum_jfg = tnt_sum_jfg
-
-        expense_sum += sum(s.expense_total for s in batch)
-        batch.expense_sum = expense_sum
-
-        income_sum += sum(s.income_total for s in batch)
-        batch.income_sum = income_sum
-
-        funding_sum += sum(s.actual_funding for s in batch)
-        batch.funding_sum = funding_sum
-        yield batch
-
-
 class SeminarProofOfUseView(StaffOnlyMixin, View):
+    """Generates the Verwendungsnachweis for a certain year containing all seminars that are überwiesen"""
+
+    @staticmethod
+    def batch_seminars(qs, n):
+        """Return seminars in batches of size n
+
+        Also adds running sums
+
+        Args:
+            qs: Queryset containing seminars
+            n: size of batches
+        Returns:
+            Generator of seminars in batches
+        """
+
+        class L(list):
+            pass
+
+        l = len(qs)
+        tnt_sum = 0
+        tnt_sum_jfg = 0
+        funding_sum = 0
+        expense_sum = 0
+        income_sum = 0
+        offset = 0
+        for ndx in range(0, l, n):
+            batch = L(qs[ndx : min(ndx + n, l)])
+            batch.offset = offset
+            offset += n
+
+            tnt_sum += sum(s.actual_attendence_days_total for s in batch)
+            batch.tnt_sum = tnt_sum
+
+            tnt_sum_jfg += sum(s.actual_attendence_days_jfg for s in batch)
+            batch.tnt_sum_jfg = tnt_sum_jfg
+
+            expense_sum += sum(s.expense_total for s in batch)
+            batch.expense_sum = expense_sum
+
+            income_sum += sum(s.income_total for s in batch)
+            batch.income_sum = income_sum
+
+            funding_sum += sum(s.actual_funding for s in batch)
+            batch.funding_sum = funding_sum
+            yield batch
+
     def get(self, *args, **kwargs):
         year = self.kwargs["year"]
         qs = (
@@ -220,7 +210,7 @@ class SeminarProofOfUseView(StaffOnlyMixin, View):
             .annotate_income_total()
             .order_by("start_date")
         )
-        batched_seminars = list(batch_seminars(qs, 15))
+        batched_seminars = list(self.batch_seminars(qs, 15))
         context = {"seminars": qs, "batched_seminars": batched_seminars}
         odt_filepath = fill_template("seminars/verwendungsnachweis.odt", context)
         filename = "Verwendungsnachweis_{}.odt".format(year)
@@ -318,9 +308,16 @@ class SeminarTeamerUpdateView(
 
     def form_valid(self, form):
         # only owner may save
-        if self.request.user != self.get_object().owner:
+        seminar = self.get_object()
+        if self.request.user != seminar.owner:
             raise PermissionDenied()
-        return super().form_valid(form)
+        result = super().form_valid(form)
+        newseminar = self.get_object()
+        EmailTemplate.send(
+            "seminar_update",
+            {"seminar_old": seminar, "seminar": newseminar, "user": self.request.user,},
+        )
+        return result
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -357,6 +354,20 @@ class SeminarStaffUpdateView(
         SeminarView(user=self.request.user, seminar=self.object).save()
         return response
 
+    def form_valid(self, *args, **kwargs):
+        oldseminar = self.get_object()
+        result = super().form_valid(*args, **kwargs)
+        newseminar = self.get_object()
+        EmailTemplate.send(
+            "seminar_update",
+            {
+                "seminar_old": oldseminar,
+                "seminar": newseminar,
+                "user": self.request.user,
+            },
+        )
+        return result
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
@@ -377,9 +388,12 @@ class SeminarDeleteView(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
             return True
 
     def delete(self, request, *args, **kwargs):
-        seminar_title = self.get_object().title
+        seminar = self.get_object()
+        messages.success(self.request, self.success_message.format(seminar.title))
+        EmailTemplate.send(
+            "seminar_delete", {"user": self.request.user, "seminar": seminar},
+        )
         result = super().delete(request, *args, **kwargs)
-        messages.success(self.request, self.success_message.format(seminar_title))
         return result
 
 
@@ -401,6 +415,14 @@ class SeminarApplyView(ErrorMessageMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         return kwargs
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        # send mail
+        EmailTemplate.send(
+            "seminar_applied", {"user": self.request.user, "seminar": self.object}
+        )
+        return result
 
     def get_success_url(self):
         seminar = self.object
@@ -472,7 +494,6 @@ class SeminarApplyWizardView(SessionWizardView):
         self.instance.owner = self.request.user
         self.instance.save()
         email = self.request.user.email
-        # TODO: Send mail
         return render(
             self.request,
             "seminars/seminar_apply_done.html",

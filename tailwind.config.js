@@ -58,7 +58,7 @@ module.exports = {
           800: "#236707",
           900: "#1a4614"
         },
-        "white-75": "rgba(255, 255, 255, 0.75)"
+        "white-75": "rgba(255, 255, 255, 0.75)",
       },
       maxWidth: {
         "7xl": "80rem"
@@ -72,6 +72,8 @@ module.exports = {
     boxShadow: ["responsive", "hover", "focus", "focus-within"],
     textColor: ["responsive", "hover", "focus", "group-hover", "focus-within"],
     borderColor: ["responsive", "hover", "focus"],
+    backgroundColor: ['responsive', 'hover', 'focus', "group-hover"],
+
   },
   plugins: [require("@tailwindcss/custom-forms")]
 };

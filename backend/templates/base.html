@@ -16,28 +16,20 @@
   </head>
 
   <body class="font-sans bg-gray-200 text-gray-800 antialiased min-h-full flex flex-col">
+
     <div class="flex-auto">
       {% include "_navbar.html" %}
 
-      {% for message in messages %}
-        <div class="{% block message_width %}max-w-4xl{% endblock %} mx-auto py-3 my-6 rounded-md bg-white shadow text-gray-800
-                    {% if message.tags == "success" %}text-green-800{% endif %}
-                    {% if message.tags == "error" %}text-red-800{% endif %}
-          ">
-          <div class="flex items-center justify-start mx-auto max-w-5xl px-4">
-            {% if message.tags == "success" %}
-              <svg viewBox="0 0 24 24" class="mr-2 h-4 w-4 fill-current text-white rounded-full bg-green-500"><path d="M10 14.59l6.3-6.3a1 1 0 0 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-3-3a1 1 0 0 1 1.4-1.42l2.3 2.3z"></path></svg>
-            {% endif %}
-            {% if message.tags == "error" %}
-              <svg viewBox="0 0 24 24" class="mr-2 h-4 w-4 fill-current text-white rounded-full bg-red-600"><path d="M13.41 12l2.83 2.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 1 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12z"></path></svg>
-            {% endif %}
-            <p>{{ message }}</p>
+      <div class="flex items-stretch justify-between">
+        {% block sidebar %}{% endblock %}
+
+        <div class="w-full">
+          {% include "_messages.html" %}
+
+          <div class="px-4 xl:px-8 mt-10">
+            {% block content %}{% endblock content %}
           </div>
         </div>
-      {% endfor %}
-
-      <div class="px-4 xl:px-8 mt-10">
-        {% block content %}{% endblock content %}
       </div>
     </div>
 

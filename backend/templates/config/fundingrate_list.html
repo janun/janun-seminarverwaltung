@@ -1,0 +1,21 @@
+{% extends 'config/base.html' %}
+{% load django_tables2 janun crispy_forms_tags %}
+
+{% block head_title %}Einstellungen{% endblock %}
+
+{% block config_content %}
+
+<div class="border-b pb-2 mb-5 mt-5 flex justify-between items-center">
+  <h1 class="font-bold text-xl">Förderungssätze</h1>
+
+  <div class="ml-auto flex items-center text-gray-600 text-sm">
+    <a class="inline-flex items-center hover:text-gray-800 mx-4" href="{% url 'config:funding_create' %}">
+    <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M12 4V20M20 12L4 12"/></svg>
+      Neu
+    </a>
+  </div>
+</div>
+
+{% render_table table %}
+    
+{% endblock %}

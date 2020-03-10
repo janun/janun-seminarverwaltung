@@ -153,10 +153,10 @@ class FundingRate(models.Model):
     history = HistoricalRecords(bases=[BaseHistoricalModel])
 
     def get_absolute_url(self) -> str:
-        return reverse("seminars:funding_rates", kwargs={"year": self.year})
+        return reverse("config:funding_update", kwargs={"year": self.year})
 
     class Meta:
-        verbose_name = "Förderungssätze"
+        verbose_name = "Förderungssatz"
         verbose_name_plural = "Förderungssätze"
 
 

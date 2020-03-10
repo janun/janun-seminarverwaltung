@@ -2,15 +2,17 @@ import re
 import functools
 from decimal import Decimal
 
+from django import forms
 from django.http import JsonResponse
 from django.template.defaultfilters import floatformat
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
-from django import forms
+from django.shortcuts import render
 
 from crispy_forms.layout import Fieldset as CrispyFieldset
-from crispy_forms.layout import HTML
+from crispy_forms.layout import HTML, LayoutObject, TEMPLATE_PACK
 import django_tables2 as tables
 
 
@@ -24,6 +26,20 @@ class Link(HTML):
     def __init__(self, href, text, css_class=""):
         html = '<a class="{2}" href="{0}">{1}</a>'.format(href, text, css_class)
         super().__init__(html)
+
+
+class Formset(LayoutObject):
+    template = "janunforms/formset.html"
+
+    def __init__(self, formset_name_in_context, template=None):
+        self.formset_name_in_context = formset_name_in_context
+        self.fields = []
+        if template:
+            self.template = template
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK):
+        formset = context[self.formset_name_in_context]
+        return render_to_string(self.template, {"formset": formset})
 
 
 def median_value(queryset, term):
