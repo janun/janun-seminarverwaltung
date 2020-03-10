@@ -3,15 +3,32 @@
 // doesnt work in ie
 function getChangedFields(oldData, newData) {
   var fields = []
-  for (var key of oldData.keys()) {
+  var oldKeys = Array.from(oldData.keys())
+  var newKeys = Array.from(newData.keys())
+
+  for (var key of oldKeys) {
     var oldValue = oldData.get(key)
     var newValue = newData.get(key)
+
+    // field was removed
+    if (!newKeys.includes(key)) {
+      fields.push(key)
+    }
+
     // compare uploads by size
     if (oldValue instanceof File) {
       if (oldValue.size != newValue.size) fields.push(key)
     }
     else if (oldValue !== newValue) fields.push(key)
   }
+
+  // check for added keys
+  for (var key2 of newKeys) {
+    if (!oldKeys.includes(key2)) {
+      fields.push(key2)
+    }
+  }
+
   return fields
 }
 

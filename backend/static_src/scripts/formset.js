@@ -31,6 +31,10 @@ document.querySelectorAll('.js-formset').forEach(function (formset) {
         var totalForms = formset.querySelector('[id$=TOTAL_FORMS]')
         var count = list.childElementCount
         totalForms.setAttribute('value', count - 1)
+
+        // fire input event
+        var form = deleteButton.closest('form')
+        form.dispatchEvent(new Event('input'))
       })
     })
 
@@ -43,6 +47,9 @@ document.querySelectorAll('.js-formset').forEach(function (formset) {
 
         var checkbox = row.querySelector('input[id$="-DELETE"]')
         checkbox.checked = true
+
+        // fire input event
+        deleteButton.form.dispatchEvent(new Event('input'))
       })
     })
   }
