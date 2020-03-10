@@ -14,6 +14,25 @@ function getLabel(form, fieldName) {
   return field.labels[0].innerText
 }
 
+// surround the button with a span
+function addButtonContainer(button) {
+  var wrapper = document.createElement('span')
+  wrapper.setAttribute('title', "Keine Änderungen")
+  button.parentNode.insertBefore(wrapper, button)
+  wrapper.appendChild(button)
+  return wrapper
+}
+
+// remove the surrounding span
+function removeButtonContainer(button) {
+  if (button.parentNode.nodeName === 'SPAN') {
+    var span = button.parentNode
+    var parent = span.parentNode
+    while (span.firstChild) parent.insertBefore(span.firstChild, span);
+    parent.removeChild(span);
+  }
+}
+
 // disable button if no changes in form
 // if there are changes, list them in title attribute
 document.querySelectorAll('.js-disable-if-unchanged').forEach(function (button) {
@@ -26,11 +45,14 @@ document.querySelectorAll('.js-disable-if-unchanged').forEach(function (button) 
 
     if (changedFields.length > 0) {
       button.removeAttribute('disabled')
+      removeButtonContainer(button)
       var labels = changedFields.map(function (field) { return getLabel(form, field) })
       var title = "Änderungen an " + labels.join(', ') + " speichern."
       button.setAttribute('title', title)
     } else {
       button.setAttribute('disabled', true)
+      button.removeAttribute('title')
+      addButtonContainer(button)
     }
   }
 
