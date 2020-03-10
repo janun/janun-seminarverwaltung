@@ -4,7 +4,13 @@
 function getChangedFields(oldData, newData) {
   var fields = []
   for (var key of oldData.keys()) {
-    if (oldData.get(key) !== newData.get(key)) fields.push(key)
+    var oldValue = oldData.get(key)
+    var newValue = newData.get(key)
+    // compare uploads by size
+    if (oldValue instanceof File) {
+      if (oldValue.size != newValue.size) fields.push(key)
+    }
+    else if (oldValue !== newValue) fields.push(key)
   }
   return fields
 }
