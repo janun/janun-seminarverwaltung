@@ -47,16 +47,16 @@ X_FRAME_OPTIONS = "DENY"
 
 # STORAGES
 # ------------------------------------------------------------------------------
-# INSTALLED_APPS += ["storages"]  # noqa F405
-# AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY")
-# AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
-# AWS_AUTO_CREATE_BUCKET = True
-# AWS_QUERYSTRING_AUTH = False
-# _AWS_EXPIRY = 60 * 60 * 24 * 7
-# AWS_S3_OBJECT_PARAMETERS = {
-#     "CacheControl": f"max-age={_AWS_EXPIRY}, s-maxage={_AWS_EXPIRY}, must-revalidate"
-# }
+INSTALLED_APPS += ["storages"]  # noqa F405
+AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
+AWS_AUTO_CREATE_BUCKET = False
+AWS_QUERYSTRING_AUTH = False
+_AWS_EXPIRY = 60 * 60 * 24 * 7
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": f"max-age={_AWS_EXPIRY}, s-maxage={_AWS_EXPIRY}, must-revalidate"
+}
 
 # STATIC
 # ------------------------
@@ -66,7 +66,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # MEDIA
 # ------------------------------------------------------------------------------
 # DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# MEDIA_URL = f"https://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/"
+MEDIA_URL = f"https://{DJANGO_AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
 
 # TEMPLATES
 # ------------------------------------------------------------------------------

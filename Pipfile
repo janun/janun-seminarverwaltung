@@ -32,6 +32,7 @@ django-celery-email = "*"
 django-tables2 = "*"
 django-filter = "*"
 django-simple-history = "*"
+django-storages = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
