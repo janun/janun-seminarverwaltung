@@ -47,6 +47,7 @@ class SignupTestCase(TestCase):
             template_key="user_signup",
             subject_template="Neuer Benutzer",
             text_template="{{ user.name }} hat sich registriert.",
+            to_template="{{ user.email }}",
         )
 
     def test_signup_get(self):

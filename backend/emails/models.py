@@ -41,7 +41,7 @@ class EmailTemplate(models.Model):
         "Empfänger",
         help_text="Mehrere durch Komma trennen",
         max_length=255,
-        default="{{ user.email }}",
+        default="{{ seminar.owner.email }}",
     )
     cc_template = models.CharField(
         "CC-Kopie",
