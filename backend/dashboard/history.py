@@ -39,7 +39,9 @@ class BaseHistoricalModel(models.Model):
         abstract = True
 
 
-def get_global_history(limit=10, offset=0):
+def get_global_history(limit=50, offset=0, after_limit=None):
+    if not after_limit:
+        after_limit = limit
     history = []
     for model in registered_models.values():
         for entry in model.history.all().select_related("history_user")[
@@ -51,4 +53,4 @@ def get_global_history(limit=10, offset=0):
     history = filter(
         lambda e: e.history_type != "~" or e.history_change_reason, history
     )
-    return itertools.islice(history, limit)
+    return itertools.islice(history, after_limit)
