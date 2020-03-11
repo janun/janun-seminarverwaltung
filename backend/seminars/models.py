@@ -593,6 +593,21 @@ def get_max_funding(
     return fr.get_max_funding(group, planned_training_days, planned_attendees_max)
 
 
+class SeminarCheck(models.Model):
+    """Save which seminars have been checked by automatic checking
+
+    For example to send mails when deadlines expire"""
+
+    seminar = models.ForeignKey(
+        Seminar, on_delete=models.CASCADE, related_name="checks"
+    )
+    check_type = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"Check von {self.seminar} zu {self.check_type}"
+
+
 class SeminarComment(models.Model):
     text = models.TextField()
     owner = models.ForeignKey(

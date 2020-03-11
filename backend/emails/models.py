@@ -20,6 +20,9 @@ class EmailTemplate(models.Model):
         ("seminar_applied", "Seminar angemeldet"),
         ("seminar_delete", "Seminar gelöscht"),
         ("seminar_update", "Seminar geändert"),
+        ("seminar_deadline_expired", "Seminar Abrechnungsfrist abgelaufen"),
+        ("seminar_deadline_soon", "Seminar Abrechnungsfrist in 14 Tagen"),
+        ("seminar_occurred", "Seminar stattgefunden (Enddatum Vergangenheit)"),
         ("user_signup", "Benutzer registriert"),
     )
     active = models.BooleanField("Aktiv", default=True)
@@ -96,7 +99,7 @@ class EmailTemplate(models.Model):
 
     @classmethod
     def send(cls, template_key: str, context: dict):
-        """Send mail using template
+        """Send mails using template
 
         Args:
             template_key: The name of the template
