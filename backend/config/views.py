@@ -12,9 +12,10 @@ from .forms import SettingsForm, FundingRateForm
 from .tables import FundingRateTable
 
 
-class GeneralSettingsView(SuperuserOnlyMixin, UpdateView):
+class GeneralSettingsView(SuccessMessageMixin, SuperuserOnlyMixin, UpdateView):
     template_name = "config/general.html"
     model = JANUNSeminarPreferences
+    success_message = "Gespeichert"
     form_class = SettingsForm
     success_url = reverse_lazy("config:general")
 
