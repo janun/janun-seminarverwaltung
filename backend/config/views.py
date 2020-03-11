@@ -33,18 +33,17 @@ class FundingRateUpdateView(
 ):
     model = FundingRate
     form_class = FundingRateForm
+    success_message = "Gespeichert"
     slug_field = "year"
     slug_url_kwarg = "year"
     template_name = "config/fundingrate_form.html"
-
-    def get_success_message(self, request):
-        return "Förderungssatz {} gespeichert.".format(self.kwargs["year"])
 
 
 class FundingRateCreateView(
     ErrorMessageMixin, SuccessMessageMixin, SuperuserOnlyMixin, CreateView
 ):
     model = FundingRate
+    success_message = "Erstellt"
     form_class = FundingRateForm
     template_name = "config/fundingrate_form.html"
 
