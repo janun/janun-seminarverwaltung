@@ -27,29 +27,19 @@ class EmailTemplate(models.Model):
     )
     active = models.BooleanField("Aktiv", default=True)
     template_key = models.CharField(
-        "Grundbedingung",
-        help_text="Wann diese E-Mail verschickt werden soll",
-        max_length=255,
-        choices=TEMPLATE_KEY_CHOICES,
+        "Grundbedingung", max_length=255, choices=TEMPLATE_KEY_CHOICES,
     )
-    description = models.TextField("Beschreibung", blank=True, null=True)
+    description = models.CharField(
+        "Beschreibung", max_length=255, blank=True, null=True
+    )
 
     from_template = models.CharField(
-        "Absender", max_length=255, default="seminare@janun.de",
+        "Von", max_length=255, default="seminare@janun.de",
     )
     to_template = models.CharField(
-        "Empfänger",
-        help_text="Mehrere durch Komma trennen",
-        max_length=255,
-        default="{{ seminar.owner.email }}",
+        "An", max_length=255, default="{{ seminar.owner.email }}",
     )
-    cc_template = models.CharField(
-        "CC-Kopie",
-        help_text="Mehrere durch Komma trennen",
-        max_length=255,
-        blank=True,
-        null=True,
-    )
+    cc_template = models.CharField("CC", max_length=255, blank=True, null=True,)
     text_template = models.TextField("Text", blank=True, null=True)
     subject_template = models.CharField(
         "Betreff", max_length=255, blank=True, null=True
@@ -89,9 +79,7 @@ class EmailTemplate(models.Model):
 
         # attachments
         for attachment in template_obj.attachments.all():
-            filename = attachment.filename
-            if filename is None:
-                filename = os.path.basename(attachment.file.name)
+            filename = os.path.basename(attachment.file.name)
             email.attach(filename=filename, content=attachment.file.read())
 
         # actually send the mail
@@ -118,7 +106,6 @@ class EmailAttachment(models.Model):
         EmailTemplate, on_delete=models.CASCADE, related_name="attachments"
     )
     file = models.FileField("Datei", upload_to="email_attachments/")
-    filename = models.CharField("Dateiname", max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "E-Mail-Anhang"
@@ -129,7 +116,9 @@ class EmailTemplateCondition(models.Model):
     template = models.ForeignKey(
         EmailTemplate, on_delete=models.CASCADE, related_name="conditions"
     )
-    expression = models.CharField("Bedingung", max_length=255,)
+    expression = models.CharField(
+        "Nebenbedingung", help_text="z.B. user.role == 'Teamer_in'", max_length=255,
+    )
 
     def evaluate(self, context: dict) -> bool:
         expression = "{% if " + self.expression + " %}True{%endif%}"

@@ -10,7 +10,7 @@ from .models import EmailTemplate, EmailAttachment, EmailTemplateCondition
 
 
 AttachmentFormset = inlineformset_factory(
-    EmailTemplate, EmailAttachment, fields=("filename", "file"), extra=1
+    EmailTemplate, EmailAttachment, fields=("file",), extra=1
 )
 
 
@@ -33,16 +33,14 @@ class EmailTemplateForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
+            Fieldset("", Field("description", css_class="w-full js-autogrow"),),
             Fieldset(
-                "Allgemeines",
+                "Bedingungen",
                 Field("active", css_class=""),
                 Field("template_key", css_class="w-full"),
-                Field("description", css_class="w-full js-autogrow"),
-            ),
-            Fieldset(
-                "Weitere Bedingungen",
                 Formset("conditions"),
-                text="""Bsp: <code>seminar.owner == user</code> oder<br> <code>user.role == "Teamer_in"</code>""",
+                text="""E-Mails werden verschickt, wenn die Vorlage aktiv ist
+                und die Grundbedingung und alle Nebenbedingungen erfüllt sind.""",
             ),
             Fieldset(
                 "E-Mail-Vorlage",

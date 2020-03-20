@@ -1,7 +1,7 @@
 {% extends 'config/base.html' %}
 {% load janun crispy_forms_tags %}
 
-{% block head_title %}E-Mail-Vorlage: {{ object.get_template_key_display }}{% endblock %}
+{% block head_title %}E-Mail-Vorlage: {{ object.description }}{% endblock %}
 
 {% block config_content %}
 
@@ -11,7 +11,7 @@
 </a>
 
 <div class="md:flex flex-wrap items-center mb-12 pb-4 border-b">
-  <h1 class="font-bold text-xl">E-Mail-Vorlage: {{ object.get_template_key_display }}</h1>
+  <h1 class="font-bold text-xl">E-Mail-Vorlage: {{ object.description }}</h1>
 </div>
 
 <form enctype="multipart/form-data" method="post" action="{{ request.path }}" class="md:mt-10 relative js-focus-invalid js-warn-if-unsaved">
