@@ -57,8 +57,8 @@ createForm.addEventListener("submit", function (formEvent) {
   var XHR = new XMLHttpRequest();
   XHR.addEventListener('load', function(loadEvent) {
     if (loadEvent.target.status === 200) {
-      textarea.value = "";
-      disableButton();
+      createForm.reset()
+      createForm.classList.remove('submit-attempted')
       loadComments();
     } else {
       onCreateError();
