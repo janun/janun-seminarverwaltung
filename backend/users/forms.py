@@ -181,7 +181,7 @@ class SignupForm(AllauthSignupForm):
         if preferences.JANUNSeminarPreferences.data_protection_policy_url:
             self.fields[
                 "data_protection_read"
-            ].label = 'Ich habe die <a class="underline text-gray-900" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
+            ].label = 'Ich habe die <a class="underline text-gray-900" target="_blank" href="{0}">Datenschutzbedingungen</a> gelesen und verstanden.'.format(
                 preferences.JANUNSeminarPreferences.data_protection_policy_url
             )
 
