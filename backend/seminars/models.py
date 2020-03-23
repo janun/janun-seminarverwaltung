@@ -642,7 +642,10 @@ class SeminarComment(models.Model):
         verbose_name_plural = "Kommentare"
 
     def __str__(self) -> str:
-        return "Kommentar an {}".format(self.seminar)
+        try:
+            return "Kommentar an {}".format(self.seminar)
+        except Seminar.DoesNotExist:
+            return "Kommentar"
 
 
 class SeminarView(models.Model):

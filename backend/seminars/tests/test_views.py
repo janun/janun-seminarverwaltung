@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from backend.users.models import User
 from backend.groups.models import JANUNGroup
-from backend.seminars.models import Seminar, FundingRate
+from backend.seminars.models import Seminar, FundingRate, SeminarComment
 from backend.emails.models import EmailTemplate
 
 
@@ -91,6 +91,8 @@ class SeminarDeleteViewTestCase(TestCase):
             owner=cls.testowner,
         )
         cls.testseminar.save()
+        # comment on seminar:
+        SeminarComment.objects.create(text="Blabla", seminar=cls.testseminar)
 
     def test_get(self):
         self.client.login(username="testadmin", password="secret")
