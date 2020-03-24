@@ -3,7 +3,7 @@
 function updateTotal(fromFields, toField) {
   var sum = 0.0;
   for (var i = 0; i < fromFields.length; i++) {
-    var value = parseFloat(fromFields[i].value);
+    var value = parseFloat(fromFields[i].value.replace(',', '.'));
     if (!isNaN(value)) {
       sum += value;
     }

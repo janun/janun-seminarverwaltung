@@ -2,10 +2,9 @@ from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
-from crispy_forms.bootstrap import AppendedText
 from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
-from backend.utils import Fieldset
+from backend.utils import Fieldset, EuroInput
 from backend.seminars.models import FundingRate
 
 from backend.users.models import JANUNSeminarPreferences
@@ -53,18 +52,18 @@ class FundingRateForm(forms.ModelForm):
             Fieldset("", Field("year")),
             Fieldset(
                 "JANUN-Gruppen",
-                AppendedText("group_rate", "€"),
-                AppendedText("group_rate_one_day", "€"),
+                EuroInput("group_rate"),
+                EuroInput("group_rate_one_day"),
                 Field("group_limit_formula", css_class="w-full"),
-                AppendedText("group_limit", "€"),
+                EuroInput("group_limit"),
                 text="Förderung für Seminare, die für JANUN-Gruppen angemeldet werden.",
             ),
             Fieldset(
                 "Einzelpersonen",
-                AppendedText("single_rate", "€"),
-                AppendedText("single_rate_one_day", "€"),
+                EuroInput("single_rate"),
+                EuroInput("single_rate_one_day"),
                 Field("single_limit_formula", css_class="w-full"),
-                AppendedText("single_limit", "€"),
+                EuroInput("single_limit"),
                 text="Förderung für Seminare, die für Einzelpersonen angemeldet werden.",
             ),
         )
@@ -101,3 +100,11 @@ class FundingRateForm(forms.ModelForm):
             "group_limit_formula": forms.Textarea(attrs={"rows": 2}),
             "single_limit_formula": forms.Textarea(attrs={"rows": 2}),
         }
+        localized_fields = [
+            "group_rate",
+            "group_rate_one_day",
+            "group_limit",
+            "single_rate",
+            "single_rate_one_day",
+            "single_limit",
+        ]

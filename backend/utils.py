@@ -9,10 +9,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
-from django.shortcuts import render
 
 from crispy_forms.layout import Fieldset as CrispyFieldset
 from crispy_forms.layout import HTML, LayoutObject, TEMPLATE_PACK
+from crispy_forms.bootstrap import AppendedText
 import django_tables2 as tables
 
 
@@ -51,9 +51,10 @@ def median_value(queryset, term):
 
 
 def format_number(value, decimals=0):
+    """Formats a number with commas for decimals and whitespace for thousands"""
     if value is None:
         return None
-    return re.sub(r"^(-?\d+)(\d{3})", r"\g<1>.\g<2>", floatformat(value, decimals))
+    return re.sub(r"^(-?\d+)(\d{3})", r"\g<1> \g<2>", floatformat(value, decimals))
 
 
 def format_currency(value):
@@ -151,3 +152,14 @@ class ColoredBooleanColumn(tables.BooleanColumn):
 
 class DateInput(forms.DateInput):
     template_name = "widgets/date_input.html"
+
+
+class EuroInput(AppendedText):
+    """Crispy Form Layout Element for Euro Inputs"""
+
+    def __init__(self, field, *args, **kwargs):
+        css_class = kwargs.get("css_class", "")
+        css_class += " w-40 text-right"
+        kwargs["css_class"] = css_class
+        kwargs["pattern"] = "[0-9,. ]+"
+        super().__init__(field, text="€", *args, **kwargs)

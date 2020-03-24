@@ -446,4 +446,4 @@ class StaffSeminarListViewTestCase(TestCase):
         self.client.login(username="teststaff", password="secret")
         response = self.client.get(self.url_2019)
         self.assertEqual(response.context["confirmed_aggregates"]["funding_sum"], 3000)
-        self.assertContains(response, "3.000,00")
+        self.assertContains(response, "3 000,00")

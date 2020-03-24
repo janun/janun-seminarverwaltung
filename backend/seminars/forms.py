@@ -6,11 +6,10 @@ from django.template import defaultfilters
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
-from crispy_forms.bootstrap import AppendedText
 from preferences import preferences
 
 from backend.groups.models import JANUNGroup
-from backend.utils import Fieldset, Link, DateInput
+from backend.utils import Fieldset, Link, DateInput, EuroInput
 from .models import Seminar, get_max_funding
 from .states import STATE_INFO, get_next_states
 
@@ -104,7 +103,7 @@ class SeminarTeamerChangeForm(forms.ModelForm):
                     css_class="md:flex -mx-2",
                 ),
                 "group",
-                AppendedText("requested_funding", "€", css_class="w-40"),
+                EuroInput("requested_funding"),
                 text="Angaben, die sich direkt auf die Förderung auswirken.",
             ),
         )
@@ -166,6 +165,7 @@ class SeminarTeamerChangeForm(forms.ModelForm):
             "group",
         ]
         widgets = {"description": forms.Textarea({"rows": 3})}
+        localized_fields = ["requested_funding"]
 
 
 class SeminarTeamerApplyForm(forms.ModelForm):
@@ -340,7 +340,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
                     css_id="max_funding_text",
                     css_class="hidden mb-4 text-gray-700",
                 ),
-                AppendedText("requested_funding", "€", css_class="w-40"),
+                EuroInput("requested_funding"),
                 HTML(
                     """
                     <h4 class="text-gray-700 mt-6 mb-1 text-sm font-bold">Teilnahmebeitrag:</h4>
@@ -400,6 +400,7 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             "group",
         ]
         widgets = {"description": forms.Textarea({"rows": 3})}
+        localized_fields = ["requested_funding"]
 
 
 class SeminarStaffChangeForm(forms.ModelForm):
@@ -501,7 +502,7 @@ class SeminarStaffChangeForm(forms.ModelForm):
                     ),
                     css_class="md:flex -mx-2",
                 ),
-                AppendedText("requested_funding", "€", css_class="w-40"),
+                EuroInput("requested_funding"),
             ),
             Fieldset(
                 "Abrechnung: TNT",
@@ -533,11 +534,11 @@ class SeminarStaffChangeForm(forms.ModelForm):
             ),
             Fieldset(
                 "Ausgaben",
-                AppendedText("expense_catering", "€", css_class="w-40"),
-                AppendedText("expense_accomodation", "€", css_class="w-40"),
-                AppendedText("expense_referent", "€", css_class="w-40"),
-                AppendedText("expense_travel", "€", css_class="w-40"),
-                AppendedText("expense_other", "€", css_class="w-40"),
+                EuroInput("expense_catering"),
+                EuroInput("expense_accomodation"),
+                EuroInput("expense_referent"),
+                EuroInput("expense_travel"),
+                EuroInput("expense_other"),
                 HTML(
                     '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-minuend"></span></div>'
                 ),
@@ -545,9 +546,9 @@ class SeminarStaffChangeForm(forms.ModelForm):
             ),
             Fieldset(
                 "Einnahmen",
-                AppendedText("income_fees", "€", css_class="w-40"),
-                AppendedText("income_public", "€", css_class="w-40"),
-                AppendedText("income_other", "€", css_class="w-40"),
+                EuroInput("income_fees"),
+                EuroInput("income_public"),
+                EuroInput("income_other"),
                 HTML(
                     '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-subtrahend"></span></div>'
                 ),
@@ -558,8 +559,8 @@ class SeminarStaffChangeForm(forms.ModelForm):
                 HTML(
                     '<div class="mb-4">Ausgaben - Einnahmen: <span class="mx-1 js-substraction-difference"></span></div>'
                 ),
-                AppendedText("advance", "€", css_class="w-40"),
-                AppendedText("actual_funding", "€", css_class="w-40"),
+                EuroInput("advance"),
+                EuroInput("actual_funding"),
                 "transferred_at",
             ),
         )
@@ -598,7 +599,22 @@ class SeminarStaffChangeForm(forms.ModelForm):
             "actual_funding",
             "transferred_at",
         ]
-        widgets = {"description": forms.Textarea({"rows": 3})}
+        widgets = {
+            "description": forms.Textarea({"rows": 3}),
+        }
+        localized_fields = [
+            "requested_funding",
+            "expense_catering",
+            "expense_accomodation",
+            "expense_referent",
+            "expense_travel",
+            "expense_other",
+            "income_fees",
+            "income_public",
+            "income_other",
+            "advance",
+            "actual_funding",
+        ]
 
 
 class SeminarStepForm(forms.ModelForm):
@@ -765,7 +781,7 @@ class FundingSeminarForm(SeminarStepForm):
 
         self.helper.layout = Layout(
             HTML(funding_text),
-            AppendedText("requested_funding", "€"),
+            EuroInput("requested_funding"),
             HTML(
                 '<p class="text-sm mt-4">JANUN fördert Seminare, finanziert sie aber nicht komplett. '
                 "Deswegen brauchst Du auch andere Einnahmen (Teilnahmebeiträge, Spenden o.ä.). "

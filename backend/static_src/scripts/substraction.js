@@ -1,9 +1,15 @@
+function parseNumber(string) {
+  string = string.replace('.', '').replace(',', '.')
+  var number = parseFloat(string)
+  return isNaN(number) ? 0 : number
+}
+
 function updateDifference() {
-  var minuend = document.querySelector(".js-substraction-minuend").innerHTML.replace('.', '').replace(',', '.');
-  var subtrahend = document.querySelector(".js-substraction-subtrahend").innerHTML.replace('.', '').replace(',', '.');
-  var difference = document.querySelector(".js-substraction-difference");
-  minuend = isNaN(minuend) ? 0 : parseFloat(minuend);
-  subtrahend = isNaN(subtrahend) ? 0 : parseFloat(subtrahend);
+  var minuend = document.querySelector(".js-substraction-minuend").innerHTML
+  var subtrahend = document.querySelector(".js-substraction-subtrahend").innerHTML
+  var difference = document.querySelector(".js-substraction-difference")
+  minuend = parseNumber(minuend)
+  subtrahend = parseNumber(subtrahend)
   var result = minuend - subtrahend;
   difference.innerHTML = result.toLocaleString("de", { style: "currency", currency: "EUR" })
 }
