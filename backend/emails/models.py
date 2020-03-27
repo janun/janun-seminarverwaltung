@@ -7,7 +7,10 @@ from django.template import Template, Context
 from django.core.mail import EmailMessage
 from django.core import mail
 
+from simple_history.models import HistoricalRecords
 from model_utils import Choices
+
+from backend.dashboard.history import BaseHistoricalModel
 
 
 def render_template(template: str, context: dict) -> str:
@@ -47,8 +50,10 @@ class EmailTemplate(models.Model):
         "Betreff", max_length=255, blank=True, null=True
     )
 
+    history = HistoricalRecords(bases=[BaseHistoricalModel])
+
     def __str__(self) -> str:
-        return self.template_key
+        return f"E-Mail-Vorlage '{self.description}'"
 
     def get_absolute_url(self) -> str:
         return reverse("emails:update", kwargs={"pk": self.pk})
