@@ -30,11 +30,11 @@ class JANUNGroupQuerySet(models.QuerySet):
             tnt_this_year=Sum(
                 Case(
                     When(
-                        seminars__actual_attendence_days_total__isnull=True,
+                        seminars__actual_attendence_days_jfg__isnull=True,
                         then=F("seminars__planned_attendees_max")
                         * F("seminars__planned_training_days"),
                     ),
-                    default="seminars__actual_attendence_days_total",
+                    default="seminars__actual_attendence_days_jfg",
                 ),
                 filter=Q(seminars__start_date__year=ExtractYear(Now())),
             ),

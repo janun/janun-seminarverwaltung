@@ -19,8 +19,8 @@ class JANUNGroupTable(tables.Table):
         verbose_name="Seminare {}".format(timezone.now().year)
     )
     funding_this_year = EuroColumn(verbose_name="Förderung")
-    tnt_this_year = NumericColumn(verbose_name="TNT")
-    tnt_cost_simple_this_year = EuroColumn(verbose_name="€/TNT")
+    tnt_this_year = NumericColumn(verbose_name="TNT (JFG)")
+    tnt_cost_simple_this_year = EuroColumn(verbose_name="€/TNT (JFG)")
 
     class Meta:
         model = JANUNGroup

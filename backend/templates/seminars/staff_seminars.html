@@ -64,15 +64,15 @@
         </div>
         <div class="">
           <span class="font-bold text-sm">{{ confirmed_aggregates.tnt_sum|default:0|number:0 }}</span>
-          <span class="text-xs">TNT</span>
+          <span class="text-sm">TNT</span><span class="text-xxs">(JFG)</span>
         </div>
         <div class="">
           <span class="font-bold text-sm">{{ confirmed_aggregates.tnt_cost|default:0|number:2 }}</span>
-          <span class="text-xs">€/TNT</span>
+          <span class="text-sm">€/TNT</span><span class="text-xxs">(JFG)</span>
         </div>
         <div class="">
           <span class="font-bold text-sm">{{ confirmed_aggregates.count }}</span>
-          <span class="text-xs">Stück</span>
+          <span class="text-sm">Stück</span>
         </div>
       </div>
     </div>
@@ -82,7 +82,7 @@
         <div class="font-bold mb-1">mit Abrechnung:</div>
         <div>{{ bills_present_aggregates.count }} von {{ confirmed_aggregates.count }}</div>
         <div>{{ bills_present_aggregates.funding_sum|default:0|number:2 }} €</div>
-        <div>{{ bills_present_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
+        <div>{{ bills_present_aggregates.tnt_sum|default:0|number:0 }} TNT<span class="text-xxs">(JFG)</span></div>
       </div>
 
       {% widthratio bills_present_aggregates.count confirmed_aggregates.count 100 as percent %}
@@ -94,7 +94,7 @@
         <div class="font-bold mb-1">Frist abgelaufen:</div>
         <div>{{ deadline_expired_aggregates.count }} von {{ confirmed_aggregates.count }}</div>
         <div>{{ deadline_expired_aggregates.funding_sum|default:0|number:2 }} €</div>
-        <div>{{ deadline_expired_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
+        <div>{{ deadline_expired_aggregates.tnt_sum|default:0|number:0 }} TNT<span class="text-xxs">(JFG)</span></div>
       </div>
 
       {% widthratio deadline_expired_aggregates.count confirmed_aggregates.count 100 as percent %}
@@ -106,7 +106,7 @@
         <div class="mb-1 font-bold">überwiesen:</div>
         <div>{{ transferred_aggregates.count }} von {{ confirmed_aggregates.count }}</div>
         <div>{{ transferred_aggregates.funding_sum|default:0|number:2 }} €</div>
-        <div>{{ transferred_aggregates.tnt_sum|default:0|number:0 }} TNT</div>
+        <div>{{ transferred_aggregates.tnt_sum|default:0|number:0 }} TNT<span class="text-xxs">(JFG)</span></div>
       </div>
 
       {% widthratio transferred_aggregates.count confirmed_aggregates.count 100 as percent %}

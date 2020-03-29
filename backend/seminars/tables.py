@@ -37,9 +37,9 @@ class SeminarTable(tables.Table):
     )
     owner = tables.Column(verbose_name="Besitzer_in", linkify=True)
     group = tables.Column(verbose_name="Gruppe", linkify=True)
-    tnt = NumericColumn(verbose_name="TNT")
+    tnt = NumericColumn(verbose_name="TNT (JFG)")
     funding = EuroColumn(verbose_name="Förderung")
-    tnt_cost = EuroColumn(verbose_name="€/TNT")
+    tnt_cost = EuroColumn(verbose_name="€/TNT (JFG)")
     deadline = tables.DateColumn(
         verbose_name="Frist", format="d.m.y", attrs={"cell": {"class": "numeric"}}
     )

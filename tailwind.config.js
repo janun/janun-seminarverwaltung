@@ -39,6 +39,9 @@ module.exports = {
       })
     },
     extend: {
+      fontSize: {
+        'xxs': '.6rem',
+      },
       borderRadius: {
         md: "6px"
       },

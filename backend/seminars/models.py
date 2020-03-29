@@ -228,10 +228,10 @@ class SeminarQuerySet(models.QuerySet):
         return self.annotate_planned_attendence_days().annotate(
             tnt=Case(
                 When(
-                    actual_attendence_days_total__isnull=True,
+                    actual_attendence_days_jfg__isnull=True,
                     then="planned_attendence_days",
                 ),
-                default="actual_attendence_days_total",
+                default="actual_attendence_days_jfg",
             )
         )
 
