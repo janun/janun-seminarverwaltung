@@ -7,10 +7,10 @@
   "scripts": {
     "build:css": "postcss backend/static_src/styles/base.css -o backend/static/styles/base.css",
     "build:js": "rollup -c",
-    "build": "yarn build:css && yarn build:js",
-    "watch:css": "onchange -i 'backend/**/*.*' tailwind.config.js -e 'backend/static' -- yarn build:css",
+    "build": "npm run build:css && npm run build:js",
+    "watch:css": "onchange -i 'backend/**/*.*' tailwind.config.js -e 'backend/static' -- npm run build:css",
     "watch:js": "rollup -c --watch",
-    "watch": "concurrently 'yarn watch:js' 'yarn watch:css'"
+    "watch": "concurrently 'npm run watch:js' 'npm run watch:css'"
   },
   "dependencies": {
     "typeface-cabin": "^0.0.72"
