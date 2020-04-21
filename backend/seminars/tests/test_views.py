@@ -86,8 +86,8 @@ class SeminarDeleteViewTestCase(TestCase):
         # seminar:
         cls.testseminar = Seminar(
             title="Test-Seminar",
-            start_date="2019-05-05",
-            end_date="2019-05-06",
+            start_date=datetime.date(2019, 5, 5),
+            end_date=datetime.date(2019, 5, 5),
             owner=cls.testowner,
         )
         cls.testseminar.save()
@@ -202,8 +202,8 @@ class SeminarTeamerUpdateViewTestCase(TestCase):
         # seminar:
         self.testseminar = Seminar(
             title="Test-Seminar",
-            start_date="2019-05-05",
-            end_date="2019-05-06",
+            start_date=datetime.date(2019, 5, 5),
+            end_date=datetime.date(2019, 5, 6),
             owner=self.testowner,
             group=self.testgroup,
         )
