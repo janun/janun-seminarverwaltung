@@ -435,6 +435,13 @@ class Seminar(models.Model):
     actual_attendence_days_jfg = models.PositiveSmallIntegerField(
         "TNT nach JFG", blank=True, null=True
     )
+    districts = models.PositiveSmallIntegerField(
+        "Anzahl Landkreise",
+        blank=True,
+        null=True,
+        help_text="Anzahl Landkreise aus denen die Teilnehmenden kommen",
+    )
+
     advance = models.DecimalField(
         "Vorschuss", max_digits=10, decimal_places=2, blank=True, null=True
     )
