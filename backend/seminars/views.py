@@ -234,9 +234,13 @@ class SeminarImportView(ErrorMessageMixin, StaffOnlyMixin, FormView):
         return context
 
     def form_valid(self, form):
-        resource = self.resource_class()
+        # read CSV
         dataset = Dataset()
-        dataset.load(self.request.FILES["file"].read().decode("utf-8"), format="csv")
+        file = self.request.FILES["file"].read()
+        file_str = file.decode("UTF-8")
+        dataset.load(file_str, format="csv")
+
+        resource = self.resource_class()
         # dry run first
         result = resource.import_data(
             dataset,
