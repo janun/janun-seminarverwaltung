@@ -1,8 +1,9 @@
 import json
 
-from django.utils.html import format_html
+from django.utils.html import format_html, escape, mark_safe
 from django.contrib.humanize.templatetags.humanize import NaturalTimeFormatter
 from django.template import defaultfilters
+from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist, FieldDoesNotExist
 
@@ -56,8 +57,7 @@ class HistoryTable(tables.Table):
                 value = record.name  # workaround for strange User.__str__ behaviour
 
         return render_two_values(
-            defaultfilters.truncatechars(value, 70),
-            record.history_object._meta.verbose_name,
+            truncatechars(value, 70), record.history_object._meta.verbose_name,
         )
 
     history_change_reason = tables.Column(
@@ -67,9 +67,7 @@ class HistoryTable(tables.Table):
     def render_history_change_reason(self, record):
         if record.history_type == "+":
             if record._meta.model_name == "historicalseminarcomment":
-                return "Kommentar: {}".format(
-                    defaultfilters.truncatechars(record.text, 150)
-                )
+                return "Kommentar: {}".format(truncatechars(record.text, 150))
             return format_html("<em>erstellt</em>")
 
         if record.history_type == "-":
@@ -79,29 +77,25 @@ class HistoryTable(tables.Table):
             return format_html("<em>nichts geändert</em>")
 
         def format_change(change):
+            # get field name
             try:
                 field = record.instance._meta.get_field(change["field"]).verbose_name
             except FieldDoesNotExist:
                 field = change["field"]
 
-            if not change["new"]:
-                string = "{} gelöscht".format(field)
-            elif not change["old"]:
-                string = "{}: {}".format(
-                    field, defaultfilters.truncatechars(change["new"], 20)
-                )
-            else:
-                string = "{}: {} → {}".format(
-                    field,
-                    defaultfilters.truncatechars(change["old"], 15),
-                    defaultfilters.truncatechars(change["new"], 15),
-                )
-            return format_html(
-                '<li class="mr-2 whitespace-no-wrap">{}</li>'.format(string)
-            )
+            new = truncatechars(change["new"], 15)
+            old = truncatechars(change["old"], 15)
+
+            if not change["new"]:  # was deleted
+                string = f"{field} gelöscht"
+            elif not change["old"]:  # is new
+                string = f"{field}: {new}"
+            else:  # was changed
+                string = f"{field}: {old} → {new}"
+            return f'<li class="mr-2 whitespace-no-wrap">{escape(string)}</li>'
 
         changes = map(format_change, json.loads(record.history_change_reason))
-        return format_html("<ul>{}</ul>".format("".join(changes)))
+        return mark_safe(f"<ul>{''.join(changes)}</ul>")
 
     class Meta:
         template_name = "table.html"
