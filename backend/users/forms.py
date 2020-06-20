@@ -165,7 +165,11 @@ class SignupForm(AllauthSignupForm):
         self.fields["name"].widget.attrs.update({"autofocus": "autofocus"})
 
         # set some help_texts
-        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields[
+            "username"
+        ].help_text = (
+            "Buchstaben, Ziffern und @, ., +, -, _. Groß-/Kleinschreibung ist egal."
+        )
         self.fields["username"].label = "Benutzername"
 
         self.fields[
@@ -238,7 +242,11 @@ class ProfileForm(forms.ModelForm):
             ),
         )
 
-        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields[
+            "username"
+        ].help_text = (
+            "Buchstaben, Ziffern und @, ., +, -, _. Groß-/Kleinschreibung ist egal."
+        )
         self.fields["email"].required = True
         self.fields[
             "email"
@@ -293,7 +301,11 @@ class UserCreateForm(forms.ModelForm):
             Fieldset("Gruppen", "janun_groups", "group_hats"),
         )
 
-        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields[
+            "username"
+        ].help_text = (
+            "Buchstaben, Ziffern und @, ., +, -, _. Groß-/Kleinschreibung ist egal."
+        )
         self.fields["email"].required = True
 
         # set autofocus
@@ -401,7 +413,11 @@ class UserDetailForm(forms.ModelForm):
             Fieldset("Gruppen", "janun_groups", "group_hats"),
         )
 
-        self.fields["username"].help_text = "Groß-/Kleinschreibung ist egal."
+        self.fields[
+            "username"
+        ].help_text = (
+            "Buchstaben, Ziffern und @, ., +, -, _. Groß-/Kleinschreibung ist egal."
+        )
         self.fields["email"].required = True
 
         # set autofocus
