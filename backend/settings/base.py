@@ -55,7 +55,6 @@ THIRD_PARTY_APPS = [
     "djcelery_email",
     "preferences",
     "phonenumber_field",
-    "formtools",
     "crispy_forms",
     "import_export",
     "allauth",

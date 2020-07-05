@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from django.views.generic import (
     View,
     TemplateView,
@@ -21,13 +19,11 @@ from django.utils import timezone
 from django.http import HttpResponse
 
 from tablib import Dataset
-from formtools.wizard.views import SessionWizardView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 from backend.mixins import ErrorMessageMixin, StaffOnlyMixin
 from backend.utils import AjaxableResponseMixin
-from backend.seminars import forms as seminar_forms
 from backend.emails.models import EmailTemplate
 
 from .models import Seminar, SeminarComment, get_max_funding, SeminarView
@@ -433,75 +429,6 @@ class SeminarApplyView(ErrorMessageMixin, CreateView):
         return reverse(
             "seminars:apply_done",
             kwargs={"year": seminar.start_date.year, "slug": seminar.slug},
-        )
-
-
-class SeminarApplyWizardView(SessionWizardView):
-    template_name = "seminars/seminar_apply.html"
-    form_list = [
-        seminar_forms.ContentSeminarForm,
-        seminar_forms.DateLocationSeminarForm,
-        seminar_forms.GroupSeminarForm,
-        seminar_forms.TrainingDaysSeminarForm,
-        seminar_forms.AttendeesSeminarForm,
-        seminar_forms.FundingSeminarForm,
-        seminar_forms.ConfirmSeminarForm,
-    ]
-
-    def get(self, request, *args, **kwargs):
-        try:
-            # restore saved steps
-            form = self.get_form()
-            if form.instance.title:
-                messages.info(request, "Frühere Formulareingaben wiederhergestellt")
-                return self.render(form)
-        except KeyError:
-            pass
-        return super().get(request, *args, **kwargs)
-
-    def get_form_instance(self, step):
-        if not getattr(self, "instance", None):
-            self.instance = Seminar()
-            for form_key in self.get_form_list():
-                self.get_form(
-                    step=form_key,
-                    data=self.storage.get_step_data(form_key),
-                    files=self.storage.get_step_files(form_key),
-                ).is_valid()
-        return self.instance
-
-    def get_steps(self):
-        forms = OrderedDict()
-        for form_key in self.get_form_list():
-            forms[form_key] = self.get_form(
-                step=form_key,
-                data=self.storage.get_step_data(form_key),
-                files=self.storage.get_step_files(form_key),
-            )
-            try:
-                forms[form_key].is_valid()
-            except ValueError:
-                pass
-        return forms
-
-    def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs["request"] = self.request
-        return kwargs
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form=form, **kwargs)
-        context["steps"] = self.get_steps()
-        return context
-
-    def done(self, form_list, **kwargs):
-        self.instance.owner = self.request.user
-        self.instance.save()
-        email = self.request.user.email
-        return render(
-            self.request,
-            "seminars/seminar_apply_done.html",
-            {"seminar": self.instance, "email": email},
         )
 
 
