@@ -1,5 +1,4 @@
 from django import forms
-from django.utils import timezone, formats
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.validators import FileExtensionValidator
 from django.template import defaultfilters
@@ -401,6 +400,202 @@ class SeminarTeamerApplyForm(forms.ModelForm):
         ]
         widgets = {"description": forms.Textarea({"rows": 3})}
         localized_fields = ["requested_funding"]
+
+
+class SeminarCreateForm(forms.ModelForm):
+    """Form for admins to create a seminar without checks"""
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        self.fields["start_date"].widget = DateInput()
+        self.fields["end_date"].widget = DateInput()
+        self.fields["transferred_at"].widget = DateInput()
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Fieldset("Status", "status", text="Wie weit das Seminar bearbeitet ist.",),
+            Fieldset(
+                "Besitz / Gruppe",
+                Field("owner"),
+                Field("group"),
+                text="Wer das Seminar besitzt und dadurch bearbeiten kann.",
+            ),
+            Fieldset(
+                "Inhalt",
+                Field("title", css_class="w-full"),
+                Field("description", css_class="w-full js-autogrow"),
+                text="Um zu entscheiden, ob das Seminar gefördert werden kann.",
+            ),
+            Fieldset(
+                "Zeit & Ort",
+                Div(
+                    Div(Field("start_date"), css_class="mx-2"),
+                    Div(Field("start_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Div(
+                    Div(
+                        Field(
+                            "end_date",
+                            css_class="js-update-min",
+                            data_min_field="#id_start_date",
+                            data_date_transform=True,
+                        ),
+                        css_class="mx-2",
+                    ),
+                    Div(Field("end_time", css_class="w-24"), css_class="mx-2"),
+                    css_class="flex -mx-2",
+                ),
+                Field("location", css_class="w-full"),
+                text="Wann und wo das Seminar stattfindet.",
+            ),
+            Fieldset(
+                "Geplante TNT / Förderung",
+                Field(
+                    "planned_training_days",
+                    css_class="w-24 js-update-max-from-date-diff",
+                ),
+                Div(
+                    Div(
+                        Field("planned_attendees_min", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field(
+                            "planned_attendees_max",
+                            css_class="w-24 js-update-min",
+                            data_min_field="#id_planned_attendees_min",
+                        ),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                Div(
+                    HTML(
+                        """
+                        <p class="mb-2">
+                        Förderhöchstbetrag: <span class="font-bold" id="max_funding"></span></strong>
+                        </p>
+                    """
+                    ),
+                    css_id="max_funding_text",
+                    css_class="hidden mb-4 text-gray-700",
+                ),
+                EuroInput("requested_funding"),
+            ),
+            Fieldset(
+                "Abrechnung: TNT",
+                Field("actual_training_days", css_class="w-24"),
+                Div(
+                    Div(
+                        Field("actual_attendees_total", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("actual_attendees_jfg", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                Div(
+                    Div(
+                        Field("actual_attendence_days_total", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    Div(
+                        Field("actual_attendence_days_jfg", css_class="w-24"),
+                        css_class="mx-2",
+                    ),
+                    css_class="md:flex -mx-2",
+                ),
+                Div(Field("districts", css_class="w-24")),
+            ),
+            Fieldset(
+                "Ausgaben",
+                EuroInput("expense_catering"),
+                EuroInput("expense_accomodation"),
+                EuroInput("expense_referent"),
+                EuroInput("expense_travel"),
+                EuroInput("expense_other"),
+                HTML(
+                    '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-minuend"></span></div>'
+                ),
+                css_class="js-sum",
+            ),
+            Fieldset(
+                "Einnahmen",
+                EuroInput("income_fees"),
+                EuroInput("income_public"),
+                EuroInput("income_other"),
+                HTML(
+                    '<div class="mt-8 mb-4">Summe: <span class="mx-1 js-sum-result js-substraction-subtrahend"></span></div>'
+                ),
+                css_class="js-sum",
+            ),
+            Fieldset(
+                "Abrechnung: Bilanz",
+                HTML(
+                    '<div class="mb-4">Ausgaben - Einnahmen: <span class="mx-1 js-substraction-difference"></span></div>'
+                ),
+                EuroInput("advance"),
+                EuroInput("actual_funding"),
+                "transferred_at",
+            ),
+        )
+
+    class Meta:
+        model = Seminar
+        fields = [
+            "status",
+            "owner",
+            "group",
+            "title",
+            "description",
+            "start_date",
+            "start_time",
+            "end_date",
+            "end_time",
+            "location",
+            "planned_training_days",
+            "planned_attendees_min",
+            "planned_attendees_max",
+            "requested_funding",
+            "actual_training_days",
+            "actual_attendees_total",
+            "actual_attendees_jfg",
+            "actual_attendence_days_total",
+            "actual_attendence_days_jfg",
+            "districts",
+            "expense_catering",
+            "expense_accomodation",
+            "expense_referent",
+            "expense_travel",
+            "expense_other",
+            "income_fees",
+            "income_public",
+            "income_other",
+            "advance",
+            "actual_funding",
+            "transferred_at",
+        ]
+        widgets = {
+            "description": forms.Textarea({"rows": 3}),
+        }
+        localized_fields = [
+            "requested_funding",
+            "expense_catering",
+            "expense_accomodation",
+            "expense_referent",
+            "expense_travel",
+            "expense_other",
+            "income_fees",
+            "income_public",
+            "income_other",
+            "advance",
+            "actual_funding",
+        ]
 
 
 class SeminarStaffChangeForm(forms.ModelForm):

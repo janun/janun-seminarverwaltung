@@ -32,6 +32,7 @@ from .tables import SeminarTable, SeminarHistoryTable
 from .filters import SeminarStaffFilter
 from .resources import SeminarResource
 from .forms import (
+    SeminarCreateForm,
     SeminarImportForm,
     SeminarTeamerChangeForm,
     SeminarStaffChangeForm,
@@ -367,6 +368,19 @@ class SeminarStaffUpdateView(
             },
         )
         return result
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+
+class SeminarCreateView(
+    StaffOnlyMixin, ErrorMessageMixin, SuccessMessageMixin, CreateView
+):
+    form_class = SeminarCreateForm
+    template_name = "seminars/seminar_create.html"
+    success_message = "Seminar erfolgreich erstellt."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

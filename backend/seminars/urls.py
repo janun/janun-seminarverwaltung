@@ -49,6 +49,7 @@ urlpatterns = [
     ),
     # create:
     path("apply", views.SeminarApplyView.as_view(), name="apply"),
+    path("create", views.SeminarCreateView.as_view(), name="create"),
     # comments:
     path(
         "<int:year>/<slug:slug>/comments",

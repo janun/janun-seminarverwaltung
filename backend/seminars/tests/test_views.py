@@ -447,3 +447,59 @@ class StaffSeminarListViewTestCase(TestCase):
         response = self.client.get(self.url_2019)
         self.assertEqual(response.context["confirmed_aggregates"]["funding_sum"], 3000)
         self.assertContains(response, "3 000,00")
+
+
+class SeminarCreateViewTestCase(TestCase):
+    url = reverse("seminars:create")
+
+    def setUp(self):
+        # testuser:
+        self.testuser = User(
+            name="Max Mustermann", username="testuser", email="testuser@example.com",
+        )
+        self.testuser.set_password("secret")
+        self.testuser.save()
+        # test staff user:
+        self.staffuser = User(
+            name="Staff Mustermann",
+            username="staffuser",
+            email="staffuser@example.com",
+        )
+        self.staffuser.set_password("secret")
+        self.staffuser.is_staff = True
+        self.staffuser.is_admin = True
+        self.staffuser.save()
+        # funding_rate:
+        self.funding_rate = FundingRate(year=2019, group_rate=10, single_rate=8)
+        self.funding_rate.save()
+        # form date
+        self.form_data = {
+            "title": "Foobar",
+            "description": "Blabla",
+            "status": "angemeldet",
+            "start_date": "2019-05-06",
+            "end_date": "2019-05-06",
+            "planned_training_days": "1",
+            "planned_attendees_min": "10",
+            "planned_attendees_max": "20",
+            "requested_funding": "100",
+        }
+
+    def test_get_403(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertContains(response, "Keine Berechtigung", status_code=403)
+
+    def test_get(self):
+        self.client.login(username="staffuser", password="secret")
+        response = self.client.get(self.url)
+        self.assertContains(response, "Neues Seminar erstellen")
+
+    def test_post_success(self):
+        self.client.login(username="staffuser", password="secret")
+        response = self.client.post(self.url, self.form_data, follow=True)
+        self.assertContains(response, "Foobar")
+        self.assertContains(response, "Seminar erfolgreich erstellt.")
+        seminar = response.context["seminar"]
+        self.assertEqual(seminar.start_date, datetime.date(2019, 5, 6))
+        self.assertEqual(seminar.title, "Foobar")

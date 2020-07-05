@@ -5,7 +5,9 @@ var startDateField = document.querySelector('#id_start_date');
 function updateFunding() {
   var funding = parseFloat(fundingField.value);
   var fundingStr = funding.toLocaleString("de", { style: "currency", currency: "EUR" });
-  document.querySelector('#funding').innerHTML = funding ? "von " + fundingStr : "";
+  var checkbox = document.querySelector('#funding');
+  if (!checkbox) return;
+  checkbox.innerHTML = funding ? "von " + fundingStr : "";
 }
 fundingField.addEventListener('input', updateFunding);
 updateFunding();
@@ -35,10 +37,12 @@ function getDeadline(date) {
 // update deadline in confirmation checkbox
 function updateDeadline() {
   var date = parseGermanDate(startDateField.value)
+  var checkbox = document.querySelector('#deadline');
+  if (!checkbox) return;
   if (date) {
-    document.querySelector('#deadline').innerHTML = "am " + getDeadline(date).toLocaleDateString("de");
+    checkbox.innerHTML = "am " + getDeadline(date).toLocaleDateString("de");
   } else {
-    document.querySelector('#deadline').innerHTML = "";
+    checkbox.innerHTML = "";
   }
 }
 startDateField.addEventListener('input', updateDeadline);
