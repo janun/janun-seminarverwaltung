@@ -1,5 +1,6 @@
 var fundingField = document.querySelector('#id_requested_funding');
 var startDateField = document.querySelector('#id_start_date');
+var endDateField = document.querySelector('#id_end_date');
 
 // update funding in confirmation checkbox
 function updateFunding() {
@@ -36,7 +37,7 @@ function getDeadline(date) {
 
 // update deadline in confirmation checkbox
 function updateDeadline() {
-  var date = parseGermanDate(startDateField.value)
+  var date = parseGermanDate(endDateField.value)
   var checkbox = document.querySelector('#deadline');
   if (!checkbox) return;
   if (date) {
@@ -45,7 +46,7 @@ function updateDeadline() {
     checkbox.innerHTML = "";
   }
 }
-startDateField.addEventListener('input', updateDeadline);
+endDateField.addEventListener('input', updateDeadline);
 updateDeadline();
 
 

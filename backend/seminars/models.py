@@ -174,28 +174,28 @@ class SeminarQuerySet(models.QuerySet):
         return self.annotate_year().annotate(
             deadline=Case(
                 When(
-                    start_date__quarter=1,
+                    end_date__quarter=1,
                     then=Cast(
                         Concat(Cast("year", models.TextField()), Value("-04-15")),
                         models.DateField(),
                     ),
                 ),
                 When(
-                    start_date__quarter=2,
+                    end_date__quarter=2,
                     then=Cast(
                         Concat(Cast("year", models.TextField()), Value("-07-15")),
                         models.DateField(),
                     ),
                 ),
                 When(
-                    start_date__quarter=3,
+                    end_date__quarter=3,
                     then=Cast(
                         Concat(Cast("year", models.TextField()), Value("-10-15")),
                         models.DateField(),
                     ),
                 ),
                 When(
-                    start_date__quarter=4,
+                    end_date__quarter=4,
                     then=Cast(
                         Concat(
                             Cast(F("year") + 1, models.TextField()), Value("-01-15")
@@ -568,9 +568,9 @@ class Seminar(models.Model):
         return all(getattr(self, field) is not None for field in fields)
 
     def get_deadline(self) -> datetime.date:
-        if not self.start_date:
+        if not self.end_date:
             return None
-        year = self.start_date.year
+        year = self.end_date.year
         deadlines = [
             datetime.date(year, 4, 15),
             datetime.date(year, 7, 15),

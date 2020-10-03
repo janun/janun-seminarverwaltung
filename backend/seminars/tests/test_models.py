@@ -339,19 +339,19 @@ class SeminarModelTestCase(TestCase):
 
     def test_get_deadline(self):
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 3, 1)).get_deadline(),
+            Seminar(title="Test", start_date=datetime.date(2019, 3, 1), end_date=datetime.date(2019, 3, 1)).get_deadline(),
             datetime.date(2019, 4, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 6, 1)).get_deadline(),
+            Seminar(title="Test", start_date=datetime.date(2019, 6, 1), end_date=datetime.date(2019, 6, 1)).get_deadline(),
             datetime.date(2019, 7, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 8, 2)).get_deadline(),
+            Seminar(title="Test", start_date=datetime.date(2019, 8, 2), end_date=datetime.date(2019, 8, 2)).get_deadline(),
             datetime.date(2019, 10, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 11, 5)).get_deadline(),
+            Seminar(title="Test", start_date=datetime.date(2019, 11, 5), end_date=datetime.date(2019, 11, 5)).get_deadline(),
             datetime.date(2020, 1, 15),
         )
 
