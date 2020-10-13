@@ -170,8 +170,11 @@ class SeminarQuerySet(models.QuerySet):
     def annotate_year(self) -> models.QuerySet:
         return self.annotate(year=ExtractYear("start_date"))
 
+    def annotate_end_year(self) -> models.QuerySet:
+        return self.annotate(end_year=ExtractYear("end_date"))
+
     def annotate_deadline(self) -> models.QuerySet:
-        return self.annotate(
+        return self.annotate_end_year().annotate(
             deadline=Case(
                 When(
                     start_date__month=12,
@@ -179,7 +182,7 @@ class SeminarQuerySet(models.QuerySet):
                     end_date__day__lt=6,
                     then=Cast(
                         Concat(
-                            Cast(ExtractYear("end_date"), models.TextField()),
+                            Cast("end_year", models.TextField()),
                             Value("-01-15"),
                         ),
                         models.DateField(),
@@ -189,7 +192,7 @@ class SeminarQuerySet(models.QuerySet):
                     end_date__quarter=1,
                     then=Cast(
                         Concat(
-                            Cast(ExtractYear("end_date"), models.TextField()),
+                            Cast("end_year", models.TextField()),
                             Value("-04-15"),
                         ),
                         models.DateField(),
@@ -199,7 +202,7 @@ class SeminarQuerySet(models.QuerySet):
                     end_date__quarter=2,
                     then=Cast(
                         Concat(
-                            Cast(ExtractYear("end_date"), models.TextField()),
+                            Cast("end_year", models.TextField()),
                             Value("-07-15"),
                         ),
                         models.DateField(),
@@ -209,7 +212,7 @@ class SeminarQuerySet(models.QuerySet):
                     end_date__quarter=3,
                     then=Cast(
                         Concat(
-                            Cast(ExtractYear("end_date"), models.TextField()),
+                            Cast("end_year", models.TextField()),
                             Value("-10-15"),
                         ),
                         models.DateField(),
@@ -219,7 +222,7 @@ class SeminarQuerySet(models.QuerySet):
                     end_date__quarter=4,
                     then=Cast(
                         Concat(
-                            Cast(F("end_date__year") + 1, models.TextField()),
+                            Cast(F("end_year") + 1, models.TextField()),
                             Value("-01-15"),
                         ),
                         models.DateField(),
