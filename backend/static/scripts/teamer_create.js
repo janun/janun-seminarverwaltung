@@ -27,21 +27,30 @@ function parseGermanDate(string) {
   }
 }
 
-function getDeadline(date) {
-  var quarter = Math.floor((date.getMonth() / 3));
-  var year = date.getFullYear();
+function getDeadline(startDate, endDate) {
+  var quarter = Math.floor((endDate.getMonth() / 3));
+  var year = endDate.getFullYear();
   var month = [4, 7, 10, 1][quarter];
+
+  // over year boundary
+  if (startDate.getMonth() == 11 && endDate.getMonth() == 0) {
+    if (endDate.getDate() < 6) {
+      return new Date(year, 0, 15);
+    }
+  }
+
   if (quarter === 3) year += 1;
   return new Date(year, month - 1, 15);
 }
 
 // update deadline in confirmation checkbox
 function updateDeadline() {
-  var date = parseGermanDate(endDateField.value)
+  var endDate = parseGermanDate(endDateField.value)
+  var startDate = parseGermanDate(startDateField.value)
   var checkbox = document.querySelector('#deadline');
   if (!checkbox) return;
-  if (date) {
-    checkbox.innerHTML = "am " + getDeadline(date).toLocaleDateString("de");
+  if (endDate) {
+    checkbox.innerHTML = "am " + getDeadline(startDate, endDate).toLocaleDateString("de");
   } else {
     checkbox.innerHTML = "";
   }

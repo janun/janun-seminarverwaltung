@@ -63,6 +63,19 @@ class DeadlineAnnotationsTestCase(TestCase):
             [repr(test4)],
         )
 
+        # goes over year boundary
+        test5 = Seminar.objects.create(
+            title="Test5",
+            start_date=datetime.date(2019, 12, 31),
+            end_date=datetime.date(2020, 1, 1),
+        )
+        self.assertQuerysetEqual(
+            Seminar.objects.annotate_deadline().filter(
+                deadline=datetime.date(2020, 1, 15)
+            ),
+            [repr(test5), repr(test4)],
+        )
+
     def test_deadline_status_expired(self):
         ago_150_days = (timezone.now() - datetime.timedelta(days=150)).date()
         expired = Seminar.objects.create(
@@ -339,19 +352,44 @@ class SeminarModelTestCase(TestCase):
 
     def test_get_deadline(self):
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 3, 1), end_date=datetime.date(2019, 3, 1)).get_deadline(),
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 3, 1),
+                end_date=datetime.date(2019, 3, 1),
+            ).get_deadline(),
             datetime.date(2019, 4, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 6, 1), end_date=datetime.date(2019, 6, 1)).get_deadline(),
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 6, 1),
+                end_date=datetime.date(2019, 6, 1),
+            ).get_deadline(),
             datetime.date(2019, 7, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 8, 2), end_date=datetime.date(2019, 8, 2)).get_deadline(),
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 8, 2),
+                end_date=datetime.date(2019, 8, 2),
+            ).get_deadline(),
             datetime.date(2019, 10, 15),
         )
         self.assertEqual(
-            Seminar(title="Test", start_date=datetime.date(2019, 11, 5), end_date=datetime.date(2019, 11, 5)).get_deadline(),
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 11, 5),
+                end_date=datetime.date(2019, 11, 5),
+            ).get_deadline(),
+            datetime.date(2020, 1, 15),
+        )
+        # goes over year boundary
+        self.assertEqual(
+            Seminar(
+                title="Test",
+                start_date=datetime.date(2019, 12, 30),
+                end_date=datetime.date(2020, 1, 3),
+            ).get_deadline(),
             datetime.date(2020, 1, 15),
         )
 

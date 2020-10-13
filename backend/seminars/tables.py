@@ -57,6 +57,7 @@ class SeminarTable(tables.Table):
     def render_deadline(self, record, value):
         status = record.deadline_status
         formatted = defaultfilters.date(value, "d.m.y")
+        color = ""
         if status == "not_applicable":
             return "—"
         if status == "not_soon":
