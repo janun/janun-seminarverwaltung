@@ -373,7 +373,8 @@ class SeminarTeamerApplyForm(forms.ModelForm):
             cleaned_data["planned_attendees_max"],
         )
         if (
-            cleaned_data["requested_funding"]
+            "requested_funding" in cleaned_data
+            and cleaned_data["requested_funding"]
             and max_funding
             and cleaned_data["requested_funding"] > max_funding
         ):
