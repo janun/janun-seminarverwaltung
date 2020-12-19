@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 
 {% block head_title %}{{ block.super }} Dein Konto{% endblock %}
@@ -23,42 +23,46 @@
         <p>Solltest Du hier eine Änderung benötigen, musst Du uns kontaktieren.</p>
       </div>
       <div class="fieldset-content">
-        <div class="mb-4"><div class="col-form-label">Konto-Rolle</div>{{ user.role }}</div>
+        <div class="mb-4">
+          <div class="col-form-label">Konto-Rolle</div>{{ user.role }}
+        </div>
 
         <div class="mb-4">
           <div class="col-form-label">Gruppen-Mitgliedschaften</div>
           {% if user.janun_groups.all %}
-            <ul>
-              {% for group in user.janun_groups.all %}
-                <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
-              {% endfor %}
-            </ul>
-            {% if not user.is_reviewed %}
-              <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
-            {% endif %}
+          <ul>
+            {% for group in user.janun_groups.all %}
+            <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
+            {% endfor %}
+          </ul>
+          {% if not user.is_reviewed %}
+          <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft
+            wurde.</p>
+          {% endif %}
           {% else %}
-            <p>keine</p>
+          <p>keine</p>
           {% endif %}
         </div>
 
         {% if user.is_staff %}
-          <div class="mb-4">
-            <div class="col-form-label">Gruppen-Hüte</div>
-            {% if user.group_hats.all %}
-              <ul>
-                {% for group in user.group_hats.all %}
-                  <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
-                {% endfor %}
-              </ul>
-              {% if not user.is_reviewed %}
-                <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft wurde.</p>
-              {% endif %}
-            {% else %}
-              <p>keine</p>
-            {% endif %}
-          </div>
+        <div class="mb-4">
+          <div class="col-form-label">Gruppen-Hüte</div>
+          {% if user.group_hats.all %}
+          <ul>
+            {% for group in user.group_hats.all %}
+            <li><a class="underline" href="{% url 'groups:detail' group.slug %}">{{ group.name }}</a></li>
+            {% endfor %}
+          </ul>
+          {% if not user.is_reviewed %}
+          <p class="my-2 italic">Du kannst aber z.Z. auf keine Gruppen zugreifen, da dein Konto noch nicht überprüft
+            wurde.</p>
+          {% endif %}
+          {% else %}
+          <p>keine</p>
+          {% endif %}
+        </div>
         {% endif %}
-          
+
       </div>
     </div>
   </div>

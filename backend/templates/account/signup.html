@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 
 {% block head_title %}Neues Konto anlegen{% endblock %}
@@ -7,17 +7,23 @@
 
 <div class="mx-auto max-w-4xl">
   <a class="inline-flex items-center text-gray-500 hover:text-gray-800 text-xs mb-4" href="{% url 'account_login' %}">
-    <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20"><polygon points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9"/></svg>
+    <svg class="fill-current mr-2 h-2 w-2" viewBox="0 0 20 20">
+      <polygon
+        points="3.828 9 9.899 2.929 8.485 1.515 0 10 .707 10.707 8.485 18.485 9.899 17.071 3.828 11 20 11 20 9 3.828 9" />
+    </svg>
     Login
   </a>
   <h1 class="mb-5 md:mb-10 font-bold text-2xl border-b pb-4">Neues Konto Anlegen</h1>
 
-  <form class="signup js-focus-invalid js-warn-if-unsaved" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  <form class="signup js-focus-invalid js-warn-if-unsaved" id="signup_form" method="post"
+    action="{% url 'account_signup' %}">
     {% crispy form %}
     <div class="mt-10 flex flex-wrap items-center justify-center md:justify-end">
       <button class="button button-primary form-invalid:bg-gray-400 js-list-invalid-in-title" type="submit">
         Anlegen &amp; Anmelden
-        <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3"><path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path></svg>
+        <svg viewBox="0 0 20 20" class="ml-2 fill-current h-3 w-3">
+          <path d="M16.172 9l-6.071-6.071 1.414-1.414L20 10l-.707.707-7.778 7.778-1.414-1.414L16.172 11H0V9z"></path>
+        </svg>
       </button>
     </div>
   </form>
